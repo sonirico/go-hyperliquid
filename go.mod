@@ -1,6 +1,6 @@
 module github.com/sonirico/go-hyperliquid
 
-go 1.23.0
+go 1.24
 
 require (
 	github.com/ethereum/go-ethereum v1.16.2
@@ -12,7 +12,7 @@ require (
 	github.com/stretchr/testify v1.10.0
 	github.com/valyala/fastjson v1.6.4
 	github.com/vmihailenco/msgpack/v5 v5.4.1
-	gopkg.in/dnaeon/go-vcr.v4 v4.0.4
+	gopkg.in/dnaeon/go-vcr.v4 v4.0.5
 )
 
 require (
@@ -24,6 +24,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0 // indirect
 	github.com/ethereum/c-kzg-4844/v2 v2.1.1 // indirect
 	github.com/ethereum/go-verkle v0.2.2 // indirect
+	github.com/goccy/go-yaml v1.18.0 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
