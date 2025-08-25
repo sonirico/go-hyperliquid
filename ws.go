@@ -202,6 +202,10 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 				continue
 			}
 
+			if wsMsg.Channel == ChannelPong {
+				continue
+			}
+
 			if err := w.dispatch(wsMsg); err != nil {
 				log.Printf("failed to dispatch websocket message: %v", err)
 			}

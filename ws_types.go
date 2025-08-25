@@ -14,6 +14,7 @@ const (
 	ChannelNotification string = "notification"
 	ChannelOrderUpdates string = "orderUpdates"
 	ChannelSubResponse  string = "subscriptionResponse"
+	ChannelPong         string = "pong"
 )
 
 type wsMessage struct {
