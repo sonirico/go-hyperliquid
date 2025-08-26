@@ -55,9 +55,9 @@ lint: ## Run golangci-lint
 	golangci-lint run
 
 fmt: ## Format code
-	@find . -name "*.go" -not -name "*_easyjson.go" -not -path "./examples/*" | xargs gofmt -s -w
-	@find . -name "*.go" -not -name "*_easyjson.go" -not -path "./examples/*" | xargs goimports -w
-	@find . -name "*.go" -not -name "*_easyjson.go" -not -path "./examples/*" | xargs golines -w
+	@find . -name "*.go" -not -name "*_easyjson.go"  | xargs gofmt -s -w
+	@find . -name "*.go" -not -name "*_easyjson.go"  | xargs goimports -w
+	@find . -name "*.go" -not -name "*_easyjson.go"  | xargs golines -w
 
 vet: ## Run go vet
 	$(GOCMD) vet ./...

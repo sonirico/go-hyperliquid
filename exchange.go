@@ -7,6 +7,7 @@ import (
 )
 
 type Exchange struct {
+	debug        bool
 	client       *Client
 	privateKey   *ecdsa.PrivateKey
 	vault        string
@@ -21,18 +22,35 @@ func NewExchange(
 	meta *Meta,
 	vaultAddr, accountAddr string,
 	spotMeta *SpotMeta,
+	opts ...ExchangeOpt,
 ) *Exchange {
-	return &Exchange{
-		client:      NewClient(baseURL),
+	ex := &Exchange{
 		privateKey:  privateKey,
 		vault:       vaultAddr,
 		accountAddr: accountAddr,
-		info:        NewInfo(baseURL, true, meta, spotMeta),
 	}
+
+	for _, opt := range opts {
+		opt.Apply(ex)
+	}
+
+	var (
+		clientOpts []ClientOpt
+		infoOpts   []InfoOpt
+	)
+	if ex.debug {
+		clientOpts = append(clientOpts, ClientOptDebugMode())
+		infoOpts = append(infoOpts, InfoOptDebugMode())
+	}
+
+	ex.client = NewClient(baseURL, clientOpts...)
+	ex.info = NewInfo(baseURL, true, meta, spotMeta, infoOpts...)
+
+	return ex
 }
 
 // executeAction executes an action and unmarshals the response into the given result
-func (e *Exchange) executeAction(action any, result any) error {
+func (e *Exchange) executeAction(action, result any) error {
 	timestamp := time.Now().UnixMilli()
 
 	sig, err := SignL1Action(

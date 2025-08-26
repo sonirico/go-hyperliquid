@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/sonirico/vago/lol"
 )
 
 const (
@@ -22,19 +24,27 @@ const (
 )
 
 type Client struct {
+	logger     lol.Logger
+	debug      bool
 	baseURL    string
 	httpClient *http.Client
 }
 
-func NewClient(baseURL string) *Client {
+func NewClient(baseURL string, opts ...ClientOpt) *Client {
 	if baseURL == "" {
 		baseURL = MainnetAPIURL
 	}
 
-	return &Client{
+	cli := &Client{
 		baseURL:    baseURL,
 		httpClient: new(http.Client),
 	}
+
+	for _, opt := range opts {
+		opt.Apply(cli)
+	}
+
+	return cli
 }
 
 func (c *Client) post(path string, payload any) ([]byte, error) {
@@ -46,7 +56,7 @@ func (c *Client) post(path string, payload any) ([]byte, error) {
 	url := c.baseURL + path
 	req, err := http.NewRequestWithContext(
 		context.Background(),
-		"POST",
+		http.MethodPost,
 		url,
 		bytes.NewBuffer(jsonData),
 	)
@@ -55,6 +65,14 @@ func (c *Client) post(path string, payload any) ([]byte, error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+
+	if c.debug {
+		c.logger.WithFields(lol.Fields{
+			"method": "POST",
+			"url":    url,
+			"body":   string(jsonData),
+		}).Debug("HTTP request")
+	}
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -70,7 +88,17 @@ func (c *Client) post(path string, payload any) ([]byte, error) {
 		}
 	}
 
+	if c.debug {
+		c.logger.WithFields(lol.Fields{
+			"status": resp.Status,
+			"body":   string(body),
+		}).Debug("HTTP response")
+	}
+
 	if resp.StatusCode >= httpErrorStatusCode {
+		if !json.Valid(body) {
+			return nil, fmt.Errorf("status %d: %s", resp.StatusCode, string(body))
+		}
 		var apiErr APIError
 		if err := json.Unmarshal(body, &apiErr); err != nil {
 			return nil, fmt.Errorf("status %d: %s", resp.StatusCode, string(body))

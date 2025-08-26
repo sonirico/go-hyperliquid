@@ -11,6 +11,7 @@ const (
 )
 
 type Info struct {
+	debug          bool
 	client         *Client
 	coinToAsset    map[string]int
 	nameToCoin     map[string]string
@@ -45,13 +46,23 @@ func (i *Info) postTimeRangeRequest(
 	return resp, nil
 }
 
-func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta) *Info {
+func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts ...InfoOpt) *Info {
 	info := &Info{
-		client:         NewClient(baseURL),
 		coinToAsset:    make(map[string]int),
 		nameToCoin:     make(map[string]string),
 		assetToDecimal: make(map[int]int),
 	}
+
+	for _, opt := range opts {
+		opt.Apply(info)
+	}
+
+	var clientOpts []ClientOpt
+	if info.debug {
+		clientOpts = append(clientOpts, ClientOptDebugMode())
+	}
+
+	info.client = NewClient(baseURL, clientOpts...)
 
 	if meta == nil {
 		var err error
