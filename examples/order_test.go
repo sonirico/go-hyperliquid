@@ -152,3 +152,31 @@ func TestBulkModifyOrders(t *testing.T) {
 
 	t.Logf("Bulk modify orders result: %+v", result)
 }
+
+func TestSLOrder(t *testing.T) {
+	godotenv.Overload()
+	exchange := newTestExchange(t)
+
+	tpOrderReq := hyperliquid.CreateOrderRequest{
+		Coin:       "SOL",
+		IsBuy:      true,
+		Price:      110_000,
+		Size:       0.001,
+		ReduceOnly: true,
+		OrderType: hyperliquid.OrderType{
+			Trigger: &hyperliquid.TriggerOrderType{
+				TriggerPx: 100000,
+				IsMarket:  true,
+				Tpsl:      hyperliquid.StopLoss,
+			},
+		},
+		ClientOrderID: nil,
+	}
+
+	result, err := exchange.Order(tpOrderReq, nil)
+	if err != nil {
+		t.Fatalf("SLOrder failed: %v", err)
+	}
+
+	t.Logf("SL order result: %+v", result)
+}

@@ -113,13 +113,28 @@ type UpdateIsolatedMarginAction struct {
 
 // OrderWire represents the wire format for orders with deterministic field ordering
 type OrderWire struct {
-	Asset      int            `json:"a"           msgpack:"a"`
-	IsBuy      bool           `json:"b"           msgpack:"b"`
-	LimitPx    string         `json:"p"           msgpack:"p"`
-	Size       string         `json:"s"           msgpack:"s"`
-	ReduceOnly bool           `json:"r"           msgpack:"r"`
-	OrderType  map[string]any `json:"t"           msgpack:"t"`
-	Cloid      *string        `json:"c,omitempty" msgpack:"c,omitempty"`
+	Asset      int           `json:"a"           msgpack:"a"`
+	IsBuy      bool          `json:"b"           msgpack:"b"`
+	LimitPx    string        `json:"p"           msgpack:"p"`
+	Size       string        `json:"s"           msgpack:"s"`
+	ReduceOnly bool          `json:"r"           msgpack:"r"`
+	OrderType  orderWireType `json:"t"           msgpack:"t"`
+	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"`
+}
+
+type orderWireType struct {
+	Limit   *orderWireTypeLimit   `json:"limit,omitempty"   msgpack:"limit,omitempty"`
+	Trigger *orderWireTypeTrigger `json:"trigger,omitempty" msgpack:"trigger,omitempty"`
+}
+
+type orderWireTypeLimit struct {
+	Tif Tif `json:"tif,string" msgpack:"tif"`
+}
+
+type orderWireTypeTrigger struct {
+	TriggerPx float64 `json:"triggerPx,string" msgpack:"triggerPx"`
+	IsMarket  bool    `json:"isMarket"         msgpack:"isMarket"`
+	Tpsl      Tpsl    `json:"tpsl"             msgpack:"tpsl"` // "tp" or "sl"
 }
 
 // OrderAction represents the order action with deterministic field ordering
