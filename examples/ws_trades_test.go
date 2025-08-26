@@ -20,12 +20,15 @@ func TestWebsocket(t *testing.T) {
 	}
 	defer ws.Close()
 
-	sub1, err := ws.Trades(hyperliquid.TradesSubscriptionParams{Coin: "SOL"}, func(trades []hyperliquid.Trade, err error) {
-		if err != nil {
-			t.Fatalf("Failed to receive trades1: %v", err)
-		}
-		t.Logf("Received a set of trades1: %+v", len(trades))
-	})
+	sub1, err := ws.Trades(
+		hyperliquid.TradesSubscriptionParams{Coin: "SOL"},
+		func(trades []hyperliquid.Trade, err error) {
+			if err != nil {
+				t.Fatalf("Failed to receive trades1: %v", err)
+			}
+			t.Logf("Received a set of trades1: %+v", len(trades))
+		},
+	)
 
 	if err != nil {
 		t.Fatalf("Failed to subscribe to trades1: %v", err)
@@ -35,12 +38,15 @@ func TestWebsocket(t *testing.T) {
 
 	defer sub1.Close()
 
-	sub2, err := ws.Trades(hyperliquid.TradesSubscriptionParams{Coin: "SOL"}, func(trades []hyperliquid.Trade, err error) {
-		if err != nil {
-			t.Fatalf("Failed to receive trades2: %v", err)
-		}
-		t.Logf("Received a set of trades2: %+v", len(trades))
-	})
+	sub2, err := ws.Trades(
+		hyperliquid.TradesSubscriptionParams{Coin: "SOL"},
+		func(trades []hyperliquid.Trade, err error) {
+			if err != nil {
+				t.Fatalf("Failed to receive trades2: %v", err)
+			}
+			t.Logf("Received a set of trades2: %+v", len(trades))
+		},
+	)
 
 	if err != nil {
 		t.Fatalf("Failed to subscribe to trades2: %v", err)

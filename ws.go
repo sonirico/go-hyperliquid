@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/sonirico/vago/lol"
 	"github.com/sonirico/vago/maps"
 )
 
@@ -37,9 +38,11 @@ type WebsocketClient struct {
 	done                  chan struct{}
 	closeOnce             sync.Once
 	reconnectWait         time.Duration
+	debug                 bool
+	logger                lol.Logger
 }
 
-func NewWebsocketClient(baseURL string) *WebsocketClient {
+func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 	if baseURL == "" {
 		baseURL = MainnetAPIURL
 	}
@@ -51,7 +54,7 @@ func NewWebsocketClient(baseURL string) *WebsocketClient {
 	parsedURL.Path = "/ws"
 	wsURL := parsedURL.String()
 
-	return &WebsocketClient{
+	cli := &WebsocketClient{
 		url:           wsURL,
 		done:          make(chan struct{}),
 		reconnectWait: time.Second,
@@ -68,6 +71,12 @@ func NewWebsocketClient(baseURL string) *WebsocketClient {
 			ChannelSubResponse:  NewNoopDispatcher(),
 		},
 	}
+
+	for _, opt := range opts {
+		opt.Apply(cli)
+	}
+
+	return cli
 }
 
 func (w *WebsocketClient) Connect(ctx context.Context) error {
@@ -115,7 +124,7 @@ func (w *WebsocketClient) subscribe(
 			// on subscribe
 			func(p subscriptable) {
 				if err := w.sendSubscribe(p); err != nil {
-					log.Printf("failed to subscribe: %v", err)
+					w.logger.Errorf("failed to subscribe: %v", err)
 				}
 			},
 			// on unsubscribe
@@ -124,7 +133,7 @@ func (w *WebsocketClient) subscribe(
 				defer w.mu.Unlock()
 				delete(w.subscribers, pkey)
 				if err := w.sendUnsubscribe(p); err != nil {
-					log.Printf("failed to unsubscribe: %v", err)
+					w.logger.Errorf("failed to unsubscribe: %v", err)
 				}
 			},
 		)
@@ -192,19 +201,23 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 			_, msg, err := w.conn.ReadMessage()
 			if err != nil {
 				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					log.Printf("websocket read error: %v", err)
+					w.logger.Errorf("websocket read error: %v", err)
 				}
 				return
 			}
 
+			if w.debug {
+				w.logger.Debugf("[<] %s", string(msg))
+			}
+
 			var wsMsg wsMessage
 			if err := json.Unmarshal(msg, &wsMsg); err != nil {
-				log.Printf("websocket message parse error: %v", err)
+				w.logger.Errorf("websocket message parse error: %v", err)
 				continue
 			}
 
 			if err := w.dispatch(wsMsg); err != nil {
-				log.Printf("failed to dispatch websocket message: %v", err)
+				w.logger.Errorf("failed to dispatch websocket message: %v", err)
 			}
 		}
 	}
@@ -222,7 +235,7 @@ func (w *WebsocketClient) pingPump(ctx context.Context) {
 			return
 		case <-ticker.C:
 			if err := w.sendPing(); err != nil {
-				log.Printf("ping error: %v", err)
+				w.logger.Errorf("ping error: %v", err)
 				w.reconnect(ctx)
 				return
 			}
@@ -231,15 +244,11 @@ func (w *WebsocketClient) pingPump(ctx context.Context) {
 }
 
 func (w *WebsocketClient) dispatch(msg wsMessage) error {
-	// println("[<] " + msg.Channel)
-	// println("[<] " + string(msg.Data))
-
 	dispatcher, ok := w.msgDispatcherRegistry[msg.Channel]
 	if !ok {
 		return fmt.Errorf("no dispatcher for channel: %s", msg.Channel)
 	}
 
-	// Read lock is only required for the subscribers since msgDispatcherRegistry is never modified.
 	w.mu.RLock()
 	subscribers := maps.Values(w.subscribers)
 	w.mu.RUnlock()
@@ -302,9 +311,10 @@ func (w *WebsocketClient) writeJSON(v any) error {
 		return fmt.Errorf("connection closed")
 	}
 
-	// debug
-	//bts, _ := json.Marshal(v)
-	//println("[>] " + fmt.Sprintf("%s", string(bts)))
+	if w.debug {
+		bts, _ := json.Marshal(v)
+		w.logger.Debugf("[>] %s", string(bts))
+	}
 
 	return w.conn.WriteJSON(v)
 }
