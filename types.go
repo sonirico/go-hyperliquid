@@ -31,6 +31,13 @@ const (
 	TifGtc Tif = "Gtc" // Good Till Cancel
 )
 
+type Tpsl string // Advanced order type
+
+const (
+	TakeProfit Tpsl = "tp"
+	StopLoss   Tpsl = "sl"
+)
+
 type AssetInfo struct {
 	Name       string `json:"name"`
 	SzDecimals int    `json:"szDecimals"`
@@ -132,7 +139,7 @@ type LimitOrderType struct {
 type TriggerOrderType struct {
 	TriggerPx float64 `json:"triggerPx"`
 	IsMarket  bool    `json:"isMarket"`
-	Tpsl      string  `json:"tpsl"` // "tp" or "sl"
+	Tpsl      Tpsl    `json:"tpsl"` // "tp" or "sl"
 }
 
 type BuilderInfo struct {

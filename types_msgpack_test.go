@@ -21,13 +21,13 @@ type OrderWireOld struct {
 }
 
 type OrderWireNew struct {
-	Asset      int            `json:"a"           msgpack:"a"`
-	IsBuy      bool           `json:"b"           msgpack:"b"`
-	LimitPx    string         `json:"p"           msgpack:"p"`
-	Size       string         `json:"s"           msgpack:"s"`
-	ReduceOnly bool           `json:"r"           msgpack:"r"`
-	OrderType  map[string]any `json:"t"           msgpack:"t"`
-	Cloid      *string        `json:"c,omitempty" msgpack:"c,omitempty"`
+	Asset      int           `json:"a"           msgpack:"a"`
+	IsBuy      bool          `json:"b"           msgpack:"b"`
+	LimitPx    string        `json:"p"           msgpack:"p"`
+	Size       string        `json:"s"           msgpack:"s"`
+	ReduceOnly bool          `json:"r"           msgpack:"r"`
+	OrderType  orderWireType `json:"t"           msgpack:"t"`
+	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"`
 }
 
 func Test_Msgpack_Field_Ordering(t *testing.T) {
@@ -35,6 +35,12 @@ func Test_Msgpack_Field_Ordering(t *testing.T) {
 	orderType := map[string]any{
 		"limit": map[string]any{
 			"tif": "Gtc",
+		},
+	}
+
+	orderTypeNew := orderWireType{
+		Limit: &orderWireTypeLimit{
+			Tif: TifGtc,
 		},
 	}
 
@@ -55,7 +61,7 @@ func Test_Msgpack_Field_Ordering(t *testing.T) {
 		LimitPx:    "40000",
 		Size:       "0.001",
 		ReduceOnly: false,
-		OrderType:  orderType,
+		OrderType:  orderTypeNew,
 	}
 
 	// Serialize both with msgpack

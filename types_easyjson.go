@@ -987,7 +987,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid9(in *jlexer.Lexer, out
 		case "isMarket":
 			out.IsMarket = bool(in.Bool())
 		case "tpsl":
-			out.Tpsl = string(in.String())
+			out.Tpsl = Tpsl(in.String())
 		default:
 			in.SkipRecursive()
 		}

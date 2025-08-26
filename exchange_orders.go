@@ -42,6 +42,28 @@ type OrderResponse struct {
 	Statuses []OrderStatus
 }
 
+func newOrderTypeWire(o CreateOrderRequest) orderWireType {
+	if o.OrderType.Limit != nil {
+		return orderWireType{
+			Limit: &orderWireTypeLimit{
+				Tif: o.OrderType.Limit.Tif,
+			},
+		}
+	}
+
+	if o.OrderType.Trigger != nil {
+		return orderWireType{
+			Trigger: &orderWireTypeTrigger{
+				TriggerPx: o.OrderType.Trigger.TriggerPx,
+				IsMarket:  o.OrderType.Trigger.IsMarket,
+				Tpsl:      o.OrderType.Trigger.Tpsl,
+			},
+		}
+	}
+
+	return orderWireType{}
+}
+
 func newCreateOrderAction(
 	e *Exchange,
 	orders []CreateOrderRequest,
@@ -59,29 +81,16 @@ func newCreateOrderAction(
 			return OrderAction{}, fmt.Errorf("failed to wire size for order %d: %w", i, err)
 		}
 
-		// Build order type map with proper field ordering
-		orderTypeMap := make(map[string]any)
-		if order.OrderType.Limit != nil {
-			orderTypeMap["limit"] = map[string]any{
-				"tif": order.OrderType.Limit.Tif,
-			}
-		} else if order.OrderType.Trigger != nil {
-			orderTypeMap["trigger"] = map[string]any{
-				"triggerPx": order.OrderType.Trigger.TriggerPx,
-				"isMarket":  order.OrderType.Trigger.IsMarket,
-				"tpsl":      order.OrderType.Trigger.Tpsl,
-			}
-		}
-
 		orderWire := OrderWire{
 			Asset:      e.info.NameToAsset(order.Coin),
 			IsBuy:      order.IsBuy,
 			LimitPx:    priceWire,
 			Size:       sizeWire,
 			ReduceOnly: order.ReduceOnly,
-			OrderType:  orderTypeMap,
 			Cloid:      order.ClientOrderID,
+			OrderType:  newOrderTypeWire(order),
 		}
+
 		orderRequests[i] = orderWire
 	}
 
@@ -176,18 +185,20 @@ func newModifyOrderAction(
 		}
 	}
 
+	order := OrderWire{
+		Asset:      e.info.NameToAsset(modifyRequest.Order.Coin),
+		IsBuy:      modifyRequest.Order.IsBuy,
+		LimitPx:    priceWire,
+		Size:       sizeWire,
+		ReduceOnly: modifyRequest.Order.ReduceOnly,
+		Cloid:      modifyRequest.Order.ClientOrderID,
+		OrderType:  newOrderTypeWire(modifyRequest.Order),
+	}
+
 	return ModifyAction{
-		Type: "modify",
-		Oid:  modifyRequest.Oid,
-		Order: OrderWire{
-			Asset:      e.info.NameToAsset(modifyRequest.Order.Coin),
-			IsBuy:      modifyRequest.Order.IsBuy,
-			LimitPx:    priceWire,
-			Size:       sizeWire,
-			ReduceOnly: modifyRequest.Order.ReduceOnly,
-			OrderType:  orderTypeMap,
-			Cloid:      modifyRequest.Order.ClientOrderID,
-		},
+		Type:  "modify",
+		Oid:   modifyRequest.Oid,
+		Order: order,
 	}, nil
 }
 
