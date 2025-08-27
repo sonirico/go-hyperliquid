@@ -90,6 +90,12 @@ func (e *Exchange) SlippagePrice(
 		price *= (1 - slippage)
 	}
 
+	// First we need to round the price to Hyperliquid's max 5 significant figures (see: https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/tick-and-lot-size)
+	price, err := roundToSignificantFigures(price, 5)
+	if err != nil {
+		return 0, err
+	}
+
 	// Round to appropriate decimals
 	decimals := 6
 	if isSpot {

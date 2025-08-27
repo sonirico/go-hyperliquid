@@ -61,3 +61,44 @@ func floatToWire(x float64) (string, error) {
 
 	return result, nil
 }
+
+func roundToSignificantFigures(price float64, sigFigs int) (float64, error) {
+	if price == 0 {
+		return 0, nil
+	}
+
+	// Work with the absolute value of the price to simplify calculations. We will restore the sign later.
+	absPrice := math.Abs(price)
+
+	// Determine the integer part of the absolute price (e.g., for 123.45, integerPart is 123).
+	integerPart := math.Floor(absPrice)
+
+	// Calculate the number of digits in the integer part.
+	// This helps in deciding if we're rounding to an integer or including fractional parts.
+	numIntegerDigits := 0
+	if integerPart > 0 {
+		// Count the number of digits in the integer part.
+		temp := int(integerPart)
+		for temp > 0 {
+			temp = temp / 10
+			numIntegerDigits++
+		}
+	} else {
+		// Since we know the price is not 0 and thus is a fraction, 0 is a significant figure.
+		numIntegerDigits = 1
+	}
+
+	if numIntegerDigits >= sigFigs {
+		// Returning the integer part, keeping the original sign.
+		// We do need to preserve the whole integer part, even though it may result in more significant figures than requested.
+		return math.Copysign(integerPart, price), nil
+	}
+
+	sigFigsLeft := sigFigs - numIntegerDigits
+
+	// Round the float64 to the number of significant figures left.
+	rounded := roundToDecimals(absPrice, sigFigsLeft)
+
+	// Return the rounded number, applying the original sign.
+	return math.Copysign(rounded, price), nil
+}
