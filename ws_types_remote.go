@@ -98,3 +98,17 @@ func (p remoteWebData2SubscriptionPayload) Channel() string {
 func (p remoteWebData2SubscriptionPayload) Key() string {
 	return keyWebData2(p.User)
 }
+
+type remoteBboSubscriptionPayload struct {
+	Type string `json:"type"`
+	Coin string `json:"coin"`
+}
+
+func (p remoteBboSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteBboSubscriptionPayload) Key() string {
+	// Deliberately exclude NSigFigs and Mantissa.
+	return keyBbo(p.Coin)
+}

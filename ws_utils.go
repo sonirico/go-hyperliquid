@@ -50,3 +50,7 @@ func keyWebData2(_ string) string {
 	// The dispatching is handled by the subscription system based on the subscription key.
 	return key(ChannelWebData2)
 }
+
+func keyBbo(coin string) string {
+	return key(ChannelBbo, coin)
+}

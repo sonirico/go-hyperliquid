@@ -15,6 +15,7 @@ const (
 	ChannelNotification string = "notification"
 	ChannelOrderUpdates string = "orderUpdates"
 	ChannelWebData2     string = "webData2"
+	ChannelBbo          string = "bbo"
 	ChannelSubResponse  string = "subscriptionResponse"
 )
 
@@ -127,6 +128,12 @@ type (
 		Coin   string    `json:"coin"`
 		Levels [][]Level `json:"levels"`
 		Time   int64     `json:"time"`
+	}
+
+	Bbo struct {
+		Coin string  `json:"coin"`
+		Time int64   `json:"time"`
+		Bbo  []Level `json:"bbo"`
 	}
 
 	Level struct {

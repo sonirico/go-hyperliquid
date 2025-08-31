@@ -476,7 +476,80 @@ func (v *remoteCandlesSubscriptionPayload) UnmarshalJSON(data []byte) error {
 func (v *remoteCandlesSubscriptionPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid5(l, v)
 }
-func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(in *jlexer.Lexer, out *remoteAllMidsSubscriptionPayload) {
+func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(in *jlexer.Lexer, out *remoteBboSubscriptionPayload) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "type":
+			out.Type = string(in.String())
+		case "coin":
+			out.Coin = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(out *jwriter.Writer, in remoteBboSubscriptionPayload) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"coin\":"
+		out.RawString(prefix)
+		out.String(string(in.Coin))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v remoteBboSubscriptionPayload) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v remoteBboSubscriptionPayload) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *remoteBboSubscriptionPayload) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *remoteBboSubscriptionPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(l, v)
+}
+func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid7(in *jlexer.Lexer, out *remoteAllMidsSubscriptionPayload) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -517,7 +590,7 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(in *jlexer.Lexer, out
 		in.Consumed()
 	}
 }
-func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(out *jwriter.Writer, in remoteAllMidsSubscriptionPayload) {
+func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid7(out *jwriter.Writer, in remoteAllMidsSubscriptionPayload) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -537,23 +610,23 @@ func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(out *jwriter.Writer, 
 // MarshalJSON supports json.Marshaler interface
 func (v remoteAllMidsSubscriptionPayload) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(&w, v)
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid7(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v remoteAllMidsSubscriptionPayload) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid6(w, v)
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid7(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *remoteAllMidsSubscriptionPayload) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(&r, v)
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid7(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *remoteAllMidsSubscriptionPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(l, v)
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid7(l, v)
 }

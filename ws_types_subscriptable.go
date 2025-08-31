@@ -51,3 +51,5 @@ func (w WebData2) Key() string {
 	// The dispatching is handled by the subscription system based on the subscription key.
 	return ChannelWebData2
 }
+
+func (w Bbo) Key() string { return keyBbo(w.Coin) }
