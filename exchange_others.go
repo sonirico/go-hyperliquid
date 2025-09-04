@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
 )
@@ -50,7 +49,7 @@ func (e *Exchange) UpdateIsolatedMargin(amount float64, name string) (*UserState
 
 // SetExpiresAfter sets the expiration time for actions
 // If expiresAfter is nil, actions will not have an expiration time
-// If expiresAfter is set, actions will include this expiration timestamp
+// If expiresAfter is set, actions will include this expiration nonce
 func (e *Exchange) SetExpiresAfter(expiresAfter *int64) {
 	e.expiresAfter = expiresAfter
 }
@@ -102,7 +101,7 @@ func (e *Exchange) SlippagePrice(
 
 // ScheduleCancel schedules cancellation of all open orders
 func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := ScheduleCancelAction{
 		Type: "scheduleCancel",
@@ -113,7 +112,7 @@ func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse,
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -121,7 +120,7 @@ func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse,
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +134,7 @@ func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse,
 
 // SetReferrer sets a referral code
 func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := SetReferrerAction{
 		Type: "setReferrer",
@@ -146,7 +145,7 @@ func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
 		e.privateKey,
 		action,
 		"", // No vault address for referrer
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -154,7 +153,7 @@ func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -168,7 +167,7 @@ func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
 
 // CreateSubAccount creates a new sub-account
 func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := CreateSubAccountAction{
 		Type: "createSubAccount",
@@ -179,7 +178,7 @@ func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, err
 		e.privateKey,
 		action,
 		"", // No vault address for sub-account creation
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -187,7 +186,7 @@ func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, err
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +200,7 @@ func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, err
 
 // UsdClassTransfer transfers between USD classes
 func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	strAmount := formatFloat(amount)
 	if e.vault != "" {
@@ -212,14 +211,14 @@ func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferRespo
 		Type:   "usdClassTransfer",
 		Amount: strAmount,
 		ToPerp: toPerp,
-		Nonce:  timestamp,
+		Nonce:  nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -227,7 +226,7 @@ func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferRespo
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +244,7 @@ func (e *Exchange) SubAccountTransfer(
 	isDeposit bool,
 	usd int,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := SubAccountTransferAction{
 		Type:           "subAccountTransfer",
@@ -258,7 +257,7 @@ func (e *Exchange) SubAccountTransfer(
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -266,7 +265,7 @@ func (e *Exchange) SubAccountTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +283,7 @@ func (e *Exchange) VaultUsdTransfer(
 	isDeposit bool,
 	usd int,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := VaultUsdTransferAction{
 		Type:         "vaultTransfer",
@@ -297,7 +296,7 @@ func (e *Exchange) VaultUsdTransfer(
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -305,7 +304,7 @@ func (e *Exchange) VaultUsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +322,7 @@ func (e *Exchange) CreateVault(
 	description string,
 	initialUsd int,
 ) (*CreateVaultResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := CreateVaultAction{
 		Type:        "createVault",
@@ -336,7 +335,7 @@ func (e *Exchange) CreateVault(
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -344,7 +343,7 @@ func (e *Exchange) CreateVault(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -361,7 +360,7 @@ func (e *Exchange) VaultModify(
 	allowDeposits bool,
 	alwaysCloseOnWithdraw bool,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := VaultModifyAction{
 		Type:                  "vaultModify",
@@ -374,7 +373,7 @@ func (e *Exchange) VaultModify(
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -382,7 +381,7 @@ func (e *Exchange) VaultModify(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -395,7 +394,7 @@ func (e *Exchange) VaultModify(
 }
 
 func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := VaultDistributeAction{
 		Type:         "vaultDistribute",
@@ -407,7 +406,7 @@ func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferRespo
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -415,7 +414,7 @@ func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferRespo
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -429,20 +428,20 @@ func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferRespo
 
 // UsdTransfer transfers USD to another address
 func (e *Exchange) UsdTransfer(amount float64, destination string) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := UsdTransferAction{
 		Type:        "usdSend",
 		Destination: destination,
 		Amount:      formatFloat(amount),
-		Time:        timestamp,
+		Time:        nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -450,7 +449,7 @@ func (e *Exchange) UsdTransfer(amount float64, destination string) (*TransferRes
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -467,21 +466,21 @@ func (e *Exchange) SpotTransfer(
 	amount float64,
 	destination, token string,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := SpotTransferAction{
 		Type:        "spotSend",
 		Destination: destination,
 		Amount:      formatFloat(amount),
 		Token:       token,
-		Time:        timestamp,
+		Time:        nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -489,7 +488,7 @@ func (e *Exchange) SpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -503,7 +502,7 @@ func (e *Exchange) SpotTransfer(
 
 // UseBigBlocks enables or disables big blocks
 func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := UseBigBlocksAction{
 		Type:           "evmUserModify",
@@ -514,7 +513,7 @@ func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
 		e.privateKey,
 		action,
 		"", // No vault address
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -522,7 +521,7 @@ func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -540,7 +539,7 @@ func (e *Exchange) PerpDexClassTransfer(
 	amount float64,
 	toPerp bool,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := PerpDexClassTransferAction{
 		Type:   "perpDexClassTransfer",
@@ -554,7 +553,7 @@ func (e *Exchange) PerpDexClassTransfer(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -562,7 +561,7 @@ func (e *Exchange) PerpDexClassTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -581,7 +580,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 	token string,
 	amount float64,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := SubAccountSpotTransferAction{
 		Type:           "subAccountSpotTransfer",
@@ -595,7 +594,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -603,7 +602,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -621,21 +620,21 @@ func (e *Exchange) TokenDelegate(
 	wei int,
 	isUndelegate bool,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := TokenDelegateAction{
 		Type:         "tokenDelegate",
 		Validator:    validator,
 		Wei:          wei,
 		IsUndelegate: isUndelegate,
-		Nonce:        timestamp,
+		Nonce:        nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -643,7 +642,7 @@ func (e *Exchange) TokenDelegate(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -660,20 +659,20 @@ func (e *Exchange) WithdrawFromBridge(
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := WithdrawFromBridgeAction{
 		Type:        "withdraw3",
 		Destination: destination,
 		Amount:      fmt.Sprintf("%.6f", amount),
-		Time:        timestamp,
+		Time:        nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -681,7 +680,7 @@ func (e *Exchange) WithdrawFromBridge(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -709,20 +708,20 @@ func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, e
 	}
 
 	agentAddress := crypto.PubkeyToAddress(privateKey.PublicKey).Hex()
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := ApproveAgentAction{
 		Type:         "approveAgent",
 		AgentAddress: agentAddress,
 		AgentName:    name,
-		Nonce:        timestamp,
+		Nonce:        nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -730,7 +729,7 @@ func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, e
 		return nil, "", err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, "", err
 	}
@@ -744,20 +743,20 @@ func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, e
 
 // ApproveBuilderFee approves builder fee payment
 func (e *Exchange) ApproveBuilderFee(builder string, maxFeeRate string) (*ApprovalResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := ApproveBuilderFeeAction{
 		Type:       "approveBuilderFee",
 		Builder:    builder,
 		MaxFeeRate: maxFeeRate,
-		Nonce:      timestamp,
+		Nonce:      nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -765,7 +764,7 @@ func (e *Exchange) ApproveBuilderFee(builder string, maxFeeRate string) (*Approv
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -782,7 +781,7 @@ func (e *Exchange) ConvertToMultiSigUser(
 	authorizedUsers []string,
 	threshold int,
 ) (*MultiSigConversionResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	// Sort users as done in Python
 	sort.Strings(authorizedUsers)
@@ -800,14 +799,14 @@ func (e *Exchange) ConvertToMultiSigUser(
 	action := ConvertToMultiSigUserAction{
 		Type:    "convertToMultiSigUser",
 		Signers: string(signersJSON),
-		Nonce:   timestamp,
+		Nonce:   nonce,
 	}
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -815,7 +814,7 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -837,7 +836,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 	maxGas int,
 	fullName string,
 ) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "spotDeploy",
@@ -856,7 +855,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 		e.privateKey,
 		action,
 		"", // No vault address for spot deploy
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -864,7 +863,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -878,7 +877,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 
 // SpotDeployUserGenesis initializes user genesis for spot trading
 func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":     "spotDeployUserGenesis",
@@ -889,7 +888,7 @@ func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDepl
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -897,7 +896,7 @@ func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDepl
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -911,7 +910,7 @@ func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDepl
 
 // SpotDeployEnableFreezePrivilege enables freeze privilege for spot deployer
 func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "spotDeployEnableFreezePrivilege",
@@ -921,7 +920,7 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -929,7 +928,7 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -943,7 +942,7 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error
 
 // SpotDeployFreezeUser freezes a user in spot trading
 func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":        "spotDeployFreezeUser",
@@ -954,7 +953,7 @@ func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -962,7 +961,7 @@ func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -976,7 +975,7 @@ func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse
 
 // SpotDeployRevokeFreezePrivilege revokes freeze privilege for spot deployer
 func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "spotDeployRevokeFreezePrivilege",
@@ -986,7 +985,7 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -994,7 +993,7 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1008,7 +1007,7 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error
 
 // SpotDeployGenesis initializes spot genesis
 func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":     "spotDeployGenesis",
@@ -1020,7 +1019,7 @@ func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDepl
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1028,7 +1027,7 @@ func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDepl
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1045,7 +1044,7 @@ func (e *Exchange) SpotDeployRegisterSpot(
 	baseToken string,
 	quoteToken string,
 ) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":       "spotDeployRegisterSpot",
@@ -1057,7 +1056,7 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1065,7 +1064,7 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1082,7 +1081,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 	name string,
 	tokens []string,
 ) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":   "spotDeployRegisterHyperliquidity",
@@ -1094,7 +1093,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1102,7 +1101,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1118,7 +1117,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 	feeShare float64,
 ) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":     "spotDeploySetDeployerTradingFeeShare",
@@ -1129,7 +1128,7 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1137,7 +1136,7 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1156,7 +1155,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	asset string,
 	perpDexInput PerpDexSchemaInput,
 ) (*PerpDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":         "perpDeployRegisterAsset",
@@ -1168,7 +1167,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1176,7 +1175,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1193,7 +1192,7 @@ func (e *Exchange) PerpDeploySetOracle(
 	asset string,
 	oracleAddress string,
 ) (*SpotDeployResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":          "perpDeploySetOracle",
@@ -1205,7 +1204,7 @@ func (e *Exchange) PerpDeploySetOracle(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1213,7 +1212,7 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1229,7 +1228,7 @@ func (e *Exchange) PerpDeploySetOracle(
 
 // CSignerUnjailSelf unjails self as consensus signer
 func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "cSignerUnjailSelf",
@@ -1239,7 +1238,7 @@ func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1247,7 +1246,7 @@ func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1261,7 +1260,7 @@ func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
 
 // CSignerJailSelf jails self as consensus signer
 func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "cSignerJailSelf",
@@ -1271,7 +1270,7 @@ func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1279,7 +1278,7 @@ func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1293,7 +1292,7 @@ func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
 
 // CSignerInner executes inner consensus signer action
 func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":        "cSignerInner",
@@ -1304,7 +1303,7 @@ func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse,
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1312,7 +1311,7 @@ func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse,
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1328,7 +1327,7 @@ func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse,
 
 // CValidatorRegister registers as consensus validator
 func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":             "cValidatorRegister",
@@ -1339,7 +1338,7 @@ func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*Validat
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1347,7 +1346,7 @@ func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*Validat
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1361,7 +1360,7 @@ func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*Validat
 
 // CValidatorChangeProfile changes validator profile
 func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":       "cValidatorChangeProfile",
@@ -1372,7 +1371,7 @@ func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*Validato
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1380,7 +1379,7 @@ func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*Validato
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1394,7 +1393,7 @@ func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*Validato
 
 // CValidatorUnregister unregisters as consensus validator
 func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type": "cValidatorUnregister",
@@ -1404,7 +1403,7 @@ func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1412,7 +1411,7 @@ func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1429,7 +1428,7 @@ func (e *Exchange) MultiSig(
 	signers []string,
 	signatures []string,
 ) (*MultiSigResponse, error) {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	multiSigAction := map[string]any{
 		"type":       "multiSig",
@@ -1442,7 +1441,7 @@ func (e *Exchange) MultiSig(
 		e.privateKey,
 		multiSigAction,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -1450,7 +1449,7 @@ func (e *Exchange) MultiSig(
 		return nil, err
 	}
 
-	resp, err := e.postAction(multiSigAction, sig, timestamp)
+	resp, err := e.postAction(multiSigAction, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
