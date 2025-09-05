@@ -1,6 +1,6 @@
 module github.com/sonirico/go-hyperliquid
 
-go 1.23.0
+go 1.25.0
 
 require (
 	github.com/ethereum/go-ethereum v1.16.2
