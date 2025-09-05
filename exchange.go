@@ -3,6 +3,7 @@ package hyperliquid
 import (
 	"crypto/ecdsa"
 	"encoding/json"
+	"sync/atomic"
 	"time"
 )
 
@@ -14,6 +15,7 @@ type Exchange struct {
 	accountAddr  string
 	info         *Info
 	expiresAfter *int64
+	lastNonce    atomic.Int64
 }
 
 func NewExchange(
@@ -49,15 +51,41 @@ func NewExchange(
 	return ex
 }
 
+// nextNonce returns either the current timestamp in milliseconds or incremented by one to prevent duplicates
+// Nonces must be within (T - 2 days, T + 1 day), where T is the unix millisecond timestamp on the block of the transaction.
+// See https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/nonces-and-api-wallets#hyperliquid-nonces
+func (e *Exchange) nextNonce() int64 {
+	// it's possible that at exactly the same time a nextNonce is requested
+	for {
+		last := e.lastNonce.Load()
+		candidate := time.Now().UnixMilli()
+
+		if candidate <= last {
+			candidate = last + 1
+		}
+
+		// Try to publish our candidate; if someone beat us, retry.
+		if e.lastNonce.CompareAndSwap(last, candidate) {
+			return candidate
+		}
+	}
+}
+
+// SetLastNonce allows for resuming from a persisted nonce, e.g. the nonce was stored before a restart
+// Only useful if a lot of increments happen for unique nonces. Most users do not need this.
+func (e *Exchange) SetLastNonce(n int64) {
+	e.lastNonce.Store(n)
+}
+
 // executeAction executes an action and unmarshals the response into the given result
 func (e *Exchange) executeAction(action, result any) error {
-	timestamp := time.Now().UnixMilli()
+	nonce := e.nextNonce()
 
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
 		e.vault,
-		timestamp,
+		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
@@ -65,7 +93,7 @@ func (e *Exchange) executeAction(action, result any) error {
 		return err
 	}
 
-	resp, err := e.postAction(action, sig, timestamp)
+	resp, err := e.postAction(action, sig, nonce)
 	if err != nil {
 		return err
 	}

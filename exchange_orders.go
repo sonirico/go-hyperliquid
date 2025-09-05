@@ -15,6 +15,11 @@ type CreateOrderRequest struct {
 	ClientOrderID *string
 }
 
+func (s *CreateOrderRequest) String() string {
+	data, _ := json.Marshal(s)
+	return string(data)
+}
+
 type OrderStatusResting struct {
 	Oid      int64   `json:"oid"`
 	ClientID *string `json:"cloid"`
