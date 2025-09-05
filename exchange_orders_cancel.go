@@ -50,7 +50,7 @@ func (e *Exchange) BulkCancel(
 
 	if res == nil || !res.Ok || res.Status == "err" {
 		if res != nil && res.Err != "" {
-			return res, fmt.Errorf(res.Err)
+			return res, fmt.Errorf("%s", res.Err)
 		}
 		return res, fmt.Errorf("cancel failed")
 	}
@@ -99,7 +99,7 @@ func (e *Exchange) BulkCancelByCloids(
 
 	if res == nil || !res.Ok || res.Status == "err" {
 		if res != nil && res.Err != "" {
-			return res, fmt.Errorf(res.Err)
+			return res, fmt.Errorf("%s", res.Err)
 		}
 		return res, fmt.Errorf("cancel failed")
 	}
