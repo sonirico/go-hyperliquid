@@ -10,7 +10,7 @@ require (
 	github.com/mailru/easyjson v0.9.0
 	github.com/sonirico/vago v0.8.2
 	github.com/sonirico/vago/lol v0.0.0-20250823171800-46ee1766e546
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	github.com/valyala/fastjson v1.6.4
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.4
