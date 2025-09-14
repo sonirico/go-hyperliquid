@@ -125,7 +125,7 @@ func (w *WebsocketClient) subscribe(
 			// on subscribe
 			func(p subscriptable) {
 				if err := w.sendSubscribe(p); err != nil {
-					w.logger.Errorf("failed to subscribe: %v", err)
+					w.logErrf("failed to subscribe: %v", err)
 				}
 			},
 			// on unsubscribe
@@ -134,7 +134,7 @@ func (w *WebsocketClient) subscribe(
 				defer w.mu.Unlock()
 				delete(w.subscribers, pkey)
 				if err := w.sendUnsubscribe(p); err != nil {
-					w.logger.Errorf("failed to unsubscribe: %v", err)
+					w.logErrf("failed to unsubscribe: %v", err)
 				}
 			},
 		)
@@ -202,23 +202,23 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 			_, msg, err := w.conn.ReadMessage()
 			if err != nil {
 				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					w.logger.Errorf("websocket read error: %v", err)
+					w.logErrf("websocket read error: %v", err)
 				}
 				return
 			}
 
 			if w.debug {
-				w.logger.Debugf("[<] %s", string(msg))
+				w.logDebugf("[<] %s", string(msg))
 			}
 
 			var wsMsg wsMessage
 			if err := json.Unmarshal(msg, &wsMsg); err != nil {
-				w.logger.Errorf("websocket message parse error: %v", err)
+				w.logErrf("websocket message parse error: %v", err)
 				continue
 			}
 
 			if err := w.dispatch(wsMsg); err != nil {
-				w.logger.Errorf("failed to dispatch websocket message: %v", err)
+				w.logErrf("failed to dispatch websocket message: %v", err)
 			}
 		}
 	}
@@ -236,7 +236,7 @@ func (w *WebsocketClient) pingPump(ctx context.Context) {
 			return
 		case <-ticker.C:
 			if err := w.sendPing(); err != nil {
-				w.logger.Errorf("ping error: %v", err)
+				w.logErrf("ping error: %v", err)
 				w.reconnect(ctx)
 				return
 			}
@@ -314,8 +314,24 @@ func (w *WebsocketClient) writeJSON(v any) error {
 
 	if w.debug {
 		bts, _ := json.Marshal(v)
-		w.logger.Debugf("[>] %s", string(bts))
+		w.logDebugf("[>] %s", string(bts))
 	}
 
 	return w.conn.WriteJSON(v)
+}
+
+func (w *WebsocketClient) logErrf(fmt string, args ...any) {
+	if w.logger == nil {
+		return
+	}
+
+	w.logger.Errorf(fmt, args...)
+}
+
+func (w *WebsocketClient) logDebugf(fmt string, args ...any) {
+	if w.logger == nil {
+		return
+	}
+
+	w.logger.Debugf(fmt, args...)
 }

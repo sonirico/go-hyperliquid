@@ -59,7 +59,14 @@ func TestNextNonce_TableDriven(t *testing.T) {
 				}
 
 				if got != want {
-					t.Fatalf("nextNonce()=%d, want %d (preLast=%d now=%d advance=%s)", got, want, preLast, now, tc.advance)
+					t.Fatalf(
+						"nextNonce()=%d, want %d (preLast=%d now=%d advance=%s)",
+						got,
+						want,
+						preLast,
+						now,
+						tc.advance,
+					)
 				}
 				if stored := e.lastNonce.Load(); stored != want {
 					t.Fatalf("lastNonce=%d, want %d", stored, want)
