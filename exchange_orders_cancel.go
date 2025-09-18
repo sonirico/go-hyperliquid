@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/sonirico/vago/slices"
@@ -32,6 +33,13 @@ func (e *Exchange) Cancel(
 func (e *Exchange) BulkCancel(
 	requests []CancelOrderRequest,
 ) (res *APIResponse[CancelOrderResponse], err error) {
+	return e.BulkCancelWithContext(context.Background(), requests)
+}
+
+func (e *Exchange) BulkCancelWithContext(
+	ctx context.Context,
+	requests []CancelOrderRequest,
+) (res *APIResponse[CancelOrderResponse], err error) {
 	cancels := slices.Map(requests, func(req CancelOrderRequest) CancelOrderWire {
 		return CancelOrderWire{
 			Asset:   e.info.NameToAsset(req.Coin),
@@ -44,7 +52,7 @@ func (e *Exchange) BulkCancel(
 		Cancels: cancels,
 	}
 
-	if err = e.executeAction(action, &res); err != nil {
+	if err = e.executeAction(ctx, action, &res); err != nil {
 		return
 	}
 
@@ -81,6 +89,13 @@ func (e *Exchange) CancelByCloid(
 func (e *Exchange) BulkCancelByCloids(
 	requests []CancelOrderRequestByCloid,
 ) (res *APIResponse[CancelOrderResponse], err error) {
+	return e.BulkCancelByCloidsWithContext(context.Background(), requests)
+}
+
+func (e *Exchange) BulkCancelByCloidsWithContext(
+	ctx context.Context,
+	requests []CancelOrderRequestByCloid,
+) (res *APIResponse[CancelOrderResponse], err error) {
 	cancels := slices.Map(requests, func(req CancelOrderRequestByCloid) CancelByCloidWire {
 		return CancelByCloidWire{
 			Asset:    e.info.NameToAsset(req.Coin),
@@ -93,7 +108,7 @@ func (e *Exchange) BulkCancelByCloids(
 		Cancels: cancels,
 	}
 
-	if err = e.executeAction(action, &res); err != nil {
+	if err = e.executeAction(ctx, action, &res); err != nil {
 		return
 	}
 

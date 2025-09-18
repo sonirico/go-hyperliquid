@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -136,11 +137,19 @@ func (e *Exchange) BulkOrders(
 	orders []CreateOrderRequest,
 	builder *BuilderInfo,
 ) (result *APIResponse[OrderResponse], err error) {
+	return e.BulkOrdersWithContext(context.Background(), orders, builder)
+}
+
+func (e *Exchange) BulkOrdersWithContext(
+	ctx context.Context,
+	orders []CreateOrderRequest,
+	builder *BuilderInfo,
+) (result *APIResponse[OrderResponse], err error) {
 	action, err := newCreateOrderAction(e, orders, builder)
 	if err != nil {
 		return nil, err
 	}
-	err = e.executeAction(action, &result)
+	err = e.executeAction(ctx, action, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -230,13 +239,20 @@ func newModifyOrdersAction(
 func (e *Exchange) ModifyOrder(
 	req ModifyOrderRequest,
 ) (result OrderStatus, err error) {
+	return e.ModifyOrderWithContext(context.Background(), req)
+}
+
+func (e *Exchange) ModifyOrderWithContext(
+	ctx context.Context,
+	req ModifyOrderRequest,
+) (result OrderStatus, err error) {
 	resp := APIResponse[OrderResponse]{}
 	action, err := newModifyOrderAction(e, req)
 	if err != nil {
 		return result, fmt.Errorf("failed to create modify action: %w", err)
 	}
 
-	err = e.executeAction(action, &resp)
+	err = e.executeAction(ctx, action, &resp)
 	if err != nil {
 		err = fmt.Errorf("failed to modify order: %w", err)
 		return
@@ -260,13 +276,20 @@ func (e *Exchange) ModifyOrder(
 func (e *Exchange) BulkModifyOrders(
 	modifyRequests []ModifyOrderRequest,
 ) ([]OrderStatus, error) {
+	return e.BulkModifyOrdersWithContext(context.Background(), modifyRequests)
+}
+
+func (e *Exchange) BulkModifyOrdersWithContext(
+	ctx context.Context,
+	modifyRequests []ModifyOrderRequest,
+) ([]OrderStatus, error) {
 	resp := APIResponse[OrderResponse]{}
 	action, err := newModifyOrdersAction(e, modifyRequests)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create bulk modify action: %w", err)
 	}
 
-	err = e.executeAction(action, &resp)
+	err = e.executeAction(ctx, action, &resp)
 	if err != nil {
 		return nil, fmt.Errorf("failed to modify orders: %w", err)
 	}

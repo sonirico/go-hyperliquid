@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -20,6 +21,7 @@ type Info struct {
 
 // postTimeRangeRequest makes a POST request with time range parameters
 func (i *Info) postTimeRangeRequest(
+	ctx context.Context,
 	requestType, user string,
 	startTime int64,
 	endTime *int64,
@@ -39,7 +41,7 @@ func (i *Info) postTimeRangeRequest(
 		payload[k] = v
 	}
 
-	resp, err := i.client.post("/info", payload)
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch %s: %w", requestType, err)
 	}
@@ -151,7 +153,11 @@ func parseMetaResponse(resp []byte) (*Meta, error) {
 }
 
 func (i *Info) Meta() (*Meta, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.MetaWithContext(context.Background())
+}
+
+func (i *Info) MetaWithContext(ctx context.Context) (*Meta, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "meta",
 	})
 	if err != nil {
@@ -162,7 +168,11 @@ func (i *Info) Meta() (*Meta, error) {
 }
 
 func (i *Info) SpotMeta() (*SpotMeta, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.SpotMetaWithContext(context.Background())
+}
+
+func (i *Info) SpotMetaWithContext(ctx context.Context) (*SpotMeta, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotMeta",
 	})
 	if err != nil {
@@ -183,7 +193,11 @@ func (i *Info) NameToAsset(name string) int {
 }
 
 func (i *Info) UserState(address string) (*UserState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserStateWithContext(context.Background(), address)
+}
+
+func (i *Info) UserStateWithContext(ctx context.Context, address string) (*UserState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "clearinghouseState",
 		"user": address,
 	})
@@ -199,7 +213,11 @@ func (i *Info) UserState(address string) (*UserState, error) {
 }
 
 func (i *Info) SpotUserState(address string) (*SpotUserState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.SpotUserStateWithContext(context.Background(), address)
+}
+
+func (i *Info) SpotUserStateWithContext(ctx context.Context, address string) (*SpotUserState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotClearinghouseState",
 		"user": address,
 	})
@@ -215,7 +233,11 @@ func (i *Info) SpotUserState(address string) (*SpotUserState, error) {
 }
 
 func (i *Info) OpenOrders(address string) ([]OpenOrder, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.OpenOrdersWithContext(context.Background(), address)
+}
+
+func (i *Info) OpenOrdersWithContext(ctx context.Context, address string) ([]OpenOrder, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "openOrders",
 		"user": address,
 	})
@@ -231,7 +253,11 @@ func (i *Info) OpenOrders(address string) ([]OpenOrder, error) {
 }
 
 func (i *Info) FrontendOpenOrders(address string) ([]OpenOrder, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.FrontendOpenOrdersWithContext(context.Background(), address)
+}
+
+func (i *Info) FrontendOpenOrdersWithContext(ctx context.Context, address string) ([]OpenOrder, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "frontendOpenOrders",
 		"user": address,
 	})
@@ -247,7 +273,11 @@ func (i *Info) FrontendOpenOrders(address string) ([]OpenOrder, error) {
 }
 
 func (i *Info) AllMids() (map[string]string, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.AllMidsWithContext(context.Background())
+}
+
+func (i *Info) AllMidsWithContext(ctx context.Context) (map[string]string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "allMids",
 	})
 	if err != nil {
@@ -262,7 +292,11 @@ func (i *Info) AllMids() (map[string]string, error) {
 }
 
 func (i *Info) UserFills(address string) ([]Fill, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserFillsWithContext(context.Background(), address)
+}
+
+func (i *Info) UserFillsWithContext(ctx context.Context, address string) ([]Fill, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userFills",
 		"user": address,
 	})
@@ -278,7 +312,11 @@ func (i *Info) UserFills(address string) ([]Fill, error) {
 }
 
 func (i *Info) UserFillsByTime(address string, startTime int64, endTime *int64) ([]Fill, error) {
-	resp, err := i.postTimeRangeRequest("userFillsByTime", address, startTime, endTime, nil)
+	return i.UserFillsByTimeWithContext(context.Background(), address, startTime, endTime)
+}
+
+func (i *Info) UserFillsByTimeWithContext(ctx context.Context, address string, startTime int64, endTime *int64) ([]Fill, error) {
+	resp, err := i.postTimeRangeRequest(ctx, "userFillsByTime", address, startTime, endTime, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -291,7 +329,11 @@ func (i *Info) UserFillsByTime(address string, startTime int64, endTime *int64) 
 }
 
 func (i *Info) MetaAndAssetCtxs() (*MetaAndAssetCtxs, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.MetaAndAssetCtxsWithContext(context.Background())
+}
+
+func (i *Info) MetaAndAssetCtxsWithContext(ctx context.Context) (*MetaAndAssetCtxs, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "metaAndAssetCtxs",
 	})
 	if err != nil {
@@ -336,7 +378,11 @@ func (i *Info) MetaAndAssetCtxs() (*MetaAndAssetCtxs, error) {
 }
 
 func (i *Info) SpotMetaAndAssetCtxs() (*SpotMetaAndAssetCtxs, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.SpotMetaAndAssetCtxsWithContext(context.Background())
+}
+
+func (i *Info) SpotMetaAndAssetCtxsWithContext(ctx context.Context) (*SpotMetaAndAssetCtxs, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotMetaAndAssetCtxs",
 	})
 	if err != nil {
@@ -385,8 +431,18 @@ func (i *Info) FundingHistory(
 	startTime int64,
 	endTime *int64,
 ) ([]FundingHistory, error) {
+	return i.FundingHistoryWithContext(context.Background(), name, startTime, endTime)
+}
+
+func (i *Info) FundingHistoryWithContext(
+	ctx context.Context,
+	name string,
+	startTime int64,
+	endTime *int64,
+) ([]FundingHistory, error) {
 	coin := i.nameToCoin[name]
 	resp, err := i.postTimeRangeRequest(
+		ctx,
 		"fundingHistory",
 		"",
 		startTime,
@@ -409,7 +465,16 @@ func (i *Info) UserFundingHistory(
 	startTime int64,
 	endTime *int64,
 ) ([]UserFundingHistory, error) {
-	resp, err := i.postTimeRangeRequest("userFunding", user, startTime, endTime, nil)
+	return i.UserFundingHistoryWithContext(context.Background(), user, startTime, endTime)
+}
+
+func (i *Info) UserFundingHistoryWithContext(
+	ctx context.Context,
+	user string,
+	startTime int64,
+	endTime *int64,
+) ([]UserFundingHistory, error) {
+	resp, err := i.postTimeRangeRequest(ctx, "userFunding", user, startTime, endTime, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -422,7 +487,11 @@ func (i *Info) UserFundingHistory(
 }
 
 func (i *Info) L2Snapshot(name string) (*L2Book, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.L2SnapshotWithContext(context.Background(), name)
+}
+
+func (i *Info) L2SnapshotWithContext(ctx context.Context, name string) (*L2Book, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "l2Book",
 		"coin": i.nameToCoin[name],
 	})
@@ -438,6 +507,10 @@ func (i *Info) L2Snapshot(name string) (*L2Book, error) {
 }
 
 func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) ([]Candle, error) {
+	return i.CandlesSnapshotWithContext(context.Background(), name, interval, startTime, endTime)
+}
+
+func (i *Info) CandlesSnapshotWithContext(ctx context.Context, name, interval string, startTime, endTime int64) ([]Candle, error) {
 	req := map[string]any{
 		"coin":      i.nameToCoin[name],
 		"interval":  interval,
@@ -445,7 +518,7 @@ func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) 
 		"endTime":   endTime,
 	}
 
-	resp, err := i.client.post("/info", map[string]any{
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "candleSnapshot",
 		"req":  req,
 	})
@@ -461,7 +534,11 @@ func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) 
 }
 
 func (i *Info) UserFees(address string) (*UserFees, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserFeesWithContext(context.Background(), address)
+}
+
+func (i *Info) UserFeesWithContext(ctx context.Context, address string) (*UserFees, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userFees",
 		"user": address,
 	})
@@ -477,7 +554,11 @@ func (i *Info) UserFees(address string) (*UserFees, error) {
 }
 
 func (i *Info) UserActiveAssetData(address string, coin string) (*UserActiveAssetData, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserActiveAssetDataWithContext(context.Background(), address, coin)
+}
+
+func (i *Info) UserActiveAssetDataWithContext(ctx context.Context, address string, coin string) (*UserActiveAssetData, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "activeAssetData",
 		"user": address,
 		"coin": coin,
@@ -494,7 +575,11 @@ func (i *Info) UserActiveAssetData(address string, coin string) (*UserActiveAsse
 }
 
 func (i *Info) UserStakingSummary(address string) (*StakingSummary, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserStakingSummaryWithContext(context.Background(), address)
+}
+
+func (i *Info) UserStakingSummaryWithContext(ctx context.Context, address string) (*StakingSummary, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegatorSummary",
 		"user": address,
 	})
@@ -510,7 +595,11 @@ func (i *Info) UserStakingSummary(address string) (*StakingSummary, error) {
 }
 
 func (i *Info) UserStakingDelegations(address string) ([]StakingDelegation, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserStakingDelegationsWithContext(context.Background(), address)
+}
+
+func (i *Info) UserStakingDelegationsWithContext(ctx context.Context, address string) ([]StakingDelegation, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegations",
 		"user": address,
 	})
@@ -526,7 +615,11 @@ func (i *Info) UserStakingDelegations(address string) ([]StakingDelegation, erro
 }
 
 func (i *Info) UserStakingRewards(address string) ([]StakingReward, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.UserStakingRewardsWithContext(context.Background(), address)
+}
+
+func (i *Info) UserStakingRewardsWithContext(ctx context.Context, address string) ([]StakingReward, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegatorRewards",
 		"user": address,
 	})
@@ -541,10 +634,19 @@ func (i *Info) UserStakingRewards(address string) ([]StakingReward, error) {
 	return result, nil
 }
 
-func (i *Info) QueryOrderByOid(user string, oid int64) (*OrderQueryResult, error) {
-	resp, err := i.client.post("/info", map[string]any{
+// QueryOrderByOid takes a user wallet addr and the oid
+// As per docs for cloid:
+// Fieldname:   oid
+// Type:        uint64 or string
+// Description: Either u64 representing the order id or 16-byte hex string representing the client order id
+func (i *Info) QueryOrderByOid(userAddress string, oid int64) (*OrderQueryResult, error) {
+	return i.QueryOrderByOidWithContext(context.Background(), userAddress, oid)
+}
+
+func (i *Info) QueryOrderByOidWithContext(ctx context.Context, userAddress string, oid int64) (*OrderQueryResult, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "orderStatus",
-		"user": user,
+		"user": userAddress,
 		"oid":  oid,
 	})
 	if err != nil {
@@ -558,10 +660,19 @@ func (i *Info) QueryOrderByOid(user string, oid int64) (*OrderQueryResult, error
 	return &result, nil
 }
 
-func (i *Info) QueryOrderByCloid(user, cloid string) (*OrderQueryResult, error) {
-	resp, err := i.client.post("/info", map[string]any{
+// QueryOrderByCloid takes a user wallet addr and the cloid
+// As per docs for cloid:
+// Fieldname:   oid
+// Type:        uint64 or string
+// Description: Either u64 representing the order id or 16-byte hex string representing the client order id
+func (i *Info) QueryOrderByCloid(userAddress, cloid string) (*OrderQueryResult, error) {
+	return i.QueryOrderByCloidWithContext(context.Background(), userAddress, cloid)
+}
+
+func (i *Info) QueryOrderByCloidWithContext(ctx context.Context, userAddress, cloid string) (*OrderQueryResult, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "orderStatus",
-		"user": user,
+		"user": userAddress,
 		"oid":  cloid,
 	})
 	if err != nil {
@@ -576,7 +687,11 @@ func (i *Info) QueryOrderByCloid(user, cloid string) (*OrderQueryResult, error) 
 }
 
 func (i *Info) QueryReferralState(user string) (*ReferralState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.QueryReferralStateWithContext(context.Background(), user)
+}
+
+func (i *Info) QueryReferralStateWithContext(ctx context.Context, user string) (*ReferralState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "referral",
 		"user": user,
 	})
@@ -592,7 +707,11 @@ func (i *Info) QueryReferralState(user string) (*ReferralState, error) {
 }
 
 func (i *Info) QuerySubAccounts(user string) ([]SubAccount, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.QuerySubAccountsWithContext(context.Background(), user)
+}
+
+func (i *Info) QuerySubAccountsWithContext(ctx context.Context, user string) ([]SubAccount, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "subAccounts",
 		"user": user,
 	})
@@ -608,7 +727,11 @@ func (i *Info) QuerySubAccounts(user string) ([]SubAccount, error) {
 }
 
 func (i *Info) QueryUserToMultiSigSigners(multiSigUser string) ([]MultiSigSigner, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.QueryUserToMultiSigSignersWithContext(context.Background(), multiSigUser)
+}
+
+func (i *Info) QueryUserToMultiSigSignersWithContext(ctx context.Context, multiSigUser string) ([]MultiSigSigner, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userToMultiSigSigners",
 		"user": multiSigUser,
 	})
@@ -625,7 +748,11 @@ func (i *Info) QueryUserToMultiSigSigners(multiSigUser string) ([]MultiSigSigner
 
 // PerpDexs returns the list of available perpetual dexes
 func (i *Info) PerpDexs() ([]string, error) {
-	resp, err := i.client.post("/info", map[string]any{
+	return i.PerpDexsWithContext(context.Background())
+}
+
+func (i *Info) PerpDexsWithContext(ctx context.Context) ([]string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "perpDexs",
 	})
 	if err != nil {

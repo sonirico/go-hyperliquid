@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
@@ -11,6 +12,9 @@ import (
 )
 
 func (e *Exchange) UpdateLeverage(leverage int, name string, isCross bool) (*UserState, error) {
+	return e.UpdateLeverageWithContext(context.Background(), leverage, name, isCross)
+}
+func (e *Exchange) UpdateLeverageWithContext(ctx context.Context, leverage int, name string, isCross bool) (*UserState, error) {
 	leverageType := "isolated"
 	if isCross {
 		leverageType = "cross"
@@ -26,13 +30,15 @@ func (e *Exchange) UpdateLeverage(leverage int, name string, isCross bool) (*Use
 	}
 
 	var result UserState
-	if err := e.executeAction(action, &result); err != nil {
+	if err := e.executeAction(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
 }
-
 func (e *Exchange) UpdateIsolatedMargin(amount float64, name string) (*UserState, error) {
+	return e.UpdateIsolatedMarginWithContext(context.Background(), amount, name)
+}
+func (e *Exchange) UpdateIsolatedMarginWithContext(ctx context.Context, amount float64, name string) (*UserState, error) {
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
 		Asset: e.info.NameToAsset(name),
@@ -41,7 +47,7 @@ func (e *Exchange) UpdateIsolatedMargin(amount float64, name string) (*UserState
 	}
 
 	var result UserState
-	if err := e.executeAction(action, &result); err != nil {
+	if err := e.executeAction(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -107,6 +113,9 @@ func (e *Exchange) SlippagePrice(
 
 // ScheduleCancel schedules cancellation of all open orders
 func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse, error) {
+	return e.ScheduleCancelWithContext(context.Background(), scheduleTime)
+}
+func (e *Exchange) ScheduleCancelWithContext(ctx context.Context, scheduleTime *int64) (*ScheduleCancelResponse, error) {
 	nonce := e.nextNonce()
 
 	action := ScheduleCancelAction{
@@ -126,7 +135,7 @@ func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse,
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -140,6 +149,9 @@ func (e *Exchange) ScheduleCancel(scheduleTime *int64) (*ScheduleCancelResponse,
 
 // SetReferrer sets a referral code
 func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
+	return e.SetReferrerWithContext(context.Background(), code)
+}
+func (e *Exchange) SetReferrerWithContext(ctx context.Context, code string) (*SetReferrerResponse, error) {
 	nonce := e.nextNonce()
 
 	action := SetReferrerAction{
@@ -159,7 +171,7 @@ func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -173,6 +185,9 @@ func (e *Exchange) SetReferrer(code string) (*SetReferrerResponse, error) {
 
 // CreateSubAccount creates a new sub-account
 func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, error) {
+	return e.CreateSubAccountWithContext(context.Background(), name)
+}
+func (e *Exchange) CreateSubAccountWithContext(ctx context.Context, name string) (*CreateSubAccountResponse, error) {
 	nonce := e.nextNonce()
 
 	action := CreateSubAccountAction{
@@ -192,7 +207,7 @@ func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, err
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -206,6 +221,9 @@ func (e *Exchange) CreateSubAccount(name string) (*CreateSubAccountResponse, err
 
 // UsdClassTransfer transfers between USD classes
 func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferResponse, error) {
+	return e.UsdClassTransferWithContext(context.Background(), amount, toPerp)
+}
+func (e *Exchange) UsdClassTransferWithContext(ctx context.Context, amount float64, toPerp bool) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
 	strAmount := formatFloat(amount)
@@ -232,7 +250,7 @@ func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferRespo
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -245,7 +263,10 @@ func (e *Exchange) UsdClassTransfer(amount float64, toPerp bool) (*TransferRespo
 }
 
 // SubAccountTransfer transfers funds to/from sub-account
-func (e *Exchange) SubAccountTransfer(
+func (e *Exchange) SubAccountTransfer(subAccountUser string, isDeposit bool, usd int) (*TransferResponse, error) {
+	return e.SubAccountTransferWithContext(context.Background(), subAccountUser, isDeposit, usd)
+}
+func (e *Exchange) SubAccountTransferWithContext(ctx context.Context,
 	subAccountUser string,
 	isDeposit bool,
 	usd int,
@@ -271,7 +292,7 @@ func (e *Exchange) SubAccountTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -284,7 +305,10 @@ func (e *Exchange) SubAccountTransfer(
 }
 
 // VaultUsdTransfer transfers to/from vault
-func (e *Exchange) VaultUsdTransfer(
+func (e *Exchange) VaultUsdTransfer(vaultAddress string, isDeposit bool, usd int) (*TransferResponse, error) {
+	return e.VaultUsdTransferWithContext(context.Background(), vaultAddress, isDeposit, usd)
+}
+func (e *Exchange) VaultUsdTransferWithContext(ctx context.Context,
 	vaultAddress string,
 	isDeposit bool,
 	usd int,
@@ -310,7 +334,7 @@ func (e *Exchange) VaultUsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +347,10 @@ func (e *Exchange) VaultUsdTransfer(
 }
 
 // CreateVault creates a new vault
-func (e *Exchange) CreateVault(
+func (e *Exchange) CreateVault(name string, description string, initialUsd int) (*CreateVaultResponse, error) {
+	return e.CreateVaultWithContext(context.Background(), name, description, initialUsd)
+}
+func (e *Exchange) CreateVaultWithContext(ctx context.Context,
 	name string,
 	description string,
 	initialUsd int,
@@ -349,7 +376,7 @@ func (e *Exchange) CreateVault(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -360,8 +387,10 @@ func (e *Exchange) CreateVault(
 	}
 	return &result, nil
 }
-
-func (e *Exchange) VaultModify(
+func (e *Exchange) VaultModify(vaultAddress string, allowDeposits bool, alwaysCloseOnWithdraw bool) (*TransferResponse, error) {
+	return e.VaultModifyWithContext(context.Background(), vaultAddress, allowDeposits, alwaysCloseOnWithdraw)
+}
+func (e *Exchange) VaultModifyWithContext(ctx context.Context,
 	vaultAddress string,
 	allowDeposits bool,
 	alwaysCloseOnWithdraw bool,
@@ -387,7 +416,7 @@ func (e *Exchange) VaultModify(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -398,8 +427,10 @@ func (e *Exchange) VaultModify(
 	}
 	return &result, nil
 }
-
 func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferResponse, error) {
+	return e.VaultDistributeWithContext(context.Background(), vaultAddress, usd)
+}
+func (e *Exchange) VaultDistributeWithContext(ctx context.Context, vaultAddress string, usd int) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
 	action := VaultDistributeAction{
@@ -420,7 +451,7 @@ func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferRespo
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -434,6 +465,9 @@ func (e *Exchange) VaultDistribute(vaultAddress string, usd int) (*TransferRespo
 
 // UsdTransfer transfers USD to another address
 func (e *Exchange) UsdTransfer(amount float64, destination string) (*TransferResponse, error) {
+	return e.UsdTransferWithContext(context.Background(), amount, destination)
+}
+func (e *Exchange) UsdTransferWithContext(ctx context.Context, amount float64, destination string) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
 	action := UsdTransferAction{
@@ -455,7 +489,7 @@ func (e *Exchange) UsdTransfer(amount float64, destination string) (*TransferRes
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -468,7 +502,10 @@ func (e *Exchange) UsdTransfer(amount float64, destination string) (*TransferRes
 }
 
 // SpotTransfer transfers spot tokens to another address
-func (e *Exchange) SpotTransfer(
+func (e *Exchange) SpotTransfer(amount float64, destination, token string) (*TransferResponse, error) {
+	return e.SpotTransferWithContext(context.Background(), amount, destination, token)
+}
+func (e *Exchange) SpotTransferWithContext(ctx context.Context,
 	amount float64,
 	destination, token string,
 ) (*TransferResponse, error) {
@@ -494,7 +531,7 @@ func (e *Exchange) SpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -508,6 +545,10 @@ func (e *Exchange) SpotTransfer(
 
 // UseBigBlocks enables or disables big blocks
 func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
+	return e.UseBigBlocksWithContext(context.Background(), enable)
+}
+
+func (e *Exchange) UseBigBlocksWithContext(ctx context.Context, enable bool) (*ApprovalResponse, error) {
 	nonce := e.nextNonce()
 
 	action := UseBigBlocksAction{
@@ -527,7 +568,7 @@ func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -540,7 +581,11 @@ func (e *Exchange) UseBigBlocks(enable bool) (*ApprovalResponse, error) {
 }
 
 // PerpDexClassTransfer transfers tokens between perp dex classes
-func (e *Exchange) PerpDexClassTransfer(
+func (e *Exchange) PerpDexClassTransfer(dex, token string, amount float64, toPerp bool) (*TransferResponse, error) {
+	return e.PerpDexClassTransferWithContext(context.Background(), dex, token, amount, toPerp)
+}
+
+func (e *Exchange) PerpDexClassTransferWithContext(ctx context.Context,
 	dex, token string,
 	amount float64,
 	toPerp bool,
@@ -567,7 +612,7 @@ func (e *Exchange) PerpDexClassTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -580,7 +625,11 @@ func (e *Exchange) PerpDexClassTransfer(
 }
 
 // SubAccountSpotTransfer transfers spot tokens to/from sub-account
-func (e *Exchange) SubAccountSpotTransfer(
+func (e *Exchange) SubAccountSpotTransfer(subAccountUser string, isDeposit bool, token string, amount float64) (*TransferResponse, error) {
+	return e.SubAccountSpotTransferWithContext(context.Background(), subAccountUser, isDeposit, token, amount)
+}
+
+func (e *Exchange) SubAccountSpotTransferWithContext(ctx context.Context,
 	subAccountUser string,
 	isDeposit bool,
 	token string,
@@ -608,7 +657,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -621,7 +670,11 @@ func (e *Exchange) SubAccountSpotTransfer(
 }
 
 // TokenDelegate delegates tokens for staking
-func (e *Exchange) TokenDelegate(
+func (e *Exchange) TokenDelegate(validator string, wei int, isUndelegate bool) (*TransferResponse, error) {
+	return e.TokenDelegateWithContext(context.Background(), validator, wei, isUndelegate)
+}
+
+func (e *Exchange) TokenDelegateWithContext(ctx context.Context,
 	validator string,
 	wei int,
 	isUndelegate bool,
@@ -648,7 +701,7 @@ func (e *Exchange) TokenDelegate(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -661,7 +714,11 @@ func (e *Exchange) TokenDelegate(
 }
 
 // WithdrawFromBridge withdraws tokens from bridge
-func (e *Exchange) WithdrawFromBridge(
+func (e *Exchange) WithdrawFromBridge(amount float64, destination string) (*TransferResponse, error) {
+	return e.WithdrawFromBridgeWithContext(context.Background(), amount, destination)
+}
+
+func (e *Exchange) WithdrawFromBridgeWithContext(ctx context.Context,
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
@@ -686,7 +743,7 @@ func (e *Exchange) WithdrawFromBridge(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -701,7 +758,10 @@ func (e *Exchange) WithdrawFromBridge(
 // ApproveAgent approves an agent to trade on behalf of the user
 // Returns the result and the generated agent private key
 func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, error) {
-	// Generate agent key
+	return e.ApproveAgentWithContext(context.Background(), name)
+}
+
+func (e *Exchange) ApproveAgentWithContext(ctx context.Context, name *string) (*AgentApprovalResponse, string, error) {
 	agentBytes := make([]byte, 32)
 	if _, err := rand.Read(agentBytes); err != nil {
 		return nil, "", fmt.Errorf("failed to generate agent key: %w", err)
@@ -735,7 +795,7 @@ func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, e
 		return nil, "", err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, "", err
 	}
@@ -749,6 +809,10 @@ func (e *Exchange) ApproveAgent(name *string) (*AgentApprovalResponse, string, e
 
 // ApproveBuilderFee approves builder fee payment
 func (e *Exchange) ApproveBuilderFee(builder string, maxFeeRate string) (*ApprovalResponse, error) {
+	return e.ApproveBuilderFeeWithContext(context.Background(), builder, maxFeeRate)
+}
+
+func (e *Exchange) ApproveBuilderFeeWithContext(ctx context.Context, builder string, maxFeeRate string) (*ApprovalResponse, error) {
 	nonce := e.nextNonce()
 
 	action := ApproveBuilderFeeAction{
@@ -770,7 +834,7 @@ func (e *Exchange) ApproveBuilderFee(builder string, maxFeeRate string) (*Approv
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -783,7 +847,11 @@ func (e *Exchange) ApproveBuilderFee(builder string, maxFeeRate string) (*Approv
 }
 
 // ConvertToMultiSigUser converts account to multi-signature user
-func (e *Exchange) ConvertToMultiSigUser(
+func (e *Exchange) ConvertToMultiSigUser(authorizedUsers []string, threshold int) (*MultiSigConversionResponse, error) {
+	return e.ConvertToMultiSigUserWithContext(context.Background(), authorizedUsers, threshold)
+}
+
+func (e *Exchange) ConvertToMultiSigUserWithContext(ctx context.Context,
 	authorizedUsers []string,
 	threshold int,
 ) (*MultiSigConversionResponse, error) {
@@ -820,7 +888,7 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -835,7 +903,11 @@ func (e *Exchange) ConvertToMultiSigUser(
 // Spot Deploy Methods
 
 // SpotDeployRegisterToken registers a new spot token
-func (e *Exchange) SpotDeployRegisterToken(
+func (e *Exchange) SpotDeployRegisterToken(tokenName string, szDecimals int, weiDecimals int, maxGas int, fullName string) (*SpotDeployResponse, error) {
+	return e.SpotDeployRegisterTokenWithContext(context.Background(), tokenName, szDecimals, weiDecimals, maxGas, fullName)
+}
+
+func (e *Exchange) SpotDeployRegisterTokenWithContext(ctx context.Context,
 	tokenName string,
 	szDecimals int,
 	weiDecimals int,
@@ -869,7 +941,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -883,6 +955,10 @@ func (e *Exchange) SpotDeployRegisterToken(
 
 // SpotDeployUserGenesis initializes user genesis for spot trading
 func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDeployResponse, error) {
+	return e.SpotDeployUserGenesisWithContext(context.Background(), balances)
+}
+
+func (e *Exchange) SpotDeployUserGenesisWithContext(ctx context.Context, balances map[string]float64) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -902,7 +978,7 @@ func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDepl
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -916,6 +992,10 @@ func (e *Exchange) SpotDeployUserGenesis(balances map[string]float64) (*SpotDepl
 
 // SpotDeployEnableFreezePrivilege enables freeze privilege for spot deployer
 func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error) {
+	return e.SpotDeployEnableFreezePrivilegeWithContext(context.Background())
+}
+
+func (e *Exchange) SpotDeployEnableFreezePrivilegeWithContext(ctx context.Context) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -934,7 +1014,7 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -948,6 +1028,10 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege() (*SpotDeployResponse, error
 
 // SpotDeployFreezeUser freezes a user in spot trading
 func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse, error) {
+	return e.SpotDeployFreezeUserWithContext(context.Background(), userAddress)
+}
+
+func (e *Exchange) SpotDeployFreezeUserWithContext(ctx context.Context, userAddress string) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -967,7 +1051,7 @@ func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -981,6 +1065,10 @@ func (e *Exchange) SpotDeployFreezeUser(userAddress string) (*SpotDeployResponse
 
 // SpotDeployRevokeFreezePrivilege revokes freeze privilege for spot deployer
 func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error) {
+	return e.SpotDeployRevokeFreezePrivilegeWithContext(context.Background())
+}
+
+func (e *Exchange) SpotDeployRevokeFreezePrivilegeWithContext(ctx context.Context) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -999,7 +1087,7 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1013,6 +1101,10 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege() (*SpotDeployResponse, error
 
 // SpotDeployGenesis initializes spot genesis
 func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDeployResponse, error) {
+	return e.SpotDeployGenesisWithContext(context.Background(), deployer, dexName)
+}
+
+func (e *Exchange) SpotDeployGenesisWithContext(ctx context.Context, deployer string, dexName string) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1033,7 +1125,7 @@ func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDepl
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1046,7 +1138,11 @@ func (e *Exchange) SpotDeployGenesis(deployer string, dexName string) (*SpotDepl
 }
 
 // SpotDeployRegisterSpot registers spot market
-func (e *Exchange) SpotDeployRegisterSpot(
+func (e *Exchange) SpotDeployRegisterSpot(baseToken string, quoteToken string) (*SpotDeployResponse, error) {
+	return e.SpotDeployRegisterSpotWithContext(context.Background(), baseToken, quoteToken)
+}
+
+func (e *Exchange) SpotDeployRegisterSpotWithContext(ctx context.Context,
 	baseToken string,
 	quoteToken string,
 ) (*SpotDeployResponse, error) {
@@ -1070,7 +1166,7 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1083,7 +1179,11 @@ func (e *Exchange) SpotDeployRegisterSpot(
 }
 
 // SpotDeployRegisterHyperliquidity registers hyperliquidity spot
-func (e *Exchange) SpotDeployRegisterHyperliquidity(
+func (e *Exchange) SpotDeployRegisterHyperliquidity(name string, tokens []string) (*SpotDeployResponse, error) {
+	return e.SpotDeployRegisterHyperliquidityWithContext(context.Background(), name, tokens)
+}
+
+func (e *Exchange) SpotDeployRegisterHyperliquidityWithContext(ctx context.Context,
 	name string,
 	tokens []string,
 ) (*SpotDeployResponse, error) {
@@ -1107,7 +1207,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1120,7 +1220,11 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 }
 
 // SpotDeploySetDeployerTradingFeeShare sets deployer trading fee share
-func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
+func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(feeShare float64) (*SpotDeployResponse, error) {
+	return e.SpotDeploySetDeployerTradingFeeShareWithContext(context.Background(), feeShare)
+}
+
+func (e *Exchange) SpotDeploySetDeployerTradingFeeShareWithContext(ctx context.Context,
 	feeShare float64,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
@@ -1142,7 +1246,7 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1157,7 +1261,11 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 // Perp Deploy Methods
 
 // PerpDeployRegisterAsset registers a new perpetual asset
-func (e *Exchange) PerpDeployRegisterAsset(
+func (e *Exchange) PerpDeployRegisterAsset(asset string, perpDexInput PerpDexSchemaInput) (*PerpDeployResponse, error) {
+	return e.PerpDeployRegisterAssetWithContext(context.Background(), asset, perpDexInput)
+}
+
+func (e *Exchange) PerpDeployRegisterAssetWithContext(ctx context.Context,
 	asset string,
 	perpDexInput PerpDexSchemaInput,
 ) (*PerpDeployResponse, error) {
@@ -1181,7 +1289,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1194,7 +1302,11 @@ func (e *Exchange) PerpDeployRegisterAsset(
 }
 
 // PerpDeploySetOracle sets oracle for perpetual asset
-func (e *Exchange) PerpDeploySetOracle(
+func (e *Exchange) PerpDeploySetOracle(asset string, oracleAddress string) (*SpotDeployResponse, error) {
+	return e.PerpDeploySetOracleWithContext(context.Background(), asset, oracleAddress)
+}
+
+func (e *Exchange) PerpDeploySetOracleWithContext(ctx context.Context,
 	asset string,
 	oracleAddress string,
 ) (*SpotDeployResponse, error) {
@@ -1218,7 +1330,7 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1234,6 +1346,10 @@ func (e *Exchange) PerpDeploySetOracle(
 
 // CSignerUnjailSelf unjails self as consensus signer
 func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
+	return e.CSignerUnjailSelfWithContext(context.Background())
+}
+
+func (e *Exchange) CSignerUnjailSelfWithContext(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1252,7 +1368,7 @@ func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1266,6 +1382,10 @@ func (e *Exchange) CSignerUnjailSelf() (*ValidatorResponse, error) {
 
 // CSignerJailSelf jails self as consensus signer
 func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
+	return e.CSignerJailSelfWithContext(context.Background())
+}
+
+func (e *Exchange) CSignerJailSelfWithContext(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1284,7 +1404,7 @@ func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1298,6 +1418,10 @@ func (e *Exchange) CSignerJailSelf() (*ValidatorResponse, error) {
 
 // CSignerInner executes inner consensus signer action
 func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse, error) {
+	return e.CSignerInnerWithContext(context.Background(), innerAction)
+}
+
+func (e *Exchange) CSignerInnerWithContext(ctx context.Context, innerAction map[string]any) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1317,7 +1441,7 @@ func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse,
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1333,6 +1457,10 @@ func (e *Exchange) CSignerInner(innerAction map[string]any) (*ValidatorResponse,
 
 // CValidatorRegister registers as consensus validator
 func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*ValidatorResponse, error) {
+	return e.CValidatorRegisterWithContext(context.Background(), validatorProfile)
+}
+
+func (e *Exchange) CValidatorRegisterWithContext(ctx context.Context, validatorProfile map[string]any) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1352,7 +1480,7 @@ func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*Validat
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1366,6 +1494,10 @@ func (e *Exchange) CValidatorRegister(validatorProfile map[string]any) (*Validat
 
 // CValidatorChangeProfile changes validator profile
 func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*ValidatorResponse, error) {
+	return e.CValidatorChangeProfileWithContext(context.Background(), newProfile)
+}
+
+func (e *Exchange) CValidatorChangeProfileWithContext(ctx context.Context, newProfile map[string]any) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1385,7 +1517,7 @@ func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*Validato
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1399,6 +1531,10 @@ func (e *Exchange) CValidatorChangeProfile(newProfile map[string]any) (*Validato
 
 // CValidatorUnregister unregisters as consensus validator
 func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
+	return e.CValidatorUnregisterWithContext(context.Background())
+}
+
+func (e *Exchange) CValidatorUnregisterWithContext(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1417,7 +1553,7 @@ func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
 		return nil, err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
@@ -1428,8 +1564,11 @@ func (e *Exchange) CValidatorUnregister() (*ValidatorResponse, error) {
 	}
 	return &result, nil
 }
+func (e *Exchange) MultiSig(action map[string]any, signers []string, signatures []string) (*MultiSigResponse, error) {
+	return e.MultiSigWithContext(context.Background(), action, signers, signatures)
+}
 
-func (e *Exchange) MultiSig(
+func (e *Exchange) MultiSigWithContext(ctx context.Context,
 	action map[string]any,
 	signers []string,
 	signatures []string,
@@ -1455,7 +1594,7 @@ func (e *Exchange) MultiSig(
 		return nil, err
 	}
 
-	resp, err := e.postAction(multiSigAction, sig, nonce)
+	resp, err := e.postAction(ctx, multiSigAction, sig, nonce)
 	if err != nil {
 		return nil, err
 	}
