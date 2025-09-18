@@ -133,6 +133,30 @@ func (e *Exchange) Order(
 	return data.Statuses[0], nil
 }
 
+func (e *Exchange) OrderWithContext(
+	ctx context.Context,
+	req CreateOrderRequest,
+	builder *BuilderInfo,
+) (result OrderStatus, err error) {
+	resp, err := e.BulkOrdersWithContext(ctx, []CreateOrderRequest{req}, builder)
+	if err != nil {
+		return
+	}
+
+	if !resp.Ok {
+		err = fmt.Errorf("failed to create order: %s", resp.Err)
+		return
+	}
+
+	data := resp.Data
+	if len(data.Statuses) == 0 {
+		err = fmt.Errorf("no status for order: %s", resp.Err)
+		return
+	}
+
+	return data.Statuses[0], nil
+}
+
 func (e *Exchange) BulkOrders(
 	orders []CreateOrderRequest,
 	builder *BuilderInfo,
