@@ -8,7 +8,7 @@ import (
 )
 
 func TestMetaAndAssetCtxs(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.Background(), MainnetAPIURL, true, nil, nil)
 
 	initRecorder(t, false, "MetaAndAssetCtxs")
 
