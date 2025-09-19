@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -21,7 +22,7 @@ func TestUsdTransfer(t *testing.T) {
 	t.Log("USD transfer method is available and ready to use")
 
 	// Uncomment the line below only when you want to execute actual transfers
-	result, err := exchange.UsdTransfer(amount, destination)
+	result, err := exchange.UsdTransfer(context.TODO(), amount, destination)
 
 	if err != nil {
 		t.Fatalf("UsdTransfer failed: %v", err)
@@ -49,7 +50,7 @@ func TestSpotTransfer(t *testing.T) {
 	// This would normally execute the transfer, but we'll skip for safety
 	t.Log("Spot transfer method is available and ready to use")
 
-	result, err := exchange.SpotTransfer(amount, destination, token)
+	result, err := exchange.SpotTransfer(context.TODO(), amount, destination, token)
 
 	if err != nil {
 		t.Fatalf("SpotTransfer failed: %v", err)
@@ -75,7 +76,7 @@ func TestUsdClassTransfer(t *testing.T) {
 	// This would normally execute the transfer, but we'll skip for safety
 	t.Log("USD class transfer method is available and ready to use")
 
-	result, err := exchange.UsdClassTransfer(amount, toPerp)
+	result, err := exchange.UsdClassTransfer(context.TODO(), amount, toPerp)
 
 	if err != nil {
 		t.Fatalf("UsdClassTransfer failed: %v", err)
@@ -100,7 +101,7 @@ func TestSetReferrer(t *testing.T) {
 	// This would normally execute the referrer setting, but we'll skip for safety
 	t.Log("Set referrer method is available and ready to use")
 
-	result, err := exchange.SetReferrer(referralCode)
+	result, err := exchange.SetReferrer(context.TODO(), referralCode)
 
 	if err != nil {
 		t.Fatalf("SetReferrer failed: %v", err)
@@ -125,7 +126,7 @@ func TestCreateSubAccount(t *testing.T) {
 	// This would normally execute the sub-account creation, but we'll skip for safety
 	t.Log("Create sub-account method is available and ready to use")
 
-	result, err := exchange.CreateSubAccount(subAccountName)
+	result, err := exchange.CreateSubAccount(context.TODO(), subAccountName)
 
 	if err != nil {
 		t.Fatalf("CreateSubAccount failed: %v", err)
@@ -150,7 +151,7 @@ func TestApproveAgent(t *testing.T) {
 	// This would normally execute the agent approval, but we'll skip for safety
 	t.Log("Approve agent method is available and ready to use")
 
-	result, agentKey, err := exchange.ApproveAgent(&agentName)
+	result, agentKey, err := exchange.ApproveAgent(context.TODO(), &agentName)
 
 	if err != nil {
 		t.Fatalf("ApproveAgent failed: %v", err)

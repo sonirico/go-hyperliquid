@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/sonirico/vago/slices"
@@ -18,10 +19,11 @@ type (
 )
 
 func (e *Exchange) Cancel(
+	ctx context.Context,
 	coin string,
 	oid int64,
 ) (res *APIResponse[CancelOrderResponse], err error) {
-	return e.BulkCancel([]CancelOrderRequest{
+	return e.BulkCancel(ctx, []CancelOrderRequest{
 		{
 			Coin:    coin,
 			OrderID: oid,
@@ -30,6 +32,7 @@ func (e *Exchange) Cancel(
 }
 
 func (e *Exchange) BulkCancel(
+	ctx context.Context,
 	requests []CancelOrderRequest,
 ) (res *APIResponse[CancelOrderResponse], err error) {
 	cancels := slices.Map(requests, func(req CancelOrderRequest) CancelOrderWire {
@@ -44,7 +47,7 @@ func (e *Exchange) BulkCancel(
 		Cancels: cancels,
 	}
 
-	if err = e.executeAction(action, &res); err != nil {
+	if err = e.executeAction(ctx, action, &res); err != nil {
 		return
 	}
 
@@ -68,9 +71,10 @@ type CancelOrderRequestByCloid struct {
 }
 
 func (e *Exchange) CancelByCloid(
+	ctx context.Context,
 	coin, cloid string,
 ) (res *APIResponse[CancelOrderResponse], err error) {
-	return e.BulkCancelByCloids([]CancelOrderRequestByCloid{
+	return e.BulkCancelByCloids(ctx, []CancelOrderRequestByCloid{
 		{
 			Coin:  coin,
 			Cloid: cloid,
@@ -79,6 +83,7 @@ func (e *Exchange) CancelByCloid(
 }
 
 func (e *Exchange) BulkCancelByCloids(
+	ctx context.Context,
 	requests []CancelOrderRequestByCloid,
 ) (res *APIResponse[CancelOrderResponse], err error) {
 	cancels := slices.Map(requests, func(req CancelOrderRequestByCloid) CancelByCloidWire {
@@ -93,7 +98,7 @@ func (e *Exchange) BulkCancelByCloids(
 		Cancels: cancels,
 	}
 
-	if err = e.executeAction(action, &res); err != nil {
+	if err = e.executeAction(ctx, action, &res); err != nil {
 		return
 	}
 

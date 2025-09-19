@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"testing"
@@ -27,7 +28,7 @@ func TestCancelOrder(t *testing.T) {
 		},
 	}
 
-	resp, err := exchange.Order(orderReq, nil)
+	resp, err := exchange.Order(context.TODO(), orderReq, nil)
 	if err != nil {
 		t.Fatalf("Failed to place order: %v", err)
 	}
@@ -41,7 +42,7 @@ func TestCancelOrder(t *testing.T) {
 	}
 
 	// Cancel the order
-	cancelResp, err := exchange.Cancel("BTC", orderID)
+	cancelResp, err := exchange.Cancel(context.TODO(), "BTC", orderID)
 	if err != nil {
 		t.Fatalf("Failed to cancel order: %v", err)
 	}
@@ -74,13 +75,13 @@ func TestCancelByCloid(t *testing.T) {
 		ClientOrderID: &cloid,
 	}
 
-	_, err := exchange.Order(orderReq, nil)
+	_, err := exchange.Order(context.TODO(), orderReq, nil)
 	if err != nil {
 		t.Fatalf("Failed to place order: %v", err)
 	}
 
 	// Cancel by cloid
-	cancelResp, err := exchange.CancelByCloid("BTC", cloid)
+	cancelResp, err := exchange.CancelByCloid(context.TODO(), "BTC", cloid)
 	if err != nil {
 		t.Fatalf("Failed to cancel order by cloid: %v", err)
 	}

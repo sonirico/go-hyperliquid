@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,7 +12,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 
 	initRecorder(t, false, "MetaAndAssetCtxs")
 
-	res, err := info.MetaAndAssetCtxs()
+	res, err := info.MetaAndAssetCtxs(context.TODO())
 	t.Logf("res: %+v", res)
 	t.Logf("err: %v", err)
 
@@ -69,7 +70,7 @@ func TestSpotMetaAndAssetCtxs(t *testing.T) {
 
 	initRecorder(t, false, "SpotMetaAndAssetCtxs")
 
-	res, err := info.SpotMetaAndAssetCtxs()
+	res, err := info.SpotMetaAndAssetCtxs(context.TODO())
 	t.Logf("res: %+v", res)
 	t.Logf("err: %v", err)
 
@@ -132,7 +133,7 @@ func TestMeta(t *testing.T) {
 
 	initRecorder(t, false, "Meta")
 
-	res, err := info.Meta()
+	res, err := info.Meta(context.TODO())
 	t.Logf("res: %+v", res)
 	t.Logf("err: %v", err)
 
@@ -182,7 +183,7 @@ func TestSpotMeta(t *testing.T) {
 
 	initRecorder(t, false, "SpotMeta")
 
-	res, err := info.SpotMeta()
+	res, err := info.SpotMeta(context.TODO())
 	t.Logf("res: %+v", res)
 	t.Logf("err: %v", err)
 
@@ -349,7 +350,7 @@ func TestQueryOrderByOid(t *testing.T) {
 				infoInstance = info
 			}
 
-			res, err := infoInstance.QueryOrderByOid(tc.user, tc.oid)
+			res, err := infoInstance.QueryOrderByOid(context.TODO(), tc.user, tc.oid)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
 
@@ -464,7 +465,12 @@ func TestUserFillsByTime(t *testing.T) {
 				infoInstance = info
 			}
 
-			res, err := infoInstance.UserFillsByTime(tc.user, tc.startTime, tc.endTime)
+			res, err := infoInstance.UserFillsByTime(
+				context.TODO(),
+				tc.user,
+				tc.startTime,
+				tc.endTime,
+			)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
 
@@ -551,7 +557,7 @@ func TestSpotUserState(t *testing.T) {
 				infoInstance = info
 			}
 
-			res, err := infoInstance.SpotUserState(tc.user)
+			res, err := infoInstance.SpotUserState(context.TODO(), tc.user)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
 
@@ -627,7 +633,7 @@ func TestUserActiveAssetData(t *testing.T) {
 				infoInstance = info
 			}
 
-			res, err := infoInstance.UserActiveAssetData(tc.user, tc.coin)
+			res, err := infoInstance.UserActiveAssetData(context.TODO(), tc.user, tc.coin)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
 

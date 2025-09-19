@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"testing"
 
 	"github.com/joho/godotenv"
@@ -47,7 +48,7 @@ func TestOrder(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			resp, err := exchange.Order(tt.req, nil)
+			resp, err := exchange.Order(context.TODO(), tt.req, nil)
 			if err != nil {
 				t.Fatalf("Order failed: %v", err)
 			}
@@ -68,7 +69,7 @@ func TestMarketOpen(t *testing.T) {
 	sz := 0.001
 	slippage := 0.01 // 1%
 
-	result, err := exchange.MarketOpen(name, isBuy, sz, nil, slippage, nil, nil)
+	result, err := exchange.MarketOpen(context.TODO(), name, isBuy, sz, nil, slippage, nil, nil)
 	if err != nil {
 		t.Fatalf("MarketOpen failed: %v", err)
 	}
@@ -85,7 +86,7 @@ func TestMarketClose(t *testing.T) {
 	coin := "BTC"
 	slippage := 0.01 // 1%
 
-	result, err := exchange.MarketClose(coin, nil, nil, slippage, nil, nil)
+	result, err := exchange.MarketClose(context.TODO(), coin, nil, nil, slippage, nil, nil)
 	if err != nil {
 		t.Fatalf("MarketClose failed: %v", err)
 	}
@@ -115,7 +116,7 @@ func TestModifyOrder(t *testing.T) {
 		},
 	}
 
-	result, err := exchange.ModifyOrder(modifyReq)
+	result, err := exchange.ModifyOrder(context.TODO(), modifyReq)
 	if err != nil {
 		t.Fatalf("ModifyOrder failed: %v", err)
 	}
@@ -145,7 +146,7 @@ func TestBulkModifyOrders(t *testing.T) {
 		},
 	}
 
-	result, err := exchange.BulkModifyOrders(modifyRequests)
+	result, err := exchange.BulkModifyOrders(context.TODO(), modifyRequests)
 	if err != nil {
 		t.Fatalf("BulkModifyOrders failed: %v", err)
 	}
@@ -173,7 +174,7 @@ func TestSLOrder(t *testing.T) {
 		ClientOrderID: nil,
 	}
 
-	result, err := exchange.Order(tpOrderReq, nil)
+	result, err := exchange.Order(context.TODO(), tpOrderReq, nil)
 	if err != nil {
 		t.Fatalf("SLOrder failed: %v", err)
 	}

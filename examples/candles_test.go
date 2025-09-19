@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -31,7 +32,13 @@ func TestCandlesSnapshot(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			fmt.Printf("Fetching candles for %s with interval %s", tt.coin, tt.interval)
-			candles, err := info.CandlesSnapshot(tt.coin, tt.interval, startTime, endTime)
+			candles, err := info.CandlesSnapshot(
+				context.TODO(),
+				tt.coin,
+				tt.interval,
+				startTime,
+				endTime,
+			)
 			if err != nil {
 				t.Fatalf("Failed to fetch candles: %v", err)
 			}
