@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -11,39 +12,12 @@ const (
 )
 
 type Info struct {
+	ctx            context.Context
 	debug          bool
 	client         *Client
 	coinToAsset    map[string]int
 	nameToCoin     map[string]string
 	assetToDecimal map[int]int
-}
-
-// postTimeRangeRequest makes a POST request with time range parameters
-func (i *Info) postTimeRangeRequest(
-	requestType, user string,
-	startTime int64,
-	endTime *int64,
-	extraParams map[string]any,
-) ([]byte, error) {
-	payload := map[string]any{
-		"type":      requestType,
-		"startTime": startTime,
-	}
-	if user != "" {
-		payload["user"] = user
-	}
-	if endTime != nil {
-		payload["endTime"] = *endTime
-	}
-	for k, v := range extraParams {
-		payload[k] = v
-	}
-
-	resp, err := i.client.post("/info", payload)
-	if err != nil {
-		return nil, fmt.Errorf("failed to fetch %s: %w", requestType, err)
-	}
-	return resp, nil
 }
 
 func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts ...InfoOpt) *Info {
@@ -63,10 +37,14 @@ func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts .
 	}
 
 	info.client = NewClient(baseURL, clientOpts...)
+	ctx := info.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
 
 	if meta == nil {
 		var err error
-		meta, err = info.Meta()
+		meta, err = info.Meta(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -74,7 +52,7 @@ func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts .
 
 	if spotMeta == nil {
 		var err error
-		spotMeta, err = info.SpotMeta()
+		spotMeta, err = info.SpotMeta(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -96,6 +74,35 @@ func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts .
 	}
 
 	return info
+}
+
+// postTimeRangeRequest makes a POST request with time range parameters
+func (i *Info) postTimeRangeRequest(
+	ctx context.Context,
+	requestType, user string,
+	startTime int64,
+	endTime *int64,
+	extraParams map[string]any,
+) ([]byte, error) {
+	payload := map[string]any{
+		"type":      requestType,
+		"startTime": startTime,
+	}
+	if user != "" {
+		payload["user"] = user
+	}
+	if endTime != nil {
+		payload["endTime"] = *endTime
+	}
+	for k, v := range extraParams {
+		payload[k] = v
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch %s: %w", requestType, err)
+	}
+	return resp, nil
 }
 
 func parseMetaResponse(resp []byte) (*Meta, error) {
@@ -150,8 +157,8 @@ func parseMetaResponse(resp []byte) (*Meta, error) {
 	}, nil
 }
 
-func (i *Info) Meta() (*Meta, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) Meta(ctx context.Context) (*Meta, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "meta",
 	})
 	if err != nil {
@@ -161,8 +168,8 @@ func (i *Info) Meta() (*Meta, error) {
 	return parseMetaResponse(resp)
 }
 
-func (i *Info) SpotMeta() (*SpotMeta, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) SpotMeta(ctx context.Context) (*SpotMeta, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotMeta",
 	})
 	if err != nil {
@@ -182,8 +189,8 @@ func (i *Info) NameToAsset(name string) int {
 	return i.coinToAsset[coin]
 }
 
-func (i *Info) UserState(address string) (*UserState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserState(ctx context.Context, address string) (*UserState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "clearinghouseState",
 		"user": address,
 	})
@@ -198,8 +205,8 @@ func (i *Info) UserState(address string) (*UserState, error) {
 	return &result, nil
 }
 
-func (i *Info) SpotUserState(address string) (*SpotUserState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) SpotUserState(ctx context.Context, address string) (*SpotUserState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotClearinghouseState",
 		"user": address,
 	})
@@ -214,8 +221,8 @@ func (i *Info) SpotUserState(address string) (*SpotUserState, error) {
 	return &result, nil
 }
 
-func (i *Info) OpenOrders(address string) ([]OpenOrder, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) OpenOrders(ctx context.Context, address string) ([]OpenOrder, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "openOrders",
 		"user": address,
 	})
@@ -230,8 +237,8 @@ func (i *Info) OpenOrders(address string) ([]OpenOrder, error) {
 	return result, nil
 }
 
-func (i *Info) FrontendOpenOrders(address string) ([]OpenOrder, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) FrontendOpenOrders(ctx context.Context, address string) ([]OpenOrder, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "frontendOpenOrders",
 		"user": address,
 	})
@@ -246,8 +253,8 @@ func (i *Info) FrontendOpenOrders(address string) ([]OpenOrder, error) {
 	return result, nil
 }
 
-func (i *Info) AllMids() (map[string]string, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) AllMids(ctx context.Context) (map[string]string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "allMids",
 	})
 	if err != nil {
@@ -261,8 +268,8 @@ func (i *Info) AllMids() (map[string]string, error) {
 	return result, nil
 }
 
-func (i *Info) UserFills(address string) ([]Fill, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserFills(ctx context.Context, address string) ([]Fill, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userFills",
 		"user": address,
 	})
@@ -277,8 +284,13 @@ func (i *Info) UserFills(address string) ([]Fill, error) {
 	return result, nil
 }
 
-func (i *Info) UserFillsByTime(address string, startTime int64, endTime *int64) ([]Fill, error) {
-	resp, err := i.postTimeRangeRequest("userFillsByTime", address, startTime, endTime, nil)
+func (i *Info) UserFillsByTime(
+	ctx context.Context,
+	address string,
+	startTime int64,
+	endTime *int64,
+) ([]Fill, error) {
+	resp, err := i.postTimeRangeRequest(ctx, "userFillsByTime", address, startTime, endTime, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -290,8 +302,8 @@ func (i *Info) UserFillsByTime(address string, startTime int64, endTime *int64) 
 	return result, nil
 }
 
-func (i *Info) MetaAndAssetCtxs() (*MetaAndAssetCtxs, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) MetaAndAssetCtxs(ctx context.Context) (*MetaAndAssetCtxs, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "metaAndAssetCtxs",
 	})
 	if err != nil {
@@ -335,8 +347,8 @@ func (i *Info) MetaAndAssetCtxs() (*MetaAndAssetCtxs, error) {
 	return metaAndAssetCtxs, nil
 }
 
-func (i *Info) SpotMetaAndAssetCtxs() (*SpotMetaAndAssetCtxs, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) SpotMetaAndAssetCtxs(ctx context.Context) (*SpotMetaAndAssetCtxs, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotMetaAndAssetCtxs",
 	})
 	if err != nil {
@@ -381,12 +393,14 @@ func (i *Info) SpotMetaAndAssetCtxs() (*SpotMetaAndAssetCtxs, error) {
 }
 
 func (i *Info) FundingHistory(
+	ctx context.Context,
 	name string,
 	startTime int64,
 	endTime *int64,
 ) ([]FundingHistory, error) {
 	coin := i.nameToCoin[name]
 	resp, err := i.postTimeRangeRequest(
+		ctx,
 		"fundingHistory",
 		"",
 		startTime,
@@ -405,11 +419,12 @@ func (i *Info) FundingHistory(
 }
 
 func (i *Info) UserFundingHistory(
+	ctx context.Context,
 	user string,
 	startTime int64,
 	endTime *int64,
 ) ([]UserFundingHistory, error) {
-	resp, err := i.postTimeRangeRequest("userFunding", user, startTime, endTime, nil)
+	resp, err := i.postTimeRangeRequest(ctx, "userFunding", user, startTime, endTime, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -421,8 +436,8 @@ func (i *Info) UserFundingHistory(
 	return result, nil
 }
 
-func (i *Info) L2Snapshot(name string) (*L2Book, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) L2Snapshot(ctx context.Context, name string) (*L2Book, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "l2Book",
 		"coin": i.nameToCoin[name],
 	})
@@ -437,7 +452,11 @@ func (i *Info) L2Snapshot(name string) (*L2Book, error) {
 	return &result, nil
 }
 
-func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) ([]Candle, error) {
+func (i *Info) CandlesSnapshot(
+	ctx context.Context,
+	name, interval string,
+	startTime, endTime int64,
+) ([]Candle, error) {
 	req := map[string]any{
 		"coin":      i.nameToCoin[name],
 		"interval":  interval,
@@ -445,7 +464,7 @@ func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) 
 		"endTime":   endTime,
 	}
 
-	resp, err := i.client.post("/info", map[string]any{
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "candleSnapshot",
 		"req":  req,
 	})
@@ -460,8 +479,8 @@ func (i *Info) CandlesSnapshot(name, interval string, startTime, endTime int64) 
 	return result, nil
 }
 
-func (i *Info) UserFees(address string) (*UserFees, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserFees(ctx context.Context, address string) (*UserFees, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userFees",
 		"user": address,
 	})
@@ -476,8 +495,12 @@ func (i *Info) UserFees(address string) (*UserFees, error) {
 	return &result, nil
 }
 
-func (i *Info) UserActiveAssetData(address string, coin string) (*UserActiveAssetData, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserActiveAssetData(
+	ctx context.Context,
+	address string,
+	coin string,
+) (*UserActiveAssetData, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "activeAssetData",
 		"user": address,
 		"coin": coin,
@@ -493,8 +516,8 @@ func (i *Info) UserActiveAssetData(address string, coin string) (*UserActiveAsse
 	return &result, nil
 }
 
-func (i *Info) UserStakingSummary(address string) (*StakingSummary, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserStakingSummary(ctx context.Context, address string) (*StakingSummary, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegatorSummary",
 		"user": address,
 	})
@@ -509,8 +532,11 @@ func (i *Info) UserStakingSummary(address string) (*StakingSummary, error) {
 	return &result, nil
 }
 
-func (i *Info) UserStakingDelegations(address string) ([]StakingDelegation, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserStakingDelegations(
+	ctx context.Context,
+	address string,
+) ([]StakingDelegation, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegations",
 		"user": address,
 	})
@@ -525,8 +551,8 @@ func (i *Info) UserStakingDelegations(address string) ([]StakingDelegation, erro
 	return result, nil
 }
 
-func (i *Info) UserStakingRewards(address string) ([]StakingReward, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) UserStakingRewards(ctx context.Context, address string) ([]StakingReward, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "delegatorRewards",
 		"user": address,
 	})
@@ -541,8 +567,12 @@ func (i *Info) UserStakingRewards(address string) ([]StakingReward, error) {
 	return result, nil
 }
 
-func (i *Info) QueryOrderByOid(user string, oid int64) (*OrderQueryResult, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) QueryOrderByOid(
+	ctx context.Context,
+	user string,
+	oid int64,
+) (*OrderQueryResult, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "orderStatus",
 		"user": user,
 		"oid":  oid,
@@ -558,8 +588,11 @@ func (i *Info) QueryOrderByOid(user string, oid int64) (*OrderQueryResult, error
 	return &result, nil
 }
 
-func (i *Info) QueryOrderByCloid(user, cloid string) (*OrderQueryResult, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) QueryOrderByCloid(
+	ctx context.Context,
+	user, cloid string,
+) (*OrderQueryResult, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "orderStatus",
 		"user": user,
 		"oid":  cloid,
@@ -575,8 +608,8 @@ func (i *Info) QueryOrderByCloid(user, cloid string) (*OrderQueryResult, error) 
 	return &result, nil
 }
 
-func (i *Info) QueryReferralState(user string) (*ReferralState, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) QueryReferralState(ctx context.Context, user string) (*ReferralState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "referral",
 		"user": user,
 	})
@@ -591,8 +624,8 @@ func (i *Info) QueryReferralState(user string) (*ReferralState, error) {
 	return &result, nil
 }
 
-func (i *Info) QuerySubAccounts(user string) ([]SubAccount, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) QuerySubAccounts(ctx context.Context, user string) ([]SubAccount, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "subAccounts",
 		"user": user,
 	})
@@ -607,8 +640,11 @@ func (i *Info) QuerySubAccounts(user string) ([]SubAccount, error) {
 	return result, nil
 }
 
-func (i *Info) QueryUserToMultiSigSigners(multiSigUser string) ([]MultiSigSigner, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) QueryUserToMultiSigSigners(
+	ctx context.Context,
+	multiSigUser string,
+) ([]MultiSigSigner, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userToMultiSigSigners",
 		"user": multiSigUser,
 	})
@@ -624,8 +660,8 @@ func (i *Info) QueryUserToMultiSigSigners(multiSigUser string) ([]MultiSigSigner
 }
 
 // PerpDexs returns the list of available perpetual dexes
-func (i *Info) PerpDexs() ([]string, error) {
-	resp, err := i.client.post("/info", map[string]any{
+func (i *Info) PerpDexs(ctx context.Context) ([]string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "perpDexs",
 	})
 	if err != nil {

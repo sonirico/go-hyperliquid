@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"testing"
 )
 
@@ -11,7 +12,7 @@ func TestUpdateLeverage(t *testing.T) {
 	name := "BTC"
 	isCross := true // Use cross margin
 
-	resp, err := exchange.UpdateLeverage(leverage, name, isCross)
+	resp, err := exchange.UpdateLeverage(context.TODO(), leverage, name, isCross)
 	if err != nil {
 		t.Fatalf("Failed to update leverage: %v", err)
 	}
@@ -25,7 +26,7 @@ func TestUpdateIsolatedMargin(t *testing.T) {
 	amount := 1000.0 // Amount in USD
 	name := "BTC"
 
-	resp, err := exchange.UpdateIsolatedMargin(amount, name)
+	resp, err := exchange.UpdateIsolatedMargin(context.TODO(), amount, name)
 	if err != nil {
 		t.Fatalf("Failed to update isolated margin: %v", err)
 	}

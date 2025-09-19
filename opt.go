@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"os"
 
 	"github.com/sonirico/vago/lol"
@@ -33,6 +34,12 @@ func WsOptDebugMode() WsOpt {
 func InfoOptDebugMode() InfoOpt {
 	return func(i *Info) {
 		i.debug = true
+	}
+}
+
+func InfoOptCtx(ctx context.Context) InfoOpt {
+	return func(i *Info) {
+		i.ctx = ctx
 	}
 }
 

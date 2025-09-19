@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -110,10 +111,11 @@ func newCreateOrderAction(
 }
 
 func (e *Exchange) Order(
+	ctx context.Context,
 	req CreateOrderRequest,
 	builder *BuilderInfo,
 ) (result OrderStatus, err error) {
-	resp, err := e.BulkOrders([]CreateOrderRequest{req}, builder)
+	resp, err := e.BulkOrders(ctx, []CreateOrderRequest{req}, builder)
 	if err != nil {
 		return
 	}
@@ -133,6 +135,7 @@ func (e *Exchange) Order(
 }
 
 func (e *Exchange) BulkOrders(
+	ctx context.Context,
 	orders []CreateOrderRequest,
 	builder *BuilderInfo,
 ) (result *APIResponse[OrderResponse], err error) {
@@ -140,7 +143,7 @@ func (e *Exchange) BulkOrders(
 	if err != nil {
 		return nil, err
 	}
-	err = e.executeAction(action, &result)
+	err = e.executeAction(ctx, action, &result)
 	if err != nil {
 		return nil, err
 	}
@@ -228,6 +231,7 @@ func newModifyOrdersAction(
 
 // ModifyOrder modifies an existing order
 func (e *Exchange) ModifyOrder(
+	ctx context.Context,
 	req ModifyOrderRequest,
 ) (result OrderStatus, err error) {
 	resp := APIResponse[OrderResponse]{}
@@ -236,7 +240,7 @@ func (e *Exchange) ModifyOrder(
 		return result, fmt.Errorf("failed to create modify action: %w", err)
 	}
 
-	err = e.executeAction(action, &resp)
+	err = e.executeAction(ctx, action, &resp)
 	if err != nil {
 		err = fmt.Errorf("failed to modify order: %w", err)
 		return
@@ -258,6 +262,7 @@ func (e *Exchange) ModifyOrder(
 
 // BulkModifyOrders modifies multiple orders
 func (e *Exchange) BulkModifyOrders(
+	ctx context.Context,
 	modifyRequests []ModifyOrderRequest,
 ) ([]OrderStatus, error) {
 	resp := APIResponse[OrderResponse]{}
@@ -266,7 +271,7 @@ func (e *Exchange) BulkModifyOrders(
 		return nil, fmt.Errorf("failed to create bulk modify action: %w", err)
 	}
 
-	err = e.executeAction(action, &resp)
+	err = e.executeAction(ctx, action, &resp)
 	if err != nil {
 		return nil, fmt.Errorf("failed to modify orders: %w", err)
 	}
@@ -285,6 +290,7 @@ func (e *Exchange) BulkModifyOrders(
 
 // MarketOpen opens a market position
 func (e *Exchange) MarketOpen(
+	ctx context.Context,
 	name string,
 	isBuy bool,
 	sz float64,
@@ -293,7 +299,7 @@ func (e *Exchange) MarketOpen(
 	cloid *string,
 	builder *BuilderInfo,
 ) (res OrderStatus, err error) {
-	slippagePrice, err := e.SlippagePrice(name, isBuy, slippage, px)
+	slippagePrice, err := e.SlippagePrice(ctx, name, isBuy, slippage, px)
 	if err != nil {
 		return
 	}
@@ -302,7 +308,7 @@ func (e *Exchange) MarketOpen(
 		Limit: &LimitOrderType{Tif: TifIoc},
 	}
 
-	return e.Order(CreateOrderRequest{
+	return e.Order(ctx, CreateOrderRequest{
 		Coin:          name,
 		IsBuy:         isBuy,
 		Size:          sz,
@@ -315,6 +321,7 @@ func (e *Exchange) MarketOpen(
 
 // MarketClose closes a position
 func (e *Exchange) MarketClose(
+	ctx context.Context,
 	coin string,
 	sz *float64,
 	px *float64,
@@ -327,7 +334,7 @@ func (e *Exchange) MarketClose(
 		address = e.vault
 	}
 
-	userState, err := e.info.UserState(address)
+	userState, err := e.info.UserState(ctx, address)
 	if err != nil {
 		return OrderStatus{}, err
 	}
@@ -348,7 +355,7 @@ func (e *Exchange) MarketClose(
 
 		isBuy := szi < 0
 
-		slippagePrice, err := e.SlippagePrice(coin, isBuy, slippage, px)
+		slippagePrice, err := e.SlippagePrice(ctx, coin, isBuy, slippage, px)
 		if err != nil {
 			return OrderStatus{}, err
 		}
@@ -357,7 +364,7 @@ func (e *Exchange) MarketClose(
 			Limit: &LimitOrderType{Tif: TifIoc},
 		}
 
-		return e.Order(CreateOrderRequest{
+		return e.Order(ctx, CreateOrderRequest{
 			Coin:          coin,
 			IsBuy:         isBuy,
 			Size:          size,

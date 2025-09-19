@@ -8,7 +8,7 @@ import (
 	"testing/synctest"
 )
 
-func TestNextNonce_TableDriven(t *testing.T) {
+func TestNextNonce(t *testing.T) {
 	cases := []struct {
 		name          string
 		preLastOffset int64         // preLast = baseNow + preLastOffset

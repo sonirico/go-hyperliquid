@@ -47,7 +47,7 @@ func NewClient(baseURL string, opts ...ClientOpt) *Client {
 	return cli
 }
 
-func (c *Client) post(path string, payload any) ([]byte, error) {
+func (c *Client) post(ctx context.Context, path string, payload any) ([]byte, error) {
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal payload: %w", err)
@@ -55,7 +55,7 @@ func (c *Client) post(path string, payload any) ([]byte, error) {
 
 	url := c.baseURL + path
 	req, err := http.NewRequestWithContext(
-		context.Background(),
+		ctx,
 		http.MethodPost,
 		url,
 		bytes.NewBuffer(jsonData),

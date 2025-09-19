@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"crypto/ecdsa"
 	"encoding/json"
 	"sync/atomic"
@@ -71,6 +72,13 @@ func (e *Exchange) nextNonce() int64 {
 	}
 }
 
+// SetExpiresAfter sets the expiration time for actions
+// If expiresAfter is nil, actions will not have an expiration time
+// If expiresAfter is set, actions will include this expiration nonce
+func (e *Exchange) SetExpiresAfter(expiresAfter *int64) {
+	e.expiresAfter = expiresAfter
+}
+
 // SetLastNonce allows for resuming from a persisted nonce, e.g. the nonce was stored before a restart
 // Only useful if a lot of increments happen for unique nonces. Most users do not need this.
 func (e *Exchange) SetLastNonce(n int64) {
@@ -78,7 +86,7 @@ func (e *Exchange) SetLastNonce(n int64) {
 }
 
 // executeAction executes an action and unmarshals the response into the given result
-func (e *Exchange) executeAction(action, result any) error {
+func (e *Exchange) executeAction(ctx context.Context, action, result any) error {
 	nonce := e.nextNonce()
 
 	sig, err := SignL1Action(
@@ -93,7 +101,7 @@ func (e *Exchange) executeAction(action, result any) error {
 		return err
 	}
 
-	resp, err := e.postAction(action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
 		return err
 	}
@@ -106,6 +114,7 @@ func (e *Exchange) executeAction(action, result any) error {
 }
 
 func (e *Exchange) postAction(
+	ctx context.Context,
 	action any,
 	signature SignatureResult,
 	nonce int64,
@@ -136,5 +145,5 @@ func (e *Exchange) postAction(
 		payload["expiresAfter"] = *e.expiresAfter
 	}
 
-	return e.client.post("/exchange", payload)
+	return e.client.post(ctx, "/exchange", payload)
 }

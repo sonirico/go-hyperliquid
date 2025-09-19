@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"context"
 	"log"
 	"testing"
 
@@ -87,14 +88,14 @@ func TestCancelByCloid(t *testing.T) {
 
 			cloid := tc.cloid
 			if tc.placeFirst {
-				placed, err := exchange.Order(tc.order, nil)
+				placed, err := exchange.Order(context.TODO(), tc.order, nil)
 				require.NoError(tt, err)
 				require.NotNil(tt, placed.Resting, "expected resting order so it can be canceled")
 				cloid = placed.Resting.ClientID
 			}
 
 			// First cancel
-			resp, err := exchange.CancelByCloid(tc.coin, *cloid)
+			resp, err := exchange.CancelByCloid(context.TODO(), tc.coin, *cloid)
 			if tc.wantErr != "" && !tc.doubleCancel {
 				require.Error(tt, err)
 				require.Contains(tt, err.Error(), tc.wantErr)
@@ -190,14 +191,14 @@ func TestCancel(t *testing.T) {
 
 			oid := tc.oid
 			if tc.placeFirst {
-				placed, err := exchange.Order(tc.order, nil)
+				placed, err := exchange.Order(context.TODO(), tc.order, nil)
 				require.NoError(tt, err)
 				require.NotNil(tt, placed.Resting, "expected resting order so it can be canceled")
 				oid = placed.Resting.Oid
 			}
 
 			// First cancel
-			resp, err := exchange.Cancel(tc.coin, oid)
+			resp, err := exchange.Cancel(context.TODO(), tc.coin, oid)
 			if tc.wantErr != "" && !tc.doubleCancel {
 				require.Error(tt, err)
 				require.Contains(tt, err.Error(), tc.wantErr)
@@ -208,7 +209,7 @@ func TestCancel(t *testing.T) {
 
 			// Optional second cancel to test error path
 			if tc.doubleCancel {
-				resp2, err2 := exchange.Cancel(tc.coin, oid)
+				resp2, err2 := exchange.Cancel(context.TODO(), tc.coin, oid)
 				require.Error(tt, err2, "expected error on second cancel")
 				if tc.wantErr != "" {
 					require.Contains(tt, err2.Error(), tc.wantErr)
