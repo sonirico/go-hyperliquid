@@ -8,7 +8,7 @@ import (
 )
 
 func TestMetaAndAssetCtxs(t *testing.T) {
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	initRecorder(t, false, "MetaAndAssetCtxs")
 
@@ -66,7 +66,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 }
 
 func TestSpotMetaAndAssetCtxs(t *testing.T) {
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	initRecorder(t, false, "SpotMetaAndAssetCtxs")
 
@@ -129,7 +129,7 @@ func TestSpotMetaAndAssetCtxs(t *testing.T) {
 }
 
 func TestMeta(t *testing.T) {
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	initRecorder(t, false, "Meta")
 
@@ -179,7 +179,7 @@ func TestMeta(t *testing.T) {
 }
 
 func TestSpotMeta(t *testing.T) {
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	initRecorder(t, false, "SpotMeta")
 
@@ -248,7 +248,7 @@ func TestQueryOrderByOid(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	cases := []tc{
 		{
@@ -345,7 +345,7 @@ func TestQueryOrderByOid(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(TestnetAPIURL, true, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil)
 			} else {
 				infoInstance = info
 			}
@@ -394,7 +394,7 @@ func TestUserFillsByTime(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	cases := []tc{
 		{
@@ -460,7 +460,7 @@ func TestUserFillsByTime(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(TestnetAPIURL, true, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil)
 			} else {
 				infoInstance = info
 			}
@@ -509,7 +509,7 @@ func TestSpotUserState(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	cases := []tc{
 		{
@@ -552,7 +552,7 @@ func TestSpotUserState(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(TestnetAPIURL, true, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil)
 			} else {
 				infoInstance = info
 			}
@@ -598,7 +598,7 @@ func TestUserActiveAssetData(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(MainnetAPIURL, true, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
 
 	cases := []tc{
 		{
@@ -628,7 +628,7 @@ func TestUserActiveAssetData(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(TestnetAPIURL, true, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil)
 			} else {
 				infoInstance = info
 			}

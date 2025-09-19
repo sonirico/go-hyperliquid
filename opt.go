@@ -1,7 +1,6 @@
 package hyperliquid
 
 import (
-	"context"
 	"os"
 
 	"github.com/sonirico/vago/lol"
@@ -37,12 +36,6 @@ func InfoOptDebugMode() InfoOpt {
 	}
 }
 
-func InfoOptCtx(ctx context.Context) InfoOpt {
-	return func(i *Info) {
-		i.ctx = ctx
-	}
-}
-
 func ExchangeOptDebugMode() ExchangeOpt {
 	return func(e *Exchange) {
 		e.debug = true
@@ -57,5 +50,26 @@ func ClientOptDebugMode() ClientOpt {
 			lol.WithWriter(os.Stderr),
 			lol.WithEnv(lol.EnvDev),
 		)
+	}
+}
+
+// ExchangeOptClientOptions allows passing of ClientOpt to Client
+func ExchangeOptClientOptions(opts ...ClientOpt) ExchangeOpt {
+	return func(e *Exchange) {
+		e.clientOpts = append(e.clientOpts, opts...)
+	}
+}
+
+// ExchangeOptInfoOptions allows passing of InfoOpt to Info
+func ExchangeOptInfoOptions(opts ...InfoOpt) ExchangeOpt {
+	return func(e *Exchange) {
+		e.infoOpts = append(e.infoOpts, opts...)
+	}
+}
+
+// InfoOptClientOptions allows passing of ClientOpt to Info
+func InfoOptClientOptions(opts ...ClientOpt) InfoOpt {
+	return func(i *Info) {
+		i.clientOpts = append(i.clientOpts, opts...)
 	}
 }
