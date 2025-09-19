@@ -30,16 +30,19 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid(in *jlexer.Lexer, out 
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "user":
-			out.User = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.User = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -103,16 +106,19 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid1(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "coin":
-			out.Coin = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -176,16 +182,19 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid2(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "user":
-			out.User = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.User = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -249,16 +258,19 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid3(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "user":
-			out.User = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.User = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -322,20 +334,31 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid4(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "coin":
-			out.Coin = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
 		case "nSigFigs":
-			out.NSigFigs = int(in.Int())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.NSigFigs = int(in.Int())
+			}
 		case "mantissa":
-			out.Mantissa = int(in.Int())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Mantissa = int(in.Int())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -409,18 +432,25 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid5(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "coin":
-			out.Coin = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
 		case "interval":
-			out.Interval = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Interval = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -489,16 +519,19 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid6(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "coin":
-			out.Coin = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -562,14 +595,13 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid7(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "dex":
 			if in.IsNull() {
 				in.Skip()
@@ -578,7 +610,11 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid7(in *jlexer.Lexer, out
 				if out.Dex == nil {
 					out.Dex = new(string)
 				}
-				*out.Dex = string(in.String())
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Dex = string(in.String())
+				}
 			}
 		default:
 			in.SkipRecursive()

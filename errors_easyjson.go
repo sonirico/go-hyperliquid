@@ -30,16 +30,19 @@ func easyjsonD31a5a85DecodeGithubComSoniricoGoHyperliquid(in *jlexer.Lexer, out 
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "Field":
-			out.Field = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Field = string(in.String())
+			}
 		case "Message":
-			out.Message = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Message = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -103,16 +106,19 @@ func easyjsonD31a5a85DecodeGithubComSoniricoGoHyperliquid1(in *jlexer.Lexer, out
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "code":
-			out.Code = int(in.Int())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Code = int(in.Int())
+			}
 		case "msg":
-			out.Message = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Message = string(in.String())
+			}
 		case "data":
 			if m, ok := out.Data.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
