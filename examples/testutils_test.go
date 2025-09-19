@@ -1,6 +1,7 @@
 package examples
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -21,6 +22,7 @@ func newTestExchange(t *testing.T) *hyperliquid.Exchange {
 
 	// Initialize test exchange
 	return hyperliquid.NewExchange(
+		context.TODO(),
 		testPrivateKey,
 		hyperliquid.MainnetAPIURL,
 		nil,

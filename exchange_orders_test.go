@@ -36,6 +36,7 @@ func newExchange(key string, url string) (*Exchange, error) {
 	accountAddr := crypto.PubkeyToAddress(*pubECDSA).Hex()
 
 	exchange := NewExchange(
+		context.TODO(),
 		privateKey,
 		url,
 		nil, // Meta will be fetched automatically

@@ -12,15 +12,15 @@ const (
 )
 
 type Info struct {
-	ctx            context.Context
 	debug          bool
 	client         *Client
 	coinToAsset    map[string]int
 	nameToCoin     map[string]string
 	assetToDecimal map[int]int
+	clientOpts     []ClientOpt
 }
 
-func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts ...InfoOpt) *Info {
+func NewInfo(ctx context.Context, baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts ...InfoOpt) *Info {
 	info := &Info{
 		coinToAsset:    make(map[string]int),
 		nameToCoin:     make(map[string]string),
@@ -31,16 +31,11 @@ func NewInfo(baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts .
 		opt.Apply(info)
 	}
 
-	var clientOpts []ClientOpt
 	if info.debug {
-		clientOpts = append(clientOpts, ClientOptDebugMode())
+		info.clientOpts = append(info.clientOpts, ClientOptDebugMode())
 	}
 
-	info.client = NewClient(baseURL, clientOpts...)
-	ctx := info.ctx
-	if ctx == nil {
-		ctx = context.Background()
-	}
+	info.client = NewClient(baseURL, info.clientOpts...)
 
 	if meta == nil {
 		var err error
