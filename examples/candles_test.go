@@ -12,7 +12,7 @@ import (
 
 func TestCandlesSnapshot(t *testing.T) {
 	godotenv.Overload()
-	info := hyperliquid.NewInfo(hyperliquid.MainnetAPIURL, true, nil, nil)
+	info := hyperliquid.NewInfo(context.Background(), hyperliquid.MainnetAPIURL, true, nil, nil)
 
 	now := time.Now()
 	startTime := now.Add(-1 * time.Hour).UnixMilli()
