@@ -87,6 +87,7 @@ func main() {
     // For trading, create an Exchange with your private key
     privateKey, _ := crypto.HexToECDSA("your-private-key")
     exchange := hyperliquid.NewExchange(
+        context.Background(),
         privateKey,
         hyperliquid.MainnetAPIURL,
         nil,    // Meta will be fetched automatically
@@ -108,7 +109,7 @@ func main() {
         },
     }
 
-    resp, err := exchange.Order(order, nil)
+    resp, err := exchange.Order(context.Background(), order, nil)
     if err != nil {
         log.Fatal(err)
     }
