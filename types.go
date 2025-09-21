@@ -39,8 +39,10 @@ const (
 )
 
 type AssetInfo struct {
-	Name       string `json:"name"`
-	SzDecimals int    `json:"szDecimals"`
+	Name          string `json:"name"`
+	SzDecimals    int    `json:"szDecimals"`
+	MaxLeverage   int    `json:"maxLeverage"`
+	MarginTableId int    `json:"marginTableId"`
 }
 
 type MarginTier struct {

@@ -4676,7 +4676,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Universe == nil {
 					if !in.IsDelim(']') {
-						out.Universe = make([]AssetInfo, 0, 2)
+						out.Universe = make([]AssetInfo, 0, 1)
 					} else {
 						out.Universe = []AssetInfo{}
 					}
@@ -4832,7 +4832,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Universe == nil {
 					if !in.IsDelim(']') {
-						out.Universe = make([]AssetInfo, 0, 2)
+						out.Universe = make([]AssetInfo, 0, 1)
 					} else {
 						out.Universe = []AssetInfo{}
 					}
@@ -6872,6 +6872,18 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, ou
 			} else {
 				out.SzDecimals = int(in.Int())
 			}
+		case "maxLeverage":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MaxLeverage = int(in.Int())
+			}
+		case "marginTableId":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MarginTableId = int(in.Int())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -6895,6 +6907,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer,
 		const prefix string = ",\"szDecimals\":"
 		out.RawString(prefix)
 		out.Int(int(in.SzDecimals))
+	}
+	{
+		const prefix string = ",\"maxLeverage\":"
+		out.RawString(prefix)
+		out.Int(int(in.MaxLeverage))
+	}
+	{
+		const prefix string = ",\"marginTableId\":"
+		out.RawString(prefix)
+		out.Int(int(in.MarginTableId))
 	}
 	out.RawByte('}')
 }
