@@ -34,10 +34,14 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 		if asset.Name == "BTC" {
 			btcFound = true
 			require.Equal(t, 5, asset.SzDecimals)
+			require.Equal(t, 40, asset.MaxLeverage)
+			require.Equal(t, 56, asset.MarginTableId)
 		}
 		if asset.Name == "ETH" {
 			ethFound = true
 			require.Equal(t, 4, asset.SzDecimals)
+			require.Equal(t, 25, asset.MaxLeverage)
+			require.Equal(t, 55, asset.MarginTableId)
 		}
 	}
 	require.True(t, btcFound, "BTC asset should be present in universe")
