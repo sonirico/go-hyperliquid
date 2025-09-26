@@ -14,6 +14,7 @@ const (
 	ChannelAllMids      string = "allMids"
 	ChannelNotification string = "notification"
 	ChannelOrderUpdates string = "orderUpdates"
+	ChannelOrderFills   string = "orderFills"
 	ChannelWebData2     string = "webData2"
 	ChannelBbo          string = "bbo"
 	ChannelSubResponse  string = "subscriptionResponse"
@@ -122,6 +123,37 @@ type (
 		Timestamp int64   `json:"timestamp"`
 		OrigSz    string  `json:"origSz"`
 		Cloid     *string `json:"cloid"`
+	}
+
+	WsOrderFills struct {
+		IsSnapshot bool          `json:"isSnapshot"`
+		User       string        `json:"user"`
+		Fills      []WsOrderFill `json:"fills"`
+	}
+
+	WsOrderFill struct {
+		Coin          string           `json:"coin"`
+		Px            string           `json:"px"` // price
+		Sz            string           `json:"sz"` // size
+		Side          string           `json:"side"`
+		Time          int64            `json:"time"`
+		StartPosition string           `json:"startPosition"`
+		Dir           string           `json:"dir"` // used for frontend display
+		ClosedPnl     string           `json:"closedPnl"`
+		Hash          string           `json:"hash"`    // L1 transaction hash
+		Oid           int64            `json:"oid"`     // order id
+		Crossed       bool             `json:"crossed"` // whether order crossed the spread (was taker)
+		Fee           string           `json:"fee"`     // negative means rebate
+		Tid           int64            `json:"tid"`     // unique trade id
+		Liquidation   *FillLiquidation `json:"liquidation,omitempty"`
+		FeeToken      string           `json:"feeToken"`             // the token the fee was paid in
+		BuilderFee    *string          `json:"builderFee,omitempty"` // amount paid to builder, also included in fee
+	}
+
+	FillLiquidation struct {
+		LiquidatedUser *string `json:"liquidatedUser,omitempty"`
+		MarkPx         string  `json:"markPx"`
+		Method         string  `json:"method"`
 	}
 
 	L2Book struct {

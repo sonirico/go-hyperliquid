@@ -53,3 +53,7 @@ func (w WebData2) Key() string {
 }
 
 func (w Bbo) Key() string { return keyBbo(w.Coin) }
+
+func (w WsOrderFills) Key() string {
+	return keyOrderFills(w.User)
+}
