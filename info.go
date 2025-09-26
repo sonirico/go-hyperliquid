@@ -232,7 +232,7 @@ func (i *Info) OpenOrders(ctx context.Context, address string) ([]OpenOrder, err
 	return result, nil
 }
 
-func (i *Info) FrontendOpenOrders(ctx context.Context, address string) ([]OpenOrder, error) {
+func (i *Info) FrontendOpenOrders(ctx context.Context, address string) ([]FrontendOpenOrder, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "frontendOpenOrders",
 		"user": address,
@@ -241,7 +241,7 @@ func (i *Info) FrontendOpenOrders(ctx context.Context, address string) ([]OpenOr
 		return nil, fmt.Errorf("failed to fetch frontend open orders: %w", err)
 	}
 
-	var result []OpenOrder
+	var result []FrontendOpenOrder
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal frontend open orders: %w", err)
 	}

@@ -231,6 +231,22 @@ type OpenOrder struct {
 	Timestamp int64   `json:"timestamp"`
 }
 
+type FrontendOpenOrder struct {
+	Coin             string    `json:"coin"`
+	IsPositionTpSl   bool      `json:"isPositionTpsl"`
+	IsTrigger        bool      `json:"isTrigger"`
+	LimitPx          float64   `json:"limitPx,string"`
+	Oid              int64     `json:"oid"`
+	OrderType        string    `json:"orderType"`
+	OrigSz           float64   `json:"origSz,string"`
+	ReduceOnly       bool      `json:"reduceOnly"`
+	Side             OrderSide `json:"side"`
+	Sz               float64   `json:"sz,string"`
+	Timestamp        int64     `json:"timestamp"`
+	TriggerCondition string    `json:"triggerCondition"`
+	TriggerPx        string    `json:"triggerPx"`
+}
+
 type OrderSide string
 
 const (
