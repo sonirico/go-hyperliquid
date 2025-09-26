@@ -8,7 +8,7 @@ type OrderFillsSubscriptionParams struct {
 
 func (w *WebsocketClient) OrderFills(
 	params OrderFillsSubscriptionParams,
-	callback func([]WsOrderFill, error),
+	callback func(WsOrderFills, error),
 ) (*Subscription, error) {
 	payload := remoteOrderFillsSubscriptionPayload{
 		Type: ChannelOrderFills,
@@ -18,10 +18,10 @@ func (w *WebsocketClient) OrderFills(
 	return w.subscribe(payload, func(msg any) {
 		orders, ok := msg.(WsOrderFills)
 		if !ok {
-			callback(nil, fmt.Errorf("invalid message type"))
+			callback(WsOrderFills{}, fmt.Errorf("invalid message type"))
 			return
 		}
 
-		callback(orders.Fills, nil)
+		callback(orders, nil)
 	})
 }
