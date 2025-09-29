@@ -14,7 +14,7 @@ const (
 	ChannelAllMids      string = "allMids"
 	ChannelNotification string = "notification"
 	ChannelOrderUpdates string = "orderUpdates"
-	ChannelOrderFills   string = "orderFills"
+	ChannelOrderFills   string = "userFills"
 	ChannelWebData2     string = "webData2"
 	ChannelBbo          string = "bbo"
 	ChannelSubResponse  string = "subscriptionResponse"
