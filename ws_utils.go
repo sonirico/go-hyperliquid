@@ -45,9 +45,7 @@ func keyOrderUpdates(_ string) string {
 	return key(ChannelOrderUpdates)
 }
 
-func keyOrderFills(user string) string {
-	// Order fills are user-specific but don't contain user info in the message itself.
-	// The dispatching is handled by the subscription system based on the subscription key.
+func keyUserFills(user string) string {
 	return key(ChannelUserFills, user)
 }
 
