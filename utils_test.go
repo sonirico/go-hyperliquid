@@ -26,12 +26,6 @@ func TestRoundToSignificantFigures(t *testing.T) {
 			expected: 123.45,
 		},
 		{
-			name:     "fraction below 1 should consider 0 as a significant figure",
-			price:    0.12,
-			sigFigs:  2,
-			expected: 0.1,
-		},
-		{
 			name:     "if integer part has more significant figures, return whole integer part",
 			price:    110454,
 			sigFigs:  5,
@@ -43,12 +37,17 @@ func TestRoundToSignificantFigures(t *testing.T) {
 			sigFigs:  0,
 			expected: 24,
 		},
+		{
+			name:     "test rounding a fraction",
+			price:    0.00252312,
+			sigFigs:  5,
+			expected: 0.0025231,
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			rounded, err := roundToSignificantFigures(test.price, test.sigFigs)
-			assert.NoError(t, err)
+			rounded := roundToSignificantFigures(test.price, test.sigFigs)
 			assert.Equal(t, test.expected, rounded)
 		})
 	}
