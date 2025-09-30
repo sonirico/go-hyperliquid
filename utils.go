@@ -62,9 +62,9 @@ func floatToWire(x float64) (string, error) {
 	return result, nil
 }
 
-func roundToSignificantFigures(price float64, sigFigs int) (float64, error) {
+func roundToSignificantFigures(price float64, sigFigs int) float64 {
 	if price == 0 {
-		return 0, nil
+		return 0
 	}
 
 	// Work with the absolute value of the price to simplify calculations. We will restore the sign later.
@@ -83,22 +83,33 @@ func roundToSignificantFigures(price float64, sigFigs int) (float64, error) {
 			temp = temp / 10
 			numIntegerDigits++
 		}
+
+		if numIntegerDigits >= sigFigs {
+			// Returning the integer part, keeping the original sign.
+			// We do need to preserve the whole integer part, even though it may result in more significant figures than requested.
+			return math.Copysign(integerPart, price)
+		}
+
+		sigFigsLeft := sigFigs - numIntegerDigits
+
+		// Round the float64 to the number of significant figures left.
+		rounded := roundToDecimals(absPrice, sigFigsLeft)
+
+		// Return the rounded number, applying the original sign.
+		return math.Copysign(rounded, price)
 	} else {
-		// Since we know the price is not 0 and thus is a fraction, 0 is a significant figure.
-		numIntegerDigits = 1
+		// Working with a fraction, multiply by 10 until we have an integer so we can use roundToDecimals.
+		multiplications := 0
+		for absPrice < 1 {
+			absPrice *= 10
+			multiplications++
+		}
+
+		// Round the integer to the number of significant figures.
+		// Using sigFigs-1 since the integer part is already counted as a significant figure.
+		rounded := roundToDecimals(absPrice, sigFigs-1)
+
+		// Divide by 10^multiplications to get the original fraction.
+		return math.Copysign(rounded/math.Pow(10, float64(multiplications)), price)
 	}
-
-	if numIntegerDigits >= sigFigs {
-		// Returning the integer part, keeping the original sign.
-		// We do need to preserve the whole integer part, even though it may result in more significant figures than requested.
-		return math.Copysign(integerPart, price), nil
-	}
-
-	sigFigsLeft := sigFigs - numIntegerDigits
-
-	// Round the float64 to the number of significant figures left.
-	rounded := roundToDecimals(absPrice, sigFigsLeft)
-
-	// Return the rounded number, applying the original sign.
-	return math.Copysign(rounded, price), nil
 }
