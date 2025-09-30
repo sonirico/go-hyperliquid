@@ -96,7 +96,7 @@ func (p remoteOrderFillsSubscriptionPayload) Channel() string {
 }
 
 func (p remoteOrderFillsSubscriptionPayload) Key() string {
-	return keyOrderFills(p.User)
+	return keyUserFills(p.User)
 }
 
 type remoteWebData2SubscriptionPayload struct {
