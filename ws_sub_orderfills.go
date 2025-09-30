@@ -11,7 +11,7 @@ func (w *WebsocketClient) OrderFills(
 	callback func(WsOrderFills, error),
 ) (*Subscription, error) {
 	payload := remoteOrderFillsSubscriptionPayload{
-		Type: ChannelOrderFills,
+		Type: ChannelUserFills,
 		User: params.User,
 	}
 
