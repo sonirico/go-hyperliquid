@@ -147,7 +147,7 @@ type OrderAction struct {
 
 // ModifyAction represents a single order modification
 type ModifyAction struct {
-	Type  string    `json:"type"  msgpack:"type"`
+	Type  string    `json:"type,omitempty"  msgpack:"type,omitempty"`
 	Oid   any       `json:"oid"   msgpack:"oid"`
 	Order OrderWire `json:"order" msgpack:"order"`
 }

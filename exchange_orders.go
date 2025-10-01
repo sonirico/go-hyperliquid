@@ -220,6 +220,7 @@ func newModifyOrdersAction(
 		if err != nil {
 			return BatchModifyAction{}, fmt.Errorf("failed to create modify request %d: %w", i, err)
 		}
+		modify.Type = ""
 		modifies[i] = modify
 	}
 
