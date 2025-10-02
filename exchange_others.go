@@ -17,18 +17,11 @@ func (e *Exchange) UpdateLeverage(
 	name string,
 	isCross bool,
 ) (*UserState, error) {
-	leverageType := "isolated"
-	if isCross {
-		leverageType = "cross"
-	}
-
 	action := UpdateLeverageAction{
-		Type:  "updateLeverage",
-		Asset: e.info.NameToAsset(name),
-		Leverage: map[string]any{
-			"type":  leverageType,
-			"value": leverage,
-		},
+		Type:     "updateLeverage",
+		Asset:    e.info.NameToAsset(name),
+		IsCross:  isCross,
+		Leverage: leverage,
 	}
 
 	var result UserState
