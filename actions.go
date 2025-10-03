@@ -98,9 +98,10 @@ type VaultDistributeAction struct {
 
 // UpdateLeverageAction represents leverage update
 type UpdateLeverageAction struct {
-	Type     string         `json:"type"     msgpack:"type"`
-	Asset    int            `json:"asset"    msgpack:"asset"`
-	Leverage map[string]any `json:"leverage" msgpack:"leverage"`
+	Type     string `json:"type"     msgpack:"type"`
+	Asset    int    `json:"asset"    msgpack:"asset"`
+	IsCross  bool   `json:"isCross"  msgpack:"isCross"`
+	Leverage int    `json:"leverage" msgpack:"leverage"`
 }
 
 // UpdateIsolatedMarginAction represents isolated margin update
