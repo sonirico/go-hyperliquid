@@ -2335,14 +2335,20 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid22(out *jwriter.Writer,
 	out.RawByte('{')
 	first := true
 	_ = first
-	{
+	if in.Type != "" {
 		const prefix string = ",\"type\":"
+		first = false
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
 	}
 	{
 		const prefix string = ",\"oid\":"
-		out.RawString(prefix)
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		if m, ok := in.Oid.(easyjson.Marshaler); ok {
 			m.MarshalEasyJSON(out)
 		} else if m, ok := in.Oid.(json.Marshaler); ok {
