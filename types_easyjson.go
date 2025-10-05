@@ -7081,6 +7081,18 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in *jlexer.Lexer, ou
 			} else {
 				out.MarginTableId = int(in.Int())
 			}
+		case "onlyIsolated":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.OnlyIsolated = bool(in.Bool())
+			}
+		case "isDelisted":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.IsDelisted = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -7114,6 +7126,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out *jwriter.Writer,
 		const prefix string = ",\"marginTableId\":"
 		out.RawString(prefix)
 		out.Int(int(in.MarginTableId))
+	}
+	{
+		const prefix string = ",\"onlyIsolated\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.OnlyIsolated))
+	}
+	{
+		const prefix string = ",\"isDelisted\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsDelisted))
 	}
 	out.RawByte('}')
 }
