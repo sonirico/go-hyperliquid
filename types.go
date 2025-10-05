@@ -43,6 +43,8 @@ type AssetInfo struct {
 	SzDecimals    int    `json:"szDecimals"`
 	MaxLeverage   int    `json:"maxLeverage"`
 	MarginTableId int    `json:"marginTableId"`
+	OnlyIsolated  bool   `json:"onlyIsolated"`
+	IsDelisted    bool   `json:"isDelisted"`
 }
 
 type MarginTier struct {
