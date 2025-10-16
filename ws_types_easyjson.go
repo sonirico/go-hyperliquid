@@ -568,7 +568,7 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid4(in *jlexer.Lexer, out
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Status = string(in.String())
+				out.Status = OrderStatusValue(in.String())
 			}
 		case "statusTimestamp":
 			if in.IsNull() {

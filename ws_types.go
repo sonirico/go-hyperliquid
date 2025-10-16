@@ -109,9 +109,9 @@ type (
 	}
 
 	WsOrder struct {
-		Order           WsBasicOrder `json:"order"`
-		Status          string       `json:"status"`
-		StatusTimestamp int64        `json:"statusTimestamp"`
+		Order           WsBasicOrder     `json:"order"`
+		Status          OrderStatusValue `json:"status"`
+		StatusTimestamp int64            `json:"statusTimestamp"`
 	}
 
 	WsBasicOrder struct {
