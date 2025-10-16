@@ -26,9 +26,12 @@ type Tif string
 
 // Order Time-in-Force constants
 const (
-	TifAlo Tif = "Alo" // Add Liquidity Only
-	TifIoc Tif = "Ioc" // Immediate or Cancel
-	TifGtc Tif = "Gtc" // Good Till Cancel
+	// Add Liquidity Only
+	TifAlo Tif = "Alo"
+	// Immediate or Cancel
+	TifIoc Tif = "Ioc"
+	// Good Till Cancel
+	TifGtc Tif = "Gtc"
 )
 
 type Tpsl string // Advanced order type
