@@ -20,7 +20,14 @@ type Info struct {
 	clientOpts     []ClientOpt
 }
 
-func NewInfo(ctx context.Context, baseURL string, skipWS bool, meta *Meta, spotMeta *SpotMeta, opts ...InfoOpt) *Info {
+func NewInfo(
+	ctx context.Context,
+	baseURL string,
+	skipWS bool,
+	meta *Meta,
+	spotMeta *SpotMeta,
+	opts ...InfoOpt,
+) *Info {
 	info := &Info{
 		coinToAsset:    make(map[string]int),
 		nameToCoin:     make(map[string]string),
@@ -232,7 +239,10 @@ func (i *Info) OpenOrders(ctx context.Context, address string) ([]OpenOrder, err
 	return result, nil
 }
 
-func (i *Info) FrontendOpenOrders(ctx context.Context, address string) ([]FrontendOpenOrder, error) {
+func (i *Info) FrontendOpenOrders(
+	ctx context.Context,
+	address string,
+) ([]FrontendOpenOrder, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "frontendOpenOrders",
 		"user": address,

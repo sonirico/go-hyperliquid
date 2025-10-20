@@ -17,16 +17,13 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-// addressToBytes converts a hex address to bytes, matching Python's address_to_bytes
 func addressToBytes(address string) []byte {
 	address = strings.TrimPrefix(address, "0x")
 	bytes, _ := hex.DecodeString(address)
 	return bytes
 }
 
-// actionHash implements the same logic as Python's action_hash function
 func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) []byte {
-	// Pack action using msgpack (like Python's msgpack.packb)
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
 	enc.SetSortMapKeys(true)
@@ -71,7 +68,6 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 	return hash
 }
 
-// constructPhantomAgent implements the same logic as Python's construct_phantom_agent
 func constructPhantomAgent(hash []byte, isMainnet bool) map[string]any {
 	source := "b" // testnet
 	if isMainnet {
@@ -83,7 +79,6 @@ func constructPhantomAgent(hash []byte, isMainnet bool) map[string]any {
 	}
 }
 
-// l1Payload implements the same logic as Python's l1_payload
 func l1Payload(phantomAgent map[string]any) apitypes.TypedData {
 	chainId := math.HexOrDecimal256(*big.NewInt(1337))
 	return apitypes.TypedData{
@@ -117,7 +112,6 @@ type SignatureResult struct {
 	V int    `json:"v"`
 }
 
-// signInner implements the same logic as Python's sign_inner
 func signInner(
 	privateKey *ecdsa.PrivateKey,
 	typedData apitypes.TypedData,
@@ -155,7 +149,6 @@ func signInner(
 	}, nil
 }
 
-// SignL1Action implements the same logic as Python's sign_l1_action
 func SignL1Action(
 	privateKey *ecdsa.PrivateKey,
 	action any,
@@ -177,6 +170,12 @@ func SignL1Action(
 	return signInner(privateKey, typedData)
 }
 
+type signUsdClassTransferAction struct {
+	Type   string  `msgpack:"type"`
+	Amount float64 `msgpack:"amount"`
+	ToPerp bool    `msgpack:"toPerp"`
+}
+
 // SignUsdClassTransferAction signs USD class transfer action
 func SignUsdClassTransferAction(
 	privateKey *ecdsa.PrivateKey,
@@ -185,13 +184,20 @@ func SignUsdClassTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":   "usdClassTransfer",
-		"amount": amount,
-		"toPerp": toPerp,
+	action := signUsdClassTransferAction{
+		Type:   "usdClassTransfer",
+		Amount: amount,
+		ToPerp: toPerp,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signSpotTransferAction struct {
+	Type        string  `msgpack:"type"`
+	Amount      float64 `msgpack:"amount"`
+	Destination string  `msgpack:"destination"`
+	Token       string  `msgpack:"token"`
 }
 
 // SignSpotTransferAction signs spot transfer action
@@ -202,14 +208,20 @@ func SignSpotTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":        "spotTransfer",
-		"amount":      amount,
-		"destination": destination,
-		"token":       token,
+	action := signSpotTransferAction{
+		Type:        "spotTransfer",
+		Amount:      amount,
+		Destination: destination,
+		Token:       token,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signUsdTransferAction struct {
+	Type        string  `msgpack:"type"`
+	Amount      float64 `msgpack:"amount"`
+	Destination string  `msgpack:"destination"`
 }
 
 // SignUsdTransferAction signs USD transfer action
@@ -220,13 +232,21 @@ func SignUsdTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":        "usdTransfer",
-		"amount":      amount,
-		"destination": destination,
+	action := signUsdTransferAction{
+		Type:        "usdTransfer",
+		Amount:      amount,
+		Destination: destination,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signPerpDexClassTransferAction struct {
+	Type   string  `msgpack:"type"`
+	Dex    string  `msgpack:"dex"`
+	Token  string  `msgpack:"token"`
+	Amount float64 `msgpack:"amount"`
+	ToPerp bool    `msgpack:"toPerp"`
 }
 
 // SignPerpDexClassTransferAction signs perp dex class transfer action
@@ -238,15 +258,22 @@ func SignPerpDexClassTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":   "perpDexClassTransfer",
-		"dex":    dex,
-		"token":  token,
-		"amount": amount,
-		"toPerp": toPerp,
+	action := signPerpDexClassTransferAction{
+		Type:   "perpDexClassTransfer",
+		Dex:    dex,
+		Token:  token,
+		Amount: amount,
+		ToPerp: toPerp,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signTokenDelegateAction struct {
+	Type             string  `msgpack:"type"`
+	Token            string  `msgpack:"token"`
+	Amount           float64 `msgpack:"amount"`
+	ValidatorAddress string  `msgpack:"validatorAddress"`
 }
 
 // SignTokenDelegateAction signs token delegate action
@@ -258,14 +285,21 @@ func SignTokenDelegateAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":             "tokenDelegate",
-		"token":            token,
-		"amount":           amount,
-		"validatorAddress": validatorAddress,
+	action := signTokenDelegateAction{
+		Type:             "tokenDelegate",
+		Token:            token,
+		Amount:           amount,
+		ValidatorAddress: validatorAddress,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signWithdrawFromBridgeAction struct {
+	Type        string  `msgpack:"type"`
+	Destination string  `msgpack:"destination"`
+	Amount      float64 `msgpack:"amount"`
+	Fee         float64 `msgpack:"fee"`
 }
 
 // SignWithdrawFromBridgeAction signs withdraw from bridge action
@@ -276,14 +310,20 @@ func SignWithdrawFromBridgeAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":        "withdrawFromBridge",
-		"destination": destination,
-		"amount":      amount,
-		"fee":         fee,
+	action := signWithdrawFromBridgeAction{
+		Type:        "withdrawFromBridge",
+		Destination: destination,
+		Amount:      amount,
+		Fee:         fee,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signAgent struct {
+	Type         string `msgpack:"type"`
+	AgentAddress string `msgpack:"agentAddress"`
+	AgentName    string `msgpack:"agentName"`
 }
 
 // SignAgent signs agent approval action
@@ -293,13 +333,21 @@ func SignAgent(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":         "approveAgent",
-		"agentAddress": agentAddress,
-		"agentName":    agentName,
+	action := signAgent{
+		Type:         "approveAgent",
+		AgentAddress: agentAddress,
+		AgentName:    agentName,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signApproveBuilderFee struct {
+	Type string `msgpack:"type"`
+	// BuilderAddress is the address of the builder
+	BuilderAddress string `msgpack:"builderAddress"`
+	// MaxFeeRate is the maximum fee rate the user is willing to pay
+	MaxFeeRate float64 `msgpack:"maxFeeRate"`
 }
 
 // SignApproveBuilderFee signs approve builder fee action
@@ -310,13 +358,19 @@ func SignApproveBuilderFee(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":           "approveBuilderFee",
-		"builderAddress": builderAddress,
-		"maxFeeRate":     maxFeeRate,
+	action := signApproveBuilderFee{
+		Type:           "approveBuilderFee",
+		BuilderAddress: builderAddress,
+		MaxFeeRate:     maxFeeRate,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signConvertToMultiSigUserAction struct {
+	Type      string   `msgpack:"type"`
+	Signers   []string `msgpack:"signers"`
+	Threshold int      `msgpack:"threshold"`
 }
 
 // SignConvertToMultiSigUserAction signs convert to multi-sig user action
@@ -327,13 +381,20 @@ func SignConvertToMultiSigUserAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":      "convertToMultiSigUser",
-		"signers":   signers,
-		"threshold": threshold,
+	action := signConvertToMultiSigUserAction{
+		Type:      "convertToMultiSigUser",
+		Signers:   signers,
+		Threshold: threshold,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+}
+
+type signMultiSigAction struct {
+	Type       string         `msgpack:"type"`
+	Action     map[string]any `msgpack:"action"`
+	Signers    []string       `msgpack:"signers"`
+	Signatures []string       `msgpack:"signatures"`
 }
 
 // SignMultiSigAction signs multi-signature action
@@ -345,17 +406,17 @@ func SignMultiSigAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := map[string]any{
-		"type":       "multiSig",
-		"action":     innerAction,
-		"signers":    signers,
-		"signatures": signatures,
+	action := signMultiSigAction{
+		Type:       "multiSig",
+		Action:     innerAction,
+		Signers:    signers,
+		Signatures: signatures,
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
 }
 
-// Utility function to convert float to USD integer representation
+// FloatToUsdInt converts float to USD integer representation
 func FloatToUsdInt(value float64) int {
 	// Convert float USD to integer representation (assuming 6 decimals for USDC)
 	return int(value * 1e6)

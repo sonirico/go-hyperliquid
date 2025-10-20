@@ -148,9 +148,9 @@ type OrderAction struct {
 
 // ModifyAction represents a single order modification
 type ModifyAction struct {
-	Type  string    `json:"type,omitempty"  msgpack:"type,omitempty"`
-	Oid   any       `json:"oid"   msgpack:"oid"`
-	Order OrderWire `json:"order" msgpack:"order"`
+	Type  string    `json:"type,omitempty" msgpack:"type,omitempty"`
+	Oid   any       `json:"oid"            msgpack:"oid"`
+	Order OrderWire `json:"order"          msgpack:"order"`
 }
 
 // BatchModifyAction represents multiple order modifications
