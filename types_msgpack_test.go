@@ -3,40 +3,17 @@ package hyperliquid
 import (
 	"bytes"
 	"encoding/hex"
-	"fmt"
-	"log"
 	"testing"
 
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-type OrderWireOld struct {
-	Asset      int            `json:"a"`
-	IsBuy      bool           `json:"b"`
-	LimitPx    string         `json:"p"`
-	Size       string         `json:"s"`
-	ReduceOnly bool           `json:"r"`
-	OrderType  map[string]any `json:"t"`
-	Cloid      *string        `json:"c,omitempty"`
-}
-
-type OrderWireNew struct {
-	Asset      int           `json:"a"           msgpack:"a"`
-	IsBuy      bool          `json:"b"           msgpack:"b"`
-	LimitPx    string        `json:"p"           msgpack:"p"`
-	Size       string        `json:"s"           msgpack:"s"`
-	ReduceOnly bool          `json:"r"           msgpack:"r"`
-	OrderType  orderWireType `json:"t"           msgpack:"t"`
-	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"`
-}
-
 func Test_Msgpack_Field_Ordering(t *testing.T) {
-	// Test data
-	orderType := map[string]any{
-		"limit": map[string]any{
-			"tif": "Gtc",
-		},
-	}
+	// CRITICAL: This test verifies that OrderWire struct serializes in the correct order
+	// to match Python SDK's msgpack output. Python preserves dict insertion order.
+
+	// Python order for order_wire is: a, b, p, s, r, t (and optionally c)
+	// See: hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_request_to_order_wire
 
 	orderTypeNew := orderWireType{
 		Limit: &orderWireTypeLimit{
@@ -44,49 +21,46 @@ func Test_Msgpack_Field_Ordering(t *testing.T) {
 		},
 	}
 
-	// Test with old struct (no msgpack tags)
-	oldOrder := OrderWireOld{
-		Asset:      0,
-		IsBuy:      true,
-		LimitPx:    "40000",
-		Size:       "0.001",
-		ReduceOnly: false,
-		OrderType:  orderType,
-	}
-
-	// Test with new struct (with msgpack tags)
-	newOrder := OrderWireNew{
+	// Test with current struct (must match Python order)
+	newOrder := OrderWire{
 		Asset:      0,
 		IsBuy:      true,
 		LimitPx:    "40000",
 		Size:       "0.001",
 		ReduceOnly: false,
 		OrderType:  orderTypeNew,
+		Cloid:      nil, // No cloid for this test
 	}
 
-	// Serialize both with msgpack
-	var bufOld, bufNew bytes.Buffer
-
-	encOld := msgpack.NewEncoder(&bufOld)
-	encOld.SetSortMapKeys(true)
-
+	// Serialize with msgpack
+	var bufNew bytes.Buffer
 	encNew := msgpack.NewEncoder(&bufNew)
-	encNew.SetSortMapKeys(true)
+	// CRITICAL: Do NOT use SetSortMapKeys(true) - we need field order from struct
+	encNew.UseCompactInts(true)
 
-	err := encOld.Encode(oldOrder)
+	err := encNew.Encode(newOrder)
 	if err != nil {
-		log.Fatal(err)
+		t.Fatalf("Failed to encode: %v", err)
 	}
 
-	err = encNew.Encode(newOrder)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	oldBytes := bufOld.Bytes()
 	newBytes := bufNew.Bytes()
+	goHex := hex.EncodeToString(newBytes)
 
-	fmt.Printf("Old struct (no msgpack tags): %s\n", hex.EncodeToString(oldBytes))
-	fmt.Printf("New struct (with msgpack tags): %s\n", hex.EncodeToString(newBytes))
-	fmt.Printf("Are they identical? %v\n", bytes.Equal(oldBytes, newBytes))
+	// Expected output from Python SDK for equivalent order_wire
+	// Python code: {"a": 0, "b": True, "p": "40000", "s": "0.001", "r": False, "t": {"limit": {"tif": "Gtc"}}}
+	// Verified with: python3 test_order_wire.py
+	pythonExpectedHex := "86a16100a162c3a170a53430303030a173a5302e303031a172c2a17481a56c696d697481a3746966a3477463"
+
+	t.Logf("Go msgpack output:     %s", goHex)
+	t.Logf("Python expected:       %s", pythonExpectedHex)
+
+	if goHex != pythonExpectedHex {
+		t.Errorf(
+			"Msgpack output does NOT match Python SDK!\nGot:      %s\nExpected: %s",
+			goHex,
+			pythonExpectedHex,
+		)
+	} else {
+		t.Logf("✓ Msgpack field ordering matches Python SDK!")
+	}
 }

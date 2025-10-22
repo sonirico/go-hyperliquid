@@ -1,0 +1,101 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 323
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"p\":\"0.1233\",\"r\":false,\"s\":\"100\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 97
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"resting\":{\"oid\":41569111732}}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "97"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:50 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - ceXU5lHUJvL7FS4U-JRElVXxb1Q7ZC5eNrVXlEztrLTttXobVBbcMA==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.207680535s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 255
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"cancels\":[{\"a\":173,\"o\":41569111732}],\"type\":\"cancel\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 76
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"cancel\",\"data\":{\"statuses\":[\"success\"]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "76"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:50 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 54tW5PvD7foTWereVyE89X21UJqS66zEi09iuqVcPrB7sDhewgxmwQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 609.88081ms

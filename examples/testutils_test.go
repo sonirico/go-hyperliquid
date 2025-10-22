@@ -29,6 +29,6 @@ func newTestExchange(t *testing.T) *hyperliquid.Exchange {
 		vaultAddr,
 		crypto.PubkeyToAddress(testPrivateKey.PublicKey).Hex(),
 		nil,
-		hyperliquid.ExchangeOptDebugMode(),
+		//hyperliquid.ExchangeOptDebugMode(),
 	)
 }

@@ -93,9 +93,15 @@ func newCreateOrderAction(
 			LimitPx:    priceWire,
 			Size:       sizeWire,
 			ReduceOnly: order.ReduceOnly,
-			Cloid:      order.ClientOrderID,
 			OrderType:  newOrderTypeWire(order),
 		}
+
+		// Normalize cloid to match Python SDK format (hex WITH 0x prefix)
+		normalizedCloid, err := normalizeCloid(order.ClientOrderID)
+		if err != nil {
+			return OrderAction{}, fmt.Errorf("invalid cloid for order %d: %w", i, err)
+		}
+		orderWire.Cloid = normalizedCloid
 
 		orderRequests[i] = orderWire
 	}
@@ -199,9 +205,15 @@ func newModifyOrderAction(
 		LimitPx:    priceWire,
 		Size:       sizeWire,
 		ReduceOnly: modifyRequest.Order.ReduceOnly,
-		Cloid:      modifyRequest.Order.ClientOrderID,
 		OrderType:  newOrderTypeWire(modifyRequest.Order),
 	}
+
+	// Normalize cloid to match Python SDK format (hex WITH 0x prefix)
+	normalizedCloid, err := normalizeCloid(modifyRequest.Order.ClientOrderID)
+	if err != nil {
+		return ModifyAction{}, fmt.Errorf("invalid cloid: %w", err)
+	}
+	order.Cloid = normalizedCloid
 
 	return ModifyAction{
 		Type:  "modify",

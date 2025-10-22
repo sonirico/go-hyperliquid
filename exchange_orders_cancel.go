@@ -86,12 +86,22 @@ func (e *Exchange) BulkCancelByCloids(
 	ctx context.Context,
 	requests []CancelOrderRequestByCloid,
 ) (res *APIResponse[CancelOrderResponse], err error) {
-	cancels := slices.Map(requests, func(req CancelOrderRequestByCloid) CancelByCloidWire {
-		return CancelByCloidWire{
-			Asset:    e.info.NameToAsset(req.Coin),
-			ClientID: req.Cloid,
+	cancels := make([]CancelByCloidWire, len(requests))
+	for i, req := range requests {
+		// Normalize cloid to match Python SDK format (hex without 0x prefix)
+		normalizedCloid, err := normalizeCloid(&req.Cloid)
+		if err != nil {
+			return nil, fmt.Errorf("invalid cloid for cancel request %d: %w", i, err)
 		}
-	})
+		if normalizedCloid == nil {
+			return nil, fmt.Errorf("cloid is required for cancel by cloid request %d", i)
+		}
+
+		cancels[i] = CancelByCloidWire{
+			Asset:    e.info.NameToAsset(req.Coin),
+			ClientID: *normalizedCloid,
+		}
+	}
 
 	action := CancelByCloidAction{
 		Type:    "cancelByCloid",

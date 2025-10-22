@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 244
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"cancels\":[{\"a\":173,\"o\":1}],\"type\":\"cancel\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 141
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"cancel\",\"data\":{\"statuses\":[{\"error\":\"Order was never placed, already canceled, or filled. asset=173\"}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "141"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:53 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - f-ZFBIPDE0ByZi04_XP59-RTHVTpTeoeH730BoBDyUVAFW-brU0tCQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 628.02255ms

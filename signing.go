@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/binary"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"strings"
@@ -26,7 +27,8 @@ func addressToBytes(address string) []byte {
 func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) []byte {
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
-	enc.SetSortMapKeys(true)
+	// CRITICAL: Do NOT use SetSortMapKeys(true) - Python preserves insertion order
+	// Structs in Go will serialize fields in the order they are defined
 	enc.UseCompactInts(true)
 
 	err := enc.Encode(action)
@@ -64,7 +66,10 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	// Return keccak256 hash
 	hash := crypto.Keccak256(data)
-	// fmt.Printf("go action hash: %s\n", hex.EncodeToString(hash))
+	// fmt.Printf("=== ACTION HASH DEBUG ===\n")
+	// fmt.Printf("Msgpack data: %s\n", hex.EncodeToString(data))
+	// fmt.Printf("Action hash: %s\n", hex.EncodeToString(hash))
+	// fmt.Printf("========================\n")
 	return hash
 }
 
@@ -142,11 +147,87 @@ func signInner(
 	s := new(big.Int).SetBytes(signature[32:64])
 	v := int(signature[64]) + 27
 
+	// DEBUG: Log signature details
+	// fmt.Printf("DEBUG signInner: v=%d, r=%s, s=%s\n", v, hexutil.EncodeBig(r), hexutil.EncodeBig(s))
+
 	return SignatureResult{
 		R: hexutil.EncodeBig(r),
 		S: hexutil.EncodeBig(s),
 		V: v,
 	}, nil
+}
+
+// structToOrderedMap converts a struct to a map preserving JSON tag order
+// This is needed for EIP-712 signing where field order matters
+func structToOrderedMap(v any) (map[string]any, error) {
+	// First marshal to JSON (preserves struct field order)
+	jsonBytes, err := json.Marshal(v)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal struct: %w", err)
+	}
+
+	// Then unmarshal to map
+	var result map[string]any
+	if err := json.Unmarshal(jsonBytes, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal to map: %w", err)
+	}
+
+	return result, nil
+}
+
+// SignUserSignedAction signs actions that require direct EIP-712 signing
+// (e.g., approveAgent, approveBuilderFee, convertToMultiSigUser)
+// The action struct must have JSON tags for field names
+func SignUserSignedAction(
+	privateKey *ecdsa.PrivateKey,
+	actionStruct any,
+	payloadTypes []apitypes.Type,
+	primaryType string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	// Convert struct to map
+	action, err := structToOrderedMap(actionStruct)
+	if err != nil {
+		return SignatureResult{}, err
+	}
+
+	// Remove fields that are only for HTTP body, not for EIP-712 signing
+	delete(action, "type")
+	delete(action, "signatureChainId") // This field is in the struct but NOT in payloadTypes
+
+	// hyperliquidChain should already be in the action struct
+	// If it's not, we set it based on isMainnet
+	if _, exists := action["hyperliquidChain"]; !exists {
+		if isMainnet {
+			action["hyperliquidChain"] = "Mainnet"
+		} else {
+			action["hyperliquidChain"] = "Testnet"
+		}
+	}
+
+	// Create typed data
+	chainId := math.HexOrDecimal256(*big.NewInt(0x66eee))
+	typedData := apitypes.TypedData{
+		Domain: apitypes.TypedDataDomain{
+			ChainId:           &chainId,
+			Name:              "HyperliquidSignTransaction",
+			Version:           "1",
+			VerifyingContract: "0x0000000000000000000000000000000000000000",
+		},
+		Types: apitypes.Types{
+			primaryType: payloadTypes,
+			"EIP712Domain": []apitypes.Type{
+				{Name: "name", Type: "string"},
+				{Name: "version", Type: "string"},
+				{Name: "chainId", Type: "uint256"},
+				{Name: "verifyingContract", Type: "address"},
+			},
+		},
+		PrimaryType: primaryType,
+		Message:     action,
+	}
+
+	return signInner(privateKey, typedData)
 }
 
 func SignL1Action(
@@ -320,26 +401,53 @@ func SignWithdrawFromBridgeAction(
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
 }
 
-type signAgent struct {
-	Type         string `msgpack:"type"`
-	AgentAddress string `msgpack:"agentAddress"`
-	AgentName    string `msgpack:"agentName"`
+// signApproveAgentAction is the struct used for signing agent approval
+// It has both JSON tags (for EIP-712) and msgpack tags (for request body)
+type signApproveAgentAction struct {
+	Type             string `json:"type"             msgpack:"type"`
+	HyperliquidChain string `json:"hyperliquidChain" msgpack:"hyperliquidChain"`
+	AgentAddress     string `json:"agentAddress"     msgpack:"agentAddress"`
+	AgentName        string `json:"agentName"        msgpack:"agentName"`
+	Nonce            int64  `json:"nonce"            msgpack:"nonce"`
 }
 
-// SignAgent signs agent approval action
+// SignAgent signs agent approval action using EIP-712 direct signing
 func SignAgent(
 	privateKey *ecdsa.PrivateKey,
 	agentAddress, agentName string,
-	timestamp int64,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signAgent{
-		Type:         "approveAgent",
-		AgentAddress: agentAddress,
-		AgentName:    agentName,
+	hyperliquidChain := "Testnet"
+	if isMainnet {
+		hyperliquidChain = "Mainnet"
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	action := signApproveAgentAction{
+		Type:             "approveAgent",
+		HyperliquidChain: hyperliquidChain,
+		AgentAddress:     agentAddress,
+		AgentName:        agentName,
+		Nonce:            nonce,
+	}
+
+	// payload_types from Python: only declares fields that are in the original action
+	// signatureChainId and hyperliquidChain are added by SignUserSignedAction
+	// but they're NOT declared in payloadTypes (they're added to message dynamically)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "agentAddress", Type: "address"},
+		{Name: "agentName", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:ApproveAgent",
+		isMainnet,
+	)
 }
 
 type signApproveBuilderFee struct {

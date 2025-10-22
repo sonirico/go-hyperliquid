@@ -72,6 +72,10 @@ func (e *Exchange) nextNonce() int64 {
 	}
 }
 
+func (e *Exchange) Info() *Info {
+	return e.info
+}
+
 // SetExpiresAfter sets the expiration time for actions
 // If expiresAfter is nil, actions will not have an expiration time
 // If expiresAfter is set, actions will include this expiration nonce
@@ -143,6 +147,15 @@ func (e *Exchange) postAction(
 	// Add expiration time if set
 	if e.expiresAfter != nil {
 		payload["expiresAfter"] = *e.expiresAfter
+	}
+
+	// Debug logging
+	if e.debug {
+		//if jsonPayload, err := json.MarshalIndent(payload, "", "  "); err == nil {
+		//	println("=== OUTGOING EXCHANGE PAYLOAD ===")
+		//	println(string(jsonPayload))
+		//	println("=================================")
+		//}
 	}
 
 	return e.client.post(ctx, "/exchange", payload)

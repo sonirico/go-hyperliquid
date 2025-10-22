@@ -1,0 +1,101 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 364
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"c\":\"0x285ad26a251f390c83d065af51e3f8d9\",\"p\":\"0.1233\",\"r\":false,\"s\":\"100\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 142
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"resting\":{\"oid\":41569108691,\"cloid\":\"0x285ad26a251f390c83d065af51e3f8d9\"}}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "142"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:46 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - xMWe-mHKMOcKNNl55ZMl-b9QILPVSQEXXwOsTEkEtISn8yajWh4dyQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.34753669s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 294
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"cancels\":[{\"asset\":173,\"cloid\":\"0x285ad26a251f390c83d065af51e3f8d9\"}],\"type\":\"cancelByCloid\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 76
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"cancel\",\"data\":{\"statuses\":[\"success\"]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "76"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:46 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - BkZ3g2OepmV27I7cp6WKnRcFFqREVpV8lPREPSik-ly2tFyiBDzDBw==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 731.139038ms

@@ -3243,6 +3243,18 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid32(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
+		case "signatureChainId":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SignatureChainId = string(in.String())
+			}
+		case "hyperliquidChain":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.HyperliquidChain = string(in.String())
+			}
 		case "agentAddress":
 			if in.IsNull() {
 				in.Skip()
@@ -3287,6 +3299,16 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid32(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"signatureChainId\":"
+		out.RawString(prefix)
+		out.String(string(in.SignatureChainId))
+	}
+	{
+		const prefix string = ",\"hyperliquidChain\":"
+		out.RawString(prefix)
+		out.String(string(in.HyperliquidChain))
 	}
 	{
 		const prefix string = ",\"agentAddress\":"

@@ -1,0 +1,150 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 323
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"p\":\"0.1233\",\"r\":false,\"s\":\"100\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 97
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"resting\":{\"oid\":41569113380}}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "97"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:52 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - HjC9DJrgPTCaHcsL2Suvj4Bl0E--mskWZtIYWTrmxscSsP25ez3AzA==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.26483465s
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 255
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"cancels\":[{\"a\":173,\"o\":41569113380}],\"type\":\"cancel\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 76
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"cancel\",\"data\":{\"statuses\":[\"success\"]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "76"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 17:59:52 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 e3609eb47ff3dfeeb16c2475fef64e28.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - mW9RxaNTyYnx0JJI_f--LOiZ94ls2p4pgwF8L1udcN7LuruHZkyVow==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 519.24944ms
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 255
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"cancels\":[{\"a\":173,\"o\":41569113380}],\"type\":\"cancel\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 141
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"cancel\",\"data\":{\"statuses\":[{\"error\":\"Order was never placed, already canceled, or filled. asset=173\"}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "141"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 18:15:30 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 187faa75a3ce9ee109ca3347a684b1c2.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - o1oCj6ivc3yaVnod_D2Sv20WryXWUlSUOQ9RJimIbNUvGvdiy-gkcw==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 446.780754ms
