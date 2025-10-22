@@ -6,13 +6,11 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/joho/godotenv"
-
 	"github.com/sonirico/go-hyperliquid"
 )
 
 func TestCancelOrder(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 
 	// First place an order to cancel
@@ -51,7 +49,7 @@ func TestCancelOrder(t *testing.T) {
 }
 
 func TestCancelByCloid(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 
 	// Generate a random cloid

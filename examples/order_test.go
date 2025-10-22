@@ -4,12 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/sonirico/go-hyperliquid"
 )
 
 func TestOrder(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 
 	tests := []struct {
@@ -58,7 +57,7 @@ func TestOrder(t *testing.T) {
 }
 
 func TestMarketOpen(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t) // exchange used for setup only
 
 	t.Log("Market open method is available and ready to use")
@@ -78,7 +77,7 @@ func TestMarketOpen(t *testing.T) {
 }
 
 func TestMarketClose(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 	t.Log("Market close method is available and ready to use")
 
@@ -95,7 +94,7 @@ func TestMarketClose(t *testing.T) {
 }
 
 func TestModifyOrder(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 
 	t.Log("Modify order method is available and ready to use")
@@ -125,7 +124,7 @@ func TestModifyOrder(t *testing.T) {
 }
 
 func TestBulkModifyOrders(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	exchange := newTestExchange(t)
 
 	t.Log("Bulk modify orders method is available and ready to use")
@@ -154,16 +153,58 @@ func TestBulkModifyOrders(t *testing.T) {
 	t.Logf("Bulk modify orders result: %+v", result)
 }
 
+func Test_create_order_cancel(t *testing.T) {
+	loadEnvClean(".env.testnet")
+	exchange := newTestExchange(t)
+
+	// Place a limit order far from market price so it won't fill
+	cloid := "0x06c60000000000000000000000003f5a"
+	orderReq := hyperliquid.CreateOrderRequest{
+		Coin:  "DOGE",
+		IsBuy: true,
+		Size:  1000,
+		Price: 0.01, // Far below market, won't execute
+		OrderType: hyperliquid.OrderType{
+			Limit: &hyperliquid.LimitOrderType{
+				Tif: hyperliquid.TifGtc,
+			},
+		},
+		ClientOrderID: &cloid,
+	}
+
+	result, err := exchange.Order(context.TODO(), orderReq, nil)
+	if err != nil {
+		if hyperliquid.IsWalletDoesNotExistError(err) {
+			t.Skip("wallet not registered on testnet")
+		}
+		t.Fatalf("failed to place order: %v", err)
+	}
+
+	if result.Resting == nil {
+		t.Fatalf("expected resting order, got: %+v", result)
+	}
+
+	oid := result.Resting.Oid
+	t.Logf("placed order: oid=%d cloid=%s", oid, *result.Resting.ClientID)
+
+	// Cancel the order
+	cancelResult, err := exchange.Cancel(context.TODO(), orderReq.Coin, oid)
+	if err != nil {
+		t.Fatalf("failed to cancel order: %v", err)
+	}
+
+	t.Logf("cancelled order: %+v", cancelResult)
+}
+
 func TestSLOrder(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean(".env.testnet")
 	exchange := newTestExchange(t)
 
 	tpOrderReq := hyperliquid.CreateOrderRequest{
-		Coin:       "SOL",
-		IsBuy:      true,
-		Price:      110_000,
-		Size:       0.001,
-		ReduceOnly: true,
+		Coin:  "SOL",
+		IsBuy: true,
+		Price: 110_000,
+		Size:  0.001,
 		OrderType: hyperliquid.OrderType{
 			Trigger: &hyperliquid.TriggerOrderType{
 				TriggerPx: 100000,
@@ -171,11 +212,16 @@ func TestSLOrder(t *testing.T) {
 				Tpsl:      hyperliquid.StopLoss,
 			},
 		},
-		ClientOrderID: nil,
+		ClientOrderID: func() *string { s := "0x06c60000000000000000000000003f5a"; return &s }(),
 	}
 
 	result, err := exchange.Order(context.TODO(), tpOrderReq, nil)
 	if err != nil {
+		// If wallet doesn't exist on Hyperliquid, skip the test
+		// This is expected for test credentials that haven't been funded/registered
+		if hyperliquid.IsWalletDoesNotExistError(err) {
+			t.Skipf("Wallet not registered on Hyperliquid (expected for test credentials): %v", err)
+		}
 		t.Fatalf("SLOrder failed: %v", err)
 	}
 

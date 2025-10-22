@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/joho/godotenv"
 	"github.com/sonirico/vago/ent"
 	"github.com/stretchr/testify/require"
 
@@ -174,10 +173,10 @@ func TestOrders(t *testing.T) {
 		record       bool
 	}
 
-	godotenv.Overload(".env.testnet")
+	loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	t.Logf("Using private key: %s", key)
+	// t.Logf("Using private key: %s", key)
 	invalidKey := "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899"
 
 	exchange, err := newExchange(

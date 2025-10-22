@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/joho/godotenv"
 	"github.com/sonirico/vago/ent"
 	"github.com/stretchr/testify/require"
 )
@@ -24,10 +23,10 @@ func TestCancelByCloid(t *testing.T) {
 		record  bool
 	}
 
-	godotenv.Overload(".env.testnet")
+	loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	t.Logf("Using private key: %s", key)
+	// t.Logf("Using private key: %s", key)
 
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)
@@ -105,14 +104,13 @@ func TestCancel(t *testing.T) {
 		record       bool
 	}
 
-	godotenv.Overload(".env.testnet")
+	loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	t.Logf("Using private key: %s", key)
-
+	// t.Logf("Using private key: %s", key)
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)
-	t.Logf("Exchange wallet address: %s", exchange.accountAddr)
+	// t.Logf("Exchange wallet address: %s", exchange.accountAddr)
 
 	cases := []tc{
 		{

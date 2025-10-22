@@ -31,17 +31,17 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid(in *jlexer.Lexer, out 
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		switch key {
-		case "triggerPx":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.TriggerPx = float64(in.Float64Str())
-			}
 		case "isMarket":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				out.IsMarket = bool(in.Bool())
+			}
+		case "triggerPx":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TriggerPx = string(in.String())
 			}
 		case "tpsl":
 			if in.IsNull() {
@@ -64,14 +64,14 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid(out *jwriter.Writer, i
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"triggerPx\":"
+		const prefix string = ",\"isMarket\":"
 		out.RawString(prefix[1:])
-		out.Float64Str(float64(in.TriggerPx))
+		out.Bool(bool(in.IsMarket))
 	}
 	{
-		const prefix string = ",\"isMarket\":"
+		const prefix string = ",\"triggerPx\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.IsMarket))
+		out.String(string(in.TriggerPx))
 	}
 	{
 		const prefix string = ",\"tpsl\":"

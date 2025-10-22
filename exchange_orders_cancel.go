@@ -88,7 +88,6 @@ func (e *Exchange) BulkCancelByCloids(
 ) (res *APIResponse[CancelOrderResponse], err error) {
 	cancels := make([]CancelByCloidWire, len(requests))
 	for i, req := range requests {
-		// Normalize cloid to match Python SDK format (hex without 0x prefix)
 		normalizedCloid, err := normalizeCloid(&req.Cloid)
 		if err != nil {
 			return nil, fmt.Errorf("invalid cloid for cancel request %d: %w", i, err)

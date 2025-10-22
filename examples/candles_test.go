@@ -6,12 +6,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/sonirico/go-hyperliquid"
 )
 
 func TestCandlesSnapshot(t *testing.T) {
-	godotenv.Overload()
+	loadEnvClean()
 	info := hyperliquid.NewInfo(context.Background(), hyperliquid.MainnetAPIURL, true, nil, nil)
 
 	now := time.Now()

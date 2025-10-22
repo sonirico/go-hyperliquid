@@ -135,9 +135,11 @@ type orderWireTypeLimit struct {
 }
 
 type orderWireTypeTrigger struct {
-	TriggerPx float64 `json:"triggerPx,string" msgpack:"triggerPx"`
-	IsMarket  bool    `json:"isMarket"         msgpack:"isMarket"`
-	Tpsl      Tpsl    `json:"tpsl"             msgpack:"tpsl"` // "tp" or "sl"
+	// CRITICAL: Field order MUST match Python SDK insertion order: isMarket, triggerPx, tpsl
+	// See hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_type_to_wire (lines 151-154)
+	IsMarket  bool   `json:"isMarket"  msgpack:"isMarket"`  // 1st
+	TriggerPx string `json:"triggerPx" msgpack:"triggerPx"` // 2nd - Must be string for msgpack serialization
+	Tpsl      Tpsl   `json:"tpsl"      msgpack:"tpsl"`      // 3rd - "tp" or "sl"
 }
 
 // OrderAction represents the order action with deterministic field ordering

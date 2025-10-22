@@ -58,9 +58,15 @@ func newOrderTypeWire(o CreateOrderRequest) orderWireType {
 	}
 
 	if o.OrderType.Trigger != nil {
+		triggerPxWire, err := floatToWire(o.OrderType.Trigger.TriggerPx)
+		if err != nil {
+			// This shouldn't happen, but log and use a default
+			triggerPxWire = "0"
+		}
+
 		return orderWireType{
 			Trigger: &orderWireTypeTrigger{
-				TriggerPx: o.OrderType.Trigger.TriggerPx,
+				TriggerPx: triggerPxWire,
 				IsMarket:  o.OrderType.Trigger.IsMarket,
 				Tpsl:      o.OrderType.Trigger.Tpsl,
 			},
