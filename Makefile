@@ -16,7 +16,7 @@ help: ## Display this help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 test: ## Run tests (excluding examples)
-	$(GOTEST) -v -race $(shell go list ./... | grep -v examples)
+	$(GOTEST) -v -race -failfast $(shell go list ./... | grep -v examples)
 
 test-verbose: ## Run tests with verbose output
 	$(GOTEST) -v -race ./...

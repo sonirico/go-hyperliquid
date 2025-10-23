@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 323
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"p\":\"0.1233\",\"r\":false,\"s\":\"100\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 97
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"resting\":{\"oid\":41545810396}}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "97"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 11:45:01 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 3e64b4bceb49543044d7ca6510e86e3a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - e5AegR3EtLSg9ufgN9GsX6H_Y6-7ISW7j66jY3F0Ao5CsHa-XFz6GQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.841277963s

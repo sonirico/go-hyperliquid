@@ -144,9 +144,9 @@ type LimitOrderType struct {
 }
 
 type TriggerOrderType struct {
-	TriggerPx float64 `json:"triggerPx"`
-	IsMarket  bool    `json:"isMarket"`
-	Tpsl      Tpsl    `json:"tpsl"` // "tp" or "sl"
+	TriggerPx float64 `json:"triggerPx" msgpack:"triggerPx"`
+	IsMarket  bool    `json:"isMarket"  msgpack:"isMarket"`
+	Tpsl      Tpsl    `json:"tpsl"      msgpack:"tpsl"` // "tp" or "sl"
 }
 
 type BuilderInfo struct {

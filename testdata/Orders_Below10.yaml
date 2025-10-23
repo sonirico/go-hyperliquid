@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 322
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"p\":\"0.2233\",\"r\":false,\"s\":\"25\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 125
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"error\":\"Order must have minimum value of $10. asset=173\"}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "125"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 11:45:00 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 3e64b4bceb49543044d7ca6510e86e3a.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - Jj6tc4IPMsoxhuE6k_RsGUYBEtQVk7BFsVkI65T0camzUfgwJI6FaQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.495553121s

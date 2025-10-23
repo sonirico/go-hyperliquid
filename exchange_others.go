@@ -740,23 +740,37 @@ func (e *Exchange) ApproveAgent(
 	agentAddress := crypto.PubkeyToAddress(privateKey.PublicKey).Hex()
 	nonce := e.nextNonce()
 
-	action := ApproveAgentAction{
-		Type:         "approveAgent",
-		AgentAddress: agentAddress,
-		AgentName:    name,
-		Nonce:        nonce,
+	agentName := ""
+	if name != nil {
+		agentName = *name
 	}
 
-	sig, err := SignL1Action(
+	// Use SignAgent which does EIP-712 signing (not L1Action)
+	sig, err := SignAgent(
 		e.privateKey,
-		action,
-		e.vault,
+		agentAddress,
+		agentName,
 		nonce,
-		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
 		return nil, "", err
+	}
+
+	// Build action for submission
+	// Note: We send the pointer version for omitempty behavior in JSON/msgpack
+	hyperliquidChain := "Testnet"
+	if e.client.baseURL == MainnetAPIURL {
+		hyperliquidChain = "Mainnet"
+	}
+
+	action := ApproveAgentAction{
+		Type:             "approveAgent",
+		SignatureChainId: "0x66eee",
+		HyperliquidChain: hyperliquidChain,
+		AgentAddress:     agentAddress,
+		AgentName:        name,
+		Nonce:            nonce,
 	}
 
 	resp, err := e.postAction(ctx, action, sig, nonce)

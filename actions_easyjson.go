@@ -31,17 +31,17 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid(in *jlexer.Lexer, out 
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		switch key {
-		case "triggerPx":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.TriggerPx = float64(in.Float64Str())
-			}
 		case "isMarket":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				out.IsMarket = bool(in.Bool())
+			}
+		case "triggerPx":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TriggerPx = string(in.String())
 			}
 		case "tpsl":
 			if in.IsNull() {
@@ -64,14 +64,14 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid(out *jwriter.Writer, i
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"triggerPx\":"
+		const prefix string = ",\"isMarket\":"
 		out.RawString(prefix[1:])
-		out.Float64Str(float64(in.TriggerPx))
+		out.Bool(bool(in.IsMarket))
 	}
 	{
-		const prefix string = ",\"isMarket\":"
+		const prefix string = ",\"triggerPx\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.IsMarket))
+		out.String(string(in.TriggerPx))
 	}
 	{
 		const prefix string = ",\"tpsl\":"
@@ -3243,6 +3243,18 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid32(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
+		case "signatureChainId":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SignatureChainId = string(in.String())
+			}
+		case "hyperliquidChain":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.HyperliquidChain = string(in.String())
+			}
 		case "agentAddress":
 			if in.IsNull() {
 				in.Skip()
@@ -3287,6 +3299,16 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid32(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"signatureChainId\":"
+		out.RawString(prefix)
+		out.String(string(in.SignatureChainId))
+	}
+	{
+		const prefix string = ",\"hyperliquidChain\":"
+		out.RawString(prefix)
+		out.String(string(in.HyperliquidChain))
 	}
 	{
 		const prefix string = ",\"agentAddress\":"

@@ -29,5 +29,7 @@ go.work
 *.log
 
 # Environment variables
+.env.*
 .env
+!.env.example
 __debug*

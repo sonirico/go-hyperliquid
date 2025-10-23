@@ -1,6 +1,9 @@
 package hyperliquid
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 //go:generate easyjson -all
 
@@ -21,4 +24,14 @@ type ValidationError struct {
 
 func (e ValidationError) Error() string {
 	return fmt.Sprintf("validation error on field %s: %s", e.Field, e.Message)
+}
+
+// IsWalletDoesNotExistError checks if the error is a "wallet does not exist" error from the API
+func IsWalletDoesNotExistError(err error) bool {
+	if err == nil {
+		return false
+	}
+	errMsg := strings.ToLower(err.Error())
+	return strings.Contains(errMsg, "does not exist") &&
+		(strings.Contains(errMsg, "wallet") || strings.Contains(errMsg, "user"))
 }

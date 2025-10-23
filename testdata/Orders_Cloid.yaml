@@ -1,0 +1,150 @@
+---
+version: 2
+interactions:
+- id: 0
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 361
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"c\":\"06c60000000000000000000000003f5a\",\"p\":\"0.1233\",\"r\":false,\"s\":\"45\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 107
+    body: "{\"status\":\"err\",\"response\":\"User or API Wallet 0x281abb829ea0b0291ceaa3b14b5b5d893070e8d5 does not exist.\"}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "107"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 11:53:29 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 62db9fb3b90983f59ae41bc4d453e556.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - xEie8R9VIkjw0-8q8SYKyNZ0FMHVTSM25NLFbeOJgAHB3DCXAwRLqQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 218.36981ms
+- id: 1
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 363
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"c\":\"0x06c60000000000000000000000003f5a\",\"p\":\"0.1233\",\"r\":false,\"s\":\"45\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 125
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"error\":\"Order must have minimum value of $10. asset=173\"}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "125"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 12:09:43 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 2aa171e9b9175fc3656e712b60561a24.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - l7zMel7wgAJ1XaoCTUQNJ3vT7d8Rjz7BsXvQ-28CLVoBgU4efDGsUQ==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.371674659s
+- id: 2
+  request:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 363
+    host: api.hyperliquid-testnet.xyz
+    body: "{\"action\":{\"grouping\":\"na\",\"orders\":[{\"a\":173,\"b\":true,\"c\":\"0x06c60000000000000000000000003f5a\",\"p\":\"0.1233\",\"r\":false,\"s\":\"100\",\"t\":{\"limit\":{\"tif\":\"Gtc\"}}}],\"type\":\"order\"}}"
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.hyperliquid-testnet.xyz/exchange
+    method: POST
+  response:
+    proto: HTTP/1.1
+    proto_major: 1
+    proto_minor: 1
+    content_length: 142
+    body: "{\"status\":\"ok\",\"response\":{\"type\":\"order\",\"data\":{\"statuses\":[{\"resting\":{\"oid\":41547028680,\"cloid\":\"0x06c60000000000000000000000003f5a\"}}]}}}"
+    headers:
+      Access-Control-Allow-Origin:
+      - "*"
+      Access-Control-Expose-Headers:
+      - "*"
+      Connection:
+      - keep-alive
+      Content-Length:
+      - "142"
+      Content-Type:
+      - application/json
+      Date:
+      - Wed, 22 Oct 2025 12:10:11 GMT
+      Server:
+      - nginx/1.26.2
+      Vary:
+      - origin
+      - access-control-request-method
+      - access-control-request-headers
+      Via:
+      - 1.1 11dbcac5e035be02cf80e51d1841e116.cloudfront.net (CloudFront)
+      X-Amz-Cf-Id:
+      - 4nczeicI5vGBbTt1wxxYhSaEbelttNAjhp3lPPE8xfmm2aBFEHPj9g==
+      X-Amz-Cf-Pop:
+      - MAD56-P1
+      X-Cache:
+      - Miss from cloudfront
+    status: 200 OK
+    code: 200
+    duration: 1.309152799s

@@ -113,14 +113,16 @@ type UpdateIsolatedMarginAction struct {
 }
 
 // OrderWire represents the wire format for orders with deterministic field ordering
+// CRITICAL: Field order MUST exactly match Python SDK insertion order: a, b, p, s, r, t, c
+// See hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_request_to_order_wire
 type OrderWire struct {
-	Asset      int           `json:"a"           msgpack:"a"`
-	IsBuy      bool          `json:"b"           msgpack:"b"`
-	LimitPx    string        `json:"p"           msgpack:"p"`
-	Size       string        `json:"s"           msgpack:"s"`
-	ReduceOnly bool          `json:"r"           msgpack:"r"`
-	OrderType  orderWireType `json:"t"           msgpack:"t"`
-	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"`
+	Asset      int           `json:"a"           msgpack:"a"`           // 1st
+	IsBuy      bool          `json:"b"           msgpack:"b"`           // 2nd
+	LimitPx    string        `json:"p"           msgpack:"p"`           // 3rd
+	Size       string        `json:"s"           msgpack:"s"`           // 4th
+	ReduceOnly bool          `json:"r"           msgpack:"r"`           // 5th
+	OrderType  orderWireType `json:"t"           msgpack:"t"`           // 6th
+	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"` // 7th (optional)
 }
 
 type orderWireType struct {
@@ -133,12 +135,15 @@ type orderWireTypeLimit struct {
 }
 
 type orderWireTypeTrigger struct {
-	TriggerPx float64 `json:"triggerPx,string" msgpack:"triggerPx"`
-	IsMarket  bool    `json:"isMarket"         msgpack:"isMarket"`
-	Tpsl      Tpsl    `json:"tpsl"             msgpack:"tpsl"` // "tp" or "sl"
+	// CRITICAL: Field order MUST match Python SDK insertion order: isMarket, triggerPx, tpsl
+	// See hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_type_to_wire (lines 151-154)
+	IsMarket  bool   `json:"isMarket"  msgpack:"isMarket"`  // 1st
+	TriggerPx string `json:"triggerPx" msgpack:"triggerPx"` // 2nd - Must be string for msgpack serialization
+	Tpsl      Tpsl   `json:"tpsl"      msgpack:"tpsl"`      // 3rd - "tp" or "sl"
 }
 
 // OrderAction represents the order action with deterministic field ordering
+// CRITICAL: Field order MUST match Python SDK insertion order for msgpack hash consistency
 type OrderAction struct {
 	Type     string       `json:"type"              msgpack:"type"`
 	Orders   []OrderWire  `json:"orders"            msgpack:"orders"`
@@ -220,10 +225,12 @@ type WithdrawFromBridgeAction struct {
 
 // ApproveAgentAction represents approve agent action
 type ApproveAgentAction struct {
-	Type         string  `json:"type"                msgpack:"type"`
-	AgentAddress string  `json:"agentAddress"        msgpack:"agentAddress"`
-	AgentName    *string `json:"agentName,omitempty" msgpack:"agentName,omitempty"`
-	Nonce        int64   `json:"nonce"               msgpack:"nonce"`
+	Type             string  `json:"type"                msgpack:"type"`
+	SignatureChainId string  `json:"signatureChainId"    msgpack:"signatureChainId"`
+	HyperliquidChain string  `json:"hyperliquidChain"    msgpack:"hyperliquidChain"`
+	AgentAddress     string  `json:"agentAddress"        msgpack:"agentAddress"`
+	AgentName        *string `json:"agentName,omitempty" msgpack:"agentName,omitempty"`
+	Nonce            int64   `json:"nonce"               msgpack:"nonce"`
 }
 
 // ApproveBuilderFeeAction represents approve builder fee action
