@@ -13,7 +13,7 @@ const (
 
 type Info struct {
 	debug          bool
-	client         *Client
+	client         *client
 	coinToAsset    map[string]int
 	nameToCoin     map[string]string
 	assetToDecimal map[int]int
@@ -39,10 +39,10 @@ func NewInfo(
 	}
 
 	if info.debug {
-		info.clientOpts = append(info.clientOpts, ClientOptDebugMode())
+		info.clientOpts = append(info.clientOpts, clientOptDebugMode())
 	}
 
-	info.client = NewClient(baseURL, info.clientOpts...)
+	info.client = newClient(baseURL, info.clientOpts...)
 
 	if meta == nil {
 		var err error

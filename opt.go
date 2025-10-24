@@ -13,7 +13,7 @@ func (o Opt[T]) Apply(opt *T) {
 }
 
 type (
-	ClientOpt   = Opt[Client]
+	ClientOpt   = Opt[client]
 	ExchangeOpt = Opt[Exchange]
 	InfoOpt     = Opt[Info]
 	WsOpt       = Opt[WebsocketClient]
@@ -42,8 +42,8 @@ func ExchangeOptDebugMode() ExchangeOpt {
 	}
 }
 
-func ClientOptDebugMode() ClientOpt {
-	return func(c *Client) {
+func clientOptDebugMode() ClientOpt {
+	return func(c *client) {
 		c.debug = true
 		c.logger = lol.NewZerolog(
 			lol.WithLevel(lol.LevelTrace),

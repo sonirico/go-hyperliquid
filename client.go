@@ -23,19 +23,19 @@ const (
 	httpErrorStatusCode = 400
 )
 
-type Client struct {
+type client struct {
 	logger     lol.Logger
 	debug      bool
 	baseURL    string
 	httpClient *http.Client
 }
 
-func NewClient(baseURL string, opts ...ClientOpt) *Client {
+func newClient(baseURL string, opts ...ClientOpt) *client {
 	if baseURL == "" {
 		baseURL = MainnetAPIURL
 	}
 
-	cli := &Client{
+	cli := &client{
 		baseURL:    baseURL,
 		httpClient: new(http.Client),
 	}
@@ -47,7 +47,7 @@ func NewClient(baseURL string, opts ...ClientOpt) *Client {
 	return cli
 }
 
-func (c *Client) post(ctx context.Context, path string, payload any) ([]byte, error) {
+func (c *client) post(ctx context.Context, path string, payload any) ([]byte, error) {
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal payload: %w", err)

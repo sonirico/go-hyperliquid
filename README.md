@@ -81,9 +81,6 @@ import (
 )
 
 func main() {
-    // Initialize client
-    client := hyperliquid.NewClient(hyperliquid.MainnetAPIURL)
-
     // For trading, create an Exchange with your private key
     privateKey, _ := crypto.HexToECDSA("your-private-key")
     exchange := hyperliquid.NewExchange(

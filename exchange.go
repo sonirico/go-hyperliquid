@@ -10,7 +10,7 @@ import (
 
 type Exchange struct {
 	debug        bool
-	client       *Client
+	client       *client
 	privateKey   *ecdsa.PrivateKey
 	vault        string
 	accountAddr  string
@@ -42,11 +42,11 @@ func NewExchange(
 	}
 
 	if ex.debug {
-		ex.clientOpts = append(ex.clientOpts, ClientOptDebugMode())
+		ex.clientOpts = append(ex.clientOpts, clientOptDebugMode())
 		ex.infoOpts = append(ex.infoOpts, InfoOptDebugMode())
 	}
 
-	ex.client = NewClient(baseURL, ex.clientOpts...)
+	ex.client = newClient(baseURL, ex.clientOpts...)
 	ex.info = NewInfo(ctx, baseURL, true, meta, spotMeta, ex.infoOpts...)
 
 	return ex
