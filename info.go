@@ -289,6 +289,22 @@ func (i *Info) UserFills(ctx context.Context, address string) ([]Fill, error) {
 	return result, nil
 }
 
+func (i *Info) HistoricalOrders(ctx context.Context, address string) ([]OrderQueryResponse, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "historicalOrders",
+		"user": address,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch historical orders: %w", err)
+	}
+
+	var result []OrderQueryResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal historical orders: %w", err)
+	}
+	return result, nil
+}
+
 func (i *Info) UserFillsByTime(
 	ctx context.Context,
 	address string,

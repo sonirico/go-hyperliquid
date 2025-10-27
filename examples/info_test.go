@@ -21,3 +21,13 @@ func TestInfo_UserState(t *testing.T) {
 	require.NoError(t, err)
 	log.Printf("info response: %+v", resp)
 }
+
+func TestInfo_HistoricalOrders(t *testing.T) {
+	loadEnvClean()
+	info := newTestInfo(t)
+	address := os.Getenv("HL_WALLET_ADDRESS")
+
+	resp, err := info.HistoricalOrders(context.TODO(), address)
+	require.NoError(t, err)
+	log.Printf("info response: %+v", resp)
+}

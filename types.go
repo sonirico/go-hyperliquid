@@ -260,21 +260,22 @@ const (
 )
 
 type QueriedOrder struct {
-	Coin             string    `json:"coin"`
-	Side             OrderSide `json:"side"`
-	LimitPx          string    `json:"limitPx"`
-	Sz               string    `json:"sz"`
-	Oid              int64     `json:"oid"`
-	Timestamp        int64     `json:"timestamp"`
-	TriggerCondition string    `json:"triggerCondition"`
-	IsTrigger        bool      `json:"isTrigger"`
-	TriggerPx        string    `json:"triggerPx"`
-	IsPositionTpsl   bool      `json:"isPositionTpsl"`
-	ReduceOnly       bool      `json:"reduceOnly"`
-	OrderType        string    `json:"orderType"`
-	OrigSz           string    `json:"origSz"`
-	Tif              Tif       `json:"tif"`
-	Cloid            *string   `json:"cloid"`
+	Coin             string         `json:"coin"`
+	Side             OrderSide      `json:"side"`
+	LimitPx          string         `json:"limitPx"`
+	Sz               string         `json:"sz"`
+	Oid              int64          `json:"oid"`
+	Timestamp        int64          `json:"timestamp"`
+	TriggerCondition string         `json:"triggerCondition"`
+	IsTrigger        bool           `json:"isTrigger"`
+	TriggerPx        string         `json:"triggerPx"`
+	Children         []QueriedOrder `json:"children"`
+	IsPositionTpsl   bool           `json:"isPositionTpsl"`
+	ReduceOnly       bool           `json:"reduceOnly"`
+	OrderType        string         `json:"orderType"`
+	OrigSz           string         `json:"origSz"`
+	Tif              Tif            `json:"tif"`
+	Cloid            *string        `json:"cloid"`
 }
 
 type OrderQueryResponse struct {
