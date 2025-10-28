@@ -4,6 +4,8 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/stretchr/testify/require"
 )
 
@@ -262,7 +264,11 @@ func TestQueryOrderByOid(t *testing.T) {
 			oid:          141622259364,
 			expected: &OrderQueryResult{
 				Status: OrderQueryStatusError,
-				Order:  OrderQueryResponse{},
+				Order: OrderQueryResponse{
+					Order: QueriedOrder{
+						Children: []QueriedOrder{},
+					},
+				},
 			},
 			record: false,
 		},
@@ -375,10 +381,13 @@ func TestQueryOrderByOid(t *testing.T) {
 					require.Equal(tt, tc.expected.Order.Status, res.Order.Status)
 					require.Equal(tt, tc.expected.Order.StatusTimestamp, res.Order.StatusTimestamp)
 
-					// Compare order details
+					// Compare order details - use cmp.Diff to treat nil and empty slices as equal
 					expectedOrder := tc.expected.Order.Order
 					actualOrder := res.Order.Order
-					require.Equal(tt, expectedOrder, actualOrder)
+					diff := cmp.Diff(expectedOrder, actualOrder, cmpopts.EquateEmpty())
+					if diff != "" {
+						tt.Errorf("Order mismatch (-want +got):\n%s", diff)
+					}
 				}
 			}
 		})
