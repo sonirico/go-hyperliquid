@@ -150,8 +150,8 @@ type TriggerOrderType struct {
 }
 
 type BuilderInfo struct {
-	Builder string `json:"b"`
-	Fee     int    `json:"f"`
+	Builder string `json:"b" msgpack:"b"`
+	Fee     int    `json:"f" msgpack:"f"`
 }
 
 type CancelRequest struct {
@@ -249,7 +249,7 @@ type FrontendOpenOrder struct {
 	Sz               float64   `json:"sz,string"`
 	Timestamp        int64     `json:"timestamp"`
 	TriggerCondition string    `json:"triggerCondition"`
-	TriggerPx        string    `json:"triggerPx"`
+	TriggerPx        float64   `json:"triggerPx,string"`
 }
 
 type OrderSide string
