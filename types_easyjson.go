@@ -4,6 +4,7 @@ package hyperliquid
 
 import (
 	json "encoding/json"
+
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -5667,7 +5668,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(in *jlexer.Lexer, ou
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.TriggerPx = string(in.String())
+				out.TriggerPx = float64(in.Float64Str())
 			}
 		default:
 			in.SkipRecursive()
@@ -5746,7 +5747,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(out *jwriter.Writer,
 	{
 		const prefix string = ",\"triggerPx\":"
 		out.RawString(prefix)
-		out.String(string(in.TriggerPx))
+		out.Float64Str(float64(in.TriggerPx))
 	}
 	out.RawByte('}')
 }
