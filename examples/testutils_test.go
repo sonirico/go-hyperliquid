@@ -9,6 +9,29 @@ import (
 	"github.com/sonirico/go-hyperliquid"
 )
 
+func newTestInfo(t *testing.T) *hyperliquid.Info {
+	t.Helper()
+
+	apiURL := os.Getenv("HL_API_URL")
+
+	// Default to testnet if not specified
+	if apiURL == "" {
+		apiURL = hyperliquid.TestnetAPIURL
+	}
+
+	t.Logf("API URL: %s", apiURL)
+
+	// Initialize test info
+	return hyperliquid.NewInfo(
+		context.TODO(),
+		apiURL,
+		true,
+		nil,
+		nil,
+		hyperliquid.InfoOptDebugMode(),
+	)
+}
+
 func newTestExchange(t *testing.T) *hyperliquid.Exchange {
 	t.Helper()
 
