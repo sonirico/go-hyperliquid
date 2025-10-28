@@ -6,9 +6,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math/big"
 	"sort"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 func (e *Exchange) UpdateLeverage(
@@ -793,19 +796,25 @@ func (e *Exchange) ApproveBuilderFee(
 ) (*ApprovalResponse, error) {
 	nonce := e.nextNonce()
 
-	action := ApproveBuilderFeeAction{
-		Type:       "approveBuilderFee",
-		Builder:    builder,
-		MaxFeeRate: maxFeeRate,
-		Nonce:      nonce,
+	action := map[string]any{
+		"maxFeeRate": maxFeeRate,
+		"builder":    strings.ToLower(builder),
+		"nonce":      big.NewInt(nonce),
+		"type":       "approveBuilderFee",
 	}
 
-	sig, err := SignL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "maxFeeRate", Type: "string"},
+		{Name: "builder", Type: "address"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := SignUserSignedAction(
 		e.privateKey,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:ApproveBuilderFee",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {

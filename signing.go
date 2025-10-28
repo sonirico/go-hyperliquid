@@ -248,43 +248,30 @@ func structToOrderedMap(v any) (map[string]any, error) {
 
 // SignUserSignedAction signs actions that require direct EIP-712 signing
 // (e.g., approveAgent, approveBuilderFee, convertToMultiSigUser)
-// The action struct must have JSON tags for field names
 //
-// IMPORTANT: The message will contain MORE fields than declared in payloadTypes.
-// This matches Python SDK behavior where extra fields (type, signatureChainId) are
-// present in the message but ignored during EIP-712 hashing via hashStructLenient.
+// IMPORTANT: The message will contain MORE fields than declared in payloadTypes to avoid the error
+// "422 Failed to deserialize the JSON body" and "User or API Wallet 0x123... does not exist".
+// This matches Python SDK behavior where the field order doesn't matter and extra fields (type, signatureChainId)
+// are present in the message but ignored during EIP-712 hashing via hashStructLenient.
 func SignUserSignedAction(
 	privateKey *ecdsa.PrivateKey,
-	actionStruct any,
+	action map[string]any,
 	payloadTypes []apitypes.Type,
 	primaryType string,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	// Convert struct to map
-	action, err := structToOrderedMap(actionStruct)
-	if err != nil {
-		return SignatureResult{}, err
-	}
-
 	// Add signatureChainId based on environment
 	// signatureChainId is the chain used by the wallet to sign.
 	// hyperliquidChain determines the environment and prevents replay attacks.
-	var signatureChainId string
-	var chainIdInt int64
-	if isMainnet {
-		signatureChainId = "0xa4b1" // Arbitrum One (42161)
-		chainIdInt = 0xa4b1
-		action["hyperliquidChain"] = "Mainnet"
-	} else {
-		signatureChainId = "0x66eee" // Arbitrum Sepolia (421614)
-		chainIdInt = 0x66eee
+	action["signatureChainId"] = "0x66eee"
+	action["hyperliquidChain"] = "Mainnet"
+	if !isMainnet {
 		action["hyperliquidChain"] = "Testnet"
 	}
-	action["signatureChainId"] = signatureChainId
 
 	// Create typed data
-	// Note: chainId is extracted from signatureChainId in message
-	chainId := math.HexOrDecimal256(*big.NewInt(chainIdInt))
+	// Note: chainId is hardcoded to 421614 just like the Python SDK
+	chainId := math.HexOrDecimal256(*big.NewInt(421614))
 	typedData := apitypes.TypedData{
 		Domain: apitypes.TypedDataDomain{
 			ChainId:           &chainId,
@@ -499,17 +486,11 @@ func SignAgent(
 	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	hyperliquidChain := "Testnet"
-	if isMainnet {
-		hyperliquidChain = "Mainnet"
-	}
-
-	action := signApproveAgentAction{
-		Type:             "approveAgent",
-		HyperliquidChain: hyperliquidChain,
-		AgentAddress:     agentAddress,
-		AgentName:        agentName,
-		Nonce:            nonce,
+	action := map[string]any{
+		"type":         "approveAgent",
+		"agentAddress": agentAddress,
+		"agentName":    agentName,
+		"nonce":        nonce,
 	}
 
 	// payload_types from Python: only declares fields that are in the original action
