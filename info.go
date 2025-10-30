@@ -317,7 +317,14 @@ func (i *Info) UserFillsByTime(
 		extraParams["aggregateByTime"] = aggregateByTime
 	}
 
-	resp, err := i.postTimeRangeRequest(ctx, "userFillsByTime", address, startTime, endTime, extraParams)
+	resp, err := i.postTimeRangeRequest(
+		ctx,
+		"userFillsByTime",
+		address,
+		startTime,
+		endTime,
+		extraParams,
+	)
 	if err != nil {
 		return nil, err
 	}
