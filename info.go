@@ -310,8 +310,21 @@ func (i *Info) UserFillsByTime(
 	address string,
 	startTime int64,
 	endTime *int64,
+	aggregateByTime *bool,
 ) ([]Fill, error) {
-	resp, err := i.postTimeRangeRequest(ctx, "userFillsByTime", address, startTime, endTime, nil)
+	var extraParams = make(map[string]any, 0)
+	if aggregateByTime != nil {
+		extraParams["aggregateByTime"] = aggregateByTime
+	}
+
+	resp, err := i.postTimeRangeRequest(
+		ctx,
+		"userFillsByTime",
+		address,
+		startTime,
+		endTime,
+		extraParams,
+	)
 	if err != nil {
 		return nil, err
 	}
