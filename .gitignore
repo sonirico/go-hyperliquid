@@ -32,4 +32,5 @@ go.work
 .env.*
 .env
 !.env.example
+!.env.testnet
 __debug*
