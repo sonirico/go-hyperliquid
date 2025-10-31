@@ -478,13 +478,12 @@ func TestUserFillsByTime(t *testing.T) {
 				infoInstance = info
 			}
 
-			aggregateByTime := true
 			res, err := infoInstance.UserFillsByTime(
 				context.TODO(),
 				tc.user,
 				tc.startTime,
 				tc.endTime,
-				&aggregateByTime,
+				nil,
 			)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
