@@ -148,6 +148,13 @@ Check the `examples/` directory for more usage examples:
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+### Contributors
+
+Thanks to all the people who have contributed to this project! 🎉
+
+<!-- readme: contributors -start -->
+<!-- readme: contributors -end -->
+
 ### Quick Start for Contributors
 
 ```bash
