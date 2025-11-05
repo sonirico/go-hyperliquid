@@ -75,7 +75,7 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 	// Convert fixstr to str8 for Python compatibility
 	data = convertStr16ToStr8(data)
 
-	fmt.Printf("🔍 DEBUG actionHash msgpack: %s\n", hex.EncodeToString(data))
+	// fmt.Printf("🔍 DEBUG actionHash msgpack: %s\n", hex.EncodeToString(data))
 
 	// Add nonce as 8 bytes big endian
 	if nonce < 0 {
@@ -307,7 +307,7 @@ func SignL1Action(
 ) (SignatureResult, error) {
 	// Step 1: Create action hash
 	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
-	fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
+	//fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
 
 	// Step 2: Construct phantom agent
 	phantomAgent := constructPhantomAgent(hash, isMainnet)
