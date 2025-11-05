@@ -63,7 +63,7 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 			ChannelPong:         NewPongDispatcher(),
 			ChannelTrades:       NewMsgDispatcher[Trades](ChannelTrades),
 			ChannelL2Book:       NewMsgDispatcher[L2Book](ChannelL2Book),
-			ChannelCandle:       NewMsgDispatcher[Candles](ChannelCandle),
+			ChannelCandle:       NewMsgDispatcher[Candle](ChannelCandle),
 			ChannelAllMids:      NewMsgDispatcher[AllMids](ChannelAllMids),
 			ChannelNotification: NewMsgDispatcher[Notification](ChannelNotification),
 			ChannelOrderUpdates: NewMsgDispatcher[WsOrders](ChannelOrderUpdates),
