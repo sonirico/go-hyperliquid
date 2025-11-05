@@ -175,15 +175,19 @@ type (
 	}
 
 	Candle struct {
-		Timestamp int64  `json:"T"`
-		Close     string `json:"c"`
-		High      string `json:"h"`
-		Interval  string `json:"i"`
-		Low       string `json:"l"`
-		Number    int    `json:"n"`
-		Open      string `json:"o"`
-		Symbol    string `json:"s"`
-		Time      int64  `json:"t"`
-		Volume    string `json:"v"`
+		TimeOpen    int64  `json:"t"` // open millis
+		TimeClose   int64  `json:"T"` // close millis
+		Interval    string `json:"i"` // interval
+		TradesCount int    `json:"n"` // number of trades
+		Open        string `json:"o"` // open price
+		High        string `json:"h"` // high price
+		Low         string `json:"l"` // low price
+		Close       string `json:"c"` // close price
+		Symbol      string `json:"s"` // coin
+		Volume      string `json:"v"` // volume (base unit)
 	}
+)
+
+var (
+	candleNoop = Candle{}
 )

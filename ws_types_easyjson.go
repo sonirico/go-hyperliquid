@@ -2005,23 +2005,17 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid16(in *jlexer.Lexer, ou
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		switch key {
+		case "t":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TimeOpen = int64(in.Int64())
+			}
 		case "T":
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Timestamp = int64(in.Int64())
-			}
-		case "c":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Close = string(in.String())
-			}
-		case "h":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.High = string(in.String())
+				out.TimeClose = int64(in.Int64())
 			}
 		case "i":
 			if in.IsNull() {
@@ -2029,17 +2023,11 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid16(in *jlexer.Lexer, ou
 			} else {
 				out.Interval = string(in.String())
 			}
-		case "l":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Low = string(in.String())
-			}
 		case "n":
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Number = int(in.Int())
+				out.TradesCount = int(in.Int())
 			}
 		case "o":
 			if in.IsNull() {
@@ -2047,17 +2035,29 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid16(in *jlexer.Lexer, ou
 			} else {
 				out.Open = string(in.String())
 			}
+		case "h":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.High = string(in.String())
+			}
+		case "l":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Low = string(in.String())
+			}
+		case "c":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Close = string(in.String())
+			}
 		case "s":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				out.Symbol = string(in.String())
-			}
-		case "t":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Time = int64(in.Int64())
 			}
 		case "v":
 			if in.IsNull() {
@@ -2080,19 +2080,14 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid16(out *jwriter.Writer,
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"T\":"
+		const prefix string = ",\"t\":"
 		out.RawString(prefix[1:])
-		out.Int64(int64(in.Timestamp))
+		out.Int64(int64(in.TimeOpen))
 	}
 	{
-		const prefix string = ",\"c\":"
+		const prefix string = ",\"T\":"
 		out.RawString(prefix)
-		out.String(string(in.Close))
-	}
-	{
-		const prefix string = ",\"h\":"
-		out.RawString(prefix)
-		out.String(string(in.High))
+		out.Int64(int64(in.TimeClose))
 	}
 	{
 		const prefix string = ",\"i\":"
@@ -2100,14 +2095,9 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid16(out *jwriter.Writer,
 		out.String(string(in.Interval))
 	}
 	{
-		const prefix string = ",\"l\":"
-		out.RawString(prefix)
-		out.String(string(in.Low))
-	}
-	{
 		const prefix string = ",\"n\":"
 		out.RawString(prefix)
-		out.Int(int(in.Number))
+		out.Int(int(in.TradesCount))
 	}
 	{
 		const prefix string = ",\"o\":"
@@ -2115,14 +2105,24 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid16(out *jwriter.Writer,
 		out.String(string(in.Open))
 	}
 	{
+		const prefix string = ",\"h\":"
+		out.RawString(prefix)
+		out.String(string(in.High))
+	}
+	{
+		const prefix string = ",\"l\":"
+		out.RawString(prefix)
+		out.String(string(in.Low))
+	}
+	{
+		const prefix string = ",\"c\":"
+		out.RawString(prefix)
+		out.String(string(in.Close))
+	}
+	{
 		const prefix string = ",\"s\":"
 		out.RawString(prefix)
 		out.String(string(in.Symbol))
-	}
-	{
-		const prefix string = ",\"t\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.Time))
 	}
 	{
 		const prefix string = ",\"v\":"
