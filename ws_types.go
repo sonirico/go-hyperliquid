@@ -7,17 +7,18 @@ import (
 //go:generate easyjson -all
 
 const (
-	ChannelPong         string = "pong"
-	ChannelTrades       string = "trades"
-	ChannelL2Book       string = "l2Book"
-	ChannelCandle       string = "candle"
-	ChannelAllMids      string = "allMids"
-	ChannelNotification string = "notification"
-	ChannelOrderUpdates string = "orderUpdates"
-	ChannelUserFills    string = "userFills"
-	ChannelWebData2     string = "webData2"
-	ChannelBbo          string = "bbo"
-	ChannelSubResponse  string = "subscriptionResponse"
+	ChannelPong           string = "pong"
+	ChannelTrades         string = "trades"
+	ChannelActiveAssetCtx string = "activeAssetCtx"
+	ChannelL2Book         string = "l2Book"
+	ChannelCandle         string = "candle"
+	ChannelAllMids        string = "allMids"
+	ChannelNotification   string = "notification"
+	ChannelOrderUpdates   string = "orderUpdates"
+	ChannelUserFills      string = "userFills"
+	ChannelWebData2       string = "webData2"
+	ChannelBbo            string = "bbo"
+	ChannelSubResponse    string = "subscriptionResponse"
 )
 
 type wsMessage struct {
@@ -40,6 +41,26 @@ type (
 		Hash  string   `json:"hash"`
 		Tid   int64    `json:"tid"`
 		Users []string `json:"users"`
+	}
+
+	ActiveAssetCtx struct {
+		Coin string         `json:"coin"`
+		Ctx  SharedAssetCtx `json:"ctx"`
+	}
+
+	SharedAssetCtx struct {
+		DayNtlVlm float64 `json:"dayNtlVlm,string"`
+		PrevDayPx float64 `json:"prevDayPx,string"`
+		MarkPx    float64 `json:"markPx,string"`
+		MidPx     float64 `json:"midPx,string"`
+
+		// PerpsAssetCtx
+		Funding      float64 `json:"funding,string,omitempty"`
+		OpenInterest float64 `json:"openInterest,string,omitempty"`
+		OraclePx     float64 `json:"oraclePx,string,omitempty"`
+
+		// SpotAssetCtx
+		CirculatingSupply float64 `json:"circulatingSupply,string,omitempty"`
 	}
 
 	AllMids struct {

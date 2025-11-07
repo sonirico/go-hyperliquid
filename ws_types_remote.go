@@ -33,6 +33,19 @@ func (p remoteTradesSubscriptionPayload) Key() string {
 	return keyTrades(p.Coin)
 }
 
+type remoteActiveAssetCtxSubscriptionPayload struct {
+	Type string `json:"type"`
+	Coin string `json:"coin"`
+}
+
+func (p remoteActiveAssetCtxSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteActiveAssetCtxSubscriptionPayload) Key() string {
+	return keyActiveAssetCtx(p.Coin)
+}
+
 type remoteCandlesSubscriptionPayload struct {
 	Type     string `json:"type"`
 	Coin     string `json:"coin"`

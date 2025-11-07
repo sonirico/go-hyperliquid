@@ -14,6 +14,10 @@ func keyTrades(coin string) string {
 	return key(ChannelTrades, coin)
 }
 
+func keyActiveAssetCtx(coin string) string {
+	return key(ChannelActiveAssetCtx, coin)
+}
+
 func keyCandles(symbol, interval string) string {
 	return key(ChannelCandle, symbol, interval)
 }

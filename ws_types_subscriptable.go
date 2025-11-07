@@ -18,6 +18,10 @@ func (t Trades) Key() string {
 	return keyTrades(t[0].Coin)
 }
 
+func (a ActiveAssetCtx) Key() string {
+	return keyActiveAssetCtx(a.Coin)
+}
+
 func (c Candle) Key() string {
 	return keyCandles(c.Symbol, c.Interval)
 }
