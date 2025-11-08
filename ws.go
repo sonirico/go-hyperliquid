@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -42,6 +43,27 @@ type WebsocketClient struct {
 	logger                lol.Logger
 }
 
+var upstreamHosts map[string]struct{}
+
+func init() {
+	mustHost := func(s string) string {
+		u, err := url.Parse(s)
+		if err != nil {
+			panic(fmt.Sprintf("invalid upstream URL %q: %v", s, err))
+		}
+		return strings.ToLower(u.Hostname())
+	}
+	upstreamHosts = map[string]struct{}{
+		mustHost(MainnetAPIURL): {},
+		mustHost(TestnetAPIURL): {},
+	}
+}
+
+func isUpstream(u *url.URL) bool {
+	_, ok := upstreamHosts[strings.ToLower(u.Hostname())]
+	return ok
+}
+
 func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 	if baseURL == "" {
 		baseURL = MainnetAPIURL
@@ -50,8 +72,25 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 	if err != nil {
 		log.Fatalf("invalid URL: %v", err)
 	}
-	parsedURL.Scheme = "wss"
-	parsedURL.Path = "/ws"
+
+	// the current usage expects a full address (https://api.hyp..) to keep compatibility check if
+	// that host is set and just use the old method. any new caller with their own endpoint will be
+	// forced to provide a full URI
+	if isUpstream(parsedURL) {
+		parsedURL.Scheme = "wss"
+		parsedURL.Path = "/ws"
+	} else {
+		switch parsedURL.Scheme {
+		case "https":
+			parsedURL.Scheme = "wss"
+		case "http":
+			parsedURL.Scheme = "ws"
+		case "":
+			// baseURL has no scheme set, odd
+			panic("baseURL must have a scheme set, either wss or ws")
+		}
+	}
+
 	wsURL := parsedURL.String()
 
 	cli := &WebsocketClient{
