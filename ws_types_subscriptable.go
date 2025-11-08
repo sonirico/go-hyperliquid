@@ -8,7 +8,6 @@ type subscriptable interface {
 
 type (
 	Trades   []Trade
-	Candles  []Candle
 	WsOrders []WsOrder
 )
 
@@ -19,11 +18,12 @@ func (t Trades) Key() string {
 	return keyTrades(t[0].Coin)
 }
 
-func (c Candles) Key() string {
-	if len(c) == 0 {
-		return ""
-	}
-	return keyCandles(c[0].Symbol, c[0].Interval)
+func (a ActiveAssetCtx) Key() string {
+	return keyActiveAssetCtx(a.Coin)
+}
+
+func (c Candle) Key() string {
+	return keyCandles(c.Symbol, c.Interval)
 }
 
 func (c L2Book) Key() string {

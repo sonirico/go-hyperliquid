@@ -24,7 +24,7 @@ func WsOptDebugMode() WsOpt {
 		w.debug = true
 		w.logger = lol.NewZerolog(
 			lol.WithLevel(lol.LevelTrace),
-			lol.WithWriter(os.Stderr),
+			lol.WithWriter(os.Stdout),
 			lol.WithEnv(lol.EnvDev),
 		)
 	}

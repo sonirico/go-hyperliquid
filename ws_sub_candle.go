@@ -11,7 +11,7 @@ type CandlesSubscriptionParams struct {
 
 func (w *WebsocketClient) Candles(
 	params CandlesSubscriptionParams,
-	callback func([]Candle, error),
+	callback func(Candle, error),
 ) (*Subscription, error) {
 	payload := remoteCandlesSubscriptionPayload{
 		Type:     ChannelCandle,
@@ -20,12 +20,12 @@ func (w *WebsocketClient) Candles(
 	}
 
 	return w.subscribe(payload, func(msg any) {
-		candles, ok := msg.(Candles)
+		candle, ok := msg.(Candle)
 		if !ok {
-			callback(nil, fmt.Errorf("invalid message type"))
+			callback(candleNoop, fmt.Errorf("invalid message type"))
 			return
 		}
 
-		callback(candles, nil)
+		callback(candle, nil)
 	})
 }

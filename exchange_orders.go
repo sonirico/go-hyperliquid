@@ -172,8 +172,11 @@ func (e *Exchange) BulkOrders(
 	return
 }
 
+// ModifyOrderRequest identifies an order by either exchange-provided Oid or client-provided Cloid.
+// Exactly one of Oid or Cloid must be non-nil.
 type ModifyOrderRequest struct {
-	Oid   any // can be int64 or Cloid
+	Oid   *int64
+	Cloid *Cloid
 	Order CreateOrderRequest
 }
 
@@ -181,6 +184,23 @@ func newModifyOrderAction(
 	e *Exchange,
 	modifyRequest ModifyOrderRequest,
 ) (ModifyAction, error) {
+	var wireOid any
+	switch {
+	case modifyRequest.Oid != nil && modifyRequest.Cloid != nil:
+		return ModifyAction{}, fmt.Errorf("modify request must specify only one of Oid or Cloid")
+	case modifyRequest.Oid != nil:
+		wireOid = *modifyRequest.Oid
+	case modifyRequest.Cloid != nil:
+		cloidRaw := modifyRequest.Cloid.ToRaw()
+		normalized, err := normalizeCloid(&cloidRaw)
+		if err != nil {
+			return ModifyAction{}, fmt.Errorf("invalid cloid for modify request: %w", err)
+		}
+		wireOid = *normalized
+	default:
+		return ModifyAction{}, fmt.Errorf("modify request must specify either Oid or Cloid")
+	}
+
 	priceWire, err := floatToWire(modifyRequest.Order.Price)
 	if err != nil {
 		return ModifyAction{}, fmt.Errorf("failed to wire price: %w", err)
@@ -223,7 +243,7 @@ func newModifyOrderAction(
 
 	return ModifyAction{
 		Type:  "modify",
-		Oid:   modifyRequest.Oid,
+		Oid:   wireOid,
 		Order: order,
 	}, nil
 }

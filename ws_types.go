@@ -7,17 +7,18 @@ import (
 //go:generate easyjson -all
 
 const (
-	ChannelPong         string = "pong"
-	ChannelTrades       string = "trades"
-	ChannelL2Book       string = "l2Book"
-	ChannelCandle       string = "candle"
-	ChannelAllMids      string = "allMids"
-	ChannelNotification string = "notification"
-	ChannelOrderUpdates string = "orderUpdates"
-	ChannelUserFills    string = "userFills"
-	ChannelWebData2     string = "webData2"
-	ChannelBbo          string = "bbo"
-	ChannelSubResponse  string = "subscriptionResponse"
+	ChannelPong           string = "pong"
+	ChannelTrades         string = "trades"
+	ChannelActiveAssetCtx string = "activeAssetCtx"
+	ChannelL2Book         string = "l2Book"
+	ChannelCandle         string = "candle"
+	ChannelAllMids        string = "allMids"
+	ChannelNotification   string = "notification"
+	ChannelOrderUpdates   string = "orderUpdates"
+	ChannelUserFills      string = "userFills"
+	ChannelWebData2       string = "webData2"
+	ChannelBbo            string = "bbo"
+	ChannelSubResponse    string = "subscriptionResponse"
 )
 
 type wsMessage struct {
@@ -40,6 +41,26 @@ type (
 		Hash  string   `json:"hash"`
 		Tid   int64    `json:"tid"`
 		Users []string `json:"users"`
+	}
+
+	ActiveAssetCtx struct {
+		Coin string         `json:"coin"`
+		Ctx  SharedAssetCtx `json:"ctx"`
+	}
+
+	SharedAssetCtx struct {
+		DayNtlVlm float64 `json:"dayNtlVlm,string"`
+		PrevDayPx float64 `json:"prevDayPx,string"`
+		MarkPx    float64 `json:"markPx,string"`
+		MidPx     float64 `json:"midPx,string"`
+
+		// PerpsAssetCtx
+		Funding      float64 `json:"funding,string,omitempty"`
+		OpenInterest float64 `json:"openInterest,string,omitempty"`
+		OraclePx     float64 `json:"oraclePx,string,omitempty"`
+
+		// SpotAssetCtx
+		CirculatingSupply float64 `json:"circulatingSupply,string,omitempty"`
 	}
 
 	AllMids struct {
@@ -175,15 +196,19 @@ type (
 	}
 
 	Candle struct {
-		Timestamp int64  `json:"T"`
-		Close     string `json:"c"`
-		High      string `json:"h"`
-		Interval  string `json:"i"`
-		Low       string `json:"l"`
-		Number    int    `json:"n"`
-		Open      string `json:"o"`
-		Symbol    string `json:"s"`
-		Time      int64  `json:"t"`
-		Volume    string `json:"v"`
+		TimeOpen    int64  `json:"t"` // open millis
+		TimeClose   int64  `json:"T"` // close millis
+		Interval    string `json:"i"` // interval
+		TradesCount int    `json:"n"` // number of trades
+		Open        string `json:"o"` // open price
+		High        string `json:"h"` // high price
+		Low         string `json:"l"` // low price
+		Close       string `json:"c"` // close price
+		Symbol      string `json:"s"` // coin
+		Volume      string `json:"v"` // volume (base unit)
 	}
+)
+
+var (
+	candleNoop = Candle{}
 )

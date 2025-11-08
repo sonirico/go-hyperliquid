@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sonirico/go-hyperliquid"
+	hl "github.com/sonirico/go-hyperliquid"
 )
 
 func TestCandleWebSocket(t *testing.T) {
-	ws := hyperliquid.NewWebsocketClient("")
+	ws := hl.NewWebsocketClient(hl.MainnetAPIURL)
 
 	if err := ws.Connect(context.Background()); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
@@ -19,19 +19,17 @@ func TestCandleWebSocket(t *testing.T) {
 	done := make(chan bool)
 
 	sub, err := ws.Candles(
-		hyperliquid.CandlesSubscriptionParams{
+		hl.CandlesSubscriptionParams{
 			Coin:     "BTC",
 			Interval: "1m",
 		},
-		func(candles []hyperliquid.Candle, err error) {
+		func(candle hl.Candle, err error) {
 			if err != nil {
 				t.Errorf("Error in candle callback: %v", err)
 				return
 			}
 
-			for _, candle := range candles {
-				t.Logf("Received candle: %+v", candle)
-			}
+			t.Logf("Received candle: %+v", candle)
 
 			done <- true
 		},

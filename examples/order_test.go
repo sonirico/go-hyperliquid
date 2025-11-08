@@ -100,8 +100,10 @@ func TestModifyOrder(t *testing.T) {
 	t.Log("Modify order method is available and ready to use")
 
 	// Example usage:
+	oid := int64(12345)
+
 	modifyReq := hyperliquid.ModifyOrderRequest{
-		Oid: int64(12345),
+		Oid: &oid,
 		Order: hyperliquid.CreateOrderRequest{
 			Coin:  "BTC",
 			IsBuy: true,
@@ -130,9 +132,10 @@ func TestBulkModifyOrders(t *testing.T) {
 	t.Log("Bulk modify orders method is available and ready to use")
 
 	// Example usage:
+	oid := int64(12345)
 	modifyRequests := []hyperliquid.ModifyOrderRequest{
 		{
-			Oid: int64(12345),
+			Oid: &oid,
 			Order: hyperliquid.CreateOrderRequest{
 				Coin:  "BTC",
 				IsBuy: true,

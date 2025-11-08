@@ -742,3 +742,79 @@ func (v *remoteAllMidsSubscriptionPayload) UnmarshalJSON(data []byte) error {
 func (v *remoteAllMidsSubscriptionPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid8(l, v)
 }
+func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid9(in *jlexer.Lexer, out *remoteActiveAssetCtxSubscriptionPayload) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
+		case "coin":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid9(out *jwriter.Writer, in remoteActiveAssetCtxSubscriptionPayload) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"coin\":"
+		out.RawString(prefix)
+		out.String(string(in.Coin))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v remoteActiveAssetCtxSubscriptionPayload) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid9(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v remoteActiveAssetCtxSubscriptionPayload) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6658546bEncodeGithubComSoniricoGoHyperliquid9(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *remoteActiveAssetCtxSubscriptionPayload) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid9(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *remoteActiveAssetCtxSubscriptionPayload) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6658546bDecodeGithubComSoniricoGoHyperliquid9(l, v)
+}

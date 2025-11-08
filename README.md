@@ -148,6 +148,84 @@ Check the `examples/` directory for more usage examples:
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+### Contributors
+
+Thanks to all the people who have contributed to this project! 🎉
+
+<!-- readme: contributors -start -->
+<table>
+	<tbody>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/sonirico">
+                    <img src="https://avatars.githubusercontent.com/u/9306588?v=4" width="100;" alt="sonirico"/>
+                    <br />
+                    <sub><b>Marquitos</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/terwey">
+                    <img src="https://avatars.githubusercontent.com/u/1596124?v=4" width="100;" alt="terwey"/>
+                    <br />
+                    <sub><b>Yorick Terweijden</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/standrd">
+                    <img src="https://avatars.githubusercontent.com/u/13077016?v=4" width="100;" alt="standrd"/>
+                    <br />
+                    <sub><b>Stan</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/prasiman">
+                    <img src="https://avatars.githubusercontent.com/u/8805410?v=4" width="100;" alt="prasiman"/>
+                    <br />
+                    <sub><b>Prasetyo Iman Nugroho</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/Debuggedd">
+                    <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
+                    <br />
+                    <sub><b>Alex</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/andrew-malikov">
+                    <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
+                    <br />
+                    <sub><b>Andrew Malikov</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
+                <a href="https://github.com/freeeverett">
+                    <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
+                    <br />
+                    <sub><b>Everett</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/feeeei">
+                    <img src="https://avatars.githubusercontent.com/u/8032930?v=4" width="100;" alt="feeeei"/>
+                    <br />
+                    <sub><b>feeeei</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/vyomshm">
+                    <img src="https://avatars.githubusercontent.com/u/20184946?v=4" width="100;" alt="vyomshm"/>
+                    <br />
+                    <sub><b>Vyom</b></sub>
+                </a>
+            </td>
+		</tr>
+	<tbody>
+</table>
+<!-- readme: contributors -end -->
+
 ### Quick Start for Contributors
 
 ```bash
