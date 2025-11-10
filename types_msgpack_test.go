@@ -15,8 +15,8 @@ func Test_Msgpack_Field_Ordering(t *testing.T) {
 	// Python order for order_wire is: a, b, p, s, r, t (and optionally c)
 	// See: hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_request_to_order_wire
 
-	orderTypeNew := orderWireType{
-		Limit: &orderWireTypeLimit{
+	orderTypeNew := OrderWireType{
+		Limit: &OrderWireTypeLimit{
 			Tif: TifGtc,
 		},
 	}
