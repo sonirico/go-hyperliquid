@@ -121,20 +121,23 @@ type OrderWire struct {
 	LimitPx    string        `json:"p"           msgpack:"p"`           // 3rd
 	Size       string        `json:"s"           msgpack:"s"`           // 4th
 	ReduceOnly bool          `json:"r"           msgpack:"r"`           // 5th
-	OrderType  orderWireType `json:"t"           msgpack:"t"`           // 6th
+	OrderType  OrderWireType `json:"t"           msgpack:"t"`           // 6th
 	Cloid      *string       `json:"c,omitempty" msgpack:"c,omitempty"` // 7th (optional)
 }
 
-type orderWireType struct {
-	Limit   *orderWireTypeLimit   `json:"limit,omitempty"   msgpack:"limit,omitempty"`
-	Trigger *orderWireTypeTrigger `json:"trigger,omitempty" msgpack:"trigger,omitempty"`
+// OrderWireType represents the type of order (limit or trigger).
+type OrderWireType struct {
+	Limit   *OrderWireTypeLimit   `json:"limit,omitempty"   msgpack:"limit,omitempty"`
+	Trigger *OrderWireTypeTrigger `json:"trigger,omitempty" msgpack:"trigger,omitempty"`
 }
 
-type orderWireTypeLimit struct {
+// OrderWireTypeLimit represents a limit order with time-in-force.
+type OrderWireTypeLimit struct {
 	Tif Tif `json:"tif,string" msgpack:"tif"`
 }
 
-type orderWireTypeTrigger struct {
+// OrderWireTypeTrigger represents a trigger order (stop-loss/take-profit).
+type OrderWireTypeTrigger struct {
 	// CRITICAL: Field order MUST match Python SDK insertion order: isMarket, triggerPx, tpsl
 	// See hyperliquid-python-sdk/hyperliquid/utils/signing.py:order_type_to_wire (lines 151-154)
 	IsMarket  bool   `json:"isMarket"  msgpack:"isMarket"`  // 1st

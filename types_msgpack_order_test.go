@@ -17,8 +17,8 @@ func TestMsgpackOrderSerialization(t *testing.T) {
 		LimitPx:    "40000",
 		Size:       "0.001",
 		ReduceOnly: false,
-		OrderType: orderWireType{
-			Limit: &orderWireTypeLimit{
+		OrderType: OrderWireType{
+			Limit: &OrderWireTypeLimit{
 				Tif: TifGtc,
 			},
 		},

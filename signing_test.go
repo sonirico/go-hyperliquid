@@ -269,8 +269,8 @@ func TestDebugActionHash(t *testing.T) {
 			LimitPx:    "100.5",
 			Size:       "1.0",
 			ReduceOnly: false,
-			OrderType: orderWireType{
-				Limit: &orderWireTypeLimit{
+			OrderType: OrderWireType{
+				Limit: &OrderWireTypeLimit{
 					Tif: TifGtc,
 				},
 			},

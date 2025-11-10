@@ -48,10 +48,10 @@ type OrderResponse struct {
 	Statuses []OrderStatus
 }
 
-func newOrderTypeWire(o CreateOrderRequest) orderWireType {
+func newOrderTypeWire(o CreateOrderRequest) OrderWireType {
 	if o.OrderType.Limit != nil {
-		return orderWireType{
-			Limit: &orderWireTypeLimit{
+		return OrderWireType{
+			Limit: &OrderWireTypeLimit{
 				Tif: o.OrderType.Limit.Tif,
 			},
 		}
@@ -64,8 +64,8 @@ func newOrderTypeWire(o CreateOrderRequest) orderWireType {
 			triggerPxWire = "0"
 		}
 
-		return orderWireType{
-			Trigger: &orderWireTypeTrigger{
+		return OrderWireType{
+			Trigger: &OrderWireTypeTrigger{
 				TriggerPx: triggerPxWire,
 				IsMarket:  o.OrderType.Trigger.IsMarket,
 				Tpsl:      o.OrderType.Trigger.Tpsl,
@@ -73,7 +73,7 @@ func newOrderTypeWire(o CreateOrderRequest) orderWireType {
 		}
 	}
 
-	return orderWireType{}
+	return OrderWireType{}
 }
 
 func newCreateOrderAction(
