@@ -1,4 +1,4 @@
-module github.com/sonirico/go-hyperliquid
+module github.com/corverroos/go-hyperliquid
 
 go 1.25.0
 

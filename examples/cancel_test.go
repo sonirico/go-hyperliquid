@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/sonirico/go-hyperliquid"
+	"github.com/corverroos/go-hyperliquid"
 )
 
 func TestCancelOrder(t *testing.T) {

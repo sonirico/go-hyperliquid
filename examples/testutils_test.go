@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/sonirico/go-hyperliquid"
+	"github.com/corverroos/go-hyperliquid"
 )
 
 func newTestInfo(t *testing.T) *hyperliquid.Info {
