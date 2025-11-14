@@ -596,6 +596,6 @@ type TokenDetail struct {
 }
 
 type TokenDetailGenesis struct {
-	UserBalances          [][]string      `json:"userBalances"`
-	ExistingTokenBalances [][]interface{} `json:"existingTokenBalances"`
+	UserBalances          [][]string   `json:"userBalances"`
+	ExistingTokenBalances []MixedArray `json:"existingTokenBalances"`
 }
