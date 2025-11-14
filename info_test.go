@@ -668,3 +668,11 @@ func TestUserActiveAssetData(t *testing.T) {
 		})
 	}
 }
+
+func TestTokenDetails(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+	resp, err := info.TokenDetails(context.TODO(), "0x6d1e7cde53ba9467b783cb7c530ce054")
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.Equal(t, "USDC", resp.Name)
+}
