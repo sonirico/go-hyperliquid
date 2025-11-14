@@ -671,8 +671,32 @@ func TestUserActiveAssetData(t *testing.T) {
 
 func TestTokenDetails(t *testing.T) {
 	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
-	resp, err := info.TokenDetails(context.TODO(), "0x6d1e7cde53ba9467b783cb7c530ce054")
-	require.NoError(t, err)
-	require.NotNil(t, resp)
-	require.Equal(t, "USDC", resp.Name)
+
+	type tc struct {
+		name    string
+		address string
+		coin    string
+	}
+
+	cases := []tc{
+		{
+			name:    "fetch USDC token details",
+			address: "0x6d1e7cde53ba9467b783cb7c530ce054",
+			coin:    "USDC",
+		},
+		{
+			name:    "fetch MAGA token details",
+			address: "0x9b91002773083d9292b8cb02dacb7e79",
+			coin:    "MAGA",
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(tt *testing.T) {
+			resp, err := info.TokenDetails(context.TODO(), tc.address)
+			require.NoError(t, err)
+			require.NotNil(t, resp)
+			require.Equal(t, tc.coin, resp.Name)
+		})
+	}
 }

@@ -1298,15 +1298,15 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid11(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.ExistingTokenBalances == nil {
 					if !in.IsDelim(']') {
-						out.ExistingTokenBalances = make([][]string, 0, 2)
+						out.ExistingTokenBalances = make([][]interface{}, 0, 2)
 					} else {
-						out.ExistingTokenBalances = [][]string{}
+						out.ExistingTokenBalances = [][]interface{}{}
 					}
 				} else {
 					out.ExistingTokenBalances = (out.ExistingTokenBalances)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v17 []string
+					var v17 []interface{}
 					if in.IsNull() {
 						in.Skip()
 						v17 = nil
@@ -1314,19 +1314,21 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid11(in *jlexer.Lexer, ou
 						in.Delim('[')
 						if v17 == nil {
 							if !in.IsDelim(']') {
-								v17 = make([]string, 0, 4)
+								v17 = make([]interface{}, 0, 4)
 							} else {
-								v17 = []string{}
+								v17 = []interface{}{}
 							}
 						} else {
 							v17 = (v17)[:0]
 						}
 						for !in.IsDelim(']') {
-							var v18 string
-							if in.IsNull() {
-								in.Skip()
+							var v18 interface{}
+							if m, ok := v18.(easyjson.Unmarshaler); ok {
+								m.UnmarshalEasyJSON(in)
+							} else if m, ok := v18.(json.Unmarshaler); ok {
+								_ = m.UnmarshalJSON(in.Raw())
 							} else {
-								v18 = string(in.String())
+								v18 = in.Interface()
 							}
 							v17 = append(v17, v18)
 							in.WantComma()
@@ -1398,7 +1400,13 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid11(out *jwriter.Writer,
 						if v25 > 0 {
 							out.RawByte(',')
 						}
-						out.String(string(v26))
+						if m, ok := v26.(easyjson.Marshaler); ok {
+							m.MarshalEasyJSON(out)
+						} else if m, ok := v26.(json.Marshaler); ok {
+							out.Raw(m.MarshalJSON())
+						} else {
+							out.Raw(json.Marshal(v26))
+						}
 					}
 					out.RawByte(']')
 				}
@@ -1503,26 +1511,58 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid12(in *jlexer.Lexer, ou
 		case "genesis":
 			if in.IsNull() {
 				in.Skip()
+				out.Genesis = nil
 			} else {
-				(out.Genesis).UnmarshalEasyJSON(in)
+				if out.Genesis == nil {
+					out.Genesis = new(TokenDetailGenesis)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					(*out.Genesis).UnmarshalEasyJSON(in)
+				}
 			}
 		case "deployer":
 			if in.IsNull() {
 				in.Skip()
+				out.Deployer = nil
 			} else {
-				out.Deployer = string(in.String())
+				if out.Deployer == nil {
+					out.Deployer = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Deployer = string(in.String())
+				}
 			}
 		case "deployGas":
 			if in.IsNull() {
 				in.Skip()
+				out.DeployGas = nil
 			} else {
-				out.DeployGas = string(in.String())
+				if out.DeployGas == nil {
+					out.DeployGas = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.DeployGas = string(in.String())
+				}
 			}
 		case "deployTime":
 			if in.IsNull() {
 				in.Skip()
+				out.DeployTime = nil
 			} else {
-				out.DeployTime = string(in.String())
+				if out.DeployTime == nil {
+					out.DeployTime = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.DeployTime = string(in.String())
+				}
 			}
 		case "seededUsdc":
 			if in.IsNull() {
@@ -1646,22 +1686,38 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid12(out *jwriter.Writer,
 	{
 		const prefix string = ",\"genesis\":"
 		out.RawString(prefix)
-		(in.Genesis).MarshalEasyJSON(out)
+		if in.Genesis == nil {
+			out.RawString("null")
+		} else {
+			(*in.Genesis).MarshalEasyJSON(out)
+		}
 	}
 	{
 		const prefix string = ",\"deployer\":"
 		out.RawString(prefix)
-		out.String(string(in.Deployer))
+		if in.Deployer == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Deployer))
+		}
 	}
 	{
 		const prefix string = ",\"deployGas\":"
 		out.RawString(prefix)
-		out.String(string(in.DeployGas))
+		if in.DeployGas == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.DeployGas))
+		}
 	}
 	{
 		const prefix string = ",\"deployTime\":"
 		out.RawString(prefix)
-		out.String(string(in.DeployTime))
+		if in.DeployTime == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.DeployTime))
+		}
 	}
 	{
 		const prefix string = ",\"seededUsdc\":"
