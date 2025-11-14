@@ -708,3 +708,20 @@ func (i *Info) PerpDexs(ctx context.Context) ([]string, error) {
 	}
 	return result, nil
 }
+
+func (i *Info) TokenDetails(ctx context.Context, tokenId string) (*TokenDetail, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":    "tokenDetails",
+		"tokenId": tokenId,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch token detail: %w", err)
+	}
+
+	var tokenDetail TokenDetail
+	if err := json.Unmarshal(resp, &tokenDetail); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal token detail response: %w", err)
+	}
+
+	return &tokenDetail, nil
+}

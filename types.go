@@ -575,3 +575,27 @@ type TxStatus struct {
 	Coin   string `json:"coin"`
 	Status string `json:"status"`
 }
+
+type TokenDetail struct {
+	Name                       string             `json:"name"`
+	MaxSupply                  string             `json:"maxSupply"`
+	TotalSupply                string             `json:"totalSupply"`
+	CirculatingSupply          string             `json:"circulatingSupply"`
+	SzDecimals                 int                `json:"szDecimals"`
+	WeiDecimals                int                `json:"weiDecimals"`
+	MidPx                      string             `json:"midPx"`
+	MarkPx                     string             `json:"markPx"`
+	PrevDayPx                  string             `json:"prevDayPx"`
+	Genesis                    TokenDetailGenesis `json:"genesis"`
+	Deployer                   string             `json:"deployer"`
+	DeployGas                  string             `json:"deployGas"`
+	DeployTime                 string             `json:"deployTime"`
+	SeededUsdc                 string             `json:"seededUsdc"`
+	NonCirculatingUserBalances [][]string         `json:"nonCirculatingUserBalances"`
+	FutureEmissions            string             `json:"futureEmissions"`
+}
+
+type TokenDetailGenesis struct {
+	UserBalances          [][]string `json:"userBalances"`
+	ExistingTokenBalances [][]string `json:"existingTokenBalances"`
+}
