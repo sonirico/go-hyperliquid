@@ -127,8 +127,13 @@ func TestPosition_MarshalJSON(t *testing.T) {
 				ReturnOnEquity: "0.05",
 				Szi:            "1.0",
 				UnrealizedPnl:  "2500.0",
+				CumFunding: &CumFunding{
+					AllTime:     "0.03621",
+					SinceChange: "-0.001129",
+					SinceOpen:   "-0.001129",
+				},
 			},
-			expected: `{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0"}`,
+			expected: `{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0","cumFunding":{"allTime":"0.03621","sinceOpen":"-0.001129","sinceChange":"-0.001129"}}`,
 		},
 		{
 			name: "no_position",
