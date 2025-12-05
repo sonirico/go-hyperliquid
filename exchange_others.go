@@ -220,19 +220,25 @@ func (e *Exchange) UsdClassTransfer(
 		strAmount += " subaccount:" + e.vault
 	}
 
-	action := UsdClassTransferAction{
-		Type:   "usdClassTransfer",
-		Amount: strAmount,
-		ToPerp: toPerp,
-		Nonce:  nonce,
+	action := map[string]any{
+		"amount": strAmount,
+		"toPerp": toPerp,
+		"nonce":  big.NewInt(nonce),
+		"type":   "usdClassTransfer",
 	}
 
-	sig, err := SignL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "toPerp", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := SignUserSignedAction(
 		e.privateKey,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:UsdClassTransfer",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
@@ -455,19 +461,25 @@ func (e *Exchange) UsdTransfer(
 ) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
-	action := UsdTransferAction{
-		Type:        "usdSend",
-		Destination: destination,
-		Amount:      formatFloat(amount),
-		Time:        nonce,
+	action := map[string]any{
+		"destination": destination,
+		"amount":      formatFloat(amount),
+		"time":        big.NewInt(nonce),
+		"type":        "usdSend",
 	}
 
-	sig, err := SignL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	sig, err := SignUserSignedAction(
 		e.privateKey,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:UsdSend",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
@@ -691,19 +703,25 @@ func (e *Exchange) WithdrawFromBridge(
 ) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
-	action := WithdrawFromBridgeAction{
-		Type:        "withdraw3",
-		Destination: destination,
-		Amount:      fmt.Sprintf("%.6f", amount),
-		Time:        nonce,
+	action := map[string]any{
+		"destination": destination,
+		"amount":      formatFloat(amount),
+		"time":        big.NewInt(nonce),
+		"type":        "withdraw3",
 	}
 
-	sig, err := SignL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	sig, err := SignUserSignedAction(
 		e.privateKey,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:Withdraw",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
