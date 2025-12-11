@@ -1285,15 +1285,40 @@ func (e *Exchange) PerpDeployRegisterAsset(
 // PerpDeploySetOracle sets oracle for perpetual asset
 func (e *Exchange) PerpDeploySetOracle(
 	ctx context.Context,
-	asset string,
-	oracleAddress string,
+	dex string,
+	oraclePxs map[string]string,
+	markPxs []map[string]string,
+	externalPerpPxs map[string]string,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
+	oraclePxsWire := [][2]string{}
+	for k, v := range oraclePxs {
+		oraclePxsWire = append(oraclePxsWire, [2]string{k, v})
+	}
+
+	markPxsWire := [][][2]string{}
+	for _, mp := range markPxs {
+		mpWire := [][2]string{}
+		for k, v := range mp {
+			mpWire = append(mpWire, [2]string{k, v})
+		}
+		markPxsWire = append(markPxsWire, mpWire)
+	}
+
+	externalPerpPxsWire := [][2]string{}
+	for k, v := range externalPerpPxs {
+		externalPerpPxsWire = append(externalPerpPxsWire, [2]string{k, v})
+	}
+
 	action := map[string]any{
-		"type":          "perpDeploySetOracle",
-		"asset":         asset,
-		"oracleAddress": oracleAddress,
+		"type": "perpDeploy",
+		"setOracle": map[string]any{
+			"dex":             dex,
+			"oraclePxs":       oraclePxsWire,
+			"markPxs":         markPxsWire,
+			"externalPerpPxs": externalPerpPxsWire,
+		},
 	}
 
 	sig, err := SignL1Action(
