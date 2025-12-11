@@ -1282,7 +1282,6 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	return &result, nil
 }
 
-// PerpDeploySetOracle sets oracle for perpetual asset
 func (e *Exchange) PerpDeploySetOracle(
 	ctx context.Context,
 	dex string,
@@ -1297,12 +1296,20 @@ func (e *Exchange) PerpDeploySetOracle(
 		oraclePxsWire = append(oraclePxsWire, [2]string{k, v})
 	}
 
+	sort.Slice(oraclePxsWire, func(i, j int) bool {
+		return oraclePxsWire[i][0] < oraclePxsWire[j][0]
+	})
+
 	markPxsWire := [][][2]string{}
 	for _, mp := range markPxs {
 		mpWire := [][2]string{}
 		for k, v := range mp {
 			mpWire = append(mpWire, [2]string{k, v})
 		}
+		// Sort each inner list by key
+		sort.Slice(mpWire, func(i, j int) bool {
+			return mpWire[i][0] < mpWire[j][0]
+		})
 		markPxsWire = append(markPxsWire, mpWire)
 	}
 
@@ -1310,6 +1317,10 @@ func (e *Exchange) PerpDeploySetOracle(
 	for k, v := range externalPerpPxs {
 		externalPerpPxsWire = append(externalPerpPxsWire, [2]string{k, v})
 	}
+
+	sort.Slice(externalPerpPxsWire, func(i, j int) bool {
+		return externalPerpPxsWire[i][0] < externalPerpPxsWire[j][0]
+	})
 
 	action := map[string]any{
 		"type": "perpDeploy",
@@ -1342,6 +1353,7 @@ func (e *Exchange) PerpDeploySetOracle(
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
+
 	return &result, nil
 }
 
