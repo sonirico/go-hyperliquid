@@ -1282,6 +1282,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	return &result, nil
 }
 
+// PerpDeploySetOracle sets perpetual oracle prices
 func (e *Exchange) PerpDeploySetOracle(
 	ctx context.Context,
 	dex string,
@@ -1306,10 +1307,11 @@ func (e *Exchange) PerpDeploySetOracle(
 		for k, v := range mp {
 			mpWire = append(mpWire, [2]string{k, v})
 		}
-		// Sort each inner list by key
+
 		sort.Slice(mpWire, func(i, j int) bool {
 			return mpWire[i][0] < mpWire[j][0]
 		})
+
 		markPxsWire = append(markPxsWire, mpWire)
 	}
 
