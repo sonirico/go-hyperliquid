@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 36
+        host: api.hyperliquid.xyz
+        body: '{"dex":"xyz","type":"perpDexLimits"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 475
+        body: '{"totalOiCap":"400000000.0","oiSzCapPerPerp":"1000000000.0","maxTransferNtl":"150000000.0","coinToOiCap":[["xyz:AAPL","25000000.0"],["xyz:AMZN","25000000.0"],["xyz:COIN","25000000.0"],["xyz:GOLD","25000000.0"],["xyz:GOOGL","50000000.0"],["xyz:HOOD","25000000.0"],["xyz:INTC","25000000.0"],["xyz:META","25000000.0"],["xyz:MSFT","25000000.0"],["xyz:NVDA","50000000.0"],["xyz:ORCL","25000000.0"],["xyz:PLTR","25000000.0"],["xyz:TSLA","25000000.0"],["xyz:XYZ100","150000000.0"]]}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "475"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:35:08 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 e5b7b0e902e41c76700f539e8964f7b2.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - nXfOx6LWOrqZnWmC1LiG2sN22cSu5PbHyPjsRwPIUEuyaoCYAE5CAg==
+            X-Amz-Cf-Pop:
+                - MAD53-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 253.197891ms

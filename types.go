@@ -606,3 +606,36 @@ type TokenDetailGenesis struct {
 	UserBalances          [][]string   `json:"userBalances"`
 	ExistingTokenBalances []MixedArray `json:"existingTokenBalances"`
 }
+
+// PerpDex represents a perpetual DEX
+type PerpDex struct {
+	Name                     string     `json:"name"`
+	FullName                 string     `json:"fullName"`
+	Deployer                 string     `json:"deployer"`
+	OracleUpdater            *string    `json:"oracleUpdater"`
+	FeeRecipient             *string    `json:"feeRecipient"`
+	AssetToStreamingOiCap    [][]string `json:"assetToStreamingOiCap"`    // Array of [coin, cap] tuples
+	AssetToFundingMultiplier [][]string `json:"assetToFundingMultiplier"` // Array of [coin, multiplier] tuples
+}
+
+// PerpDexLimits represents limits for a builder-deployed perp DEX
+type PerpDexLimits struct {
+	TotalOiCap     string     `json:"totalOiCap"`
+	OiSzCapPerPerp string     `json:"oiSzCapPerPerp"`
+	MaxTransferNtl string     `json:"maxTransferNtl"`
+	CoinToOiCap    [][]string `json:"coinToOiCap"` // Array of [coin, cap] tuples
+}
+
+// PerpDexStatus represents status for a builder-deployed perp DEX
+type PerpDexStatus struct {
+	TotalNetDeposit string `json:"totalNetDeposit"`
+}
+
+// PerpDeployAuctionStatus represents the status of a perp deploy auction
+type PerpDeployAuctionStatus struct {
+	StartTimeSeconds int64   `json:"startTimeSeconds"`
+	DurationSeconds  int64   `json:"durationSeconds"`
+	StartGas         string  `json:"startGas"`
+	CurrentGas       string  `json:"currentGas"`
+	EndGas           *string `json:"endGas"`
+}

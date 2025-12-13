@@ -700,3 +700,221 @@ func TestTokenDetails(t *testing.T) {
 		})
 	}
 }
+
+func TestPerpDexs(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "PerpDexs")
+
+	res, err := info.PerpDexs(context.TODO())
+	t.Logf("res: %+v", res)
+	t.Logf("err: %v", err)
+
+	require.NoError(t, err)
+	require.NotNil(t, res)
+
+	// PerpDexs returns a MixedArray where first element is null (default dex)
+	// and subsequent elements are PerpDex objects
+	require.Greater(t, len(res), 0)
+
+	// First element should be null (default dex)
+	if len(res) > 0 {
+		firstType := res[0].Type()
+		// First element can be null or an object
+		require.Contains(t, []string{"null", "object"}, firstType)
+	}
+}
+
+func TestMetaWithDex(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "Meta_WithDex")
+
+	// Test with default dex (empty string)
+	res1, err := info.Meta(context.TODO())
+	require.NoError(t, err)
+	require.NotNil(t, res1)
+	require.Greater(t, len(res1.Universe), 0)
+
+	// Test with explicit empty dex (should be same as default)
+	res2, err := info.Meta(context.TODO(), "")
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Equal(t, len(res1.Universe), len(res2.Universe))
+}
+
+func TestUserStateWithDex(t *testing.T) {
+	// Use a known test address
+	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "UserState_WithDex")
+
+	// Test with default dex (empty string)
+	res1, err := info.UserState(context.TODO(), testAddress)
+	require.NoError(t, err)
+	require.NotNil(t, res1)
+
+	// Test with explicit empty dex (should be same as default)
+	res2, err := info.UserState(context.TODO(), testAddress, "")
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Equal(t, res1.MarginSummary.AccountValue, res2.MarginSummary.AccountValue)
+}
+
+func TestAllMidsWithDex(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "AllMids_WithDex")
+
+	// Test with default dex (empty string)
+	res1, err := info.AllMids(context.TODO())
+	require.NoError(t, err)
+	require.NotNil(t, res1)
+	require.Greater(t, len(res1), 0)
+
+	// Test with explicit empty dex (should be same as default)
+	res2, err := info.AllMids(context.TODO(), "")
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Equal(t, len(res1), len(res2))
+}
+
+func TestOpenOrdersWithDex(t *testing.T) {
+	// Use a known test address
+	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "OpenOrders_WithDex")
+
+	// Test with default dex (empty string)
+	res1, err := info.OpenOrders(context.TODO(), testAddress)
+	require.NoError(t, err)
+	require.NotNil(t, res1)
+
+	// Test with explicit empty dex (should be same as default)
+	res2, err := info.OpenOrders(context.TODO(), testAddress, "")
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Equal(t, len(res1), len(res2))
+}
+
+func TestFrontendOpenOrdersWithDex(t *testing.T) {
+	// Use a known test address
+	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "FrontendOpenOrders_WithDex")
+
+	// Test with default dex (empty string)
+	res1, err := info.FrontendOpenOrders(context.TODO(), testAddress)
+	require.NoError(t, err)
+	require.NotNil(t, res1)
+
+	// Test with explicit empty dex (should be same as default)
+	res2, err := info.FrontendOpenOrders(context.TODO(), testAddress, "")
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Equal(t, len(res1), len(res2))
+}
+
+func TestPerpDexLimits(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	// First get available DEXs
+	initRecorder(t, false, "PerpDexs_ForLimits")
+	dexs, err := info.PerpDexs(context.TODO())
+	require.NoError(t, err)
+
+	// Find a non-null DEX (skip the first one which is null/default)
+	var testDex string
+	for i, dex := range dexs {
+		if i == 0 {
+			continue // Skip first (default dex)
+		}
+		if dex.Type() == "object" {
+			var perpDex PerpDex
+			if err := dex.Parse(&perpDex); err == nil && perpDex.Name != "" {
+				testDex = perpDex.Name
+				break
+			}
+		}
+	}
+
+	// Only test if we have a builder-deployed DEX
+	if testDex != "" {
+		initRecorder(t, false, "PerpDexLimits")
+
+		res, err := info.PerpDexLimits(context.TODO(), testDex)
+		t.Logf("res: %+v", res)
+		t.Logf("err: %v", err)
+
+		require.NoError(t, err)
+		require.NotNil(t, res)
+		require.NotEmpty(t, res.TotalOiCap)
+		require.NotEmpty(t, res.OiSzCapPerPerp)
+		require.NotEmpty(t, res.MaxTransferNtl)
+	} else {
+		t.Skip("No builder-deployed DEX available for testing")
+	}
+}
+
+func TestPerpDexStatus(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	// First get available DEXs to test with a specific DEX
+	initRecorder(t, false, "PerpDexs_ForStatus")
+	dexs, err := info.PerpDexs(context.TODO())
+	require.NoError(t, err)
+
+	// Find a non-null DEX
+	var testDex string
+	for i, dex := range dexs {
+		if i == 0 {
+			continue // Skip first (default dex)
+		}
+		if dex.Type() == "object" {
+			var perpDex PerpDex
+			if err := dex.Parse(&perpDex); err == nil && perpDex.Name != "" {
+				testDex = perpDex.Name
+				break
+			}
+		}
+	}
+
+	// Test with specific DEX if available
+	if testDex != "" {
+		initRecorder(t, false, "PerpDexStatus_WithDex")
+
+		res2, err := info.PerpDexStatus(context.TODO(), testDex)
+		require.NoError(t, err)
+		require.NotNil(t, res2)
+		require.NotEmpty(t, res2.TotalNetDeposit)
+	}
+}
+
+func TestPerpDeployAuctionStatus(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	initRecorder(t, false, "PerpDeployAuctionStatus")
+
+	res, err := info.PerpDeployAuctionStatus(context.TODO())
+	t.Logf("res: %+v", res)
+	t.Logf("err: %v", err)
+
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Greater(t, res.StartTimeSeconds, int64(0))
+	require.Greater(t, res.DurationSeconds, int64(0))
+	require.NotEmpty(t, res.StartGas)
+	require.NotEmpty(t, res.CurrentGas)
+}
+
+func TestPerpDexLimits_RequiresNonEmptyDex(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil)
+
+	// PerpDexLimits should fail with empty dex
+	_, err := info.PerpDexLimits(context.TODO(), "")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "dex parameter is required")
+}

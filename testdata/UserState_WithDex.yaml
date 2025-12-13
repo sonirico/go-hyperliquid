@@ -1,0 +1,101 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 81
+        host: api.hyperliquid.xyz
+        body: '{"type":"clearinghouseState","user":"0xcd5051944f780a621ee62e39e493c489668acf4d"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 309
+        body: '{"marginSummary":{"accountValue":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0","totalMarginUsed":"0.0"},"crossMarginSummary":{"accountValue":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0","totalMarginUsed":"0.0"},"crossMaintenanceMarginUsed":"0.0","withdrawable":"0.0","assetPositions":[],"time":1765661071083}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "309"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:24:31 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 4d25dc6d0e19310e58eab11401498fb2.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - _PkWPfdJH5tu9HMsJ3TQYgMreT1MylKYIxFvMHF6b75QYGmhQXuJbg==
+            X-Amz-Cf-Pop:
+                - MAD53-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 251.155371ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 81
+        host: api.hyperliquid.xyz
+        body: '{"type":"clearinghouseState","user":"0xcd5051944f780a621ee62e39e493c489668acf4d"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 309
+        body: '{"marginSummary":{"accountValue":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0","totalMarginUsed":"0.0"},"crossMarginSummary":{"accountValue":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0","totalMarginUsed":"0.0"},"crossMaintenanceMarginUsed":"0.0","withdrawable":"0.0","assetPositions":[],"time":1765661080145}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "309"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:24:40 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 22e421a47e59010b5e8eb6ae4d4bd7e4.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - JANNs1sg7W_1VUnEiHEep8pEKbmsNy6iO69O2tgLreQ0R_nHJqdVHA==
+            X-Amz-Cf-Pop:
+                - LHR61-P2
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 351.190715ms

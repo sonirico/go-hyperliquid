@@ -138,3 +138,59 @@ func (p remoteBboSubscriptionPayload) Key() string {
 	// Deliberately exclude NSigFigs and Mantissa.
 	return keyBbo(p.Coin)
 }
+
+type remoteClearinghouseStateSubscriptionPayload struct {
+	Type string  `json:"type"`
+	User string  `json:"user"`
+	Dex  *string `json:"dex,omitempty"`
+}
+
+func (p remoteClearinghouseStateSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteClearinghouseStateSubscriptionPayload) Key() string {
+	return keyClearinghouseState(p.User, fp.OptionFromPtr(p.Dex))
+}
+
+type remoteOpenOrdersSubscriptionPayload struct {
+	Type string  `json:"type"`
+	User string  `json:"user"`
+	Dex  *string `json:"dex,omitempty"`
+}
+
+func (p remoteOpenOrdersSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteOpenOrdersSubscriptionPayload) Key() string {
+	return keyOpenOrders(p.User, fp.OptionFromPtr(p.Dex))
+}
+
+type remoteTwapStatesSubscriptionPayload struct {
+	Type string  `json:"type"`
+	User string  `json:"user"`
+	Dex  *string `json:"dex,omitempty"`
+}
+
+func (p remoteTwapStatesSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteTwapStatesSubscriptionPayload) Key() string {
+	return keyTwapStates(p.User, fp.OptionFromPtr(p.Dex))
+}
+
+type remoteWebData3SubscriptionPayload struct {
+	Type string  `json:"type"`
+	User string  `json:"user"`
+	Dex  *string `json:"dex,omitempty"`
+}
+
+func (p remoteWebData3SubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteWebData3SubscriptionPayload) Key() string {
+	return keyWebData3(p.User, fp.OptionFromPtr(p.Dex))
+}

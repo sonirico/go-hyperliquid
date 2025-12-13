@@ -62,3 +62,31 @@ func keyWebData2(_ string) string {
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }
+
+func keyClearinghouseState(user string, dex fp.Option[string]) string {
+	if dex.IsNone() {
+		return key(ChannelClearinghouseState, user)
+	}
+	return key(ChannelClearinghouseState, user, dex.UnwrapUnsafe())
+}
+
+func keyOpenOrders(user string, dex fp.Option[string]) string {
+	if dex.IsNone() {
+		return key(ChannelOpenOrders, user)
+	}
+	return key(ChannelOpenOrders, user, dex.UnwrapUnsafe())
+}
+
+func keyTwapStates(user string, dex fp.Option[string]) string {
+	if dex.IsNone() {
+		return key(ChannelTwapStates, user)
+	}
+	return key(ChannelTwapStates, user, dex.UnwrapUnsafe())
+}
+
+func keyWebData3(user string, dex fp.Option[string]) string {
+	if dex.IsNone() {
+		return key(ChannelWebData3, user)
+	}
+	return key(ChannelWebData3, user, dex.UnwrapUnsafe())
+}
