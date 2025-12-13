@@ -159,10 +159,17 @@ func parseMetaResponse(resp []byte) (*Meta, error) {
 	}, nil
 }
 
-func (i *Info) Meta(ctx context.Context) (*Meta, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+// Meta retrieves perpetuals metadata
+// If dex is empty string, returns metadata for the first perp dex (default)
+func (i *Info) Meta(ctx context.Context, dex ...string) (*Meta, error) {
+	payload := map[string]any{
 		"type": "meta",
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch meta: %w", err)
 	}
@@ -191,11 +198,18 @@ func (i *Info) NameToAsset(name string) int {
 	return i.coinToAsset[coin]
 }
 
-func (i *Info) UserState(ctx context.Context, address string) (*UserState, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+// UserState retrieves user's perpetuals account summary
+// If dex is empty string, returns state for the first perp dex (default)
+func (i *Info) UserState(ctx context.Context, address string, dex ...string) (*UserState, error) {
+	payload := map[string]any{
 		"type": "clearinghouseState",
 		"user": address,
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch user state: %w", err)
 	}
@@ -223,11 +237,19 @@ func (i *Info) SpotUserState(ctx context.Context, address string) (*SpotUserStat
 	return &result, nil
 }
 
-func (i *Info) OpenOrders(ctx context.Context, address string) ([]OpenOrder, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+// OpenOrders retrieves user's open orders
+// If dex is empty string, returns orders for the first perp dex (default)
+// Note: Spot open orders are only included with the first perp dex
+func (i *Info) OpenOrders(ctx context.Context, address string, dex ...string) ([]OpenOrder, error) {
+	payload := map[string]any{
 		"type": "openOrders",
 		"user": address,
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch open orders: %w", err)
 	}
@@ -239,14 +261,23 @@ func (i *Info) OpenOrders(ctx context.Context, address string) ([]OpenOrder, err
 	return result, nil
 }
 
+// FrontendOpenOrders retrieves user's open orders with frontend info
+// If dex is empty string, returns orders for the first perp dex (default)
+// Note: Spot open orders are only included with the first perp dex
 func (i *Info) FrontendOpenOrders(
 	ctx context.Context,
 	address string,
+	dex ...string,
 ) ([]FrontendOpenOrder, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+	payload := map[string]any{
 		"type": "frontendOpenOrders",
 		"user": address,
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch frontend open orders: %w", err)
 	}
@@ -258,10 +289,18 @@ func (i *Info) FrontendOpenOrders(
 	return result, nil
 }
 
-func (i *Info) AllMids(ctx context.Context) (map[string]string, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+// AllMids retrieves mids for all coins
+// If dex is empty string, returns mids for the first perp dex (default)
+// Note: Spot mids are only included with the first perp dex
+func (i *Info) AllMids(ctx context.Context, dex ...string) (map[string]string, error) {
+	payload := map[string]any{
 		"type": "allMids",
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch all mids: %w", err)
 	}
@@ -694,7 +733,9 @@ func (i *Info) QueryUserToMultiSigSigners(
 }
 
 // PerpDexs returns the list of available perpetual dexes
-func (i *Info) PerpDexs(ctx context.Context) ([]string, error) {
+// Returns an array where each element can be nil (for the default dex) or a PerpDex object
+// The first element is always null (representing the default dex)
+func (i *Info) PerpDexs(ctx context.Context) (MixedArray, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "perpDexs",
 	})
@@ -702,7 +743,7 @@ func (i *Info) PerpDexs(ctx context.Context) ([]string, error) {
 		return nil, fmt.Errorf("failed to fetch perp dexs: %w", err)
 	}
 
-	var result []string
+	var result MixedArray
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal perp dexs: %w", err)
 	}
@@ -724,4 +765,64 @@ func (i *Info) TokenDetails(ctx context.Context, tokenId string) (*TokenDetail, 
 	}
 
 	return &tokenDetail, nil
+}
+
+// PerpDexLimits retrieves builder-deployed perp market limits
+// dex must be a non-empty string (the empty string is not allowed for this endpoint)
+func (i *Info) PerpDexLimits(ctx context.Context, dex string) (*PerpDexLimits, error) {
+	if dex == "" {
+		return nil, fmt.Errorf("dex parameter is required for perpDexLimits")
+	}
+
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpDexLimits",
+		"dex":  dex,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp dex limits: %w", err)
+	}
+
+	var result PerpDexLimits
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp dex limits: %w", err)
+	}
+	return &result, nil
+}
+
+// PerpDexStatus retrieves perp market status
+// If dex is empty string, returns status for the first perp dex (default)
+func (i *Info) PerpDexStatus(ctx context.Context, dex string) (*PerpDexStatus, error) {
+	payload := map[string]any{
+		"type": "perpDexStatus",
+	}
+	if dex != "" {
+		payload["dex"] = dex
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp dex status: %w", err)
+	}
+
+	var result PerpDexStatus
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp dex status: %w", err)
+	}
+	return &result, nil
+}
+
+// PerpDeployAuctionStatus retrieves information about the Perp Deploy Auction
+func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionStatus, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpDeployAuctionStatus",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp deploy auction status: %w", err)
+	}
+
+	var result PerpDeployAuctionStatus
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp deploy auction status: %w", err)
+	}
+	return &result, nil
 }

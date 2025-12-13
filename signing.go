@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"strconv"
 	"strings"
 	"time"
 
@@ -167,10 +168,64 @@ func hashStructLenient(
 	types := typedData.Types[primaryType]
 
 	// Filter message to only include fields that exist in type definition
+	// Also convert numeric types to ensure proper type handling for EIP-712
 	filteredMessage := make(map[string]any)
 	for _, t := range types {
 		if val, ok := message[t.Name]; ok {
-			filteredMessage[t.Name] = val
+			// Convert numeric types to ensure proper type handling for EIP-712
+			// apitypes.HashStruct expects specific types based on the type declaration
+			switch t.Type {
+			case "uint64":
+				var uintVal uint64
+				switch v := val.(type) {
+				case uint64:
+					uintVal = v
+				case int64:
+					if v < 0 {
+						return nil, fmt.Errorf("cannot convert negative int64 %d to uint64", v)
+					}
+					uintVal = uint64(v)
+				case float64:
+					// JSON unmarshaling can convert numbers to float64
+					if v < 0 || v > float64(^uint64(0)) || v != float64(uint64(v)) {
+						return nil, fmt.Errorf("invalid float64 value %f for uint64", v)
+					}
+					uintVal = uint64(v)
+				case int:
+					if v < 0 {
+						return nil, fmt.Errorf("cannot convert negative int %d to uint64", v)
+					}
+					uintVal = uint64(v)
+				case json.Number:
+					// Handle json.Number type
+					parsed, err := strconv.ParseUint(string(v), 10, 64)
+					if err != nil {
+						return nil, fmt.Errorf("failed to parse json.Number %s to uint64 for %s: %w", v, t.Name, err)
+					}
+					uintVal = parsed
+				case string:
+					// Try to parse as string representation of uint64
+					parsed, err := strconv.ParseUint(v, 10, 64)
+					if err != nil {
+						return nil, fmt.Errorf("failed to parse string %s to uint64 for %s: %w", v, t.Name, err)
+					}
+					uintVal = parsed
+				default:
+					// Try to convert via json marshal/unmarshal to handle edge cases
+					jsonBytes, err := json.Marshal(v)
+					if err != nil {
+						return nil, fmt.Errorf("failed to marshal value for %s: %w", t.Name, err)
+					}
+					if err := json.Unmarshal(jsonBytes, &uintVal); err != nil {
+						return nil, fmt.Errorf("failed to convert value to uint64 for %s: %w", t.Name, err)
+					}
+				}
+				// apitypes.HashStruct may not handle uint64 directly from map[string]any
+				// Convert to *big.Int which is commonly used for EIP-712 uint types
+				filteredMessage[t.Name] = new(big.Int).SetUint64(uintVal)
+			default:
+				filteredMessage[t.Name] = val
+			}
 		}
 	}
 
@@ -486,6 +541,13 @@ func SignAgent(
 	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
+	// The nonce must be non-negative
+	if nonce < 0 {
+		return SignatureResult{}, fmt.Errorf("nonce cannot be negative: %d", nonce)
+	}
+
+	// Use int64 in the action map - apitypes will handle the conversion to uint64
+	// based on the type declaration in payloadTypes
 	action := map[string]any{
 		"type":         "approveAgent",
 		"agentAddress": agentAddress,

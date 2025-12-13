@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 34
+        host: api.hyperliquid.xyz
+        body: '{"type":"perpDeployAuctionStatus"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 126
+        body: '{"startTimeSeconds":1765623600,"durationSeconds":111600,"startGas":"1830.62376484","currentGas":"1369.88262387","endGas":null}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "126"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:44:02 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 b5825d3f79124e6f8419a96c48f75e2a.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - ztSaw2F2kx0zai--P3SC9hM2s6G5d5wL7EtqRwrnuUeomdqH05YNGw==
+            X-Amz-Cf-Pop:
+                - MAD53-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 315.515379ms

@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 36
+        host: api.hyperliquid.xyz
+        body: '{"dex":"xyz","type":"perpDexStatus"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 41
+        body: '{"totalNetDeposit":"44452174.1128069982"}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "41"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:40:02 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 df12d2b385dac3f516d1788990ebf43a.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - NkM3tk3mI4Rhx6sRQmKwmK6AGrJrHUrW2jKChQ5VrS4sROLFNiP4Lg==
+            X-Amz-Cf-Pop:
+                - MAD53-P3
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 303.98893ms

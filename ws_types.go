@@ -7,18 +7,22 @@ import (
 //go:generate easyjson -all
 
 const (
-	ChannelPong           string = "pong"
-	ChannelTrades         string = "trades"
-	ChannelActiveAssetCtx string = "activeAssetCtx"
-	ChannelL2Book         string = "l2Book"
-	ChannelCandle         string = "candle"
-	ChannelAllMids        string = "allMids"
-	ChannelNotification   string = "notification"
-	ChannelOrderUpdates   string = "orderUpdates"
-	ChannelUserFills      string = "userFills"
-	ChannelWebData2       string = "webData2"
-	ChannelBbo            string = "bbo"
-	ChannelSubResponse    string = "subscriptionResponse"
+	ChannelPong               string = "pong"
+	ChannelTrades             string = "trades"
+	ChannelActiveAssetCtx     string = "activeAssetCtx"
+	ChannelL2Book             string = "l2Book"
+	ChannelCandle             string = "candle"
+	ChannelAllMids            string = "allMids"
+	ChannelNotification       string = "notification"
+	ChannelOrderUpdates       string = "orderUpdates"
+	ChannelUserFills          string = "userFills"
+	ChannelWebData2           string = "webData2"
+	ChannelBbo                string = "bbo"
+	ChannelSubResponse        string = "subscriptionResponse"
+	ChannelClearinghouseState string = "clearinghouseState"
+	ChannelOpenOrders         string = "openOrders"
+	ChannelTwapStates         string = "twapStates"
+	ChannelWebData3           string = "webData3"
 )
 
 type wsMessage struct {
@@ -129,6 +133,12 @@ type (
 		Balances []SpotBalance `json:"balances,omitempty"`
 	}
 
+	OpenOrders struct {
+		Dex    string         `json:"dex"`
+		User   string         `json:"user"`
+		Orders []WsBasicOrder `json:"orders"`
+	}
+
 	WsOrder struct {
 		Order           WsBasicOrder     `json:"order"`
 		Status          OrderStatusValue `json:"status"`
@@ -206,6 +216,54 @@ type (
 		Close       string `json:"c"` // close price
 		Symbol      string `json:"s"` // coin
 		Volume      string `json:"v"` // volume (base unit)
+	}
+
+	//easyjson:skip
+	TwapStates struct {
+		Dex    string                   `json:"dex"`
+		User   string                   `json:"user"`
+		States []Tuple2[int, TwapState] `json:"states"`
+	}
+
+	TwapState struct {
+		Coin        string  `json:"coin"`
+		User        string  `json:"user"`
+		Side        string  `json:"side"`
+		Sz          float64 `json:"sz,string"`
+		ExecutedSz  float64 `json:"executedSz,string"`
+		ExecutedNtl float64 `json:"executedNtl,string"`
+		Minutes     int     `json:"minutes"`
+		ReduceOnly  bool    `json:"reduceOnly"`
+		Randomize   bool    `json:"randomize"`
+		Timestamp   int64   `json:"timestamp"`
+	}
+
+	//easyjson:skip
+	WebData3 struct {
+		UserState     WebData3UserState `json:"userState"`
+		PerpDexStates []PerpDexState    `json:"perpDexStates"`
+	}
+
+	WebData3UserState struct {
+		AgentAddress          *string `json:"agentAddress,omitempty"`
+		AgentValidUntil       *int64  `json:"agentValidUntil,omitempty"`
+		ServerTime            int64   `json:"serverTime"`
+		CumLedger             float64 `json:"cumLedger,string"`
+		IsVault               bool    `json:"isVault"`
+		User                  string  `json:"user"`
+		OptOutOfSpotDusting   *bool   `json:"optOutOfSpotDusting,omitempty"`
+		DexAbstractionEnabled *bool   `json:"dexAbstractionEnabled,omitempty"`
+	}
+
+	PerpDexState struct {
+		TotalVaultEquity       float64         `json:"totalVaultEquity,string"`
+		PerpsAtOpenInterestCap *[]string       `json:"perpsAtOpenInterestCap,omitempty"`
+		LeadingVaults          *[]LeadingVault `json:"leadingVaults,omitempty"`
+	}
+
+	LeadingVault struct {
+		Address string `json:"address"`
+		Name    string `json:"name"`
 	}
 )
 

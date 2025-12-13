@@ -1,0 +1,101 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 81
+        host: api.hyperliquid.xyz
+        body: '{"type":"frontendOpenOrders","user":"0xcd5051944f780a621ee62e39e493c489668acf4d"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: '[]'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:26:31 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 c79c2a81ac4d9188a11e797e452b6892.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - iX3P1DcDT810ojjh7kCxthq3vXMZg6K7tozSHFZDgrlcSOa5kGmQuA==
+            X-Amz-Cf-Pop:
+                - LHR61-P2
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 295.819999ms
+    - id: 1
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 81
+        host: api.hyperliquid.xyz
+        body: '{"type":"frontendOpenOrders","user":"0xcd5051944f780a621ee62e39e493c489668acf4d"}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid.xyz/info
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 2
+        body: '[]'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "2"
+            Content-Type:
+                - application/json
+            Date:
+                - Sat, 13 Dec 2025 21:26:56 GMT
+            Server:
+                - nginx/1.22.1
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 c79c2a81ac4d9188a11e797e452b6892.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - nZ1twjFIk8-rwHzY_UizDMDGmltowSeii4Bw4ci2AtH7T0YetMMSdw==
+            X-Amz-Cf-Pop:
+                - LHR61-P2
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 257.077857ms

@@ -506,20 +506,27 @@ func (e *Exchange) SpotTransfer(
 ) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
-	action := SpotTransferAction{
-		Type:        "spotSend",
-		Destination: destination,
-		Amount:      formatFloat(amount),
-		Token:       token,
-		Time:        nonce,
+	action := map[string]any{
+		"destination": destination,
+		"amount":      formatFloat(amount),
+		"token":       token,
+		"time":        big.NewInt(nonce),
+		"type":        "spotSend",
 	}
 
-	sig, err := SignL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "token", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	sig, err := SignUserSignedAction(
 		e.privateKey,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:SpotSend",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
@@ -1244,18 +1251,52 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 
 // Perp Deploy Methods
 
-// PerpDeployRegisterAsset registers a new perpetual asset
+// PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX
+// This matches the Python SDK's perp_deploy_register_asset method
 func (e *Exchange) PerpDeployRegisterAsset(
 	ctx context.Context,
-	asset string,
-	perpDexInput PerpDexSchemaInput,
+	dex string,
+	maxGas *int,
+	coin string,
+	szDecimals int,
+	oraclePx string,
+	marginTableID int,
+	onlyIsolated bool,
+	schema *PerpDexSchemaInput,
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
+	schemaWire := map[string]any{}
+	if schema != nil {
+		schemaWire["fullName"] = schema.FullName
+		schemaWire["collateralToken"] = schema.CollateralToken
+		if schema.OracleUpdater != nil {
+			schemaWire["oracleUpdater"] = strings.ToLower(*schema.OracleUpdater)
+		} else {
+			schemaWire["oracleUpdater"] = nil
+		}
+	}
+
+	registerAsset := map[string]any{
+		"dex": dex,
+		"assetRequest": map[string]any{
+			"coin":          coin,
+			"szDecimals":    szDecimals,
+			"oraclePx":      oraclePx,
+			"marginTableId": marginTableID,
+			"onlyIsolated":  onlyIsolated,
+		},
+	}
+	if maxGas != nil {
+		registerAsset["maxGas"] = *maxGas
+	}
+	if schema != nil {
+		registerAsset["schema"] = schemaWire
+	}
+
 	action := map[string]any{
-		"type":         "perpDeployRegisterAsset",
-		"asset":        asset,
-		"perpDexInput": perpDexInput,
+		"type":          "perpDeploy",
+		"registerAsset": registerAsset,
 	}
 
 	sig, err := SignL1Action(
@@ -1282,18 +1323,59 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	return &result, nil
 }
 
-// PerpDeploySetOracle sets oracle for perpetual asset
+// PerpDeploySetOracle sets oracle prices for a builder-deployed DEX
+// This matches the Python SDK's perp_deploy_set_oracle method
+// oraclePxs: map of coin to oracle price string
+// allMarkPxs: list of maps, each map contains coin to mark price string
+// externalPerpPxs: map of coin to external perp price string
 func (e *Exchange) PerpDeploySetOracle(
 	ctx context.Context,
-	asset string,
-	oracleAddress string,
-) (*SpotDeployResponse, error) {
+	dex string,
+	oraclePxs map[string]string,
+	allMarkPxs []map[string]string,
+	externalPerpPxs map[string]string,
+) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
+	// Sort oracle prices for deterministic ordering
+	oraclePxsWire := make([][]string, 0, len(oraclePxs))
+	for coin, px := range oraclePxs {
+		oraclePxsWire = append(oraclePxsWire, []string{coin, px})
+	}
+	sort.Slice(oraclePxsWire, func(i, j int) bool {
+		return oraclePxsWire[i][0] < oraclePxsWire[j][0]
+	})
+
+	// Sort mark prices - each element is a list of [coin, px] pairs
+	markPxsWire := make([][][]string, 0, len(allMarkPxs))
+	for _, markPxs := range allMarkPxs {
+		markPxList := make([][]string, 0, len(markPxs))
+		for coin, px := range markPxs {
+			markPxList = append(markPxList, []string{coin, px})
+		}
+		sort.Slice(markPxList, func(i, j int) bool {
+			return markPxList[i][0] < markPxList[j][0]
+		})
+		markPxsWire = append(markPxsWire, markPxList)
+	}
+
+	// Sort external perp prices
+	externalPerpPxsWire := make([][]string, 0, len(externalPerpPxs))
+	for coin, px := range externalPerpPxs {
+		externalPerpPxsWire = append(externalPerpPxsWire, []string{coin, px})
+	}
+	sort.Slice(externalPerpPxsWire, func(i, j int) bool {
+		return externalPerpPxsWire[i][0] < externalPerpPxsWire[j][0]
+	})
+
 	action := map[string]any{
-		"type":          "perpDeploySetOracle",
-		"asset":         asset,
-		"oracleAddress": oracleAddress,
+		"type": "perpDeploy",
+		"setOracle": map[string]any{
+			"dex":             dex,
+			"oraclePxs":       oraclePxsWire,
+			"markPxs":         markPxsWire,
+			"externalPerpPxs": externalPerpPxsWire,
+		},
 	}
 
 	sig, err := SignL1Action(
@@ -1313,7 +1395,7 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
-	var result SpotDeployResponse
+	var result PerpDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
