@@ -392,10 +392,17 @@ type FundingHistory struct {
 }
 
 type UserFundingHistory struct {
-	User      string `json:"user"`
-	Type      string `json:"type"`
-	StartTime int64  `json:"startTime"`
-	EndTime   int64  `json:"endTime"`
+	Delta Delta  `json:"delta"`
+	Hash  string `json:"hash"`
+	Time  int64  `json:"time"`
+}
+
+type Delta struct {
+	Coin        string `json:"coin"`
+	FundingRate string `json:"fundingRate"`
+	Size        string `json:"size"`
+	Type        string `json:"type"`
+	USDC        string `json:"usdc"`
 }
 
 type UserFees struct {
