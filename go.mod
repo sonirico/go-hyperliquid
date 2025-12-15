@@ -11,7 +11,7 @@ require (
 	github.com/sonirico/vago v0.9.0
 	github.com/sonirico/vago/lol v0.0.0-20250901170347-2d1d82c510bd
 	github.com/stretchr/testify v1.11.1
-	github.com/valyala/fastjson v1.6.4
+	github.com/valyala/fastjson v1.6.7
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.6
 )
