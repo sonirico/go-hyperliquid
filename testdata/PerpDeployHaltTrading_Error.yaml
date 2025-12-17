@@ -1,0 +1,52 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 271
+        host: api.hyperliquid-testnet.xyz
+        body: '{"action":{"haltTrading":{"coin":"test:BTC","isHalted":true},"type":"perpDeploy"}}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid-testnet.xyz/exchange
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 51
+        body: '{"status":"err","response":"Unknown coin test:BTC"}'
+        headers:
+            Access-Control-Allow-Origin:
+                - '*'
+            Access-Control-Expose-Headers:
+                - '*'
+            Connection:
+                - keep-alive
+            Content-Length:
+                - "51"
+            Content-Type:
+                - application/json
+            Date:
+                - Thu, 18 Dec 2025 09:13:23 GMT
+            Server:
+                - nginx/1.26.2
+            Vary:
+                - origin
+                - access-control-request-method
+                - access-control-request-headers
+            Via:
+                - 1.1 37583b33679eaddf0ec0674860e6da28.cloudfront.net (CloudFront)
+            X-Amz-Cf-Id:
+                - ysnv8xd7ZoVc1zy2sWTHkL6TSyjV9o1QXwrtO5lhXGdfW1IEMWoLDQ==
+            X-Amz-Cf-Pop:
+                - WAW51-P6
+            X-Cache:
+                - Miss from cloudfront
+        status: 200 OK
+        code: 200
+        duration: 626.217421ms

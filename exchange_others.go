@@ -1323,6 +1323,47 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	return &result, nil
 }
 
+// PerpHaltTrading halts or unhalts trading for a builder-deployed DEX
+func (e *Exchange) PerpDeployHaltTrading(
+	ctx context.Context,
+	coin string,
+	isHalted bool,
+) (*PerpDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type": "perpDeploy",
+		"haltTrading": map[string]any{
+			"coin":     coin,
+			"isHalted": isHalted,
+		},
+	}
+
+	sig, err := SignL1Action(
+		e.privateKey,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PerpDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
 // PerpDeploySetOracle sets oracle prices for a builder-deployed DEX
 // This matches the Python SDK's perp_deploy_set_oracle method
 // oraclePxs: map of coin to oracle price string
