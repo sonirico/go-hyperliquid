@@ -215,6 +215,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/ivaaaan">
+                    <img src="https://avatars.githubusercontent.com/u/10375456?v=4" width="100;" alt="ivaaaan"/>
+                    <br />
+                    <sub><b>Ivan</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/aaltergot">
                     <img src="https://avatars.githubusercontent.com/u/12907019?v=4" width="100;" alt="aaltergot"/>
                     <br />
@@ -235,6 +242,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>feeeei</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/hail100">
                     <img src="https://avatars.githubusercontent.com/u/7278395?v=4" width="100;" alt="hail100"/>
@@ -242,8 +251,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>hail100</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/vyomshm">
                     <img src="https://avatars.githubusercontent.com/u/20184946?v=4" width="100;" alt="vyomshm"/>
