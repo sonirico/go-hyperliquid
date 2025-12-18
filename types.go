@@ -579,8 +579,9 @@ type MultiSigResponse struct {
 }
 
 type PerpDeployResponse struct {
-	Status string `json:"status"`
-	Data   struct {
+	Status   string `json:"status"`
+	Response string `json:"response,omitempty"`
+	Data     struct {
 		Statuses []TxStatus `json:"statuses"`
 	} `json:"data"`
 }

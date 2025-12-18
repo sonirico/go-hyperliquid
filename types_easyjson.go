@@ -4614,6 +4614,12 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(in *jlexer.Lexer, ou
 			} else {
 				out.Status = string(in.String())
 			}
+		case "response":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Response = string(in.String())
+			}
 		case "data":
 			easyjson6601e8cdDecode(in, &out.Data)
 		default:
@@ -4634,6 +4640,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(out *jwriter.Writer,
 		const prefix string = ",\"status\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Status))
+	}
+	if in.Response != "" {
+		const prefix string = ",\"response\":"
+		out.RawString(prefix)
+		out.String(string(in.Response))
 	}
 	{
 		const prefix string = ",\"data\":"
