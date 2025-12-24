@@ -15,7 +15,6 @@ type Info struct {
 	debug          bool
 	client         *client
 	coinToAsset    map[string]int
-	nameToCoin     map[string]string
 	assetToDecimal map[int]int
 	clientOpts     []ClientOpt
 }
@@ -30,7 +29,6 @@ func NewInfo(
 ) *Info {
 	info := &Info{
 		coinToAsset:    make(map[string]int),
-		nameToCoin:     make(map[string]string),
 		assetToDecimal: make(map[int]int),
 	}
 
@@ -63,7 +61,6 @@ func NewInfo(
 	// Map perp assets
 	for asset, assetInfo := range meta.Universe {
 		info.coinToAsset[assetInfo.Name] = asset
-		info.nameToCoin[assetInfo.Name] = assetInfo.Name
 		info.assetToDecimal[asset] = assetInfo.SzDecimals
 	}
 
@@ -71,7 +68,6 @@ func NewInfo(
 	for _, spotInfo := range spotMeta.Universe {
 		asset := spotInfo.Index + spotAssetIndexOffset
 		info.coinToAsset[spotInfo.Name] = asset
-		info.nameToCoin[spotInfo.Name] = spotInfo.Name
 		info.assetToDecimal[asset] = spotMeta.Tokens[spotInfo.Tokens[0]].SzDecimals
 	}
 
@@ -193,9 +189,9 @@ func (i *Info) SpotMeta(ctx context.Context) (*SpotMeta, error) {
 	return &spotMeta, nil
 }
 
-func (i *Info) NameToAsset(name string) int {
-	coin := i.nameToCoin[name]
-	return i.coinToAsset[coin]
+func (i *Info) CoinToAsset(coin string) (int, bool) {
+	result, ok := i.coinToAsset[coin]
+	return result, ok
 }
 
 // UserState retrieves user's perpetuals account summary
@@ -467,11 +463,10 @@ func (i *Info) SpotMetaAndAssetCtxs(ctx context.Context) (*SpotMetaAndAssetCtxs,
 
 func (i *Info) FundingHistory(
 	ctx context.Context,
-	name string,
+	coin string,
 	startTime int64,
 	endTime *int64,
 ) ([]FundingHistory, error) {
-	coin := i.nameToCoin[name]
 	resp, err := i.postTimeRangeRequest(
 		ctx,
 		"fundingHistory",
@@ -509,10 +504,10 @@ func (i *Info) UserFundingHistory(
 	return result, nil
 }
 
-func (i *Info) L2Snapshot(ctx context.Context, name string) (*L2Book, error) {
+func (i *Info) L2Snapshot(ctx context.Context, coin string) (*L2Book, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "l2Book",
-		"coin": i.nameToCoin[name],
+		"coin": coin,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch L2 snapshot: %w", err)
@@ -527,11 +522,11 @@ func (i *Info) L2Snapshot(ctx context.Context, name string) (*L2Book, error) {
 
 func (i *Info) CandlesSnapshot(
 	ctx context.Context,
-	name, interval string,
+	coin, interval string,
 	startTime, endTime int64,
 ) ([]Candle, error) {
 	req := map[string]any{
-		"coin":      i.nameToCoin[name],
+		"coin":      coin,
 		"interval":  interval,
 		"startTime": startTime,
 		"endTime":   endTime,
