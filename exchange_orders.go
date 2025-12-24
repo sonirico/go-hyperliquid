@@ -93,8 +93,13 @@ func newCreateOrderAction(
 			return OrderAction{}, fmt.Errorf("failed to wire size for order %d: %w", i, err)
 		}
 
+		asset, ok := e.info.CoinToAsset(order.Coin)
+		if !ok {
+			return OrderAction{}, fmt.Errorf("coin %s not found in info", order.Coin)
+		}
+
 		orderWire := OrderWire{
-			Asset:      e.info.NameToAsset(order.Coin),
+			Asset:      asset,
 			IsBuy:      order.IsBuy,
 			LimitPx:    priceWire,
 			Size:       sizeWire,
@@ -225,8 +230,13 @@ func newModifyOrderAction(
 		}
 	}
 
+	asset, ok := e.info.CoinToAsset(modifyRequest.Order.Coin)
+	if !ok {
+		return ModifyAction{}, fmt.Errorf("coin %s not found in info")
+	}
+
 	order := OrderWire{
-		Asset:      e.info.NameToAsset(modifyRequest.Order.Coin),
+		Asset:      asset,
 		IsBuy:      modifyRequest.Order.IsBuy,
 		LimitPx:    priceWire,
 		Size:       sizeWire,

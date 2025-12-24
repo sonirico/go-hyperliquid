@@ -20,9 +20,14 @@ func (e *Exchange) UpdateLeverage(
 	name string,
 	isCross bool,
 ) (*UserState, error) {
+	asset, ok := e.info.CoinToAsset(name)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info")
+	}
+
 	action := UpdateLeverageAction{
 		Type:     "updateLeverage",
-		Asset:    e.info.NameToAsset(name),
+		Asset:    asset,
 		IsCross:  isCross,
 		Leverage: leverage,
 	}
@@ -39,9 +44,14 @@ func (e *Exchange) UpdateIsolatedMargin(
 	amount float64,
 	name string,
 ) (*UserState, error) {
+	asset, ok := e.info.CoinToAsset(name)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info")
+	}
+
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
-		Asset: e.info.NameToAsset(name),
+		Asset: asset,
 		IsBuy: amount > 0,
 		Ntli:  abs(amount),
 	}
@@ -56,12 +66,11 @@ func (e *Exchange) UpdateIsolatedMargin(
 // SlippagePrice calculates the slippage price for market orders
 func (e *Exchange) SlippagePrice(
 	ctx context.Context,
-	name string,
+	coin string,
 	isBuy bool,
 	slippage float64,
 	px *float64,
 ) (float64, error) {
-	coin := e.info.nameToCoin[name]
 	var price float64
 
 	if px != nil {
