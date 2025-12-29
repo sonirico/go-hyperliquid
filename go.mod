@@ -9,7 +9,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/mailru/easyjson v0.9.1
 	github.com/sonirico/vago v0.10.0
-	github.com/sonirico/vago/lol v0.0.0-20250901170347-2d1d82c510bd
+	github.com/sonirico/vago/lol v0.1.0
 	github.com/stretchr/testify v1.11.1
 	github.com/valyala/fastjson v1.6.7
 	github.com/vmihailenco/msgpack/v5 v5.4.1
@@ -36,18 +36,18 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/prometheus/procfs v0.17.0 // indirect
+	github.com/prometheus/procfs v0.19.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/supranational/blst v0.3.16 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	go.elastic.co/apm/module/apmzerolog/v2 v2.7.1 // indirect
-	go.elastic.co/apm/v2 v2.7.1 // indirect
+	go.elastic.co/apm/module/apmzerolog/v2 v2.7.2 // indirect
+	go.elastic.co/apm/v2 v2.7.2 // indirect
 	go.elastic.co/fastjson v1.5.1 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.3 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	howett.net/plist v1.0.1 // indirect
 )
