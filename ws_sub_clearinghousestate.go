@@ -18,12 +18,12 @@ func (w *WebsocketClient) ClearinghouseState(
 	}
 
 	return w.subscribe(payload, func(msg any) {
-		state, ok := msg.(ClearinghouseState)
+		wrapper, ok := msg.(ClearinghouseStateMessage)
 		if !ok {
 			callback(ClearinghouseState{}, fmt.Errorf("invalid message type"))
 			return
 		}
 
-		callback(state, nil)
+		callback(wrapper.ClearinghouseState, nil)
 	})
 }

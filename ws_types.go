@@ -129,6 +129,12 @@ type (
 		Time                       int64           `json:"time,omitempty"`
 	}
 
+	ClearinghouseStateMessage struct {
+		Dex                string             `json:"dex,omitempty"`
+		User               string             `json:"user,omitempty"`
+		ClearinghouseState ClearinghouseState `json:"clearinghouseState"`
+	}
+
 	SpotState struct {
 		Balances []SpotBalance `json:"balances,omitempty"`
 	}
