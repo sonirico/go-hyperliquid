@@ -259,6 +259,7 @@ func newModifyOrdersAction(
 			return BatchModifyAction{}, fmt.Errorf("failed to create modify request %d: %w", i, err)
 		}
 		modify.Type = ""
+		modify.Dex = ""
 		modifies[i] = modify
 	}
 

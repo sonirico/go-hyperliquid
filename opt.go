@@ -67,6 +67,21 @@ func ExchangeOptInfoOptions(opts ...InfoOpt) ExchangeOpt {
 	}
 }
 
+func ExchangeOptPerpDex(dex string) ExchangeOpt {
+	return func(e *Exchange) {
+		e.dex = dex
+		if dex != "" {
+			e.infoOpts = append(e.infoOpts, InfoOptPerpDexName(dex))
+		}
+	}
+}
+
+func InfoOptPerpDexName(dex string) InfoOpt {
+	return func(i *Info) {
+		i.perpDexName = dex
+	}
+}
+
 // InfoOptClientOptions allows passing of ClientOpt to Info
 func InfoOptClientOptions(opts ...ClientOpt) InfoOpt {
 	return func(i *Info) {

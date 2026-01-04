@@ -9,6 +9,9 @@ import (
 const (
 	// spotAssetIndexOffset is the offset added to spot asset indices
 	spotAssetIndexOffset = 10000
+	// builderPerpAssetBase is the base offset for builder-deployed perp asset ids.
+	// See Asset IDs docs: asset = 100000 + perpDexIndex*10000 + indexInMeta.
+	builderPerpAssetBase = 100000
 )
 
 type Info struct {
@@ -17,6 +20,7 @@ type Info struct {
 	coinToAsset    map[string]int
 	nameToCoin     map[string]string
 	assetToDecimal map[int]int
+	perpDexName    string
 	clientOpts     []ClientOpt
 }
 
@@ -61,10 +65,40 @@ func NewInfo(
 	}
 
 	// Map perp assets
-	for asset, assetInfo := range meta.Universe {
-		info.coinToAsset[assetInfo.Name] = asset
-		info.nameToCoin[assetInfo.Name] = assetInfo.Name
-		info.assetToDecimal[asset] = assetInfo.SzDecimals
+	if info.perpDexName != "" {
+		// Builder-deployed perp: compute full asset id as documented.
+		perpDexs, err := info.PerpDexs(ctx)
+		if err != nil {
+			panic(err)
+		}
+		perpDexIndex := -1
+		for i, mv := range perpDexs {
+			if mv.Type() != "object" {
+				continue
+			}
+			var pd PerpDex
+			if err := mv.Parse(&pd); err == nil && pd.Name == info.perpDexName {
+				perpDexIndex = i
+				break
+			}
+		}
+		if perpDexIndex < 0 {
+			panic(fmt.Errorf("unknown perp dex %q (not present in /info perpDexs)", info.perpDexName))
+		}
+		base := builderPerpAssetBase + perpDexIndex*10000
+		for idxInMeta, assetInfo := range meta.Universe {
+			assetID := base + idxInMeta
+			info.coinToAsset[assetInfo.Name] = assetID
+			info.nameToCoin[assetInfo.Name] = assetInfo.Name
+			info.assetToDecimal[assetID] = assetInfo.SzDecimals
+		}
+	} else {
+		// Default perp dex: asset id is just index in meta universe.
+		for asset, assetInfo := range meta.Universe {
+			info.coinToAsset[assetInfo.Name] = asset
+			info.nameToCoin[assetInfo.Name] = assetInfo.Name
+			info.assetToDecimal[asset] = assetInfo.SzDecimals
+		}
 	}
 
 	// Map spot assets starting at 10000
