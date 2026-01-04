@@ -44,20 +44,28 @@ Thank you for your interest in contributing to go-hyperliquid! This document pro
    ```
 
 2. Make your changes
-3. Run tests:
+
+3. **Regenerate code** (if you modified any structs with `//go:generate` comments):
    ```bash
-   make test
+   make generate
    ```
 
-4. Run all checks:
+4. Run all checks (format, vet, lint):
    ```bash
    make check
    ```
 
-5. Commit your changes:
+5. Run tests:
+   ```bash
+   make test
+   ```
+
+6. Commit your changes:
    ```bash
    git commit -m "feat: add your feature description"
    ```
+
+> **⚠️ Important**: The CI will fail if generated files are out of date or if `go vet` finds issues. Always run `make generate` and `make check` before pushing.
 
 ### Code Generation
 
@@ -205,12 +213,19 @@ make ci-test        # Run tests excluding examples
 
 ### PR Requirements
 
-- [ ] All tests pass
-- [ ] Code is properly formatted
+- [ ] All tests pass (`make test`)
+- [ ] Code is properly formatted (`make fmt`)
+- [ ] `go vet` passes (`make vet`)
+- [ ] Linter passes (`make lint`)
+- [ ] Generated files are up to date (`make generate`)
 - [ ] New code has appropriate test coverage
 - [ ] Documentation is updated if needed
-- [ ] Generated files are up to date
 - [ ] Conventional commit messages are used
+
+**Quick check before pushing:**
+```bash
+make generate && make check && make test
+```
 
 ## Release Process
 
