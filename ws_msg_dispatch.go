@@ -3,7 +3,6 @@ package hyperliquid
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 )
 
 type msgDispatcher interface {
@@ -28,7 +27,7 @@ func NewMsgDispatcher[T subscriptable](channel string) msgDispatcher {
 		}
 
 		for _, subscriber := range subs {
-			if strings.HasPrefix(subscriber.id, x.Key()) {
+			if subscriber.id == x.Key() {
 				subscriber.dispatch(x)
 			}
 		}

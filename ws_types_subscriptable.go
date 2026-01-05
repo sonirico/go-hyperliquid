@@ -65,9 +65,10 @@ func (c ClearinghouseState) Key() string {
 }
 
 func (c ClearinghouseStateMessage) Key() string {
-	// Use prefix matching - the subscription key is "clearinghouseState:user:dex"
-	// The message dispatcher uses HasPrefix matching
-	return ChannelClearinghouseState
+	if c.Dex == "" {
+		return key(ChannelClearinghouseState, c.User)
+	}
+	return key(ChannelClearinghouseState, c.User, c.Dex)
 }
 
 func (o OpenOrders) Key() string {
