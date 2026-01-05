@@ -2967,6 +2967,12 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid29(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
+		case "dex":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Dex = string(in.String())
+			}
 		case "cancels":
 			if in.IsNull() {
 				in.Skip()
