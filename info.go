@@ -463,7 +463,7 @@ func (i *Info) SpotMetaAndAssetCtxs(ctx context.Context) (*SpotMetaAndAssetCtxs,
 
 func (i *Info) FundingHistory(
 	ctx context.Context,
-	coin string,
+	name string,
 	startTime int64,
 	endTime *int64,
 ) ([]FundingHistory, error) {
@@ -473,7 +473,7 @@ func (i *Info) FundingHistory(
 		"",
 		startTime,
 		endTime,
-		map[string]any{"coin": coin},
+		map[string]any{"coin": name},
 	)
 	if err != nil {
 		return nil, err
