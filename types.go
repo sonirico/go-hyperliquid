@@ -385,7 +385,7 @@ type Fill struct {
 }
 
 type FundingHistory struct {
-	Coin        string `json:"coin"`
+	Name        string `json:"coin"`
 	FundingRate string `json:"fundingRate"`
 	Premium     string `json:"premium"`
 	Time        int64  `json:"time"`

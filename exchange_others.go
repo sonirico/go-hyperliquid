@@ -22,7 +22,7 @@ func (e *Exchange) UpdateLeverage(
 ) (*UserState, error) {
 	asset, ok := e.info.CoinToAsset(name)
 	if !ok {
-		return nil, fmt.Errorf("coin %s not found in info")
+		return nil, fmt.Errorf("coin %s not found in info", name)
 	}
 
 	action := UpdateLeverageAction{
@@ -46,7 +46,7 @@ func (e *Exchange) UpdateIsolatedMargin(
 ) (*UserState, error) {
 	asset, ok := e.info.CoinToAsset(name)
 	if !ok {
-		return nil, fmt.Errorf("coin %s not found in info")
+		return nil, fmt.Errorf("coin %s not found in info", name)
 	}
 
 	action := UpdateIsolatedMarginAction{
@@ -66,7 +66,7 @@ func (e *Exchange) UpdateIsolatedMargin(
 // SlippagePrice calculates the slippage price for market orders
 func (e *Exchange) SlippagePrice(
 	ctx context.Context,
-	coin string,
+	name string,
 	isBuy bool,
 	slippage float64,
 	px *float64,
@@ -81,14 +81,14 @@ func (e *Exchange) SlippagePrice(
 		if err != nil {
 			return 0, err
 		}
-		if midPriceStr, exists := mids[coin]; exists {
+		if midPriceStr, exists := mids[name]; exists {
 			price = parseFloat(midPriceStr)
 		} else {
-			return 0, fmt.Errorf("could not get mid price for coin: %s", coin)
+			return 0, fmt.Errorf("could not get mid price for coin: %s", name)
 		}
 	}
 
-	asset := e.info.coinToAsset[coin]
+	asset := e.info.coinToAsset[name]
 	isSpot := asset >= 10000
 
 	// Calculate slippage

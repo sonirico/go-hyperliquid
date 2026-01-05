@@ -232,7 +232,7 @@ func newModifyOrderAction(
 
 	asset, ok := e.info.CoinToAsset(modifyRequest.Order.Coin)
 	if !ok {
-		return ModifyAction{}, fmt.Errorf("coin %s not found in info")
+		return ModifyAction{}, fmt.Errorf("coin %s not found in info", modifyRequest.Order.Coin)
 	}
 
 	order := OrderWire{

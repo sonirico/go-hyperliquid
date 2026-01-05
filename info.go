@@ -504,10 +504,10 @@ func (i *Info) UserFundingHistory(
 	return result, nil
 }
 
-func (i *Info) L2Snapshot(ctx context.Context, coin string) (*L2Book, error) {
+func (i *Info) L2Snapshot(ctx context.Context, name string) (*L2Book, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "l2Book",
-		"coin": coin,
+		"coin": name,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch L2 snapshot: %w", err)
@@ -522,11 +522,11 @@ func (i *Info) L2Snapshot(ctx context.Context, coin string) (*L2Book, error) {
 
 func (i *Info) CandlesSnapshot(
 	ctx context.Context,
-	coin, interval string,
+	name, interval string,
 	startTime, endTime int64,
 ) ([]Candle, error) {
 	req := map[string]any{
-		"coin":      coin,
+		"coin":      name,
 		"interval":  interval,
 		"startTime": startTime,
 		"endTime":   endTime,

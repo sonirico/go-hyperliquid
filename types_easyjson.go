@@ -6717,7 +6717,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(in *jlexer.Lexer, ou
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Coin = string(in.String())
+				out.Name = string(in.String())
 			}
 		case "fundingRate":
 			if in.IsNull() {
@@ -6754,7 +6754,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(out *jwriter.Writer,
 	{
 		const prefix string = ",\"coin\":"
 		out.RawString(prefix[1:])
-		out.String(string(in.Coin))
+		out.String(string(in.Name))
 	}
 	{
 		const prefix string = ",\"fundingRate\":"
