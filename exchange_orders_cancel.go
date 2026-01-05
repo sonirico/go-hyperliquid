@@ -3,8 +3,6 @@ package hyperliquid
 import (
 	"context"
 	"fmt"
-
-	"github.com/sonirico/vago/slices"
 )
 
 type (
@@ -35,12 +33,17 @@ func (e *Exchange) BulkCancel(
 	ctx context.Context,
 	requests []CancelOrderRequest,
 ) (res *APIResponse[CancelOrderResponse], err error) {
-	cancels := slices.Map(requests, func(req CancelOrderRequest) CancelOrderWire {
-		return CancelOrderWire{
-			Asset:   e.info.NameToAsset(req.Coin),
-			OrderID: req.OrderID,
+	cancels := make([]CancelOrderWire, 0, len(requests))
+	for _, req := range requests {
+		asset, ok := e.info.CoinToAsset(req.Coin)
+		if !ok {
+			return nil, fmt.Errorf("coin %s not found in info", req.Coin)
 		}
-	})
+		cancels = append(cancels, CancelOrderWire{
+			Asset:   asset,
+			OrderID: req.OrderID,
+		})
+	}
 
 	action := CancelAction{
 		Type:    "cancel",
@@ -95,9 +98,13 @@ func (e *Exchange) BulkCancelByCloids(
 		if normalizedCloid == nil {
 			return nil, fmt.Errorf("cloid is required for cancel by cloid request %d", i)
 		}
+		asset, ok := e.info.CoinToAsset(req.Coin)
+		if !ok {
+			return nil, fmt.Errorf("coin %s not found in info", req.Coin)
+		}
 
 		cancels[i] = CancelByCloidWire{
-			Asset:    e.info.NameToAsset(req.Coin),
+			Asset:    asset,
 			ClientID: *normalizedCloid,
 		}
 	}
