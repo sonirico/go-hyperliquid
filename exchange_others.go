@@ -20,9 +20,14 @@ func (e *Exchange) UpdateLeverage(
 	name string,
 	isCross bool,
 ) (*UserState, error) {
+	asset, ok := e.info.CoinToAsset(name)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", name)
+	}
+
 	action := UpdateLeverageAction{
 		Type:     "updateLeverage",
-		Asset:    e.info.NameToAsset(name),
+		Asset:    asset,
 		IsCross:  isCross,
 		Leverage: leverage,
 	}
@@ -39,9 +44,14 @@ func (e *Exchange) UpdateIsolatedMargin(
 	amount float64,
 	name string,
 ) (*UserState, error) {
+	asset, ok := e.info.CoinToAsset(name)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", name)
+	}
+
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
-		Asset: e.info.NameToAsset(name),
+		Asset: asset,
 		IsBuy: amount > 0,
 		Ntli:  abs(amount),
 	}
@@ -61,7 +71,6 @@ func (e *Exchange) SlippagePrice(
 	slippage float64,
 	px *float64,
 ) (float64, error) {
-	coin := e.info.nameToCoin[name]
 	var price float64
 
 	if px != nil {
@@ -72,14 +81,14 @@ func (e *Exchange) SlippagePrice(
 		if err != nil {
 			return 0, err
 		}
-		if midPriceStr, exists := mids[coin]; exists {
+		if midPriceStr, exists := mids[name]; exists {
 			price = parseFloat(midPriceStr)
 		} else {
-			return 0, fmt.Errorf("could not get mid price for coin: %s", coin)
+			return 0, fmt.Errorf("could not get mid price for coin: %s", name)
 		}
 	}
 
-	asset := e.info.coinToAsset[coin]
+	asset := e.info.coinToAsset[name]
 	isSpot := asset >= 10000
 
 	// Calculate slippage
