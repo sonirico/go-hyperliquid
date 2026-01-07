@@ -87,14 +87,12 @@ func NewInfo(
 		for idxInMeta, assetInfo := range meta.Universe {
 			assetID := base + idxInMeta
 			info.coinToAsset[assetInfo.Name] = assetID
-			info.nameToCoin[assetInfo.Name] = assetInfo.Name
 			info.assetToDecimal[assetID] = assetInfo.SzDecimals
 		}
 	} else {
 		// Default perp dex: asset id is just index in meta universe.
 		for asset, assetInfo := range meta.Universe {
 			info.coinToAsset[assetInfo.Name] = asset
-			info.nameToCoin[assetInfo.Name] = assetInfo.Name
 			info.assetToDecimal[asset] = assetInfo.SzDecimals
 		}
 	}
