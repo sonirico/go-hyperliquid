@@ -14,6 +14,7 @@ type Exchange struct {
 	privateKey   *ecdsa.PrivateKey
 	vault        string
 	accountAddr  string
+	dex          string
 	info         *Info
 	expiresAfter *int64
 	lastNonce    atomic.Int64
@@ -74,6 +75,11 @@ func (e *Exchange) nextNonce() int64 {
 
 func (e *Exchange) Info() *Info {
 	return e.info
+}
+
+// PerpDex returns the configured builder perp dex name (e.g. "flx"), or empty string for default dex.
+func (e *Exchange) PerpDex() string {
+	return e.dex
 }
 
 // SetExpiresAfter sets the expiration time for actions
