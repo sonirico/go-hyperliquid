@@ -222,10 +222,10 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/nick-bisonai">
-                    <img src="https://avatars.githubusercontent.com/u/148735107?v=4" width="100;" alt="nick-bisonai"/>
+                <a href="https://github.com/07Vaishnavi-Singh">
+                    <img src="https://avatars.githubusercontent.com/u/100015197?v=4" width="100;" alt="07Vaishnavi-Singh"/>
                     <br />
-                    <sub><b>Nick</b></sub>
+                    <sub><b>Vaiz_07</b></sub>
                 </a>
             </td>
             <td align="center">
