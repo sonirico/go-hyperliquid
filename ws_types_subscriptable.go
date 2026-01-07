@@ -64,6 +64,13 @@ func (c ClearinghouseState) Key() string {
 	return ChannelClearinghouseState
 }
 
+func (c ClearinghouseStateMessage) Key() string {
+	if c.Dex == "" {
+		return key(ChannelClearinghouseState, c.User)
+	}
+	return key(ChannelClearinghouseState, c.User, c.Dex)
+}
+
 func (o OpenOrders) Key() string {
 	// OpenOrders messages contain user and dex info, but we use the subscription key for dispatching
 	// The subscription key already includes dex, so we just return a generic key
