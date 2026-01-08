@@ -62,8 +62,9 @@ type MarginTable struct {
 }
 
 type Meta struct {
-	Universe     []AssetInfo   `json:"universe"`
-	MarginTables []MarginTable `json:"marginTables"`
+	Universe        []AssetInfo   `json:"universe"`
+	MarginTables    []MarginTable `json:"marginTables"`
+	CollateralToken int           `json:"collateralToken"`
 }
 
 type AssetCtx struct {
