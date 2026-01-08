@@ -68,7 +68,8 @@ func NewInfo(
 		// Builder-deployed perp: compute full asset id as documented.
 		if perpDexs == nil {
 			var err error
-			*perpDexs, err = info.PerpDexs(ctx)
+			perpDexsNew, err := info.PerpDexs(ctx)
+			perpDexs = &perpDexsNew
 			if err != nil {
 				panic(err)
 			}
