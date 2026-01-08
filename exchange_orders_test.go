@@ -43,6 +43,7 @@ func newExchange(key, url string) (*Exchange, error) {
 		"",
 		accountAddr,
 		nil, // SpotMeta will be fetched automatically
+		nil, // PerpDexs will be fetched automatically
 	)
 
 	return exchange, nil
