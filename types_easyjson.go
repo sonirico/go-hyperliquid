@@ -5942,6 +5942,12 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(in *jlexer.Lexer, ou
 				}
 				in.Delim(']')
 			}
+		case "collateralToken":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.CollateralToken = int(in.Int())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -6003,6 +6009,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(out *jwriter.Writer,
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"collateralToken\":"
+		out.RawString(prefix)
+		out.Int(int(in.CollateralToken))
 	}
 	out.RawByte('}')
 }
@@ -6098,6 +6109,12 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(in *jlexer.Lexer, ou
 				}
 				in.Delim(']')
 			}
+		case "collateralToken":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.CollateralToken = int(in.Int())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -6143,6 +6160,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(out *jwriter.Writer,
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"collateralToken\":"
+		out.RawString(prefix)
+		out.Int(int(in.CollateralToken))
 	}
 	out.RawByte('}')
 }
