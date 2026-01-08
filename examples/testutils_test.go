@@ -28,6 +28,7 @@ func newTestInfo(t *testing.T) *hyperliquid.Info {
 		true,
 		nil,
 		nil,
+		nil,
 		hyperliquid.InfoOptDebugMode(),
 	)
 }
@@ -82,6 +83,7 @@ func newTestExchange(t *testing.T) *hyperliquid.Exchange {
 		nil,
 		vaultAddr,
 		walletAddr,
+		nil,
 		nil,
 		hyperliquid.ExchangeOptDebugMode(),
 	)

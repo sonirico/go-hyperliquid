@@ -91,6 +91,7 @@ func main() {
         "vault-address",
         "account-address",
         nil,    // SpotMeta will be fetched automatically
+        nil,    // PerpDexs will be fetched automatically
     )
 
     // Place a limit order

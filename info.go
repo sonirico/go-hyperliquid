@@ -29,6 +29,7 @@ func NewInfo(
 	skipWS bool,
 	meta *Meta,
 	spotMeta *SpotMeta,
+	perpDexs *MixedArray,
 	opts ...InfoOpt,
 ) *Info {
 	info := &Info{
@@ -65,12 +66,16 @@ func NewInfo(
 	// Map perp assets
 	if info.perpDexName != "" {
 		// Builder-deployed perp: compute full asset id as documented.
-		perpDexs, err := info.PerpDexs(ctx)
-		if err != nil {
-			panic(err)
+		if perpDexs == nil {
+			var err error
+			perpDexsNew, err := info.PerpDexs(ctx)
+			perpDexs = &perpDexsNew
+			if err != nil {
+				panic(err)
+			}
 		}
 		perpDexIndex := -1
-		for i, mv := range perpDexs {
+		for i, mv := range *perpDexs {
 			if mv.Type() != "object" {
 				continue
 			}

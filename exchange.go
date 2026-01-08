@@ -30,6 +30,7 @@ func NewExchange(
 	meta *Meta,
 	vaultAddr, accountAddr string,
 	spotMeta *SpotMeta,
+	perpDexs *MixedArray,
 	opts ...ExchangeOpt,
 ) *Exchange {
 	ex := &Exchange{
@@ -48,7 +49,7 @@ func NewExchange(
 	}
 
 	ex.client = newClient(baseURL, ex.clientOpts...)
-	ex.info = NewInfo(ctx, baseURL, true, meta, spotMeta, ex.infoOpts...)
+	ex.info = NewInfo(ctx, baseURL, true, meta, spotMeta, perpDexs, ex.infoOpts...)
 
 	return ex
 }
