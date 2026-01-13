@@ -385,6 +385,11 @@ type Fill struct {
 	Tid           int64  `json:"tid"`
 }
 
+type UserFillsParams struct {
+	Address         string
+	AggregateByTime *bool
+}
+
 type FundingHistory struct {
 	Coin        string `json:"coin"`
 	FundingRate string `json:"fundingRate"`

@@ -346,11 +346,16 @@ func (i *Info) AllMids(ctx context.Context, dex ...string) (map[string]string, e
 	return result, nil
 }
 
-func (i *Info) UserFills(ctx context.Context, address string) ([]Fill, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+func (i *Info) UserFills(ctx context.Context, params UserFillsParams) ([]Fill, error) {
+	payload := map[string]any{
 		"type": "userFills",
-		"user": address,
-	})
+		"user": params.Address,
+	}
+	if params.AggregateByTime != nil {
+		payload["aggregateByTime"] = *params.AggregateByTime
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch user fills: %w", err)
 	}
