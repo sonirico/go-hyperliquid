@@ -202,6 +202,13 @@ Thanks to all the people who have contributed to this project! 🎉
 		</tr>
 		<tr>
             <td align="center">
+                <a href="https://github.com/KILLY000">
+                    <img src="https://avatars.githubusercontent.com/u/138504730?v=4" width="100;" alt="KILLY000"/>
+                    <br />
+                    <sub><b>Vernon Stokes</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/andrew-malikov">
                     <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
                     <br />
@@ -234,13 +241,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/100015197?v=4" width="100;" alt="07Vaishnavi-Singh"/>
                     <br />
                     <sub><b>Vaiz_07</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/KILLY000">
-                    <img src="https://avatars.githubusercontent.com/u/138504730?v=4" width="100;" alt="KILLY000"/>
-                    <br />
-                    <sub><b>Vernon Stokes</b></sub>
                 </a>
             </td>
 		</tr>
