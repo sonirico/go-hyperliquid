@@ -411,6 +411,20 @@ type Delta struct {
 	USDC        string `json:"usdc"`
 }
 
+type UserNonFundingLedgerUpdates struct {
+	Delta LedgerDelta `json:"delta"`
+	Hash  string      `json:"hash"`
+	Time  int64       `json:"time"`
+}
+
+type LedgerDelta struct {
+	Type        string `json:"type"`
+	USDC        string `json:"usdc"`
+	User        string `json:"user"`
+	Destination string `json:"destination"`
+	Fee         string `json:"fee"`
+}
+
 type UserFees struct {
 	ActiveReferralDiscount string       `json:"activeReferralDiscount"`
 	DailyUserVolume        []UserVolume `json:"dailyUserVlm"`
