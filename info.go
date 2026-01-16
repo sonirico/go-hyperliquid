@@ -547,6 +547,31 @@ func (i *Info) UserFundingHistory(
 	return result, nil
 }
 
+func (i *Info) UserNonFundingLedgerUpdates(
+	ctx context.Context,
+	user string,
+	startTime int64,
+	endTime *int64,
+) ([]UserNonFundingLedgerUpdates, error) {
+	resp, err := i.postTimeRangeRequest(
+		ctx,
+		"userNonFundingLedgerUpdates",
+		user,
+		startTime,
+		endTime,
+		nil,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	var result []UserNonFundingLedgerUpdates
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal user non-funding ledger updates: %w", err)
+	}
+	return result, nil
+}
+
 func (i *Info) L2Snapshot(ctx context.Context, name string) (*L2Book, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "l2Book",
