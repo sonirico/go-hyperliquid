@@ -186,26 +186,26 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/KILLY000">
+                    <img src="https://avatars.githubusercontent.com/u/138504730?v=4" width="100;" alt="KILLY000"/>
+                    <br />
+                    <sub><b>Vernon Stokes</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/Debuggedd">
                     <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
                     <br />
                     <sub><b>Alex</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/MarcSky">
                     <img src="https://avatars.githubusercontent.com/u/4164003?v=4" width="100;" alt="MarcSky"/>
                     <br />
                     <sub><b>Levan</b></sub>
-                </a>
-            </td>
-		</tr>
-		<tr>
-            <td align="center">
-                <a href="https://github.com/KILLY000">
-                    <img src="https://avatars.githubusercontent.com/u/138504730?v=4" width="100;" alt="KILLY000"/>
-                    <br />
-                    <sub><b>Vernon Stokes</b></sub>
                 </a>
             </td>
             <td align="center">
