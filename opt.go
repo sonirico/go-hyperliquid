@@ -1,8 +1,10 @@
 package hyperliquid
 
 import (
+	"net/http"
 	"os"
 
+	"github.com/gorilla/websocket"
 	"github.com/sonirico/vago/lol"
 )
 
@@ -86,5 +88,19 @@ func InfoOptPerpDexName(dex string) InfoOpt {
 func InfoOptClientOptions(opts ...ClientOpt) InfoOpt {
 	return func(i *Info) {
 		i.clientOpts = append(i.clientOpts, opts...)
+	}
+}
+
+// WsOptDialer allows setting a custom websocket.Dialer
+func WsOptDialer(dialer *websocket.Dialer) WsOpt {
+	return func(w *WebsocketClient) {
+		w.dialer = dialer
+	}
+}
+
+// ClientOptHTTPClient allows setting a custom http.Client
+func ClientOptHTTPClient(httpClient *http.Client) ClientOpt {
+	return func(c *client) {
+		c.httpClient = httpClient
 	}
 }
