@@ -136,13 +136,12 @@ func (w *WebsocketClient) Connect(ctx context.Context) error {
 		return nil
 	}
 
-	dialer := w.dialer
-	if dialer == nil {
-		dialer = websocket.DefaultDialer
+	if w.dialer == nil {
+		w.dialer = websocket.DefaultDialer
 	}
 
 	//nolint:bodyclose // WebSocket connections don't have response bodies to close
-	conn, _, err := dialer.DialContext(ctx, w.url, nil)
+	conn, _, err := w.dialer.DialContext(ctx, w.url, nil)
 	if err != nil {
 		return fmt.Errorf("websocket dial: %w", err)
 	}
