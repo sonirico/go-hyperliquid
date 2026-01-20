@@ -31,6 +31,7 @@ type Subscription struct {
 type WebsocketClient struct {
 	url                   string
 	conn                  *websocket.Conn
+	dialer                *websocket.Dialer
 	mu                    sync.RWMutex
 	writeMu               sync.Mutex
 	subscribers           map[string]*uniqSubscriber
@@ -135,7 +136,10 @@ func (w *WebsocketClient) Connect(ctx context.Context) error {
 		return nil
 	}
 
-	dialer := websocket.DefaultDialer
+	dialer := w.dialer
+	if dialer == nil {
+		dialer = websocket.DefaultDialer
+	}
 
 	//nolint:bodyclose // WebSocket connections don't have response bodies to close
 	conn, _, err := dialer.DialContext(ctx, w.url, nil)
