@@ -263,3 +263,54 @@ type MultiSigAction struct {
 	Signers    []string       `json:"signers"    msgpack:"signers"`
 	Signatures []string       `json:"signatures" msgpack:"signatures"`
 }
+
+type RegisterAssetSchema struct {
+	FullName        string  `json:"fullName"       msgpack:"fullName"`
+	CollateralToken int     `json:"collateralToken" msgpack:"collateralToken"`
+	OracleUpdater   *string `json:"oracleUpdater,omitempty" msgpack:"oracleUpdater,omitempty"`
+}
+
+type AssetRequest struct {
+	Coin          string `json:"coin" msgpack:"coin"`
+	SzDecimals    int    `json:"szDecimals" msgpack:"szDecimals"`
+	OraclePx      string `json:"oraclePx" msgpack:"oraclePx"`
+	MarginTableID int    `json:"marginTableId" msgpack:"marginTableId"`
+	OnlyIsolated  bool   `json:"onlyIsolated" msgpack:"onlyIsolated"`
+}
+
+type RegisterAsset struct {
+	Dex          string               `json:"dex" msgpack:"dex"`
+	AssetRequest AssetRequest         `json:"assetRequest" msgpack:"assetRequest"`
+	MaxGas       *int                 `json:"maxGas" msgpack:"maxGas"`
+	Schema       *RegisterAssetSchema `json:"schema,omitempty" msgpack:"schema,omitempty"`
+}
+
+type PerpDeployRegisterAssetAction struct {
+	Type          string        `json:"type"  msgpack:"type"`
+	RegisterAsset RegisterAsset `json:"registerAsset" msgpack:"registerAsset"`
+}
+
+type HaltTrading struct {
+	Type     string `json:"type" msgpack:"type"`
+	Coin     string `json:"coin" msgpack:"coin"`
+	IsHalted bool   `json:"isHalted" msgpack:"isHalted"`
+}
+
+// PerpDeployHaltTradingAction represents perp deploy halt trading action
+type PerpDeployHaltTradingAction struct {
+	Type        string      `json:"type" msgpack:"type"`
+	HaltTrading HaltTrading `json:"haltTrading" msgpack:"haltTrading"`
+}
+
+type SetOracle struct {
+	Dex             string       `json:"dex"             msgpack:"dex"`
+	OraclePxs       [][]string   `json:"oraclePxs"       msgpack:"oraclePxs"`
+	MarkPxs         [][][]string `json:"markPxs"         msgpack:"markPxs"`
+	ExternalPerpPxs [][]string   `json:"externalPerpPxs" msgpack:"externalPerpPxs"`
+}
+
+// PerpDeploySetOracleAction represents perp deploy set oracle action
+type PerpDeploySetOracleAction struct {
+	Type      string    `json:"type"      msgpack:"type"`
+	SetOracle SetOracle `json:"setOracle" msgpack:"setOracle"`
+}

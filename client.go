@@ -60,6 +60,7 @@ func (c *client) post(ctx context.Context, path string, payload any) ([]byte, er
 		url,
 		bytes.NewBuffer(jsonData),
 	)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}

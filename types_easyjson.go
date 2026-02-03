@@ -4793,7 +4793,9 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(in *jlexer.Lexer, ou
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Response = string(in.String())
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.Response).UnmarshalJSON(data))
+				}
 			}
 		case "data":
 			easyjson6601e8cdDecode(in, &out.Data)
@@ -4816,10 +4818,10 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(out *jwriter.Writer,
 		out.RawString(prefix[1:])
 		out.String(string(in.Status))
 	}
-	if in.Response != "" {
+	if len(in.Response) != 0 {
 		const prefix string = ",\"response\":"
 		out.RawString(prefix)
-		out.String(string(in.Response))
+		out.Raw((in.Response).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"data\":"

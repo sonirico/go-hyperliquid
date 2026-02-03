@@ -1275,37 +1275,35 @@ func (e *Exchange) PerpDeployRegisterAsset(
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	schemaWire := map[string]any{}
-	if schema != nil {
-		schemaWire["fullName"] = schema.FullName
-		schemaWire["collateralToken"] = schema.CollateralToken
-		if schema.OracleUpdater != nil {
-			schemaWire["oracleUpdater"] = strings.ToLower(*schema.OracleUpdater)
-		} else {
-			schemaWire["oracleUpdater"] = nil
-		}
-	}
-
-	registerAsset := map[string]any{
-		"dex": dex,
-		"assetRequest": map[string]any{
-			"coin":          coin,
-			"szDecimals":    szDecimals,
-			"oraclePx":      oraclePx,
-			"marginTableId": marginTableID,
-			"onlyIsolated":  onlyIsolated,
+	action := PerpDeployRegisterAssetAction{
+		Type: "perpDeploy",
+		RegisterAsset: RegisterAsset{
+			Dex: dex,
+			AssetRequest: AssetRequest{
+				Coin:          coin,
+				SzDecimals:    szDecimals,
+				OraclePx:      oraclePx,
+				MarginTableID: marginTableID,
+				OnlyIsolated:  onlyIsolated,
+			},
 		},
 	}
+
 	if maxGas != nil {
-		registerAsset["maxGas"] = *maxGas
-	}
-	if schema != nil {
-		registerAsset["schema"] = schemaWire
+		action.RegisterAsset.MaxGas = maxGas
 	}
 
-	action := map[string]any{
-		"type":          "perpDeploy",
-		"registerAsset": registerAsset,
+	if schema != nil {
+		action.RegisterAsset.Schema = &RegisterAssetSchema{
+			FullName:        schema.FullName,
+			CollateralToken: schema.CollateralToken,
+		}
+
+		if schema.OracleUpdater != nil {
+			oracleUpdater := strings.ToLower(*schema.OracleUpdater)
+			action.RegisterAsset.Schema.OracleUpdater = &oracleUpdater
+		}
+
 	}
 
 	sig, err := SignL1Action(
@@ -1340,11 +1338,11 @@ func (e *Exchange) PerpDeployHaltTrading(
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "perpDeploy",
-		"haltTrading": map[string]any{
-			"coin":     coin,
-			"isHalted": isHalted,
+	action := PerpDeployHaltTradingAction{
+		Type: "perpDeploy",
+		HaltTrading: HaltTrading{
+			Coin:     coin,
+			IsHalted: isHalted,
 		},
 	}
 
@@ -1418,13 +1416,13 @@ func (e *Exchange) PerpDeploySetOracle(
 		return externalPerpPxsWire[i][0] < externalPerpPxsWire[j][0]
 	})
 
-	action := map[string]any{
-		"type": "perpDeploy",
-		"setOracle": map[string]any{
-			"dex":             dex,
-			"oraclePxs":       oraclePxsWire,
-			"markPxs":         markPxsWire,
-			"externalPerpPxs": externalPerpPxsWire,
+	action := PerpDeploySetOracleAction{
+		Type: "perpDeploy",
+		SetOracle: SetOracle{
+			Dex:             dex,
+			OraclePxs:       oraclePxsWire,
+			MarkPxs:         markPxsWire,
+			ExternalPerpPxs: externalPerpPxsWire,
 		},
 	}
 
