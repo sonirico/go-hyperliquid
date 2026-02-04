@@ -311,7 +311,6 @@ type PerpDeployRegisterAsset2Action struct {
 }
 
 type HaltTrading struct {
-	Type     string `json:"type"     msgpack:"type"`
 	Coin     string `json:"coin"     msgpack:"coin"`
 	IsHalted bool   `json:"isHalted" msgpack:"isHalted"`
 }

@@ -3398,12 +3398,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid31(in *jlexer.Lexer, ou
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
 		switch key {
-		case "type":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Type = string(in.String())
-			}
 		case "coin":
 			if in.IsNull() {
 				in.Skip()
@@ -3431,13 +3425,8 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid31(out *jwriter.Writer,
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Type))
-	}
-	{
 		const prefix string = ",\"coin\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		out.String(string(in.Coin))
 	}
 	{
