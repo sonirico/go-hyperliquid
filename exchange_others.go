@@ -1260,17 +1260,13 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 
 // Perp Deploy Methods
 
-// PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX
-// This matches the Python SDK's perp_deploy_register_asset method
+// PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX.
+// Provide schema to also initialize a new dex alongside the asset registration.
 func (e *Exchange) PerpDeployRegisterAsset(
 	ctx context.Context,
 	dex string,
 	maxGas *int,
-	coin string,
-	szDecimals int,
-	oraclePx string,
-	marginTableID int,
-	onlyIsolated bool,
+	assetRequest AssetRequest,
 	schema *PerpDexSchemaInput,
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
@@ -1278,32 +1274,14 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	action := PerpDeployRegisterAssetAction{
 		Type: "perpDeploy",
 		RegisterAsset: RegisterAsset{
-			Dex: dex,
-			AssetRequest: AssetRequest{
-				Coin:          coin,
-				SzDecimals:    szDecimals,
-				OraclePx:      oraclePx,
-				MarginTableID: marginTableID,
-				OnlyIsolated:  onlyIsolated,
-			},
+			MaxGas:       maxGas,
+			AssetRequest: assetRequest,
+			Dex:          dex,
 		},
 	}
 
-	if maxGas != nil {
-		action.RegisterAsset.MaxGas = maxGas
-	}
-
 	if schema != nil {
-		action.RegisterAsset.Schema = &RegisterAssetSchema{
-			FullName:        schema.FullName,
-			CollateralToken: schema.CollateralToken,
-		}
-
-		if schema.OracleUpdater != nil {
-			oracleUpdater := strings.ToLower(*schema.OracleUpdater)
-			action.RegisterAsset.Schema.OracleUpdater = &oracleUpdater
-		}
-
+		action.RegisterAsset.Schema = buildSchemaWire(schema)
 	}
 
 	sig, err := SignL1Action(
@@ -1328,6 +1306,66 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 	return &result, nil
+}
+
+// PerpDeployRegisterAsset2 registers a new perpetual asset on a builder-deployed DEX
+// using marginMode instead of onlyIsolated. Provide schema to also initialize a new dex.
+func (e *Exchange) PerpDeployRegisterAsset2(
+	ctx context.Context,
+	dex string,
+	maxGas *int,
+	assetRequest AssetRequest2,
+	schema *PerpDexSchemaInput,
+) (*PerpDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	action := PerpDeployRegisterAsset2Action{
+		Type: "perpDeploy",
+		RegisterAsset2: RegisterAsset2{
+			MaxGas:       maxGas,
+			AssetRequest: assetRequest,
+			Dex:          dex,
+		},
+	}
+
+	if schema != nil {
+		action.RegisterAsset2.Schema = buildSchemaWire(schema)
+	}
+
+	sig, err := SignL1Action(
+		e.privateKey,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PerpDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func buildSchemaWire(schema *PerpDexSchemaInput) *RegisterAssetSchema {
+	wire := &RegisterAssetSchema{
+		FullName:        schema.FullName,
+		CollateralToken: schema.CollateralToken,
+	}
+	if schema.OracleUpdater != nil {
+		oracleUpdater := strings.ToLower(*schema.OracleUpdater)
+		wire.OracleUpdater = &oracleUpdater
+	}
+	return wire
 }
 
 // PerpHaltTrading halts or unhalts trading for a builder-deployed DEX
