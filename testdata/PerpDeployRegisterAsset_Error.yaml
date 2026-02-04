@@ -1,0 +1,28 @@
+---
+version: 2
+interactions:
+    - id: 0
+      request:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 300
+        host: api.hyperliquid-testnet.xyz
+        body: '{"action":{"registerAsset":{"assetRequest":{"coin":"test:TEST0","marginTableId":10,"onlyIsolated":false,"oraclePx":"10.0","szDecimals":2},"dex":"test","maxGas":null,"schema":null},"type":"perpDeploy"}}'
+        headers:
+            Content-Type:
+                - application/json
+        url: https://api.hyperliquid-testnet.xyz/exchange
+        method: POST
+      response:
+        proto: HTTP/1.1
+        proto_major: 1
+        proto_minor: 1
+        content_length: 60
+        body: '{"status":"err","response":"Deployer has not staked enough"}'
+        headers:
+            Content-Type:
+                - application/json
+        status: 200 OK
+        code: 200
+        duration: 500ms

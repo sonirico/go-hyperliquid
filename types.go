@@ -1,5 +1,9 @@
 package hyperliquid
 
+import (
+	json "encoding/json"
+)
+
 //go:generate easyjson -all
 
 type Side string
@@ -599,8 +603,9 @@ type MultiSigResponse struct {
 }
 
 type PerpDeployResponse struct {
-	Status   string `json:"status"`
-	Response string `json:"response,omitempty"`
+	Status string `json:"status"`
+	// Response is either a string or object `{"type": "...", ...}`
+	Response json.RawMessage `json:"response,omitempty"`
 	Data     struct {
 		Statuses []TxStatus `json:"statuses"`
 	} `json:"data"`

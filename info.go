@@ -86,7 +86,9 @@ func NewInfo(
 			}
 		}
 		if perpDexIndex < 0 {
-			panic(fmt.Errorf("unknown perp dex %q (not present in /info perpDexs)", info.perpDexName))
+			panic(
+				fmt.Errorf("unknown perp dex %q (not present in /info perpDexs)", info.perpDexName),
+			)
 		}
 		base := builderPerpAssetBase + perpDexIndex*10000
 		for idxInMeta, assetInfo := range meta.Universe {

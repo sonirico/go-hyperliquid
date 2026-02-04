@@ -13,9 +13,9 @@ type CancelOrderWire struct {
 
 // CancelAction represents the cancel action
 type CancelAction struct {
-	Type    string            `json:"type"    msgpack:"type"`
+	Type    string            `json:"type"          msgpack:"type"`
 	Dex     string            `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Cancels []CancelOrderWire `json:"cancels" msgpack:"cancels"`
+	Cancels []CancelOrderWire `json:"cancels"       msgpack:"cancels"`
 }
 
 // CancelByCloidWire represents cancel by cloid item wire format
@@ -29,9 +29,9 @@ type CancelByCloidWire struct {
 
 // CancelByCloidAction represents the cancel by cloid action
 type CancelByCloidAction struct {
-	Type    string              `json:"type"    msgpack:"type"`
+	Type    string              `json:"type"          msgpack:"type"`
 	Dex     string              `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Cancels []CancelByCloidWire `json:"cancels" msgpack:"cancels"`
+	Cancels []CancelByCloidWire `json:"cancels"       msgpack:"cancels"`
 }
 
 // UsdClassTransferAction represents USD class transfer
@@ -151,7 +151,7 @@ type OrderWireTypeTrigger struct {
 // CRITICAL: Field order MUST match Python SDK insertion order for msgpack hash consistency
 type OrderAction struct {
 	Type     string       `json:"type"              msgpack:"type"`
-	Dex      string       `json:"dex,omitempty"      msgpack:"dex,omitempty"`
+	Dex      string       `json:"dex,omitempty"     msgpack:"dex,omitempty"`
 	Orders   []OrderWire  `json:"orders"            msgpack:"orders"`
 	Grouping string       `json:"grouping"          msgpack:"grouping"`
 	Builder  *BuilderInfo `json:"builder,omitempty" msgpack:"builder,omitempty"`
@@ -167,9 +167,9 @@ type ModifyAction struct {
 
 // BatchModifyAction represents multiple order modifications
 type BatchModifyAction struct {
-	Type     string         `json:"type"     msgpack:"type"`
+	Type     string         `json:"type"          msgpack:"type"`
 	Dex      string         `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Modifies []ModifyAction `json:"modifies" msgpack:"modifies"`
+	Modifies []ModifyAction `json:"modifies"      msgpack:"modifies"`
 }
 
 // PerpDexClassTransferAction represents perp dex class transfer
@@ -262,4 +262,72 @@ type MultiSigAction struct {
 	Action     map[string]any `json:"action"     msgpack:"action"`
 	Signers    []string       `json:"signers"    msgpack:"signers"`
 	Signatures []string       `json:"signatures" msgpack:"signatures"`
+}
+
+type RegisterAssetSchema struct {
+	FullName        string  `json:"fullName"        msgpack:"fullName"`
+	CollateralToken int     `json:"collateralToken" msgpack:"collateralToken"`
+	OracleUpdater   *string `json:"oracleUpdater"   msgpack:"oracleUpdater"`
+}
+
+type AssetRequest struct {
+	Coin          string `json:"coin"          msgpack:"coin"`
+	SzDecimals    int    `json:"szDecimals"    msgpack:"szDecimals"`
+	OraclePx      string `json:"oraclePx"      msgpack:"oraclePx"`
+	MarginTableID int    `json:"marginTableId" msgpack:"marginTableId"`
+	OnlyIsolated  bool   `json:"onlyIsolated"  msgpack:"onlyIsolated"`
+}
+
+type AssetRequest2 struct {
+	Coin          string `json:"coin"          msgpack:"coin"`
+	SzDecimals    int    `json:"szDecimals"    msgpack:"szDecimals"`
+	OraclePx      string `json:"oraclePx"      msgpack:"oraclePx"`
+	MarginTableID int    `json:"marginTableId" msgpack:"marginTableId"`
+	MarginMode    string `json:"marginMode"    msgpack:"marginMode"`
+}
+
+type RegisterAsset struct {
+	MaxGas       *int                 `json:"maxGas"       msgpack:"maxGas"`
+	AssetRequest AssetRequest         `json:"assetRequest" msgpack:"assetRequest"`
+	Dex          string               `json:"dex"          msgpack:"dex"`
+	Schema       *RegisterAssetSchema `json:"schema"       msgpack:"schema"`
+}
+
+type RegisterAsset2 struct {
+	MaxGas       *int                 `json:"maxGas"       msgpack:"maxGas"`
+	AssetRequest AssetRequest2        `json:"assetRequest" msgpack:"assetRequest"`
+	Dex          string               `json:"dex"          msgpack:"dex"`
+	Schema       *RegisterAssetSchema `json:"schema"       msgpack:"schema"`
+}
+
+type PerpDeployRegisterAssetAction struct {
+	Type          string        `json:"type"          msgpack:"type"`
+	RegisterAsset RegisterAsset `json:"registerAsset" msgpack:"registerAsset"`
+}
+
+type PerpDeployRegisterAsset2Action struct {
+	Type           string         `json:"type"           msgpack:"type"`
+	RegisterAsset2 RegisterAsset2 `json:"registerAsset2" msgpack:"registerAsset2"`
+}
+
+type HaltTrading struct {
+	Coin     string `json:"coin"     msgpack:"coin"`
+	IsHalted bool   `json:"isHalted" msgpack:"isHalted"`
+}
+
+type PerpDeployHaltTradingAction struct {
+	Type        string      `json:"type"        msgpack:"type"`
+	HaltTrading HaltTrading `json:"haltTrading" msgpack:"haltTrading"`
+}
+
+type SetOracle struct {
+	Dex             string       `json:"dex"             msgpack:"dex"`
+	OraclePxs       [][]string   `json:"oraclePxs"       msgpack:"oraclePxs"`
+	MarkPxs         [][][]string `json:"markPxs"         msgpack:"markPxs"`
+	ExternalPerpPxs [][]string   `json:"externalPerpPxs" msgpack:"externalPerpPxs"`
+}
+
+type PerpDeploySetOracleAction struct {
+	Type      string    `json:"type"      msgpack:"type"`
+	SetOracle SetOracle `json:"setOracle" msgpack:"setOracle"`
 }

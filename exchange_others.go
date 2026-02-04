@@ -1260,52 +1260,28 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 
 // Perp Deploy Methods
 
-// PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX
-// This matches the Python SDK's perp_deploy_register_asset method
+// PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX.
+// Provide schema to also initialize a new dex alongside the asset registration.
 func (e *Exchange) PerpDeployRegisterAsset(
 	ctx context.Context,
 	dex string,
 	maxGas *int,
-	coin string,
-	szDecimals int,
-	oraclePx string,
-	marginTableID int,
-	onlyIsolated bool,
+	assetRequest AssetRequest,
 	schema *PerpDexSchemaInput,
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	schemaWire := map[string]any{}
-	if schema != nil {
-		schemaWire["fullName"] = schema.FullName
-		schemaWire["collateralToken"] = schema.CollateralToken
-		if schema.OracleUpdater != nil {
-			schemaWire["oracleUpdater"] = strings.ToLower(*schema.OracleUpdater)
-		} else {
-			schemaWire["oracleUpdater"] = nil
-		}
-	}
-
-	registerAsset := map[string]any{
-		"dex": dex,
-		"assetRequest": map[string]any{
-			"coin":          coin,
-			"szDecimals":    szDecimals,
-			"oraclePx":      oraclePx,
-			"marginTableId": marginTableID,
-			"onlyIsolated":  onlyIsolated,
+	action := PerpDeployRegisterAssetAction{
+		Type: "perpDeploy",
+		RegisterAsset: RegisterAsset{
+			MaxGas:       maxGas,
+			AssetRequest: assetRequest,
+			Dex:          dex,
 		},
 	}
-	if maxGas != nil {
-		registerAsset["maxGas"] = *maxGas
-	}
-	if schema != nil {
-		registerAsset["schema"] = schemaWire
-	}
 
-	action := map[string]any{
-		"type":          "perpDeploy",
-		"registerAsset": registerAsset,
+	if schema != nil {
+		action.RegisterAsset.Schema = buildSchemaWire(schema)
 	}
 
 	sig, err := SignL1Action(
@@ -1332,6 +1308,66 @@ func (e *Exchange) PerpDeployRegisterAsset(
 	return &result, nil
 }
 
+// PerpDeployRegisterAsset2 registers a new perpetual asset on a builder-deployed DEX
+// using marginMode instead of onlyIsolated. Provide schema to also initialize a new dex.
+func (e *Exchange) PerpDeployRegisterAsset2(
+	ctx context.Context,
+	dex string,
+	maxGas *int,
+	assetRequest AssetRequest2,
+	schema *PerpDexSchemaInput,
+) (*PerpDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	action := PerpDeployRegisterAsset2Action{
+		Type: "perpDeploy",
+		RegisterAsset2: RegisterAsset2{
+			MaxGas:       maxGas,
+			AssetRequest: assetRequest,
+			Dex:          dex,
+		},
+	}
+
+	if schema != nil {
+		action.RegisterAsset2.Schema = buildSchemaWire(schema)
+	}
+
+	sig, err := SignL1Action(
+		e.privateKey,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PerpDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func buildSchemaWire(schema *PerpDexSchemaInput) *RegisterAssetSchema {
+	wire := &RegisterAssetSchema{
+		FullName:        schema.FullName,
+		CollateralToken: schema.CollateralToken,
+	}
+	if schema.OracleUpdater != nil {
+		oracleUpdater := strings.ToLower(*schema.OracleUpdater)
+		wire.OracleUpdater = &oracleUpdater
+	}
+	return wire
+}
+
 // PerpHaltTrading halts or unhalts trading for a builder-deployed DEX
 func (e *Exchange) PerpDeployHaltTrading(
 	ctx context.Context,
@@ -1340,11 +1376,11 @@ func (e *Exchange) PerpDeployHaltTrading(
 ) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "perpDeploy",
-		"haltTrading": map[string]any{
-			"coin":     coin,
-			"isHalted": isHalted,
+	action := PerpDeployHaltTradingAction{
+		Type: "perpDeploy",
+		HaltTrading: HaltTrading{
+			Coin:     coin,
+			IsHalted: isHalted,
 		},
 	}
 
@@ -1418,13 +1454,13 @@ func (e *Exchange) PerpDeploySetOracle(
 		return externalPerpPxsWire[i][0] < externalPerpPxsWire[j][0]
 	})
 
-	action := map[string]any{
-		"type": "perpDeploy",
-		"setOracle": map[string]any{
-			"dex":             dex,
-			"oraclePxs":       oraclePxsWire,
-			"markPxs":         markPxsWire,
-			"externalPerpPxs": externalPerpPxsWire,
+	action := PerpDeploySetOracleAction{
+		Type: "perpDeploy",
+		SetOracle: SetOracle{
+			Dex:             dex,
+			OraclePxs:       oraclePxsWire,
+			MarkPxs:         markPxsWire,
+			ExternalPerpPxs: externalPerpPxsWire,
 		},
 	}
 
