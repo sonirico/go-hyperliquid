@@ -416,10 +416,15 @@ func (i *Info) UserFillsByTime(
 	return result, nil
 }
 
-func (i *Info) MetaAndAssetCtxs(ctx context.Context) (*MetaAndAssetCtxs, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
+func (i *Info) MetaAndAssetCtxs(ctx context.Context, dex ...string) (*MetaAndAssetCtxs, error) {
+	payload := map[string]any{
 		"type": "metaAndAssetCtxs",
-	})
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch meta and asset contexts: %w", err)
 	}
