@@ -3,6 +3,7 @@ package hyperliquid
 import (
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/sonirico/vago/lol"
@@ -88,6 +89,16 @@ func InfoOptPerpDexName(dex string) InfoOpt {
 func InfoOptClientOptions(opts ...ClientOpt) InfoOpt {
 	return func(i *Info) {
 		i.clientOpts = append(i.clientOpts, opts...)
+	}
+}
+
+// WsOptReadTimeout sets the maximum duration to wait for a single read from the
+// server. If no message is received within the timeout the connection is closed
+// and a reconnection is attempted. Must exceed the internal ping interval (50 s).
+// Defaults to 90 s.
+func WsOptReadTimeout(timeout time.Duration) WsOpt {
+	return func(w *WebsocketClient) {
+		w.readTimeout = timeout
 	}
 }
 
