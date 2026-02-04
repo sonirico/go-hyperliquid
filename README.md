@@ -202,10 +202,10 @@ Thanks to all the people who have contributed to this project! 🎉
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/coder-ishan">
-                    <img src="https://avatars.githubusercontent.com/u/59679369?v=4" width="100;" alt="coder-ishan"/>
+                <a href="https://github.com/ivaaaan">
+                    <img src="https://avatars.githubusercontent.com/u/10375456?v=4" width="100;" alt="ivaaaan"/>
                     <br />
-                    <sub><b>Ishan Singh</b></sub>
+                    <sub><b>Ivan</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -213,6 +213,13 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/4164003?v=4" width="100;" alt="MarcSky"/>
                     <br />
                     <sub><b>Levan</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/coder-ishan">
+                    <img src="https://avatars.githubusercontent.com/u/59679369?v=4" width="100;" alt="coder-ishan"/>
+                    <br />
+                    <sub><b>Ishan Singh</b></sub>
                 </a>
             </td>
             <td align="center">
@@ -227,13 +234,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
                     <br />
                     <sub><b>Everett</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/ivaaaan">
-                    <img src="https://avatars.githubusercontent.com/u/10375456?v=4" width="100;" alt="ivaaaan"/>
-                    <br />
-                    <sub><b>Ivan</b></sub>
                 </a>
             </td>
             <td align="center">
