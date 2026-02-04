@@ -48,9 +48,8 @@ func NewPongDispatcher() msgDispatcher {
 		if msg.Channel != ChannelPong {
 			return nil
 		}
-
-		// TODO: Inject dep to touch keepalive
-
+		// keepalive is handled implicitly: every successful ReadMessage (including
+		// pongs) resets the per-read deadline in readPump before the next iteration.
 		return nil
 	})
 }

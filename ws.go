@@ -3,8 +3,10 @@ package hyperliquid
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"net"
 	"net/url"
 	"strconv"
 	"strings"
@@ -20,6 +22,11 @@ import (
 const (
 	// pingInterval is the interval for sending ping messages to keep WebSocket alive
 	pingInterval = 50 * time.Second
+
+	// wsReadTimeout is the default maximum duration to wait for a single read from
+	// the server before treating the connection as stalled. Must exceed pingInterval
+	// so that normal pong responses do not trigger a false timeout.
+	wsReadTimeout = 90 * time.Second
 )
 
 type Subscription struct {
@@ -40,6 +47,7 @@ type WebsocketClient struct {
 	done                  chan struct{}
 	closeOnce             sync.Once
 	reconnectWait         time.Duration
+	readTimeout           time.Duration
 	debug                 bool
 	logger                lol.Logger
 }
@@ -98,6 +106,7 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		url:           wsURL,
 		done:          make(chan struct{}),
 		reconnectWait: time.Second,
+		readTimeout:   wsReadTimeout,
 		subscribers:   make(map[string]*uniqSubscriber),
 		msgDispatcherRegistry: map[string]msgDispatcher{
 			ChannelPong:           NewPongDispatcher(),
@@ -233,6 +242,7 @@ func (w *WebsocketClient) close() error {
 // Private methods
 
 func (w *WebsocketClient) readPump(ctx context.Context) {
+	shouldReconnect := false
 	defer func() {
 		w.mu.Lock()
 		if w.conn != nil {
@@ -240,6 +250,10 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 			w.conn = nil
 		}
 		w.mu.Unlock()
+
+		if shouldReconnect {
+			w.reconnect(ctx)
+		}
 	}()
 
 	for {
@@ -249,8 +263,19 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 		case <-w.done:
 			return
 		default:
+			if err := w.conn.SetReadDeadline(time.Now().Add(w.readTimeout)); err != nil {
+				w.logErrf("websocket set read deadline: %v", err)
+				return
+			}
+
 			_, msg, err := w.conn.ReadMessage()
 			if err != nil {
+				var netErr net.Error
+				if errors.As(err, &netErr) && netErr.Timeout() {
+					w.logErrf("websocket read timeout, reconnecting")
+					shouldReconnect = true
+					return
+				}
 				if !websocket.IsCloseError(err, websocket.CloseNormalClosure) {
 					w.logErrf("websocket read error: %v", err)
 				}
