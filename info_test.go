@@ -14,7 +14,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 
 	initRecorder(t, false, "MetaAndAssetCtxs")
 
-	res, err := info.MetaAndAssetCtxs(context.TODO())
+	res, err := info.MetaAndAssetCtxs(context.TODO(), MetaAndAssetCtxsParams{})
 	t.Logf("res: %+v", res)
 	t.Logf("err: %v", err)
 
@@ -69,6 +69,34 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	// Verify we have at least one context
 	require.Greater(t, len(res.Ctxs), 0)
 	require.NotEmpty(t, res.Ctxs[0].MarkPx)
+
+	// Test with explicit empty dex (should be same as default)
+	emptyDex := ""
+	res2, err := info.MetaAndAssetCtxs(context.TODO(), MetaAndAssetCtxsParams{Dex: &emptyDex})
+	require.NoError(t, err)
+	require.NotNil(t, res2)
+	require.Greater(t, len(res2.Meta.Universe), 0)
+	require.Greater(t, len(res2.Ctxs), 0)
+
+	// Test with explicit dex value
+	xyzDex := "xyz"
+	res3, err := info.MetaAndAssetCtxs(context.TODO(), MetaAndAssetCtxsParams{Dex: &xyzDex})
+	require.NoError(t, err)
+	require.NotNil(t, res3)
+	require.Greater(t, len(res3.Meta.Universe), 0)
+	require.Greater(t, len(res3.Ctxs), 0)
+
+	var xyzTslaFound bool
+	for _, asset := range res3.Meta.Universe {
+		if asset.Name == "xyz:TSLA" {
+			xyzTslaFound = true
+			require.Equal(t, 3, asset.SzDecimals)
+			require.Equal(t, 10, asset.MaxLeverage)
+			require.Equal(t, 10, asset.MarginTableId)
+			break
+		}
+	}
+	require.True(t, xyzTslaFound, "xyz:TSLA asset should be present in universe")
 }
 
 func TestSpotMetaAndAssetCtxs(t *testing.T) {
