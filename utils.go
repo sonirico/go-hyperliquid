@@ -80,7 +80,7 @@ func roundToSignificantFigures(price float64, sigFigs int) float64 {
 		// Count the number of digits in the integer part.
 		temp := int(integerPart)
 		for temp > 0 {
-			temp = temp / 10
+			temp /= 10
 			numIntegerDigits++
 		}
 

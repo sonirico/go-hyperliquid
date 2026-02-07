@@ -79,7 +79,7 @@ func (c *client) post(ctx context.Context, path string, payload any) ([]byte, er
 	if err != nil {
 		return nil, fmt.Errorf("request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	body := make([]byte, 0)
 	if resp.Body != nil {

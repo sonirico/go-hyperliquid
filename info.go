@@ -418,7 +418,10 @@ func (i *Info) UserFillsByTime(
 
 // MetaAndAssetCtxs retrieves perpetuals metadata and asset contexts
 // If params.Dex is nil or empty string, returns data for the first perp dex (default)
-func (i *Info) MetaAndAssetCtxs(ctx context.Context, params MetaAndAssetCtxsParams) (*MetaAndAssetCtxs, error) {
+func (i *Info) MetaAndAssetCtxs(
+	ctx context.Context,
+	params MetaAndAssetCtxsParams,
+) (*MetaAndAssetCtxs, error) {
 	// Internal payload struct with fixed Type field
 	payload := struct {
 		Type string  `json:"type"`

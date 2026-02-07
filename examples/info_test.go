@@ -10,7 +10,7 @@ import (
 )
 
 func TestInfo_UserState(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	// Use private key from environment
 	exchange := newTestExchange(t)
 	address := os.Getenv("HL_VAULT_ADDRESS")
@@ -23,7 +23,7 @@ func TestInfo_UserState(t *testing.T) {
 }
 
 func TestInfo_HistoricalOrders(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	info := newTestInfo(t)
 	address := os.Getenv("HL_WALLET_ADDRESS")
 

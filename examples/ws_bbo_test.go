@@ -14,7 +14,7 @@ func TestBboWebSocket(t *testing.T) {
 	if err := ws.Connect(context.Background()); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
-	defer ws.Close()
+	defer func() { _ = ws.Close() }()
 
 	done := make(chan bool)
 

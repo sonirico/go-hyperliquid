@@ -8,7 +8,7 @@ import (
 )
 
 func TestOrder(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 
 	tests := []struct {
@@ -57,7 +57,7 @@ func TestOrder(t *testing.T) {
 }
 
 func TestMarketOpen(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t) // exchange used for setup only
 
 	t.Log("Market open method is available and ready to use")
@@ -77,7 +77,7 @@ func TestMarketOpen(t *testing.T) {
 }
 
 func TestMarketClose(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 	t.Log("Market close method is available and ready to use")
 
@@ -94,7 +94,7 @@ func TestMarketClose(t *testing.T) {
 }
 
 func TestModifyOrder(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 
 	t.Log("Modify order method is available and ready to use")
@@ -126,7 +126,7 @@ func TestModifyOrder(t *testing.T) {
 }
 
 func TestBulkModifyOrders(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 
 	t.Log("Bulk modify orders method is available and ready to use")
@@ -157,7 +157,7 @@ func TestBulkModifyOrders(t *testing.T) {
 }
 
 func Test_create_order_cancel(t *testing.T) {
-	loadEnvClean(".env.testnet")
+	_ = loadEnvClean(".env.testnet")
 	exchange := newTestExchange(t)
 
 	// Place a limit order far from market price so it won't fill
@@ -200,7 +200,7 @@ func Test_create_order_cancel(t *testing.T) {
 }
 
 func TestSLOrder(t *testing.T) {
-	loadEnvClean(".env.testnet")
+	_ = loadEnvClean(".env.testnet")
 	exchange := newTestExchange(t)
 
 	tpOrderReq := hyperliquid.CreateOrderRequest{

@@ -22,17 +22,29 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 
 	// Verify the response structure
 	require.NotNil(t, res)
-	require.NotNil(t, res.Meta.Universe)
-	require.NotNil(t, res.Meta.MarginTables)
+	require.NotNil(
+		t,
+		res.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+	)
+	require.NotNil(
+		t,
+		res.Meta.MarginTables, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+	)
 	require.NotNil(t, res.Ctxs)
 
 	// Verify we have at least one asset in universe
-	require.Greater(t, len(res.Meta.Universe), 0)
+	require.Greater(
+		t,
+		len(
+			res.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		),
+		0,
+	)
 	require.NotEmpty(t, res.Meta.Universe[0].Name)
 
 	// Test specific known assets from the cassette data
 	var btcFound, ethFound bool
-	for _, asset := range res.Meta.Universe {
+	for _, asset := range res.Meta.Universe { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
 		if asset.Name == "BTC" {
 			btcFound = true
 			require.Equal(t, 5, asset.SzDecimals)
@@ -50,14 +62,20 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.True(t, ethFound, "ETH asset should be present in universe")
 
 	// Verify we have at least one margin table
-	require.Greater(t, len(res.Meta.MarginTables), 0)
+	require.Greater(
+		t,
+		len(
+			res.Meta.MarginTables, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		),
+		0,
+	)
 	require.GreaterOrEqual(t, res.Meta.MarginTables[0].ID, 0)
 
 	// Verify we have at least one margin tier
 	require.Greater(t, len(res.Meta.MarginTables[0].MarginTiers), 0)
 
 	// Test specific margin table structure
-	for _, marginTable := range res.Meta.MarginTables {
+	for _, marginTable := range res.Meta.MarginTables { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
 		require.NotNil(t, marginTable)
 		require.Greater(t, len(marginTable.MarginTiers), 0)
 		for _, tier := range marginTable.MarginTiers {
@@ -75,7 +93,13 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	res2, err := info.MetaAndAssetCtxs(context.TODO(), MetaAndAssetCtxsParams{Dex: &emptyDex})
 	require.NoError(t, err)
 	require.NotNil(t, res2)
-	require.Greater(t, len(res2.Meta.Universe), 0)
+	require.Greater(
+		t,
+		len(
+			res2.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		),
+		0,
+	)
 	require.Greater(t, len(res2.Ctxs), 0)
 
 	// Test with explicit dex value
@@ -83,11 +107,17 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	res3, err := info.MetaAndAssetCtxs(context.TODO(), MetaAndAssetCtxsParams{Dex: &xyzDex})
 	require.NoError(t, err)
 	require.NotNil(t, res3)
-	require.Greater(t, len(res3.Meta.Universe), 0)
+	require.Greater(
+		t,
+		len(
+			res3.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		),
+		0,
+	)
 	require.Greater(t, len(res3.Ctxs), 0)
 
 	var xyzTslaFound bool
-	for _, asset := range res3.Meta.Universe {
+	for _, asset := range res3.Meta.Universe { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
 		if asset.Name == "xyz:TSLA" {
 			xyzTslaFound = true
 			require.Equal(t, 3, asset.SzDecimals)

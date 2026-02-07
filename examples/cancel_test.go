@@ -10,7 +10,7 @@ import (
 )
 
 func TestCancelOrder(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 
 	// First place an order to cancel
@@ -49,7 +49,7 @@ func TestCancelOrder(t *testing.T) {
 }
 
 func TestCancelByCloid(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	exchange := newTestExchange(t)
 
 	// Generate a random cloid
