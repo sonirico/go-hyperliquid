@@ -416,10 +416,22 @@ func (i *Info) UserFillsByTime(
 	return result, nil
 }
 
-func (i *Info) MetaAndAssetCtxs(ctx context.Context) (*MetaAndAssetCtxs, error) {
-	resp, err := i.client.post(ctx, "/info", map[string]any{
-		"type": "metaAndAssetCtxs",
-	})
+// MetaAndAssetCtxs retrieves perpetuals metadata and asset contexts
+// If params.Dex is nil or empty string, returns data for the first perp dex (default)
+func (i *Info) MetaAndAssetCtxs(
+	ctx context.Context,
+	params MetaAndAssetCtxsParams,
+) (*MetaAndAssetCtxs, error) {
+	// Internal payload struct with fixed Type field
+	payload := struct {
+		Type string  `json:"type"`
+		Dex  *string `json:"dex,omitempty"`
+	}{
+		Type: "metaAndAssetCtxs",
+		Dex:  params.Dex,
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch meta and asset contexts: %w", err)
 	}

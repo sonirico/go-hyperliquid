@@ -174,7 +174,7 @@ func TestOrders(t *testing.T) {
 		record       bool
 	}
 
-	loadEnvClean(".env.testnet")
+	_ = loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
 	// t.Logf("Using private key: %s", key)

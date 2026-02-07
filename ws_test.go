@@ -53,7 +53,7 @@ func TestReadPumpReconnectsOnTimeout(t *testing.T) {
 		// so the TCP link itself stays alive — only application-layer data is absent.
 		for {
 			if _, _, err := conn.ReadMessage(); err != nil {
-				conn.Close()
+				_ = conn.Close()
 				return
 			}
 		}

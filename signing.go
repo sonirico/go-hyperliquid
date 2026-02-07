@@ -107,8 +107,8 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	// Return keccak256 hash
 	hash := crypto.Keccak256(data)
-	//fmt.Printf("   Msgpack data: %s\n", hex.EncodeToString(data))
-	//fmt.Printf("   Action hash: %s\n", hex.EncodeToString(hash))
+	// fmt.Printf("   Msgpack data: %s\n", hex.EncodeToString(data))
+	// fmt.Printf("   Action hash: %s\n", hex.EncodeToString(hash))
 	return hash
 }
 
@@ -200,14 +200,24 @@ func hashStructLenient(
 					// Handle json.Number type
 					parsed, err := strconv.ParseUint(string(v), 10, 64)
 					if err != nil {
-						return nil, fmt.Errorf("failed to parse json.Number %s to uint64 for %s: %w", v, t.Name, err)
+						return nil, fmt.Errorf(
+							"failed to parse json.Number %s to uint64 for %s: %w",
+							v,
+							t.Name,
+							err,
+						)
 					}
 					uintVal = parsed
 				case string:
 					// Try to parse as string representation of uint64
 					parsed, err := strconv.ParseUint(v, 10, 64)
 					if err != nil {
-						return nil, fmt.Errorf("failed to parse string %s to uint64 for %s: %w", v, t.Name, err)
+						return nil, fmt.Errorf(
+							"failed to parse string %s to uint64 for %s: %w",
+							v,
+							t.Name,
+							err,
+						)
 					}
 					uintVal = parsed
 				default:
@@ -217,7 +227,11 @@ func hashStructLenient(
 						return nil, fmt.Errorf("failed to marshal value for %s: %w", t.Name, err)
 					}
 					if err := json.Unmarshal(jsonBytes, &uintVal); err != nil {
-						return nil, fmt.Errorf("failed to convert value to uint64 for %s: %w", t.Name, err)
+						return nil, fmt.Errorf(
+							"failed to convert value to uint64 for %s: %w",
+							t.Name,
+							err,
+						)
 					}
 				}
 				// apitypes.HashStruct may not handle uint64 directly from map[string]any
@@ -265,15 +279,15 @@ func signInner(
 	v := int(signature[64]) + 27
 
 	// DEBUG: Verify signature recovery
-	//pubKey, err := crypto.SigToPub(msgHash.Bytes(), signature)
-	//if err == nil {
-	//	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
-	//	expectedAddr := crypto.PubkeyToAddress(privateKey.PublicKey)
-	//	fmt.Printf("   DEBUG SIGNATURE:\n")
-	//	fmt.Printf("   Expected address: %s\n", expectedAddr.Hex())
-	//	fmt.Printf("   Recovered address: %s\n", recoveredAddr.Hex())
-	//	fmt.Printf("   Match: %v\n", recoveredAddr.Hex() == expectedAddr.Hex())
-	//	fmt.Printf("   msgHash: %s\n", msgHash.Hex())
+	// pubKey, err := crypto.SigToPub(msgHash.Bytes(), signature)
+	// if err == nil {
+	// 	recoveredAddr := crypto.PubkeyToAddress(*pubKey)
+	// 	expectedAddr := crypto.PubkeyToAddress(privateKey.PublicKey)
+	// 	fmt.Printf("   DEBUG SIGNATURE:\n")
+	// 	fmt.Printf("   Expected address: %s\n", expectedAddr.Hex())
+	// 	fmt.Printf("   Recovered address: %s\n", recoveredAddr.Hex())
+	// 	fmt.Printf("   Match: %v\n", recoveredAddr.Hex() == expectedAddr.Hex())
+	// 	fmt.Printf("   msgHash: %s\n", msgHash.Hex())
 	//}
 
 	return SignatureResult{
@@ -281,24 +295,6 @@ func signInner(
 		S: hexutil.EncodeBig(s),
 		V: v,
 	}, nil
-}
-
-// structToOrderedMap converts a struct to a map preserving JSON tag order
-// This is needed for EIP-712 signing where field order matters
-func structToOrderedMap(v any) (map[string]any, error) {
-	// First marshal to JSON (preserves struct field order)
-	jsonBytes, err := json.Marshal(v)
-	if err != nil {
-		return nil, fmt.Errorf("failed to marshal struct: %w", err)
-	}
-
-	// Then unmarshal to map
-	var result map[string]any
-	if err := json.Unmarshal(jsonBytes, &result); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal to map: %w", err)
-	}
-
-	return result, nil
 }
 
 // SignUserSignedAction signs actions that require direct EIP-712 signing
@@ -362,7 +358,7 @@ func SignL1Action(
 ) (SignatureResult, error) {
 	// Step 1: Create action hash
 	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
-	//fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
+	// fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
 
 	// Step 2: Construct phantom agent
 	phantomAgent := constructPhantomAgent(hash, isMainnet)
@@ -522,16 +518,6 @@ func SignWithdrawFromBridgeAction(
 	}
 
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
-}
-
-// signApproveAgentAction is the struct used for signing agent approval
-// It has both JSON tags (for EIP-712) and msgpack tags (for request body)
-type signApproveAgentAction struct {
-	Type             string `json:"type"             msgpack:"type"`
-	HyperliquidChain string `json:"hyperliquidChain" msgpack:"hyperliquidChain"`
-	AgentAddress     string `json:"agentAddress"     msgpack:"agentAddress"`
-	AgentName        string `json:"agentName"        msgpack:"agentName"`
-	Nonce            int64  `json:"nonce"            msgpack:"nonce"`
 }
 
 // SignAgent signs agent approval action using EIP-712 direct signing

@@ -10,7 +10,7 @@ import (
 )
 
 func TestCandlesSnapshot(t *testing.T) {
-	loadEnvClean()
+	_ = loadEnvClean()
 	info := hyperliquid.NewInfo(
 		context.Background(),
 		hyperliquid.MainnetAPIURL,

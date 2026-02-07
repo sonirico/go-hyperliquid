@@ -18,7 +18,7 @@ func TestWebsocket(t *testing.T) {
 	if err := ws.Connect(ctx); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
-	defer ws.Close()
+	defer func() { _ = ws.Close() }()
 
 	sub1, err := ws.Trades(
 		hyperliquid.TradesSubscriptionParams{Coin: "SOL"},

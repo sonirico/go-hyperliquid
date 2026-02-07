@@ -10,7 +10,7 @@ import (
 
 func setupExchange(t *testing.T) *Exchange {
 	t.Helper()
-	loadEnvClean(".env.testnet")
+	_ = loadEnvClean(".env.testnet")
 	key := ent.Str("HL_PRIVATE_KEY", "")
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)

@@ -84,6 +84,12 @@ type AssetCtx struct {
 	DayBaseVlm   string   `json:"dayBaseVlm,omitempty"`
 }
 
+// MetaAndAssetCtxsParams contains optional parameters for MetaAndAssetCtxs request
+type MetaAndAssetCtxsParams struct {
+	// Dex specifies the DEX to query. If nil or empty string, queries the default (first) perp dex.
+	Dex *string
+}
+
 // This type has no JSON annotation because it cannot be directly unmarshalled from the response
 type MetaAndAssetCtxs struct {
 	Meta

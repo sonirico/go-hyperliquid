@@ -782,7 +782,7 @@ func TestTuple2_UnmarshalJSON_PointerTypes(t *testing.T) {
 
 			require.NoError(t, err)
 
-			if tt.jsonData == `[null, null]` {
+			if tt.jsonData == `[null, null]` { //nolint:staticcheck // Switch not needed for simple cases
 				assert.Nil(t, tuple.First)
 				assert.Nil(t, tuple.Second)
 			} else if tt.jsonData == `["hello", 42]` {

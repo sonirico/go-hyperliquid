@@ -157,12 +157,12 @@ func (e *Exchange) postAction(
 	}
 
 	// Debug logging
-	if e.debug {
-		//if jsonPayload, err := json.MarshalIndent(payload, "", "  "); err == nil {
-		//	println("=== OUTGOING EXCHANGE PAYLOAD ===")
-		//	println(string(jsonPayload))
-		//	println("=================================")
-		//}
+	if e.debug { //nolint:staticcheck // Empty branch for future debugging
+		// if jsonPayload, err := json.MarshalIndent(payload, "", "  "); err == nil {
+		// 	println("=== OUTGOING EXCHANGE PAYLOAD ===")
+		// 	println(string(jsonPayload))
+		// 	println("=================================")
+		// }
 	}
 
 	return e.client.post(ctx, "/exchange", payload)

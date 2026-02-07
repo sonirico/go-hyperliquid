@@ -68,7 +68,7 @@ func clearHyperliquidEnv() {
 
 		key := pair[0]
 		if strings.HasPrefix(key, "HL_") {
-			os.Unsetenv(key)
+			_ = os.Unsetenv(key)
 		}
 	}
 }

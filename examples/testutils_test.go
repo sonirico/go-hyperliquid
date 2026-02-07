@@ -53,11 +53,11 @@ func newTestExchange(t *testing.T) *hyperliquid.Exchange {
 
 	testPrivateKey, err := crypto.HexToECDSA(privKeyHex)
 
-	//if err == nil {
-	//	// Verify what address this private key generates
-	//	pubKey := testPrivateKey.Public()
-	//	publicKeyECDSA, ok := pubKey.(*ecdsa.PublicKey)
-	//	if ok {
+	// if err == nil {
+	// 	// Verify what address this private key generates
+	// 	pubKey := testPrivateKey.Public()
+	// 	publicKeyECDSA, ok := pubKey.(*ecdsa.PublicKey)
+	// 	if ok {
 	//		address := crypto.PubkeyToAddress(*publicKeyECDSA)
 	//		t.Logf("🔑 PRIVATE KEY GENERATES ADDRESS: %s", address.Hex())
 	//		t.Logf("📝 EXPECTED WALLET ADDRESS:       %s", walletAddr)
