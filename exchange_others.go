@@ -147,6 +147,67 @@ func (e *Exchange) ScheduleCancel(
 	return &result, nil
 }
 
+// Reserve reserves request weight capacity on the exchange.
+// Each weight unit costs 0.0005 USDC from Perps balance.
+// This increases address-based rate limits without requiring trading volume.
+//
+// Parameters:
+//   - ctx: Context for the request
+//   - weight: Number of weight units to reserve (must be > 0)
+//
+// Returns:
+//   - error: nil on success, or error describing what went wrong
+//
+// Example:
+//   err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
+func (e *Exchange) Reserve(ctx context.Context, weight int) error {
+	// Validation
+	if weight <= 0 {
+		return fmt.Errorf("weight must be greater than 0, got: %d", weight)
+	}
+
+	// Get nonce
+	nonce := e.nextNonce()
+
+	// Create action
+	action := ReserveRequestWeightAction{
+		Type:   "reserveRequestWeight",
+		Weight: weight,
+	}
+
+	// Sign the action
+	sig, err := SignL1Action(
+		e.privateKey,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to sign reserve action: %w", err)
+	}
+
+	// Post to exchange
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return fmt.Errorf("failed to post reserve action: %w", err)
+	}
+
+	// Parse response
+	var result ReserveRequestWeightResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return fmt.Errorf("failed to parse reserve response: %w", err)
+	}
+
+	// Check for errors in response
+	if result.Error != "" {
+		return fmt.Errorf("reserve request error: %s", result.Error)
+	}
+
+	return nil
+}
+
 // SetReferrer sets a referral code
 func (e *Exchange) SetReferrer(ctx context.Context, code string) (*SetReferrerResponse, error) {
 	nonce := e.nextNonce()

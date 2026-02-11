@@ -202,6 +202,13 @@ type SetReferrerAction struct {
 	Code string `json:"code" msgpack:"code"`
 }
 
+// ReserveRequestWeightAction reserves request weight capacity
+// Weight reservation costs 0.0005 USDC per weight unit
+type ReserveRequestWeightAction struct {
+	Type   string `json:"type"   msgpack:"type"`
+	Weight int    `json:"weight" msgpack:"weight"`
+}
+
 // CreateSubAccountAction represents create sub-account action
 type CreateSubAccountAction struct {
 	Type string `json:"type" msgpack:"type"`
