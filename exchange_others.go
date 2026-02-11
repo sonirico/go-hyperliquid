@@ -150,18 +150,6 @@ func (e *Exchange) ScheduleCancel(
 // Reserve reserves request weight capacity on the exchange.
 // Each weight unit costs 0.0005 USDC from Perps balance.
 // This increases address-based rate limits without requiring trading volume.
-//
-// Parameters:
-//   - ctx: Context for the request
-//   - weight: Number of weight units to reserve (must be > 0)
-//
-// Returns:
-//   - *ReserveRequestWeightResponse: Response from the API
-//   - error: nil on success, or error describing what went wrong
-//
-// Example:
-//
-//	resp, err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
 func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeightResponse, error) {
 	// Validation
 	if weight <= 0 {
@@ -176,16 +164,6 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 		Type:   "reserveRequestWeight",
 		Weight: weight,
 	}
-
-	// DEBUG: Print action details
-	fmt.Printf("\n=== DEBUG Reserve Action ===\n")
-	fmt.Printf("Action Type: %s\n", action.Type)
-	fmt.Printf("Weight: %d\n", action.Weight)
-	fmt.Printf("Nonce: %d\n", nonce)
-	fmt.Printf("Vault (for signing): %q\n", "")
-	fmt.Printf("ExpiresAfter: %v\n", e.expiresAfter)
-	fmt.Printf("IsMainnet: %v\n", e.client.baseURL == MainnetAPIURL)
-	fmt.Printf("===========================\n\n")
 
 	// Sign the action
 	sig, err := SignL1Action(
