@@ -193,19 +193,19 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/Debuggedd">
-                    <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
+                <a href="https://github.com/coder-ishan">
+                    <img src="https://avatars.githubusercontent.com/u/59679369?v=4" width="100;" alt="coder-ishan"/>
                     <br />
-                    <sub><b>Alex</b></sub>
+                    <sub><b>Ishan Singh</b></sub>
                 </a>
             </td>
 		</tr>
 		<tr>
             <td align="center">
-                <a href="https://github.com/coder-ishan">
-                    <img src="https://avatars.githubusercontent.com/u/59679369?v=4" width="100;" alt="coder-ishan"/>
+                <a href="https://github.com/Debuggedd">
+                    <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
                     <br />
-                    <sub><b>Ishan Singh</b></sub>
+                    <sub><b>Alex</b></sub>
                 </a>
             </td>
             <td align="center">
