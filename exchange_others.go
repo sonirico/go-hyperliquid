@@ -156,14 +156,15 @@ func (e *Exchange) ScheduleCancel(
 //   - weight: Number of weight units to reserve (must be > 0)
 //
 // Returns:
+//   - *ReserveRequestWeightResponse: Response from the API
 //   - error: nil on success, or error describing what went wrong
 //
 // Example:
-//   err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
-func (e *Exchange) Reserve(ctx context.Context, weight int) error {
+//   resp, err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
+func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeightResponse, error) {
 	// Validation
 	if weight <= 0 {
-		return fmt.Errorf("weight must be greater than 0, got: %d", weight)
+		return nil, fmt.Errorf("weight must be greater than 0, got: %d", weight)
 	}
 
 	// Get nonce
@@ -175,37 +176,42 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) error {
 		Weight: weight,
 	}
 
+	// DEBUG: Print action details
+	fmt.Printf("\n=== DEBUG Reserve Action ===\n")
+	fmt.Printf("Action Type: %s\n", action.Type)
+	fmt.Printf("Weight: %d\n", action.Weight)
+	fmt.Printf("Nonce: %d\n", nonce)
+	fmt.Printf("Vault (for signing): %q\n", "")
+	fmt.Printf("ExpiresAfter: %v\n", e.expiresAfter)
+	fmt.Printf("IsMainnet: %v\n", e.client.baseURL == MainnetAPIURL)
+	fmt.Printf("===========================\n\n")
+
 	// Sign the action
 	sig, err := SignL1Action(
 		e.privateKey,
 		action,
-		e.vault,
+		"", // No vault address - reserve must be performed by main wallet
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
-		return fmt.Errorf("failed to sign reserve action: %w", err)
+		return nil, fmt.Errorf("failed to sign reserve action: %w", err)
 	}
 
 	// Post to exchange
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
-		return fmt.Errorf("failed to post reserve action: %w", err)
+		return nil, fmt.Errorf("failed to post reserve action: %w", err)
 	}
 
 	// Parse response
 	var result ReserveRequestWeightResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
-		return fmt.Errorf("failed to parse reserve response: %w", err)
+		return nil, fmt.Errorf("failed to parse reserve response: %w", err)
 	}
 
-	// Check for errors in response
-	if result.Error != "" {
-		return fmt.Errorf("reserve request error: %s", result.Error)
-	}
-
-	return nil
+	return &result, nil
 }
 
 // SetReferrer sets a referral code
