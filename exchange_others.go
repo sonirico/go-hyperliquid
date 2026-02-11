@@ -160,7 +160,8 @@ func (e *Exchange) ScheduleCancel(
 //   - error: nil on success, or error describing what went wrong
 //
 // Example:
-//   resp, err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
+//
+//	resp, err := exchange.Reserve(ctx, 100) // Reserve 100 units (costs 0.05 USDC)
 func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeightResponse, error) {
 	// Validation
 	if weight <= 0 {
