@@ -36,18 +36,20 @@ func convertStr16ToStr8(data []byte) []byte {
 
 		// Check if it's str16 (0xda)
 		if b == 0xda && i+2 < len(data) {
-			// Read 2-byte big-endian length
-			length := (int(data[i+1]) << 8) | int(data[i+2])
+			// Read length byte directly from the 2-byte field
+			lengthHi := data[i+1]
+			lengthLo := data[i+2]
 
-			// If length fits in 1 byte, convert to str8 (0xd9)
-			if length < 256 {
+			// If high byte is 0 (length < 256), convert to str8 (0xd9)
+			if lengthHi == 0 {
 				result = append(result, 0xd9)
-				result = append(result, byte(length))
+				// Safe: lengthLo is already a byte (0-255)
+				result = append(result, lengthLo)
 				i += 3
 				// Copy the string data
-				if i+length <= len(data) {
-					result = append(result, data[i:i+length]...)
-					i += length
+				if i+int(lengthLo) <= len(data) {
+					result = append(result, data[i:i+int(lengthLo)]...)
+					i += int(lengthLo)
 				}
 				continue
 			}

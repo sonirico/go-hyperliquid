@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/sonirico/vago/lol"
 )
@@ -28,6 +30,35 @@ type client struct {
 	debug      bool
 	baseURL    string
 	httpClient *http.Client
+}
+
+// validateBaseURL validates that the base URL uses HTTPS (or HTTP for localhost only)
+// to prevent SSRF attacks
+func validateBaseURL(baseURL string) error {
+	if baseURL == "" {
+		return nil // Will use default MainnetAPIURL
+	}
+
+	parsed, err := url.Parse(baseURL)
+	if err != nil {
+		return fmt.Errorf("invalid URL: %w", err)
+	}
+
+	// Allow HTTPS for all domains
+	if parsed.Scheme == "https" {
+		return nil
+	}
+
+	// Allow HTTP only for localhost/127.0.0.1
+	if parsed.Scheme == "http" {
+		host := strings.ToLower(parsed.Hostname())
+		if host == "localhost" || host == "127.0.0.1" || host == "::1" {
+			return nil
+		}
+		return fmt.Errorf("HTTP scheme only allowed for localhost, got: %s", parsed.Host)
+	}
+
+	return fmt.Errorf("URL must use HTTPS (or HTTP for localhost only), got: %s", parsed.Scheme)
 }
 
 func newClient(baseURL string, opts ...ClientOpt) *client {
@@ -53,11 +84,17 @@ func (c *client) post(ctx context.Context, path string, payload any) ([]byte, er
 		return nil, fmt.Errorf("failed to marshal payload: %w", err)
 	}
 
-	url := c.baseURL + path
+	targetURL := c.baseURL + path
+
+	// Validate URL before making request to prevent SSRF
+	if err := validateBaseURL(targetURL); err != nil {
+		return nil, fmt.Errorf("invalid request URL: %w", err)
+	}
+
 	req, err := http.NewRequestWithContext(
 		ctx,
 		http.MethodPost,
-		url,
+		targetURL,
 		bytes.NewBuffer(jsonData),
 	)
 
@@ -70,7 +107,7 @@ func (c *client) post(ctx context.Context, path string, payload any) ([]byte, er
 	if c.debug {
 		c.logger.WithFields(lol.Fields{
 			"method": "POST",
-			"url":    url,
+			"url":    targetURL,
 			"body":   string(jsonData),
 		}).Debug("HTTP request")
 	}
