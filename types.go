@@ -579,10 +579,26 @@ type ScheduleCancelResponse struct {
 }
 
 // ReserveRequestWeightResponse represents the response from reserve request weight action
+// The "response" field is polymorphic: on success it is {"type":"..."}, on error it is a string.
 type ReserveRequestWeightResponse struct {
-	Status   string `json:"status"`
-	Response string `json:"response,omitempty"` // Error message from API
-	Error    string `json:"error,omitempty"`    // Alternative error field
+	Status   string          `json:"status"`
+	Response json.RawMessage `json:"response,omitempty"`
+}
+
+func (r *ReserveRequestWeightResponse) Ok() bool {
+	return r.Status == "ok"
+}
+
+// Error returns the error message when the response is an error (response is a string).
+func (r *ReserveRequestWeightResponse) Error() string {
+	if r.Ok() || len(r.Response) == 0 {
+		return ""
+	}
+	var errMsg string
+	if err := json.Unmarshal(r.Response, &errMsg); err != nil {
+		return string(r.Response)
+	}
+	return errMsg
 }
 
 type AgentApprovalResponse struct {

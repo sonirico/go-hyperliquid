@@ -3595,13 +3595,9 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid30(in *jlexer.Lexer, ou
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Response = string(in.String())
-			}
-		case "error":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Error = string(in.String())
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.Response).UnmarshalJSON(data))
+				}
 			}
 		default:
 			in.SkipRecursive()
@@ -3622,15 +3618,10 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid30(out *jwriter.Writer,
 		out.RawString(prefix[1:])
 		out.String(string(in.Status))
 	}
-	if in.Response != "" {
+	if len(in.Response) != 0 {
 		const prefix string = ",\"response\":"
 		out.RawString(prefix)
-		out.String(string(in.Response))
-	}
-	if in.Error != "" {
-		const prefix string = ",\"error\":"
-		out.RawString(prefix)
-		out.String(string(in.Error))
+		out.Raw((in.Response).MarshalJSON())
 	}
 	out.RawByte('}')
 }

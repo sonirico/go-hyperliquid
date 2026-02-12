@@ -2,6 +2,7 @@ package examples
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 )
@@ -18,11 +19,12 @@ func TestReserve(t *testing.T) {
 	weight := 1000 // Adds 1000 extra limits, using 0.0005$ per weight from perps USDC balance
 
 	result, err := exchange.Reserve(context.TODO(), weight)
+	fmt.Println(result)
 	if err != nil {
 		t.Fatalf("Reserve failed: %v", err)
 	}
-	if result.Status != "ok" {
-		t.Fatalf("Reserve returned non-ok status: %s, error: %s", result.Status, result.Error)
+	if !result.Ok() {
+		t.Fatalf("Reserve returned non-ok status: %s, error: %s", result.Status, result.Error())
 	}
 }
 
