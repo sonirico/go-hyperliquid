@@ -183,11 +183,28 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	if err != nil {
 		return nil, fmt.Errorf("failed to post reserve action: %w", err)
 	}
-
-	// Parse response
-	var result ReserveRequestWeightResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
+	// Parse response — the "response" field is polymorphic:
+	// on success it is {"type":"..."}, on error it is a plain string.
+	var raw struct {
+		Status   string          `json:"status"`
+		Response json.RawMessage `json:"response,omitempty"`
+	}
+	if err := json.Unmarshal(resp, &raw); err != nil {
 		return nil, fmt.Errorf("failed to parse reserve response: %w", err)
+	}
+	result := ReserveRequestWeightResponse{Status: raw.Status}
+	if len(raw.Response) > 0 {
+		if raw.Status == "ok" {
+			var data ReserveResponseData
+			if err := json.Unmarshal(raw.Response, &data); err == nil {
+				result.Response = &data
+			}
+		} else {
+			var errMsg string
+			if err := json.Unmarshal(raw.Response, &errMsg); err == nil {
+				result.Error = errMsg
+			}
+		}
 	}
 
 	return &result, nil
