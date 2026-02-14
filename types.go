@@ -578,11 +578,14 @@ type ScheduleCancelResponse struct {
 	Error  string `json:"error,omitempty"`
 }
 
-// ReserveRequestWeightResponse represents the response from reserve request weight action
+// ReserveResponseData represents the parsed success data from a reserve request weight action.
+type ReserveResponseData struct {
+	Type string `json:"type"`
+}
 type ReserveRequestWeightResponse struct {
-	Status   string `json:"status"`
-	Response string `json:"response,omitempty"` // Error message from API
-	Error    string `json:"error,omitempty"`    // Alternative error field
+	Status   string               `json:"status"`
+	Response *ReserveResponseData `json:"response,omitempty"`
+	Error    string               `json:"error,omitempty"`
 }
 
 type AgentApprovalResponse struct {
