@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"sync/atomic"
 	"time"
+
+	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
 
 type Exchange struct {
@@ -18,6 +20,10 @@ type Exchange struct {
 	info         *Info
 	expiresAfter *int64
 	lastNonce    atomic.Int64
+
+	l1Signer         L1ActionSigner
+	userSignedSigner UserSignedActionSigner
+	agentSigner      AgentSigner
 
 	clientOpts []ClientOpt
 	infoOpts   []InfoOpt
@@ -96,12 +102,57 @@ func (e *Exchange) SetLastNonce(n int64) {
 	e.lastNonce.Store(n)
 }
 
+func (e *Exchange) signL1Action(
+	ctx context.Context,
+	action any,
+	vault string,
+	ts int64,
+	exp *int64,
+	mainnet bool,
+) (SignatureResult, error) {
+	if e.l1Signer != nil {
+		return e.l1Signer.SignL1Action(ctx, action, vault, ts, exp, mainnet)
+	}
+	return SignL1Action(e.privateKey, action, vault, ts, exp, mainnet)
+}
+
+func (e *Exchange) signUserSignedAction(
+	ctx context.Context,
+	action map[string]any,
+	payloadTypes []apitypes.Type,
+	primaryType string,
+	mainnet bool,
+) (SignatureResult, error) {
+	if e.userSignedSigner != nil {
+		return e.userSignedSigner.SignUserSignedAction(
+			ctx,
+			action,
+			payloadTypes,
+			primaryType,
+			mainnet,
+		)
+	}
+	return SignUserSignedAction(e.privateKey, action, payloadTypes, primaryType, mainnet)
+}
+
+func (e *Exchange) signAgent(
+	ctx context.Context,
+	agentAddress, agentName string,
+	nonce int64,
+	mainnet bool,
+) (SignatureResult, error) {
+	if e.agentSigner != nil {
+		return e.agentSigner.SignAgent(ctx, agentAddress, agentName, nonce, mainnet)
+	}
+	return SignAgent(e.privateKey, agentAddress, agentName, nonce, mainnet)
+}
+
 // executeAction executes an action and unmarshals the response into the given result
 func (e *Exchange) executeAction(ctx context.Context, action, result any) error {
 	nonce := e.nextNonce()
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,

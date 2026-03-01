@@ -2,6 +2,7 @@ package hyperliquid
 
 import (
 	"bytes"
+	"context"
 	"crypto/ecdsa"
 	"encoding/binary"
 	"encoding/hex"
@@ -156,6 +157,93 @@ type SignatureResult struct {
 	R string `json:"r"`
 	S string `json:"s"`
 	V int    `json:"v"`
+}
+
+// L1ActionSigner signs L1 actions (msgpack + phantom agent EIP-712).
+// When nil on Exchange, the default ECDSA implementation is used.
+type L1ActionSigner interface {
+	SignL1Action(
+		ctx context.Context,
+		action any,
+		vaultAddress string,
+		timestamp int64,
+		expiresAfter *int64,
+		isMainnet bool,
+	) (SignatureResult, error)
+}
+
+// UserSignedActionSigner signs direct EIP-712 user-signed actions.
+// When nil on Exchange, the default ECDSA implementation is used.
+type UserSignedActionSigner interface {
+	SignUserSignedAction(
+		ctx context.Context,
+		action map[string]any,
+		payloadTypes []apitypes.Type,
+		primaryType string,
+		isMainnet bool,
+	) (SignatureResult, error)
+}
+
+// AgentSigner signs agent approval actions.
+// When nil on Exchange, the default ECDSA implementation is used.
+type AgentSigner interface {
+	SignAgent(
+		ctx context.Context,
+		agentAddress, agentName string,
+		nonce int64,
+		isMainnet bool,
+	) (SignatureResult, error)
+}
+
+// ECDSAL1Signer implements L1ActionSigner using an ECDSA private key.
+func ECDSAL1Signer(pk *ecdsa.PrivateKey) L1ActionSigner {
+	return &ecdsaL1Signer{pk: pk}
+}
+
+type ecdsaL1Signer struct{ pk *ecdsa.PrivateKey }
+
+func (s *ecdsaL1Signer) SignL1Action(
+	_ context.Context,
+	action any,
+	vaultAddress string,
+	timestamp int64,
+	expiresAfter *int64,
+	isMainnet bool,
+) (SignatureResult, error) {
+	return SignL1Action(s.pk, action, vaultAddress, timestamp, expiresAfter, isMainnet)
+}
+
+// ECDSAUserSignedSigner implements UserSignedActionSigner using an ECDSA private key.
+func ECDSAUserSignedSigner(pk *ecdsa.PrivateKey) UserSignedActionSigner {
+	return &ecdsaUserSignedSigner{pk: pk}
+}
+
+type ecdsaUserSignedSigner struct{ pk *ecdsa.PrivateKey }
+
+func (s *ecdsaUserSignedSigner) SignUserSignedAction(
+	_ context.Context,
+	action map[string]any,
+	payloadTypes []apitypes.Type,
+	primaryType string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	return SignUserSignedAction(s.pk, action, payloadTypes, primaryType, isMainnet)
+}
+
+// ECDSAAgentSigner implements AgentSigner using an ECDSA private key.
+func ECDSAAgentSigner(pk *ecdsa.PrivateKey) AgentSigner {
+	return &ecdsaAgentSigner{pk: pk}
+}
+
+type ecdsaAgentSigner struct{ pk *ecdsa.PrivateKey }
+
+func (s *ecdsaAgentSigner) SignAgent(
+	_ context.Context,
+	agentAddress, agentName string,
+	nonce int64,
+	isMainnet bool,
+) (SignatureResult, error) {
+	return SignAgent(s.pk, agentAddress, agentName, nonce, isMainnet)
 }
 
 // hashStructLenient is like HashStruct but ignores fields in message that are not in types

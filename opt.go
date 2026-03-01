@@ -85,6 +85,27 @@ func InfoOptPerpDexName(dex string) InfoOpt {
 	}
 }
 
+// ExchangeOptL1Signer injects an L1ActionSigner. When nil, the default ECDSA implementation with privateKey is used.
+func ExchangeOptL1Signer(s L1ActionSigner) ExchangeOpt {
+	return func(e *Exchange) {
+		e.l1Signer = s
+	}
+}
+
+// ExchangeOptUserSignedSigner injects a UserSignedActionSigner. When nil, the default ECDSA implementation with privateKey is used.
+func ExchangeOptUserSignedSigner(s UserSignedActionSigner) ExchangeOpt {
+	return func(e *Exchange) {
+		e.userSignedSigner = s
+	}
+}
+
+// ExchangeOptAgentSigner injects an AgentSigner. When nil, the default ECDSA implementation with privateKey is used.
+func ExchangeOptAgentSigner(s AgentSigner) ExchangeOpt {
+	return func(e *Exchange) {
+		e.agentSigner = s
+	}
+}
+
 // InfoOptClientOptions allows passing of ClientOpt to Info
 func InfoOptClientOptions(opts ...ClientOpt) InfoOpt {
 	return func(i *Info) {
