@@ -123,8 +123,8 @@ func (e *Exchange) ScheduleCancel(
 		Time: scheduleTime,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -219,10 +219,10 @@ func (e *Exchange) SetReferrer(ctx context.Context, code string) (*SetReferrerRe
 		Code: code,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address for referrer
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -255,10 +255,10 @@ func (e *Exchange) CreateSubAccount(
 		Name: name,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address for sub-account creation
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -306,8 +306,8 @@ func (e *Exchange) UsdClassTransfer(
 		{Name: "nonce", Type: "uint64"},
 	}
 
-	sig, err := SignUserSignedAction(
-		e.privateKey,
+	sig, err := e.signUserSignedAction(
+		ctx,
 		action,
 		payloadTypes,
 		"HyperliquidTransaction:UsdClassTransfer",
@@ -345,10 +345,10 @@ func (e *Exchange) SubAccountTransfer(
 		Usd:            usd,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -385,10 +385,10 @@ func (e *Exchange) VaultUsdTransfer(
 		Usd:          usd,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -425,10 +425,10 @@ func (e *Exchange) CreateVault(
 		InitialUsd:  initialUsd,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -464,10 +464,10 @@ func (e *Exchange) VaultModify(
 		AlwaysCloseOnWithdraw: alwaysCloseOnWithdraw,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -501,10 +501,10 @@ func (e *Exchange) VaultDistribute(
 		Usd:          usd,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -547,8 +547,8 @@ func (e *Exchange) UsdTransfer(
 		{Name: "time", Type: "uint64"},
 	}
 
-	sig, err := SignUserSignedAction(
-		e.privateKey,
+	sig, err := e.signUserSignedAction(
+		ctx,
 		action,
 		payloadTypes,
 		"HyperliquidTransaction:UsdSend",
@@ -594,8 +594,8 @@ func (e *Exchange) SpotTransfer(
 		{Name: "time", Type: "uint64"},
 	}
 
-	sig, err := SignUserSignedAction(
-		e.privateKey,
+	sig, err := e.signUserSignedAction(
+		ctx,
 		action,
 		payloadTypes,
 		"HyperliquidTransaction:SpotSend",
@@ -626,10 +626,10 @@ func (e *Exchange) UseBigBlocks(ctx context.Context, enable bool) (*ApprovalResp
 		UsingBigBlocks: enable,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -667,8 +667,8 @@ func (e *Exchange) PerpDexClassTransfer(
 		ToPerp: toPerp,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -709,8 +709,8 @@ func (e *Exchange) SubAccountSpotTransfer(
 		Amount:         amount,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -750,8 +750,8 @@ func (e *Exchange) TokenDelegate(
 		Nonce:        nonce,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -796,8 +796,8 @@ func (e *Exchange) WithdrawFromBridge(
 		{Name: "time", Type: "uint64"},
 	}
 
-	sig, err := SignUserSignedAction(
-		e.privateKey,
+	sig, err := e.signUserSignedAction(
+		ctx,
 		action,
 		payloadTypes,
 		"HyperliquidTransaction:Withdraw",
@@ -845,14 +845,7 @@ func (e *Exchange) ApproveAgent(
 		agentName = *name
 	}
 
-	// Use SignAgent which does EIP-712 signing (not L1Action)
-	sig, err := SignAgent(
-		e.privateKey,
-		agentAddress,
-		agentName,
-		nonce,
-		e.client.baseURL == MainnetAPIURL,
-	)
+	sig, err := e.signAgent(ctx, agentAddress, agentName, nonce, e.client.baseURL == MainnetAPIURL)
 	if err != nil {
 		return nil, "", err
 	}
@@ -907,8 +900,8 @@ func (e *Exchange) ApproveBuilderFee(
 		{Name: "nonce", Type: "uint64"},
 	}
 
-	sig, err := SignUserSignedAction(
-		e.privateKey,
+	sig, err := e.signUserSignedAction(
+		ctx,
 		action,
 		payloadTypes,
 		"HyperliquidTransaction:ApproveBuilderFee",
@@ -957,8 +950,8 @@ func (e *Exchange) ConvertToMultiSigUser(
 		Nonce:   nonce,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1007,10 +1000,10 @@ func (e *Exchange) SpotDeployRegisterToken(
 		},
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
-		"", // No vault address for spot deploy
+		"",
 		nonce,
 		e.expiresAfter,
 		e.client.baseURL == MainnetAPIURL,
@@ -1043,8 +1036,8 @@ func (e *Exchange) SpotDeployUserGenesis(
 		"balances": balances,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1077,8 +1070,8 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 		"type": "spotDeployEnableFreezePrivilege",
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1113,8 +1106,8 @@ func (e *Exchange) SpotDeployFreezeUser(
 		"userAddress": userAddress,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1147,8 +1140,8 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 		"type": "spotDeployRevokeFreezePrivilege",
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1185,8 +1178,8 @@ func (e *Exchange) SpotDeployGenesis(
 		"dexName":  dexName,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1223,8 +1216,8 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		"quoteToken": quoteToken,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1261,8 +1254,8 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		"tokens": tokens,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1297,8 +1290,8 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		"feeShare": feeShare,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1347,8 +1340,8 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		action.RegisterAsset.Schema = buildSchemaWire(schema)
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1527,8 +1520,8 @@ func (e *Exchange) PerpDeploySetOracle(
 		},
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1561,8 +1554,8 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 		"type": "cSignerUnjailSelf",
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1593,8 +1586,8 @@ func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, err
 		"type": "cSignerJailSelf",
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1629,8 +1622,8 @@ func (e *Exchange) CSignerInner(
 		"innerAction": innerAction,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1667,8 +1660,8 @@ func (e *Exchange) CValidatorRegister(
 		"validatorProfile": validatorProfile,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1703,8 +1696,8 @@ func (e *Exchange) CValidatorChangeProfile(
 		"newProfile": newProfile,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1735,8 +1728,8 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 		"type": "cValidatorUnregister",
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1774,8 +1767,8 @@ func (e *Exchange) MultiSig(
 		"signatures": signatures,
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		multiSigAction,
 		e.vault,
 		nonce,
