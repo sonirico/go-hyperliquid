@@ -247,8 +247,10 @@ type MarginSummary struct {
 
 type OpenOrder struct {
 	Coin      string  `json:"coin"`
+	Cloid     *string `json:"cloid,omitempty"`
 	LimitPx   float64 `json:"limitPx,string"`
 	Oid       int64   `json:"oid"`
+	OrigSz    float64 `json:"origSz,string"`
 	Side      string  `json:"side"`
 	Size      float64 `json:"sz,string"`
 	Timestamp int64   `json:"timestamp"`
