@@ -313,7 +313,7 @@ func TestOpenOrder_MarshalJSON(t *testing.T) {
 				Size:      0.5,
 				Timestamp: 1234567890,
 			},
-			expected: `{"coin":"BTC","limitPx":"49500","oid":12345,"side":"B","sz":"0.5","timestamp":1234567890}`,
+			expected: `{"coin":"BTC","limitPx":"49500","oid":12345,"origSz":"0","side":"B","sz":"0.5","timestamp":1234567890}`,
 		},
 		{
 			name: "sell_order",
@@ -325,7 +325,7 @@ func TestOpenOrder_MarshalJSON(t *testing.T) {
 				Size:      2.0,
 				Timestamp: 1234567891,
 			},
-			expected: `{"coin":"ETH","limitPx":"3100","oid":67890,"side":"A","sz":"2","timestamp":1234567891}`,
+			expected: `{"coin":"ETH","limitPx":"3100","oid":67890,"origSz":"0","side":"A","sz":"2","timestamp":1234567891}`,
 		},
 	}
 

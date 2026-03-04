@@ -5493,6 +5493,20 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, ou
 			} else {
 				out.Coin = string(in.String())
 			}
+		case "cloid":
+			if in.IsNull() {
+				in.Skip()
+				out.Cloid = nil
+			} else {
+				if out.Cloid == nil {
+					out.Cloid = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Cloid = string(in.String())
+				}
+			}
 		case "limitPx":
 			if in.IsNull() {
 				in.Skip()
@@ -5504,6 +5518,12 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, ou
 				in.Skip()
 			} else {
 				out.Oid = int64(in.Int64())
+			}
+		case "origSz":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.OrigSz = float64(in.Float64Str())
 			}
 		case "side":
 			if in.IsNull() {
@@ -5542,6 +5562,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer,
 		out.RawString(prefix[1:])
 		out.String(string(in.Coin))
 	}
+	if in.Cloid != nil {
+		const prefix string = ",\"cloid\":"
+		out.RawString(prefix)
+		out.String(string(*in.Cloid))
+	}
 	{
 		const prefix string = ",\"limitPx\":"
 		out.RawString(prefix)
@@ -5551,6 +5576,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer,
 		const prefix string = ",\"oid\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Oid))
+	}
+	{
+		const prefix string = ",\"origSz\":"
+		out.RawString(prefix)
+		out.Float64Str(float64(in.OrigSz))
 	}
 	{
 		const prefix string = ",\"side\":"
@@ -8763,7 +8793,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Data == nil {
 					if !in.IsDelim(']') {
-						out.Data = make([]OpenOrder, 0, 1)
+						out.Data = make([]OpenOrder, 0, 0)
 					} else {
 						out.Data = []OpenOrder{}
 					}
