@@ -5493,6 +5493,20 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, ou
 			} else {
 				out.Coin = string(in.String())
 			}
+		case "cloid":
+			if in.IsNull() {
+				in.Skip()
+				out.Cloid = nil
+			} else {
+				v := string(in.String())
+				out.Cloid = &v
+			}
+		case "origSz":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.OrigSz = float64(in.Float64Str())
+			}
 		case "limitPx":
 			if in.IsNull() {
 				in.Skip()
@@ -5541,6 +5555,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer,
 		const prefix string = ",\"coin\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Coin))
+	}
+	if in.Cloid != nil {
+		const prefix string = ",\"cloid\":"
+		out.RawString(prefix)
+		out.String(string(*in.Cloid))
+	}
+	{
+		const prefix string = ",\"origSz\":"
+		out.RawString(prefix)
+		out.Float64Str(float64(in.OrigSz))
 	}
 	{
 		const prefix string = ",\"limitPx\":"
