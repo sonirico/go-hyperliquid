@@ -260,6 +260,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/boyi">
+                    <img src="https://avatars.githubusercontent.com/u/1566932?v=4" width="100;" alt="boyi"/>
+                    <br />
+                    <sub><b>boyi</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/aaltergot">
                     <img src="https://avatars.githubusercontent.com/u/12907019?v=4" width="100;" alt="aaltergot"/>
                     <br />
@@ -280,6 +287,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Everett</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/andrew-malikov">
                     <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
