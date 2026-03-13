@@ -104,11 +104,22 @@ func NewInfo(
 		}
 	}
 
+	// Build a lookup map from token Index value to SpotTokenInfo, because
+	// SpotAssetInfo.Tokens[0] holds a logical token Index, not the array position.
+	tokensByIndex := make(map[int]SpotTokenInfo, len(spotMeta.Tokens))
+	for _, t := range spotMeta.Tokens {
+		tokensByIndex[t.Index] = t
+	}
+
 	// Map spot assets starting at 10000
 	for _, spotInfo := range spotMeta.Universe {
 		asset := spotInfo.Index + spotAssetIndexOffset
 		info.coinToAsset[spotInfo.Name] = asset
-		info.assetToDecimal[asset] = spotMeta.Tokens[spotInfo.Tokens[0]].SzDecimals
+		if len(spotInfo.Tokens) > 0 {
+			if tokenInfo, ok := tokensByIndex[spotInfo.Tokens[0]]; ok {
+				info.assetToDecimal[asset] = tokenInfo.SzDecimals
+			}
+		}
 	}
 
 	return info
@@ -902,4 +913,21 @@ func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionS
 		return nil, fmt.Errorf("failed to unmarshal perp deploy auction status: %w", err)
 	}
 	return &result, nil
+}
+
+// portfolio returns the user's portfolio
+func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "portfolio",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch portfolio: %w", err)
+	}
+
+	var result []Portfolio
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal portfolio: %w", err)
+	}
+	return result, nil
 }

@@ -690,3 +690,13 @@ type PerpDeployAuctionStatus struct {
 	CurrentGas       string  `json:"currentGas"`
 	EndGas           *string `json:"endGas"`
 }
+
+// AccountHistory represents historical portfolio data for a specific time range
+type AccountHistory struct {
+	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]
+	PnlHistory          []MixedArray `json:"pnlHistory"`          // [timestamp, value]
+	Vlm                 string       `json:"vlm"`
+}
+
+// Portfolio represents a user's portfolio
+type Portfolio []MixedValue // [string, AccountHistory]

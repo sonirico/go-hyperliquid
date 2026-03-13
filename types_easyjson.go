@@ -9524,3 +9524,180 @@ func (v *AgentApprovalResponse) UnmarshalJSON(data []byte) error {
 func (v *AgentApprovalResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(l, v)
 }
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(in *jlexer.Lexer, out *AccountHistory) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "accountValueHistory":
+			if in.IsNull() {
+				in.Skip()
+				out.AccountValueHistory = nil
+			} else {
+				in.Delim('[')
+				if out.AccountValueHistory == nil {
+					if !in.IsDelim(']') {
+						out.AccountValueHistory = make([]MixedArray, 0, 2)
+					} else {
+						out.AccountValueHistory = []MixedArray{}
+					}
+				} else {
+					out.AccountValueHistory = (out.AccountValueHistory)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v113 MixedArray
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						if data := in.Raw(); in.Ok() {
+							in.AddError((v113).UnmarshalJSON(data))
+						}
+					}
+					out.AccountValueHistory = append(out.AccountValueHistory, v113)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "pnlHistory":
+			if in.IsNull() {
+				in.Skip()
+				out.PnlHistory = nil
+			} else {
+				in.Delim('[')
+				if out.PnlHistory == nil {
+					if !in.IsDelim(']') {
+						out.PnlHistory = make([]MixedArray, 0, 2)
+					} else {
+						out.PnlHistory = []MixedArray{}
+					}
+				} else {
+					out.PnlHistory = (out.PnlHistory)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v114 MixedArray
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						if data := in.Raw(); in.Ok() {
+							in.AddError((v114).UnmarshalJSON(data))
+						}
+					}
+					out.PnlHistory = append(out.PnlHistory, v114)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "vlm":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Vlm = string(in.String())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(out *jwriter.Writer, in AccountHistory) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"accountValueHistory\":"
+		out.RawString(prefix[1:])
+		if in.AccountValueHistory == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v115, v116 := range in.AccountValueHistory {
+				if v115 > 0 {
+					out.RawByte(',')
+				}
+				if v116 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+					out.RawString("null")
+				} else {
+					out.RawByte('[')
+					for v117, v118 := range v116 {
+						if v117 > 0 {
+							out.RawByte(',')
+						}
+						out.Raw((v118).MarshalJSON())
+					}
+					out.RawByte(']')
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"pnlHistory\":"
+		out.RawString(prefix)
+		if in.PnlHistory == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v119, v120 := range in.PnlHistory {
+				if v119 > 0 {
+					out.RawByte(',')
+				}
+				if v120 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+					out.RawString("null")
+				} else {
+					out.RawByte('[')
+					for v121, v122 := range v120 {
+						if v121 > 0 {
+							out.RawByte(',')
+						}
+						out.Raw((v122).MarshalJSON())
+					}
+					out.RawByte(']')
+				}
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"vlm\":"
+		out.RawString(prefix)
+		out.String(string(in.Vlm))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v AccountHistory) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v AccountHistory) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *AccountHistory) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *AccountHistory) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(l, v)
+}
