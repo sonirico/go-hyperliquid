@@ -903,3 +903,20 @@ func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionS
 	}
 	return &result, nil
 }
+
+// portfolio returns the user's portfolio
+func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "portfolio",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch portfolio: %w", err)
+	}
+
+	var result []Portfolio
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal portfolio: %w", err)
+	}
+	return result, nil
+}
