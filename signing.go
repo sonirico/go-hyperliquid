@@ -43,7 +43,7 @@ func convertStr16ToStr8(data []byte) []byte {
 			// If length fits in 1 byte, convert to str8 (0xd9)
 			if length < 256 {
 				result = append(result, 0xd9)
-				result = append(result, byte(length))
+				result = append(result, byte(length)) // #nosec G115 -- length is guaranteed < 256 by the if-guard above
 				i += 3
 				// Copy the string data
 				if i+length <= len(data) {
