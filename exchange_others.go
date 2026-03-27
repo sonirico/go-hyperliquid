@@ -53,7 +53,7 @@ func (e *Exchange) UpdateIsolatedMargin(
 		Type:  "updateIsolatedMargin",
 		Asset: asset,
 		IsBuy: amount > 0,
-		Ntli:  abs(amount),
+		Ntli:  int64(amount * 1000000),
 	}
 
 	var result UserState
