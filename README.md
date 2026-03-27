@@ -253,6 +253,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/daatsuka">
+                    <img src="https://avatars.githubusercontent.com/u/92530585?v=4" width="100;" alt="daatsuka"/>
+                    <br />
+                    <sub><b>daatsuka</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/corverroos">
                     <img src="https://avatars.githubusercontent.com/u/29249923?v=4" width="100;" alt="corverroos"/>
                     <br />
@@ -280,6 +287,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vaiz_07</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/freeeverett">
                     <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
@@ -287,8 +296,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Everett</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/andrew-malikov">
                     <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
