@@ -200,9 +200,20 @@ func parseMetaResponse(resp []byte) (*Meta, error) {
 		}
 	}
 
+	// Parse collateralToken (index into SpotMeta.Tokens for this dex's quote currency).
+	// Default perp dex uses 0 (USDC), builder dexes may use different tokens.
+	collateralToken := 0
+	if raw, ok := meta["collateralToken"]; ok {
+		var ct int
+		if err := json.Unmarshal(raw, &ct); err == nil {
+			collateralToken = ct
+		}
+	}
+
 	return &Meta{
-		Universe:     universe,
-		MarginTables: marginTablesResult,
+		Universe:        universe,
+		MarginTables:    marginTablesResult,
+		CollateralToken: collateralToken,
 	}, nil
 }
 
