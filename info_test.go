@@ -300,6 +300,52 @@ func TestSpotMeta(t *testing.T) {
 	require.True(t, purrTokenFound, "PURR token should be present in tokens")
 }
 
+func TestAllPerpMetas(t *testing.T) {
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	result, err := info.AllPerpMetas(context.TODO())
+	t.Logf("res: %+v", result)
+	t.Logf("err: %v", err)
+
+	require.NoError(t, err)
+
+	// Verify we have at least one meta
+	require.Greater(t, len(result), 0)
+
+	res := result[0]
+	// Verify we have at least one asset in universe
+	require.Greater(t, len(res.Universe), 0)
+	require.NotEmpty(t, res.Universe[0].Name)
+
+	// Test specific known assets from the cassette data
+	var btcFound, ethFound bool
+	for _, asset := range res.Universe {
+		if asset.Name == "BTC" {
+			btcFound = true
+			require.Equal(t, 5, asset.SzDecimals)
+		}
+		if asset.Name == "ETH" {
+			ethFound = true
+			require.Equal(t, 4, asset.SzDecimals)
+		}
+	}
+	require.True(t, btcFound, "BTC asset should be present in universe")
+	require.True(t, ethFound, "ETH asset should be present in universe")
+
+	// Verify we have at least one margin table
+	require.Greater(t, len(res.MarginTables), 0)
+	require.GreaterOrEqual(t, res.MarginTables[0].ID, 0)
+
+	// Test specific margin table structure
+	for _, marginTable := range res.MarginTables {
+		require.NotNil(t, marginTable)
+		require.Greater(t, len(marginTable.MarginTiers), 0)
+		for _, tier := range marginTable.MarginTiers {
+			require.NotEmpty(t, tier.LowerBound)
+			require.Greater(t, tier.MaxLeverage, 0)
+		}
+	}
+}
+
 func TestQueryOrderByOid(t *testing.T) {
 	type tc struct {
 		name         string

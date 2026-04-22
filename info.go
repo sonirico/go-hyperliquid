@@ -251,6 +251,39 @@ func (i *Info) SpotMeta(ctx context.Context) (*SpotMeta, error) {
 	return &spotMeta, nil
 }
 
+// allPerpMetas Retrieve all perpetuals metadata (universe and margin tables)
+func (i *Info) AllPerpMetas(ctx context.Context) ([]*Meta, error) {
+	payload := map[string]any{
+		"type": "allPerpMetas",
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch meta: %w", err)
+	}
+
+	var result []any
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal meta and asset contexts: %w", err)
+	}
+
+	allPerpMetas := make([]*Meta, len(result))
+	for i, meta := range result {
+		metaBytes, err := json.Marshal(meta)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal meta: %w", err)
+		}
+
+		metaResult, err := parseMetaResponse(metaBytes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse meta: %w", err)
+		}
+
+		allPerpMetas[i] = metaResult
+	}
+	return allPerpMetas, nil
+}
+
 func (i *Info) CoinToAsset(coin string) (int, bool) {
 	result, ok := i.coinToAsset[coin]
 	return result, ok
