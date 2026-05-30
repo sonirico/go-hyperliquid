@@ -2,6 +2,7 @@ package hyperliquid
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/sonirico/vago/ent"
@@ -15,6 +16,43 @@ func setupExchange(t *testing.T) *Exchange {
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)
 	return exchange
+}
+
+func TestUpdateIsolatedMarginNtli(t *testing.T) {
+	tests := []struct {
+		name   string
+		amount float64
+		want   int64
+	}{
+		{name: "whole dollar", amount: 64, want: 64_000_000},
+		{name: "fractional dollars", amount: 64.71885, want: 64_718_850},
+		{name: "rounds up sub micro dollar", amount: 0.0000001, want: 1},
+		{name: "negative withdraw", amount: -1.25, want: 1_250_000},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.want, updateIsolatedMarginNtli(tt.amount))
+		})
+	}
+}
+
+func TestUpdateIsolatedMarginActionJSONUsesIntegerNtli(t *testing.T) {
+	action := UpdateIsolatedMarginAction{
+		Type:  "updateIsolatedMargin",
+		Asset: 110066,
+		IsBuy: true,
+		Ntli:  64_718_850,
+	}
+
+	body, err := json.Marshal(action)
+	require.NoError(t, err)
+	require.NotContains(t, string(body), "64718850.0")
+	require.JSONEq(t, `{"type":"updateIsolatedMargin","asset":110066,"isBuy":true,"ntli":64718850}`, string(body))
+
+	var decoded UpdateIsolatedMarginAction
+	require.NoError(t, json.Unmarshal(body, &decoded))
+	require.Equal(t, action, decoded)
 }
 
 func TestPerpDeployHaltTrading(t *testing.T) {
