@@ -55,6 +55,25 @@ func TestUpdateIsolatedMarginActionJSONUsesIntegerNtli(t *testing.T) {
 	require.Equal(t, action, decoded)
 }
 
+func TestExchangeActionError(t *testing.T) {
+	err := exchangeActionError([]byte(`{"status":"err","response":"Cannot switch leverage type with open position."}`))
+	require.EqualError(t, err, "Cannot switch leverage type with open position.")
+
+	require.NoError(t, exchangeActionError([]byte(`{"status":"ok","response":{"type":"default"}}`)))
+	require.NoError(t, exchangeActionError([]byte(`not json`)))
+}
+
+func TestIsAPIResponseTarget(t *testing.T) {
+	var userState UserState
+	require.False(t, isAPIResponseTarget(&userState))
+
+	var resp APIResponse[OrderResponse]
+	require.True(t, isAPIResponseTarget(&resp))
+
+	var respPtr *APIResponse[OrderResponse]
+	require.True(t, isAPIResponseTarget(&respPtr))
+}
+
 func TestPerpDeployHaltTrading(t *testing.T) {
 	t.Run("halt trading success response", func(t *testing.T) {
 		exchange := setupExchange(t)

@@ -4,6 +4,9 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
+	"fmt"
+	"reflect"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -168,11 +171,46 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 		return err
 	}
 
+	if !isAPIResponseTarget(result) {
+		if err := exchangeActionError(resp); err != nil {
+			return err
+		}
+	}
+
 	if err := json.Unmarshal(resp, result); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func isAPIResponseTarget(result any) bool {
+	t := reflect.TypeOf(result)
+	for t != nil && t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	return t != nil && strings.HasPrefix(t.Name(), "APIResponse")
+}
+
+func exchangeActionError(resp []byte) error {
+	var envelope struct {
+		Status   string          `json:"status"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := json.Unmarshal(resp, &envelope); err != nil {
+		return nil
+	}
+	if envelope.Status != "err" {
+		return nil
+	}
+	var msg string
+	if err := json.Unmarshal(envelope.Response, &msg); err == nil && msg != "" {
+		return fmt.Errorf("%s", msg)
+	}
+	if len(envelope.Response) > 0 {
+		return fmt.Errorf("%s", envelope.Response)
+	}
+	return fmt.Errorf("exchange action failed")
 }
 
 func (e *Exchange) postAction(
