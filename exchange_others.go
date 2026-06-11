@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/big"
 	"sort"
 	"strings"
@@ -49,11 +50,15 @@ func (e *Exchange) UpdateIsolatedMargin(
 		return nil, fmt.Errorf("coin %s not found in info", name)
 	}
 
+	// Match the reference Python SDK: ntli is a signed integer in micro-USD
+	// (float_to_usd_int) and isBuy is always true — the sign of ntli encodes
+	// add vs remove. The previous absolute-value float encoding was rejected
+	// by the exchange (action hash over msgpack float != server-side int).
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
 		Asset: asset,
-		IsBuy: amount > 0,
-		Ntli:  abs(amount),
+		IsBuy: true,
+		Ntli:  int64(math.Round(amount * 1e6)),
 	}
 
 	var result UserState
