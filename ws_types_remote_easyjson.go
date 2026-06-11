@@ -720,6 +720,12 @@ func easyjson6658546bDecodeGithubComSoniricoGoHyperliquid8(in *jlexer.Lexer, out
 			} else {
 				out.Mantissa = int(in.Int())
 			}
+		case "fast":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Fast = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -753,6 +759,11 @@ func easyjson6658546bEncodeGithubComSoniricoGoHyperliquid8(out *jwriter.Writer, 
 		const prefix string = ",\"mantissa\":"
 		out.RawString(prefix)
 		out.Int(int(in.Mantissa))
+	}
+	if in.Fast {
+		const prefix string = ",\"fast\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Fast))
 	}
 	out.RawByte('}')
 }
