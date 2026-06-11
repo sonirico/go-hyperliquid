@@ -9,6 +9,7 @@ type remoteL2BookSubscriptionPayload struct {
 	Coin     string `json:"coin"`
 	NSigFigs int    `json:"nSigFigs,omitempty"`
 	Mantissa int    `json:"mantissa,omitempty"`
+	Fast     bool   `json:"fast,omitempty"`
 }
 
 func (p remoteL2BookSubscriptionPayload) Channel() string {
@@ -16,7 +17,7 @@ func (p remoteL2BookSubscriptionPayload) Channel() string {
 }
 
 func (p remoteL2BookSubscriptionPayload) Key() string {
-	// Deliberately exclude NSigFigs and Mantissa.
+	// Deliberately exclude NSigFigs, Mantissa and Fast.
 	return keyL2Book(p.Coin)
 }
 
