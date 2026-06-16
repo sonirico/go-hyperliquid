@@ -975,3 +975,37 @@ func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) 
 	}
 	return result, nil
 }
+
+// QueryUserAbstractionState returns the user's abstraction state
+func (i *Info) QueryUserAbstractionState(ctx context.Context, user string) (string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userAbstraction",
+		"user": user,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch state: %w", err)
+	}
+
+	var state string
+	if err := json.Unmarshal(resp, &state); err != nil {
+		return "", fmt.Errorf("failed to unmarshal state: %w", err)
+	}
+	return state, nil
+}
+
+// QueryUserDexAbstractionState returns the user's dex abstraction state
+func (i *Info) QueryUserDexAbstractionState(ctx context.Context, user string) (string, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userDexAbstraction",
+		"user": user,
+	})
+	if err != nil {
+		return "", fmt.Errorf("failed to fetch state: %w", err)
+	}
+
+	var state string
+	if err := json.Unmarshal(resp, &state); err != nil {
+		return "", fmt.Errorf("failed to unmarshal state: %w", err)
+	}
+	return state, nil
+}

@@ -1790,3 +1790,150 @@ func (e *Exchange) MultiSig(
 	}
 	return &result, nil
 }
+
+// UserSetAbstraction Methods set abstraction
+func (e *Exchange) UserSetAbstraction(
+	ctx context.Context,
+	user string,
+	abstraction string,
+) (*ReserveRequestWeightResponse, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"user":        user,
+		"abstraction": abstraction,
+		"nonce":       big.NewInt(nonce),
+		"type":        "userSetAbstraction",
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "user", Type: "address"},
+		{Name: "abstraction", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:UserSetAbstraction",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result ReserveRequestWeightResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// UserDexAbstraction Methods set dex abstraction
+func (e *Exchange) UserDexAbstraction(
+	ctx context.Context,
+	user string,
+	enabled bool,
+) (*ReserveRequestWeightResponse, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"user":    user,
+		"enabled": enabled,
+		"nonce":   big.NewInt(nonce),
+		"type":    "userDexAbstraction",
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "user", Type: "address"},
+		{Name: "enabled", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:UserDexAbstraction",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result ReserveRequestWeightResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// For the default perp dex use the empty string "" as name. For spot use "spot".
+// Token must match the collateral token if transferring to or from a perp dex.
+func (e *Exchange) SendAsset(
+	ctx context.Context,
+	destination string,
+	sourceDex string,
+	destinationDex string,
+	token string,
+	amount float64,
+) (*ReserveRequestWeightResponse, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"destination":    destination,
+		"sourceDex":      sourceDex,
+		"destinationDex": destinationDex,
+		"token":          token,
+		"amount":         formatFloat(amount),
+		"fromSubAccount": e.vault,
+		"nonce":          big.NewInt(nonce),
+		"type":           "sendAsset",
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "sourceDex", Type: "string"},
+		{Name: "destinationDex", Type: "string"},
+		{Name: "token", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "fromSubAccount", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:SendAsset",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result ReserveRequestWeightResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
