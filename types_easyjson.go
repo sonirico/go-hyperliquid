@@ -7209,6 +7209,30 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(in *jlexer.Lexer, ou
 			} else {
 				out.Fee = string(in.String())
 			}
+		case "token":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Token = string(in.String())
+			}
+		case "usdcValue":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.UsdcValue = string(in.String())
+			}
+		case "sourceDex":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SourceDex = string(in.String())
+			}
+		case "destinationDex":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DestinationDex = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -7247,6 +7271,26 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(out *jwriter.Writer,
 		const prefix string = ",\"fee\":"
 		out.RawString(prefix)
 		out.String(string(in.Fee))
+	}
+	{
+		const prefix string = ",\"token\":"
+		out.RawString(prefix)
+		out.String(string(in.Token))
+	}
+	{
+		const prefix string = ",\"usdcValue\":"
+		out.RawString(prefix)
+		out.String(string(in.UsdcValue))
+	}
+	{
+		const prefix string = ",\"sourceDex\":"
+		out.RawString(prefix)
+		out.String(string(in.SourceDex))
+	}
+	{
+		const prefix string = ",\"destinationDex\":"
+		out.RawString(prefix)
+		out.String(string(in.DestinationDex))
 	}
 	out.RawByte('}')
 }
