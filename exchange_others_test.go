@@ -59,19 +59,19 @@ func TestExchangeActionError(t *testing.T) {
 	err := exchangeActionError([]byte(`{"status":"err","response":"Cannot switch leverage type with open position."}`))
 	require.EqualError(t, err, "Cannot switch leverage type with open position.")
 
+	var actionErr *ExchangeActionError
+	require.ErrorAs(t, err, &actionErr)
+	require.Equal(t, "Cannot switch leverage type with open position.", actionErr.Message)
+
+	// A non-string "response" is surfaced verbatim rather than swallowed.
+	err = exchangeActionError([]byte(`{"status":"err","response":{"code":42}}`))
+	require.EqualError(t, err, `{"code":42}`)
+
+	// An "err" status with no response body still reports a failure.
+	require.EqualError(t, exchangeActionError([]byte(`{"status":"err"}`)), "exchange action failed")
+
 	require.NoError(t, exchangeActionError([]byte(`{"status":"ok","response":{"type":"default"}}`)))
 	require.NoError(t, exchangeActionError([]byte(`not json`)))
-}
-
-func TestIsAPIResponseTarget(t *testing.T) {
-	var userState UserState
-	require.False(t, isAPIResponseTarget(&userState))
-
-	var resp APIResponse[OrderResponse]
-	require.True(t, isAPIResponseTarget(&resp))
-
-	var respPtr *APIResponse[OrderResponse]
-	require.True(t, isAPIResponseTarget(&respPtr))
 }
 
 func TestPerpDeployHaltTrading(t *testing.T) {

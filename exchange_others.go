@@ -34,7 +34,7 @@ func (e *Exchange) UpdateLeverage(
 	}
 
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := e.executeActionChecked(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -58,7 +58,7 @@ func (e *Exchange) UpdateIsolatedMargin(
 	}
 
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := e.executeActionChecked(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil

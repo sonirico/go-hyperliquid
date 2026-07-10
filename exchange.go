@@ -4,9 +4,6 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
-	"fmt"
-	"reflect"
-	"strings"
 	"sync/atomic"
 	"time"
 
@@ -150,8 +147,8 @@ func (e *Exchange) signAgent(
 	return SignAgent(e.privateKey, agentAddress, agentName, nonce, mainnet)
 }
 
-// executeAction executes an action and unmarshals the response into the given result
-func (e *Exchange) executeAction(ctx context.Context, action, result any) error {
+// signAndPost signs an L1 action and posts it, returning the raw response body.
+func (e *Exchange) signAndPost(ctx context.Context, action any) ([]byte, error) {
 	nonce := e.nextNonce()
 
 	sig, err := e.signL1Action(
@@ -163,35 +160,53 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	return e.postAction(ctx, action, sig, nonce)
+}
+
+// executeAction executes an action and unmarshals the response into the given result.
+// The result type is responsible for reporting a rejected action; use
+// executeActionChecked for result types that do not decode the status envelope.
+func (e *Exchange) executeAction(ctx context.Context, action, result any) error {
+	resp, err := e.signAndPost(ctx, action)
 	if err != nil {
 		return err
 	}
 
-	if !isAPIResponseTarget(result) {
-		if err := exchangeActionError(resp); err != nil {
-			return err
-		}
-	}
+	return json.Unmarshal(resp, result)
+}
 
-	if err := json.Unmarshal(resp, result); err != nil {
+// executeActionChecked is executeAction for result types that ignore the
+// {"status":"err","response":"..."} envelope. Without this check such a
+// response unmarshals into a zero-value result and reports no error.
+func (e *Exchange) executeActionChecked(ctx context.Context, action, result any) error {
+	resp, err := e.signAndPost(ctx, action)
+	if err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func isAPIResponseTarget(result any) bool {
-	t := reflect.TypeOf(result)
-	for t != nil && t.Kind() == reflect.Ptr {
-		t = t.Elem()
+	if err := exchangeActionError(resp); err != nil {
+		return err
 	}
-	return t != nil && strings.HasPrefix(t.Name(), "APIResponse")
+
+	return json.Unmarshal(resp, result)
 }
 
+// ExchangeActionError is returned when the exchange rejects an action,
+// as opposed to the request failing to be sent or decoded.
+type ExchangeActionError struct {
+	Message string
+}
+
+func (e *ExchangeActionError) Error() string {
+	return e.Message
+}
+
+// exchangeActionError reports the exchange's rejection of an action, or nil if
+// the response is not a rejection. A body that does not parse as the envelope
+// is left for the caller's json.Unmarshal to reject.
 func exchangeActionError(resp []byte) error {
 	var envelope struct {
 		Status   string          `json:"status"`
@@ -205,12 +220,12 @@ func exchangeActionError(resp []byte) error {
 	}
 	var msg string
 	if err := json.Unmarshal(envelope.Response, &msg); err == nil && msg != "" {
-		return fmt.Errorf("%s", msg)
+		return &ExchangeActionError{Message: msg}
 	}
 	if len(envelope.Response) > 0 {
-		return fmt.Errorf("%s", envelope.Response)
+		return &ExchangeActionError{Message: string(envelope.Response)}
 	}
-	return fmt.Errorf("exchange action failed")
+	return &ExchangeActionError{Message: "exchange action failed"}
 }
 
 func (e *Exchange) postAction(
