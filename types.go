@@ -430,11 +430,15 @@ type UserNonFundingLedgerUpdates struct {
 }
 
 type LedgerDelta struct {
-	Type        string `json:"type"`
-	USDC        string `json:"usdc"`
-	User        string `json:"user"`
-	Destination string `json:"destination"`
-	Fee         string `json:"fee"`
+	Type           string `json:"type"`
+	USDC           string `json:"usdc"`
+	User           string `json:"user"`
+	Destination    string `json:"destination"`
+	Fee            string `json:"fee"`
+	Token          string `json:"token"`
+	UsdcValue      string `json:"usdcValue"`
+	SourceDex      string `json:"sourceDex"`
+	DestinationDex string `json:"destinationDex"`
 }
 
 type UserFees struct {

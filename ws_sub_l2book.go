@@ -6,6 +6,7 @@ type L2BookSubscriptionParams struct {
 	Coin     string
 	NSigFigs int
 	Mantissa int
+	Fast     bool
 }
 
 func (w *WebsocketClient) L2Book(
@@ -17,6 +18,7 @@ func (w *WebsocketClient) L2Book(
 		Coin:     params.Coin,
 		NSigFigs: params.NSigFigs,
 		Mantissa: params.Mantissa,
+		Fast:     params.Fast,
 	}
 
 	return w.subscribe(remotePayload, func(msg any) {

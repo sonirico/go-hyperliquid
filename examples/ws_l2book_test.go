@@ -23,6 +23,7 @@ func TestL2BookWebSocket(t *testing.T) {
 			Coin:     "BTC",
 			Mantissa: 2,
 			NSigFigs: 5,
+			Fast:     true,
 		},
 		func(orderbook hyperliquid.L2Book, err error) {
 			if err != nil {
