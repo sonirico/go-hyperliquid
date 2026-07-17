@@ -704,3 +704,46 @@ type AccountHistory struct {
 
 // Portfolio represents a user's portfolio
 type Portfolio []MixedValue // [string, AccountHistory]
+
+// VaultEquity represents a user's vault equity
+type VaultEquity struct {
+	LockedUntilTimestamp int64  `json:"lockedUntilTimestamp"`
+	Equity               string `json:"equity"`
+	VaultAddress         string `json:"vaultAddress"`
+}
+
+type VaultFollower struct {
+	User           string `json:"user"`
+	VaultEquity    string `json:"vaultEquity"`
+	Pnl            string `json:"pnl"`
+	AllTimePnl     string `json:"allTimePnl"`
+	DaysFollowing  int    `json:"daysFollowing"`
+	VaultEntryTime int64  `json:"vaultEntryTime"`
+	LockupUntil    int64  `json:"lockupUntil"`
+}
+
+type VaultRelationship struct {
+	Type string `json:"type"`
+	Data struct {
+		ChildAddresses []string `json:"childAddresses"`
+	} `json:"data"`
+}
+
+type VaultDetails struct {
+	Name                  string             `json:"name"`
+	VaultAddress          string             `json:"vaultAddress"`
+	Leader                string             `json:"leader"`
+	Description           string             `json:"description"`
+	Portfolio             Portfolio          `json:"portfolio"`
+	Apr                   float64            `json:"apr"`
+	FollowerState         json.RawMessage    `json:"followerState"`
+	LeaderFraction        float64            `json:"leaderFraction"`
+	LeaderCommission      float64            `json:"leaderCommission"`
+	Followers             []VaultFollower    `json:"followers"`
+	MaxDistributable      float64            `json:"maxDistributable"`
+	MaxWithdrawable       float64            `json:"maxWithdrawable"`
+	IsClosed              bool               `json:"isClosed"`
+	Relationship          *VaultRelationship `json:"relationship"`
+	AllowDeposits         bool               `json:"allowDeposits"`
+	AlwaysCloseOnWithdraw bool               `json:"alwaysCloseOnWithdraw"`
+}
