@@ -1009,3 +1009,39 @@ func (i *Info) QueryUserDexAbstractionState(ctx context.Context, user string) (s
 	}
 	return state, nil
 }
+
+// QueryUserVaultEquities returns Retrieve a user's vault deposits
+func (i *Info) QueryUserVaultEquities(ctx context.Context, user string) ([]VaultEquity, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userVaultEquities",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch VaultEquity: %w", err)
+	}
+
+	var result []VaultEquity
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal VaultEquity: %w", err)
+	}
+	return result, nil
+}
+
+// QueryVaultDetails returns the details of a vault.
+func (i *Info) QueryVaultDetails(ctx context.Context, VaultAddress string, user string) (*VaultDetails, error) {
+	payload := map[string]any{
+		"type":         "vaultDetails",
+		"vaultAddress": VaultAddress,
+		"user":         user,
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch vault details: %w", err)
+	}
+
+	var result VaultDetails
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal vault details: %w", err)
+	}
+	return &result, nil
+}
