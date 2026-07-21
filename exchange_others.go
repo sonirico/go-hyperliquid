@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/big"
 	"sort"
 	"strings"
@@ -33,7 +34,7 @@ func (e *Exchange) UpdateLeverage(
 	}
 
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := e.executeActionChecked(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -53,14 +54,18 @@ func (e *Exchange) UpdateIsolatedMargin(
 		Type:  "updateIsolatedMargin",
 		Asset: asset,
 		IsBuy: amount > 0,
-		Ntli:  abs(amount),
+		Ntli:  updateIsolatedMarginNtli(amount),
 	}
 
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := e.executeActionChecked(ctx, action, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
+}
+
+func updateIsolatedMarginNtli(amount float64) int64 {
+	return int64(math.Ceil(abs(amount) * 1_000_000))
 }
 
 // SlippagePrice calculates the slippage price for market orders
