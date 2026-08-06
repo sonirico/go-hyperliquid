@@ -1045,3 +1045,55 @@ func (i *Info) QueryVaultDetails(ctx context.Context, VaultAddress string, user 
 	}
 	return &result, nil
 }
+
+// OutcomeMeta returns the outcome metadata
+func (i *Info) OutcomeMeta(ctx context.Context) (*OutcomeMeta, error) {
+	payload := map[string]any{
+		"type": "outcomeMeta",
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch outcome meta: %w", err)
+	}
+
+	var result OutcomeMeta
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal outcome meta: %w", err)
+	}
+	return &result, nil
+}
+
+// AllBorrowLendReserveStates returns the details of all borrow/lend reserve states.
+func (i *Info) AllBorrowLendReserveStates(ctx context.Context) ([]BorrowLendReserveStates, error) {
+	payload := map[string]any{
+		"type": "allBorrowLendReserveStates",
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch all borrow/lend reserve states: %w", err)
+	}
+
+	var result []BorrowLendReserveStates
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal all borrow/lend reserve states: %w", err)
+	}
+	return result, nil
+}
+
+// BorrowLendUserState returns the details of a borrow/lend user state.
+func (i *Info) BorrowLendUserState(ctx context.Context, user string) (*BorrowLendUserState, error) {
+	payload := map[string]any{
+		"type": "borrowLendUserState",
+		"user": user,
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch borrow/lend user state: %w", err)
+	}
+
+	var result BorrowLendUserState
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal borrow/lend user state: %w", err)
+	}
+	return &result, nil
+}
