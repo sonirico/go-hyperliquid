@@ -747,3 +747,52 @@ type VaultDetails struct {
 	AllowDeposits         bool               `json:"allowDeposits"`
 	AlwaysCloseOnWithdraw bool               `json:"alwaysCloseOnWithdraw"`
 }
+
+type OutcomeMeta struct {
+	Outcomes  []OutcomeMetaOutcome  `json:"outcomes"`
+	Questions []OutcomeMetaQuestion `json:"questions"`
+}
+type OutcomeMetaOutcome struct {
+	Outcome     int               `json:"outcome"`
+	Name        string            `json:"name"`
+	Description string            `json:"description"`
+	SideSpecs   []OutcomeSideSpec `json:"sideSpecs"`
+	QuoteToken  string            `json:"quoteToken"`
+}
+type OutcomeSideSpec struct {
+	Name string `json:"name"`
+}
+type OutcomeMetaQuestion struct {
+	Question             int    `json:"question"`
+	Name                 string `json:"name"`
+	Description          string `json:"description"`
+	FallbackOutcome      int    `json:"fallbackOutcome"`
+	NamedOutcomes        []int  `json:"namedOutcomes"`
+	SettledNamedOutcomes []int  `json:"settledNamedOutcomes"`
+}
+type BorrowLendBalance struct {
+	Basis string `json:"basis"`
+	Value string `json:"value"`
+}
+type BorrowLendTokenState struct {
+	Borrow BorrowLendBalance `json:"borrow"`
+	Supply BorrowLendBalance `json:"supply"`
+}
+type BorrowLendTokenToState []MixedValue // [int, BorrowLendTokenState]
+
+type BorrowLendUserState struct {
+	TokenToState []BorrowLendTokenToState `json:"tokenToState"`
+	Health       string                   `json:"health"`
+	HealthFactor *string                  `json:"healthFactor"`
+}
+type BorrowLendReserveState struct {
+	BorrowYearlyRate string `json:"borrowYearlyRate"`
+	SupplyYearlyRate string `json:"supplyYearlyRate"`
+	Balance          string `json:"balance"`
+	Utilization      string `json:"utilization"`
+	OraclePx         string `json:"oraclePx"`
+	LTV              string `json:"ltv"`
+	TotalSupplied    string `json:"totalSupplied"`
+	TotalBorrowed    string `json:"totalBorrowed"`
+}
+type BorrowLendReserveStates []MixedValue // [int, BorrowLendReserveState]
