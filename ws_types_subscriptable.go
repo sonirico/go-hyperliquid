@@ -9,6 +9,8 @@ type subscriptable interface {
 type (
 	Trades   []Trade
 	WsOrders []WsOrder
+
+	WsFastAssetCtxs map[string]FastAssetCtx
 )
 
 func (t Trades) Key() string {
@@ -20,6 +22,10 @@ func (t Trades) Key() string {
 
 func (a ActiveAssetCtx) Key() string {
 	return keyActiveAssetCtx(a.Coin)
+}
+
+func (w WsFastAssetCtxs) Key() string {
+	return keyFastAssetCtxs()
 }
 
 func (c Candle) Key() string {
