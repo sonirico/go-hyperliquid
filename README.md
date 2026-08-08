@@ -230,12 +230,21 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/Saundr21">
+                    <img src="https://avatars.githubusercontent.com/u/144389161?v=4" width="100;" alt="Saundr21"/>
+                    <br />
+                    <sub><b>Saunder</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/MarcSky">
                     <img src="https://avatars.githubusercontent.com/u/4164003?v=4" width="100;" alt="MarcSky"/>
                     <br />
                     <sub><b>Levan</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/andrew-malikov">
                     <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
@@ -243,20 +252,11 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Andrew Malikov</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/freeeverett">
                     <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
                     <br />
                     <sub><b>Everett</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/Saundr21">
-                    <img src="https://avatars.githubusercontent.com/u/144389161?v=4" width="100;" alt="Saundr21"/>
-                    <br />
-                    <sub><b>Saunder</b></sub>
                 </a>
             </td>
             <td align="center">
