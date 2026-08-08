@@ -10,6 +10,7 @@ const (
 	ChannelPong               string = "pong"
 	ChannelTrades             string = "trades"
 	ChannelActiveAssetCtx     string = "activeAssetCtx"
+	ChannelFastAssetCtxs      string = "fastAssetCtxs"
 	ChannelL2Book             string = "l2Book"
 	ChannelCandle             string = "candle"
 	ChannelAllMids            string = "allMids"
@@ -50,6 +51,11 @@ type (
 	ActiveAssetCtx struct {
 		Coin string         `json:"coin"`
 		Ctx  SharedAssetCtx `json:"ctx"`
+	}
+
+	FastAssetCtx struct {
+		MarkPx *float64 `json:"markPx,string,omitempty"`
+		MidPx  *float64 `json:"midPx,string,omitempty"`
 	}
 
 	SharedAssetCtx struct {

@@ -18,6 +18,10 @@ func keyActiveAssetCtx(coin string) string {
 	return key(ChannelActiveAssetCtx, coin)
 }
 
+func keyFastAssetCtxs() string {
+	return key(ChannelFastAssetCtxs)
+}
+
 func keyCandles(symbol, interval string) string {
 	return key(ChannelCandle, symbol, interval)
 }
