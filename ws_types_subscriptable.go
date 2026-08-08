@@ -28,6 +28,10 @@ func (w WsFastAssetCtxs) Key() string {
 	return keyFastAssetCtxs()
 }
 
+func (w WsAllDexsAssetCtxs) Key() string {
+	return keyAllDexsAssetCtxs()
+}
+
 func (c Candle) Key() string {
 	return keyCandles(c.Symbol, c.Interval)
 }

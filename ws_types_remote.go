@@ -59,6 +59,18 @@ func (p remoteFastAssetCtxsSubscriptionPayload) Key() string {
 	return keyFastAssetCtxs()
 }
 
+type remoteAllDexsAssetCtxsSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remoteAllDexsAssetCtxsSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteAllDexsAssetCtxsSubscriptionPayload) Key() string {
+	return keyAllDexsAssetCtxs()
+}
+
 type remoteCandlesSubscriptionPayload struct {
 	Type     string `json:"type"`
 	Coin     string `json:"coin"`

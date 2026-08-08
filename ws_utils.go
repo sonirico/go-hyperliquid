@@ -22,6 +22,10 @@ func keyFastAssetCtxs() string {
 	return key(ChannelFastAssetCtxs)
 }
 
+func keyAllDexsAssetCtxs() string {
+	return key(ChannelAllDexsAssetCtxs)
+}
+
 func keyCandles(symbol, interval string) string {
 	return key(ChannelCandle, symbol, interval)
 }

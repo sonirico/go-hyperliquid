@@ -11,6 +11,7 @@ const (
 	ChannelTrades             string = "trades"
 	ChannelActiveAssetCtx     string = "activeAssetCtx"
 	ChannelFastAssetCtxs      string = "fastAssetCtxs"
+	ChannelAllDexsAssetCtxs   string = "allDexsAssetCtxs"
 	ChannelL2Book             string = "l2Book"
 	ChannelCandle             string = "candle"
 	ChannelAllMids            string = "allMids"
@@ -56,6 +57,11 @@ type (
 	FastAssetCtx struct {
 		MarkPx *float64 `json:"markPx,string,omitempty"`
 		MidPx  *float64 `json:"midPx,string,omitempty"`
+	}
+
+	//easyjson:skip
+	WsAllDexsAssetCtxs struct {
+		Ctxs []Tuple2[string, AssetCtxs] `json:"ctxs"`
 	}
 
 	SharedAssetCtx struct {
