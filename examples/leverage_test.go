@@ -23,7 +23,7 @@ func TestUpdateLeverage(t *testing.T) {
 func TestUpdateIsolatedMargin(t *testing.T) {
 	exchange := newTestExchange(t)
 
-	amount := 1000.0 // Amount in USD
+	amount := 100.2 // Amount in USD
 	name := "BTC"
 
 	resp, err := exchange.UpdateIsolatedMargin(context.TODO(), amount, name)
