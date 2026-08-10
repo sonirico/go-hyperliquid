@@ -6,10 +6,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"math/big"
 	"sort"
 	"strings"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 )
@@ -816,6 +818,82 @@ func (e *Exchange) WithdrawFromBridge(
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
+	return &result, nil
+}
+
+// SendToEVMWithData sends tokens to EVM with additional data
+func (e *Exchange) SendToEVMWithData(
+	ctx context.Context,
+	token string,
+	amount string,
+	sourceDex string,
+	destinationRecipient string,
+	addressEncoding string,
+	destinationChainID int64,
+	gasLimit int64,
+	data string,
+) (*TransferResponse, error) {
+	if destinationChainID < 0 || destinationChainID > math.MaxUint32 {
+		return nil, fmt.Errorf("destinationChainID must be in range [0, %d]", math.MaxUint32)
+	}
+	if gasLimit < 0 {
+		return nil, fmt.Errorf("gasLimit cannot be negative: %d", gasLimit)
+	}
+
+	dbyte, err := hexutil.Decode(data)
+	if err != nil {
+		return nil, fmt.Errorf("invalid data: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"token":                token,
+		"amount":               amount,
+		"sourceDex":            sourceDex,
+		"destinationRecipient": destinationRecipient,
+		"addressEncoding":      addressEncoding,
+		"destinationChainId":   new(big.Int).SetInt64(destinationChainID),
+		"gasLimit":             new(big.Int).SetInt64(gasLimit),
+		"data":                 dbyte,
+		"nonce":                nonce,
+		"type":                 "sendToEvmWithData",
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "token", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "sourceDex", Type: "string"},
+		{Name: "destinationRecipient", Type: "string"},
+		{Name: "addressEncoding", Type: "string"},
+		{Name: "destinationChainId", Type: "uint32"},
+		{Name: "gasLimit", Type: "uint64"},
+		{Name: "data", Type: "bytes"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:SendToEvmWithData",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	var result TransferResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 
