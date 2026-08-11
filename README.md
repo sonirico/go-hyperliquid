@@ -209,6 +209,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/Saundr21">
+                    <img src="https://avatars.githubusercontent.com/u/144389161?v=4" width="100;" alt="Saundr21"/>
+                    <br />
+                    <sub><b>Saunder</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/Debuggedd">
                     <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
                     <br />
@@ -227,13 +234,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/1566932?v=4" width="100;" alt="boyi"/>
                     <br />
                     <sub><b>boyi</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/Saundr21">
-                    <img src="https://avatars.githubusercontent.com/u/144389161?v=4" width="100;" alt="Saundr21"/>
-                    <br />
-                    <sub><b>Saunder</b></sub>
                 </a>
             </td>
             <td align="center">
