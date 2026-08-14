@@ -798,3 +798,9 @@ type BorrowLendReserveState struct {
 	TotalBorrowed    string `json:"totalBorrowed"`
 }
 type BorrowLendReserveStates []MixedValue // [int, BorrowLendReserveState]
+
+type ExtraAgents struct {
+	Name       string `json:"name"`
+	Address    string `json:"address"`
+	ValidUntil int    `json:"validUntil"`
+}

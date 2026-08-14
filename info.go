@@ -1097,3 +1097,37 @@ func (i *Info) BorrowLendUserState(ctx context.Context, user string) (*BorrowLen
 	}
 	return &result, nil
 }
+
+// ApprovedBuilders returns the approved builders address.
+func (i *Info) ApprovedBuilders(ctx context.Context, user string) ([]string, error) {
+	payload := map[string]any{
+		"type": "approvedBuilders",
+		"user": user,
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch approved builders: %w", err)
+	}
+	var result []string
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal approved builders: %w", err)
+	}
+	return result, nil
+}
+
+// Retrieve extra agents associated with a user
+func (i *Info) ExtraAgents(ctx context.Context, user string) ([]ExtraAgents, error) {
+	payload := map[string]any{
+		"type": "extraAgents",
+		"user": user,
+	}
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch extra agents: %w", err)
+	}
+	var result []ExtraAgents
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal extra agents: %w", err)
+	}
+	return result, nil
+}
