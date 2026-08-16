@@ -357,3 +357,135 @@ func TestLevel_UnmarshalJSON_StringToFloat(t *testing.T) {
 	assert.Equal(t, 50000.123, level.Px)
 	assert.Equal(t, 1.456789, level.Sz)
 }
+
+func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
+
+	tests := []struct {
+		name     string
+		jsonData string
+		expected LedgerDelta
+	}{
+		{
+			name:     "deposit",
+			jsonData: `{"type":"deposit","usdc":"1000.0"}`,
+			expected: LedgerDelta{Type: "deposit", USDC: "1000.0"},
+		},
+		{
+			name:     "withdraw",
+			jsonData: `{"type":"withdraw","usdc":"500.0","nonce":1681923833000,"fee":"1.0"}`,
+			expected: LedgerDelta{
+				Type:  "withdraw",
+				USDC:  "500.0",
+				Fee:   "1.0",
+				Nonce: 1681923833000,
+			},
+		},
+		{
+			// toPerp:true, not false: with a plain bool a broken json tag would
+			// still yield false and the test would pass regardless
+			name:     "accountClassTransfer",
+			jsonData: `{"type":"accountClassTransfer","usdc":"12.0","toPerp":true}`,
+			expected: LedgerDelta{
+				Type:   "accountClassTransfer",
+				USDC:   "12.0",
+				ToPerp: true,
+			},
+		},
+		{
+			name:     "spotTransfer_null_nonce",
+			jsonData: `{"type":"spotTransfer","token":"PURR","amount":"10.5","usdcValue":"10.5","user":"0x2ba553d9f990a3b66b03b2dc0d030dfc1c061036","destination":"0xaaa0c2769cb990f4f37db951a9e48de2385c2733","fee":"1.0","nativeTokenFee":"0.0","nonce":null,"feeToken":"USDC"}`,
+			expected: LedgerDelta{
+				Type:           "spotTransfer",
+				Token:          "PURR",
+				Amount:         "10.5",
+				UsdcValue:      "10.5",
+				User:           "0x2ba553d9f990a3b66b03b2dc0d030dfc1c061036",
+				Destination:    "0xaaa0c2769cb990f4f37db951a9e48de2385c2733",
+				Fee:            "1.0",
+				NativeTokenFee: "0.0",
+				FeeToken:       "USDC",
+				Nonce:          0, // sent as null; 0 is never a real nonce
+			},
+		},
+		{
+			name:     "liquidation",
+			jsonData: `{"type":"liquidation","liquidatedNtlPos":"12345.6","accountValue":"-10.5","leverageType":"Cross","liquidatedPositions":[{"coin":"BTC","szi":"-1.0"},{"coin":"ETH","szi":"25.0"}]}`,
+			expected: LedgerDelta{
+				Type:             "liquidation",
+				LiquidatedNtlPos: "12345.6",
+				AccountValue:     "-10.5",
+				LeverageType:     "Cross",
+				LiquidatedPositions: []LiquidatedPosition{
+					{Coin: "BTC", Szi: "-1.0"},
+					{Coin: "ETH", Szi: "25.0"},
+				},
+			},
+		},
+		{
+			// captured from mainnet, tx 0x2412fe68258fc2be258c042d3a7e0f020565004dc082e190c7dba9bae4839ca8
+			name:     "liquidation_mainnet_capture",
+			jsonData: `{"type":"liquidation","liquidatedNtlPos":"145.503","accountValue":"0.330377","leverageType":"Cross","liquidatedPositions":[{"coin":"WIF","szi":"-510.0"}]}`,
+			expected: LedgerDelta{
+				Type:                "liquidation",
+				LiquidatedNtlPos:    "145.503",
+				AccountValue:        "0.330377",
+				LeverageType:        "Cross",
+				LiquidatedPositions: []LiquidatedPosition{{Coin: "WIF", Szi: "-510.0"}},
+			},
+		},
+		{
+			name:     "vaultWithdraw",
+			jsonData: `{"type":"vaultWithdraw","vault":"0xa15099a30bbf2e68942d6f4c43d70d04faeab0a0","user":"0x2ba553d9f990a3b66b03b2dc0d030dfc1c061036","requestedUsd":"100.0","commission":"1.0","closingCost":"0.5","basis":"98.0","netWithdrawnUsd":"98.5"}`,
+			expected: LedgerDelta{
+				Type:            "vaultWithdraw",
+				Vault:           "0xa15099a30bbf2e68942d6f4c43d70d04faeab0a0",
+				User:            "0x2ba553d9f990a3b66b03b2dc0d030dfc1c061036",
+				RequestedUsd:    "100.0",
+				Commission:      "1.0",
+				ClosingCost:     "0.5",
+				Basis:           "98.0",
+				NetWithdrawnUsd: "98.5",
+			},
+		},
+		{
+			name:     "borrowLend",
+			jsonData: `{"type":"borrowLend","token":"USDC","operation":"borrow","amount":"250.0","interestAmount":"0.13"}`,
+			expected: LedgerDelta{
+				Type:           "borrowLend",
+				Token:          "USDC",
+				Operation:      "borrow",
+				Amount:         "250.0",
+				InterestAmount: "0.13",
+			},
+		},
+		{
+			name:     "cStakingTransfer",
+			jsonData: `{"type":"cStakingTransfer","token":"HYPE","amount":"5.0","isDeposit":true}`,
+			expected: LedgerDelta{
+				Type:      "cStakingTransfer",
+				Token:     "HYPE",
+				Amount:    "5.0",
+				IsDeposit: true,
+			},
+		},
+		{
+			name:     "activateDexAbstraction",
+			jsonData: `{"type":"activateDexAbstraction","dex":"test","token":"USDC","amount":"1.0"}`,
+			expected: LedgerDelta{
+				Type:   "activateDexAbstraction",
+				Dex:    "test",
+				Token:  "USDC",
+				Amount: "1.0",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var delta LedgerDelta
+			err := json.Unmarshal([]byte(tt.jsonData), &delta)
+			require.NoError(t, err, "unmarshaling should not fail")
+			assert.Equal(t, tt.expected, delta, "decoded delta should match expected")
+		})
+	}
+}
