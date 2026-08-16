@@ -441,6 +441,38 @@ type LedgerDelta struct {
 	UsdcValue      string `json:"usdcValue"`
 	SourceDex      string `json:"sourceDex"`
 	DestinationDex string `json:"destinationDex"`
+
+	// transfers and sends
+	Amount         string `json:"amount,omitempty"`
+	NativeTokenFee string `json:"nativeTokenFee,omitempty"`
+	FeeToken       string `json:"feeToken,omitempty"`
+	Nonce          int64  `json:"nonce,omitempty"`
+	ToPerp         bool   `json:"toPerp,omitempty"`
+
+	// vaults
+	Vault           string `json:"vault,omitempty"`
+	RequestedUsd    string `json:"requestedUsd,omitempty"`
+	Commission      string `json:"commission,omitempty"`
+	ClosingCost     string `json:"closingCost,omitempty"`
+	Basis           string `json:"basis,omitempty"`
+	NetWithdrawnUsd string `json:"netWithdrawnUsd,omitempty"`
+
+	// liquidation
+	LiquidatedNtlPos    string               `json:"liquidatedNtlPos,omitempty"`
+	AccountValue        string               `json:"accountValue,omitempty"`
+	LeverageType        string               `json:"leverageType,omitempty"` // "Cross" or "Isolated"
+	LiquidatedPositions []LiquidatedPosition `json:"liquidatedPositions,omitempty"`
+
+	// staking, borrow/lend and dex abstraction
+	IsDeposit      bool   `json:"isDeposit,omitempty"`
+	Operation      string `json:"operation,omitempty"` // "supply", "withdraw", "repay" or "borrow"
+	InterestAmount string `json:"interestAmount,omitempty"`
+	Dex            string `json:"dex,omitempty"`
+}
+
+type LiquidatedPosition struct {
+	Coin string `json:"coin"`
+	Szi  string `json:"szi"`
 }
 
 type UserFees struct {
