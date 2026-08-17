@@ -8531,20 +8531,44 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(in *jlexer.Lexer, ou
 		case "feeToken":
 			if in.IsNull() {
 				in.Skip()
+				out.FeeToken = nil
 			} else {
-				out.FeeToken = string(in.String())
+				if out.FeeToken == nil {
+					out.FeeToken = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.FeeToken = string(in.String())
+				}
 			}
 		case "nonce":
 			if in.IsNull() {
 				in.Skip()
+				out.Nonce = nil
 			} else {
-				out.Nonce = int64(in.Int64())
+				if out.Nonce == nil {
+					out.Nonce = new(int64)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Nonce = int64(in.Int64())
+				}
 			}
 		case "toPerp":
 			if in.IsNull() {
 				in.Skip()
+				out.ToPerp = nil
 			} else {
-				out.ToPerp = bool(in.Bool())
+				if out.ToPerp == nil {
+					out.ToPerp = new(bool)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.ToPerp = bool(in.Bool())
+				}
 			}
 		case "vault":
 			if in.IsNull() {
@@ -8630,8 +8654,16 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(in *jlexer.Lexer, ou
 		case "isDeposit":
 			if in.IsNull() {
 				in.Skip()
+				out.IsDeposit = nil
 			} else {
-				out.IsDeposit = bool(in.Bool())
+				if out.IsDeposit == nil {
+					out.IsDeposit = new(bool)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.IsDeposit = bool(in.Bool())
+				}
 			}
 		case "operation":
 			if in.IsNull() {
@@ -8720,20 +8752,20 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(out *jwriter.Writer,
 		out.RawString(prefix)
 		out.String(string(in.NativeTokenFee))
 	}
-	if in.FeeToken != "" {
+	if in.FeeToken != nil {
 		const prefix string = ",\"feeToken\":"
 		out.RawString(prefix)
-		out.String(string(in.FeeToken))
+		out.String(string(*in.FeeToken))
 	}
-	if in.Nonce != 0 {
+	if in.Nonce != nil {
 		const prefix string = ",\"nonce\":"
 		out.RawString(prefix)
-		out.Int64(int64(in.Nonce))
+		out.Int64(int64(*in.Nonce))
 	}
-	if in.ToPerp {
+	if in.ToPerp != nil {
 		const prefix string = ",\"toPerp\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.ToPerp))
+		out.Bool(bool(*in.ToPerp))
 	}
 	if in.Vault != "" {
 		const prefix string = ",\"vault\":"
@@ -8794,10 +8826,10 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(out *jwriter.Writer,
 			out.RawByte(']')
 		}
 	}
-	if in.IsDeposit {
+	if in.IsDeposit != nil {
 		const prefix string = ",\"isDeposit\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.IsDeposit))
+		out.Bool(bool(*in.IsDeposit))
 	}
 	if in.Operation != "" {
 		const prefix string = ",\"operation\":"

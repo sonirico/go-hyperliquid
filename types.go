@@ -443,11 +443,11 @@ type LedgerDelta struct {
 	DestinationDex string `json:"destinationDex"`
 
 	// transfers and sends
-	Amount         string `json:"amount,omitempty"`
-	NativeTokenFee string `json:"nativeTokenFee,omitempty"`
-	FeeToken       string `json:"feeToken,omitempty"`
-	Nonce          int64  `json:"nonce,omitempty"`
-	ToPerp         bool   `json:"toPerp,omitempty"`
+	Amount         string  `json:"amount,omitempty"`
+	NativeTokenFee string  `json:"nativeTokenFee,omitempty"`
+	FeeToken       *string `json:"feeToken,omitempty"`
+	Nonce          *int64  `json:"nonce,omitempty"`
+	ToPerp         *bool   `json:"toPerp,omitempty"`
 
 	// vaults
 	Vault           string `json:"vault,omitempty"`
@@ -464,7 +464,7 @@ type LedgerDelta struct {
 	LiquidatedPositions []LiquidatedPosition `json:"liquidatedPositions,omitempty"`
 
 	// staking, borrow/lend and dex abstraction
-	IsDeposit      bool   `json:"isDeposit,omitempty"`
+	IsDeposit      *bool  `json:"isDeposit,omitempty"`
 	Operation      string `json:"operation,omitempty"` // "supply", "withdraw", "repay" or "borrow"
 	InterestAmount string `json:"interestAmount,omitempty"`
 	Dex            string `json:"dex,omitempty"`
