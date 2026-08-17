@@ -360,6 +360,9 @@ func TestLevel_UnmarshalJSON_StringToFloat(t *testing.T) {
 
 func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 
+	int64Ptr := func(i int64) *int64 { return &i }
+	boolPtr := func(b bool) *bool { return &b }
+
 	tests := []struct {
 		name     string
 		jsonData string
@@ -377,19 +380,33 @@ func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 				Type:  "withdraw",
 				USDC:  "500.0",
 				Fee:   "1.0",
-				Nonce: 1681923833000,
+				Nonce: int64Ptr(1681923833000),
 			},
 		},
 		{
 			// toPerp:true, not false: with a plain bool a broken json tag would
 			// still yield false and the test would pass regardless
-			name:     "accountClassTransfer",
+			name:     "accountClassTransfer_to_perp",
 			jsonData: `{"type":"accountClassTransfer","usdc":"12.0","toPerp":true}`,
 			expected: LedgerDelta{
 				Type:   "accountClassTransfer",
 				USDC:   "12.0",
-				ToPerp: true,
+				ToPerp: boolPtr(true),
 			},
+		},
+		{
+			name:     "accountClassTransfer_to_spot",
+			jsonData: `{"type":"accountClassTransfer","usdc":"12.0","toPerp":false}`,
+			expected: LedgerDelta{
+				Type:   "accountClassTransfer",
+				USDC:   "12.0",
+				ToPerp: boolPtr(false),
+			},
+		},
+		{
+			name:     "deposit_has_no_toPerp",
+			jsonData: `{"type":"deposit","usdc":"5.0"}`,
+			expected: LedgerDelta{Type: "deposit", USDC: "5.0", ToPerp: nil},
 		},
 		{
 			name:     "spotTransfer_null_nonce",
@@ -403,8 +420,43 @@ func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 				Destination:    "0xaaa0c2769cb990f4f37db951a9e48de2385c2733",
 				Fee:            "1.0",
 				NativeTokenFee: "0.0",
-				FeeToken:       "USDC",
-				Nonce:          0, // sent as null; 0 is never a real nonce
+				FeeToken:       stringPtr("USDC"),
+				Nonce:          nil,
+			},
+		},
+		{
+			name:     "send_empty_dex_is_a_value",
+			jsonData: `{"type":"send","user":"0xaaa","destination":"0xbbb","sourceDex":"","destinationDex":"spot","token":"USDC","amount":"10.0","usdcValue":"10.0","fee":"0.0","nativeTokenFee":"0.0","nonce":1700000000000,"feeToken":""}`,
+			expected: LedgerDelta{
+				Type:           "send",
+				User:           "0xaaa",
+				Destination:    "0xbbb",
+				SourceDex:      "",
+				DestinationDex: "spot",
+				Token:          "USDC",
+				Amount:         "10.0",
+				UsdcValue:      "10.0",
+				Fee:            "0.0",
+				NativeTokenFee: "0.0",
+				Nonce:          int64Ptr(1700000000000),
+				FeeToken:       stringPtr(""),
+			},
+		},
+		{
+			name:     "deposit_dex_keys_absent",
+			jsonData: `{"type":"deposit","usdc":"1.0"}`,
+			expected: LedgerDelta{
+				Type: "deposit", USDC: "1.0",
+				SourceDex: "", DestinationDex: "", FeeToken: nil,
+			},
+		},
+		{
+			name:     "rewardsClaim_empty_token",
+			jsonData: `{"type":"rewardsClaim","amount":"280.109527","token":""}`,
+			expected: LedgerDelta{
+				Type:   "rewardsClaim",
+				Amount: "280.109527",
+				Token:  "",
 			},
 		},
 		{
@@ -465,7 +517,7 @@ func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 				Type:      "cStakingTransfer",
 				Token:     "HYPE",
 				Amount:    "5.0",
-				IsDeposit: true,
+				IsDeposit: boolPtr(true),
 			},
 		},
 		{
