@@ -10,7 +10,7 @@ require (
 	github.com/mailru/easyjson v0.9.2
 	github.com/sonirico/vago v0.12.0
 	github.com/sonirico/vago/lol v0.1.0
-	github.com/stretchr/testify v1.12.0
+	github.com/stretchr/testify v1.12.1
 	github.com/valyala/fastjson v1.6.10
 	github.com/vmihailenco/msgpack/v5 v5.4.1
 	gopkg.in/dnaeon/go-vcr.v4 v4.0.7
@@ -38,9 +38,9 @@ require (
 	go.elastic.co/apm/module/apmzerolog/v2 v2.7.2 // indirect
 	go.elastic.co/apm/v2 v2.7.2 // indirect
 	go.elastic.co/fastjson v1.5.1 // indirect
+	go.yaml.in/yaml/v3 v3.0.5 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
 	golang.org/x/sync v0.19.0 // indirect
 	golang.org/x/sys v0.41.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	howett.net/plist v1.0.1 // indirect
 )
