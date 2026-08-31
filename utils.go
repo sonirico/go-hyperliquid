@@ -22,6 +22,18 @@ func parseFloat(s string) float64 {
 	return f
 }
 
+// parseFloatStrict parses a string to float64 and returns an error on failure.
+// Use this for financial values (prices, sizes) coming off the wire, where a
+// silent 0.0 from parseFloat would be dangerous — e.g. sending a market order
+// priced at 0.
+func parseFloatStrict(s string) (float64, error) {
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0, fmt.Errorf("parse float %q: %w", s, err)
+	}
+	return f, nil
+}
+
 // abs returns the absolute value of a float64.
 func abs(x float64) float64 {
 	if x < 0 {

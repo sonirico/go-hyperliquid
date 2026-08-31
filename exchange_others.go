@@ -84,7 +84,10 @@ func (e *Exchange) SlippagePrice(
 			return 0, err
 		}
 		if midPriceStr, exists := mids[name]; exists {
-			price = parseFloat(midPriceStr)
+			price, err = parseFloatStrict(midPriceStr)
+			if err != nil {
+				return 0, fmt.Errorf("invalid mid price %q for coin %s: %w", midPriceStr, name, err)
+			}
 		} else {
 			return 0, fmt.Errorf("could not get mid price for coin: %s", name)
 		}

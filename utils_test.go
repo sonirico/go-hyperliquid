@@ -52,3 +52,22 @@ func TestRoundToSignificantFigures(t *testing.T) {
 		})
 	}
 }
+
+func TestParseFloatStrict(t *testing.T) {
+	// Valid numbers parse the same as parseFloat.
+	for _, s := range []string{"0", "1.5", "12345.6789", "-3.2", "0.00000001"} {
+		got, err := parseFloatStrict(s)
+		assert.NoError(t, err, "input %q", s)
+		assert.Equal(t, parseFloat(s), got, "input %q", s)
+	}
+
+	// Invalid input must error, NOT silently return 0 the way parseFloat does.
+	// This is the difference that matters for financial values off the wire:
+	// a malformed mid price must not become a market order priced at 0.
+	for _, s := range []string{"", "abc", "1.2.3", "NaNaN", "0x10", " "} {
+		_, err := parseFloatStrict(s)
+		assert.Error(t, err, "input %q must be rejected", s)
+		// Document the dangerous legacy behaviour the strict variant guards against.
+		assert.Equal(t, 0.0, parseFloat(s), "parseFloat silently returns 0 for %q", s)
+	}
+}

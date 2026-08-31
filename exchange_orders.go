@@ -395,7 +395,10 @@ func (e *Exchange) MarketClose(
 			continue
 		}
 
-		szi := parseFloat(pos.Szi)
+		szi, err := parseFloatStrict(pos.Szi)
+		if err != nil {
+			return OrderStatus{}, fmt.Errorf("invalid position size %q for coin %s: %w", pos.Szi, coin, err)
+		}
 		var size float64
 		if sz != nil {
 			size = *sz
