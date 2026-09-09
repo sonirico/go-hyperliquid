@@ -2018,3 +2018,42 @@ func (e *Exchange) SendAsset(
 	}
 	return &result, nil
 }
+
+// Borrow, repay, supply, or withdraw HIP-2 borrow/lend assets
+func (e *Exchange) BorrowLend(
+	ctx context.Context,
+	amount float64,
+	operation string,
+	token int64,
+) (*ReserveRequestWeightResponse, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type":      "borrowLend",
+		"operation": operation,
+		"token":     token,
+		"amount":    formatFloat(amount),
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+	var result ReserveRequestWeightResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}

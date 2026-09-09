@@ -836,3 +836,12 @@ type ExtraAgents struct {
 	Address    string `json:"address"`
 	ValidUntil int    `json:"validUntil"`
 }
+
+type OperationType string
+
+const (
+	OperationTypeSupply   OperationType = "supply"
+	OperationTypeWithdraw OperationType = "withdraw"
+	OperationTypeBorrow   OperationType = "borrow"
+	OperationTypeRepay    OperationType = "repay"
+)
