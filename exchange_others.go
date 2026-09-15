@@ -79,7 +79,7 @@ func (e *Exchange) SlippagePrice(
 		price = *px
 	} else {
 		// Get midprice
-		mids, err := e.info.AllMids(ctx)
+		mids, err := e.info.AllMids(ctx, e.dex)
 		if err != nil {
 			return 0, err
 		}
@@ -94,7 +94,7 @@ func (e *Exchange) SlippagePrice(
 	}
 
 	asset := e.info.coinToAsset[name]
-	isSpot := asset >= 10000
+	isSpot := asset >= spotAssetIndexOffset && asset < builderPerpAssetBase
 
 	// Calculate slippage
 	if isBuy {

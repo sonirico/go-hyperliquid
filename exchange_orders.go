@@ -384,7 +384,7 @@ func (e *Exchange) MarketClose(
 		address = e.vault
 	}
 
-	userState, err := e.info.UserState(ctx, address)
+	userState, err := e.info.UserState(ctx, address, e.dex)
 	if err != nil {
 		return OrderStatus{}, err
 	}

@@ -49,7 +49,7 @@ func NewInfo(
 
 	if meta == nil {
 		var err error
-		meta, err = info.Meta(ctx)
+		meta, err = info.Meta(ctx, info.perpDexName)
 		if err != nil {
 			panic(err)
 		}
