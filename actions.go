@@ -108,10 +108,10 @@ type UpdateLeverageAction struct {
 
 // UpdateIsolatedMarginAction represents isolated margin update
 type UpdateIsolatedMarginAction struct {
-	Type  string  `json:"type"  msgpack:"type"`
-	Asset int     `json:"asset" msgpack:"asset"`
-	IsBuy bool    `json:"isBuy" msgpack:"isBuy"`
-	Ntli  float64 `json:"ntli"  msgpack:"ntli"`
+	Type  string `json:"type"  msgpack:"type"`
+	Asset int    `json:"asset" msgpack:"asset"`
+	IsBuy bool   `json:"isBuy" msgpack:"isBuy"`
+	Ntli  int64  `json:"ntli"  msgpack:"ntli"`
 }
 
 // OrderWire represents the wire format for orders with deterministic field ordering
