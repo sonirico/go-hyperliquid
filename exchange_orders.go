@@ -48,20 +48,22 @@ type OrderResponse struct {
 	Statuses []OrderStatus
 }
 
-func newOrderTypeWire(o CreateOrderRequest) OrderWireType {
+func newOrderTypeWire(o CreateOrderRequest) (OrderWireType, error) {
 	if o.OrderType.Limit != nil {
 		return OrderWireType{
 			Limit: &OrderWireTypeLimit{
 				Tif: o.OrderType.Limit.Tif,
 			},
-		}
+		}, nil
 	}
 
 	if o.OrderType.Trigger != nil {
+		// Same rule as the limit price and size above: a trigger price that
+		// cannot be wired is an error, not a "0". A stop-loss sent with
+		// triggerPx 0 never fires.
 		triggerPxWire, err := floatToWire(o.OrderType.Trigger.TriggerPx)
 		if err != nil {
-			// This shouldn't happen, but log and use a default
-			triggerPxWire = "0"
+			return OrderWireType{}, fmt.Errorf("failed to wire trigger price: %w", err)
 		}
 
 		return OrderWireType{
@@ -70,10 +72,10 @@ func newOrderTypeWire(o CreateOrderRequest) OrderWireType {
 				IsMarket:  o.OrderType.Trigger.IsMarket,
 				Tpsl:      o.OrderType.Trigger.Tpsl,
 			},
-		}
+		}, nil
 	}
 
-	return OrderWireType{}
+	return OrderWireType{}, nil
 }
 
 func newCreateOrderAction(
@@ -98,13 +100,18 @@ func newCreateOrderAction(
 			return OrderAction{}, fmt.Errorf("coin %s not found in info", order.Coin)
 		}
 
+		orderTypeWire, err := newOrderTypeWire(order)
+		if err != nil {
+			return OrderAction{}, fmt.Errorf("order %d: %w", i, err)
+		}
+
 		orderWire := OrderWire{
 			Asset:      asset,
 			IsBuy:      order.IsBuy,
 			LimitPx:    priceWire,
 			Size:       sizeWire,
 			ReduceOnly: order.ReduceOnly,
-			OrderType:  newOrderTypeWire(order),
+			OrderType:  orderTypeWire,
 		}
 
 		// Normalize cloid to match Python SDK format (hex WITH 0x prefix)
@@ -235,13 +242,18 @@ func newModifyOrderAction(
 		return ModifyAction{}, fmt.Errorf("coin %s not found in info", modifyRequest.Order.Coin)
 	}
 
+	orderTypeWire, err := newOrderTypeWire(modifyRequest.Order)
+	if err != nil {
+		return ModifyAction{}, err
+	}
+
 	order := OrderWire{
 		Asset:      asset,
 		IsBuy:      modifyRequest.Order.IsBuy,
 		LimitPx:    priceWire,
 		Size:       sizeWire,
 		ReduceOnly: modifyRequest.Order.ReduceOnly,
-		OrderType:  newOrderTypeWire(modifyRequest.Order),
+		OrderType:  orderTypeWire,
 	}
 
 	// Normalize cloid to match Python SDK format (hex WITH 0x prefix)

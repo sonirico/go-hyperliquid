@@ -312,3 +312,41 @@ func TestOrders(t *testing.T) {
 		})
 	}
 }
+
+func TestNewOrderTypeWireTriggerPrice(t *testing.T) {
+	trigger := func(px float64) CreateOrderRequest {
+		return CreateOrderRequest{
+			Coin: "BTC",
+			OrderType: OrderType{
+				Trigger: &TriggerOrderType{TriggerPx: px, IsMarket: true, Tpsl: "sl"},
+			},
+		}
+	}
+
+	t.Run("wires a representable trigger price", func(t *testing.T) {
+		wire, err := newOrderTypeWire(trigger(0.0001))
+		require.NoError(t, err)
+		require.Equal(t, "0.0001", wire.Trigger.TriggerPx)
+	})
+
+	t.Run("errors instead of sending a 0 trigger price", func(t *testing.T) {
+		// Needs more than the 8 decimals floatToWire accepts — a 5% stop under a
+		// sub-cent entry lands here. Previously this became triggerPx "0", a
+		// stop-loss that can never fire.
+		for _, px := range []float64{0.0000123 * 0.95, 0.123456789} {
+			_, err := newOrderTypeWire(trigger(px))
+			require.Error(t, err, "px=%v", px)
+			require.Contains(t, err.Error(), "trigger price", "px=%v", px)
+		}
+	})
+
+	t.Run("limit orders are unaffected", func(t *testing.T) {
+		wire, err := newOrderTypeWire(CreateOrderRequest{
+			Coin:      "BTC",
+			OrderType: OrderType{Limit: &LimitOrderType{Tif: TifGtc}},
+		})
+		require.NoError(t, err)
+		require.Equal(t, TifGtc, wire.Limit.Tif)
+		require.Nil(t, wire.Trigger)
+	})
+}
