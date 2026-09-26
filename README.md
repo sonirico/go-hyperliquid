@@ -230,12 +230,21 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/pucedoteth">
+                    <img src="https://avatars.githubusercontent.com/u/119044801?v=4" width="100;" alt="pucedoteth"/>
+                    <br />
+                    <sub><b>monem</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/boyi">
                     <img src="https://avatars.githubusercontent.com/u/1566932?v=4" width="100;" alt="boyi"/>
                     <br />
                     <sub><b>boyi</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/MarcSky">
                     <img src="https://avatars.githubusercontent.com/u/4164003?v=4" width="100;" alt="MarcSky"/>
@@ -243,8 +252,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Levan</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/andrew-malikov">
                     <img src="https://avatars.githubusercontent.com/u/35894527?v=4" width="100;" alt="andrew-malikov"/>
@@ -280,6 +287,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Alexander Altergot</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/corverroos">
                     <img src="https://avatars.githubusercontent.com/u/29249923?v=4" width="100;" alt="corverroos"/>
@@ -287,8 +296,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>corver</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/daatsuka">
                     <img src="https://avatars.githubusercontent.com/u/92530585?v=4" width="100;" alt="daatsuka"/>
@@ -301,13 +308,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/8032930?v=4" width="100;" alt="feeeei"/>
                     <br />
                     <sub><b>feeeei</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/pucedoteth">
-                    <img src="https://avatars.githubusercontent.com/u/119044801?v=4" width="100;" alt="pucedoteth"/>
-                    <br />
-                    <sub><b>monem</b></sub>
                 </a>
             </td>
             <td align="center">
