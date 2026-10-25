@@ -804,7 +804,7 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid8(in *jlexer.Lexer, out
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Ntli = float64(in.Float64())
+				out.Ntli = int64(in.Int64())
 			}
 		default:
 			in.SkipRecursive()
@@ -838,7 +838,7 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid8(out *jwriter.Writer, 
 	{
 		const prefix string = ",\"ntli\":"
 		out.RawString(prefix)
-		out.Float64(float64(in.Ntli))
+		out.Int64(int64(in.Ntli))
 	}
 	out.RawByte('}')
 }
