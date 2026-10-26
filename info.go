@@ -446,10 +446,14 @@ func (i *Info) UserFillsByTime(
 	startTime int64,
 	endTime *int64,
 	aggregateByTime *bool,
+	reversed *bool,
 ) ([]Fill, error) {
 	var extraParams = make(map[string]any, 0)
 	if aggregateByTime != nil {
 		extraParams["aggregateByTime"] = aggregateByTime
+	}
+	if reversed != nil {
+		extraParams["reversed"] = reversed
 	}
 
 	resp, err := i.postTimeRangeRequest(
