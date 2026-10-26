@@ -588,6 +588,7 @@ func TestUserFillsByTime(t *testing.T) {
 				tc.startTime,
 				tc.endTime,
 				nil,
+				nil,
 			)
 			tt.Logf("res: %+v", res)
 			tt.Logf("err: %v", err)
