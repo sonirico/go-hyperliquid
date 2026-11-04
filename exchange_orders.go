@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
+	"github.com/ethereum/go-ethereum/crypto"
 )
 
 type CreateOrderRequest struct {
@@ -391,9 +393,14 @@ func (e *Exchange) MarketClose(
 	cloid *string,
 	builder *BuilderInfo,
 ) (OrderStatus, error) {
-	address := e.accountAddr
+	// Same precedence as the Python SDK: orders on a vault are signed for the vault, so its
+	// position is the one to close, then the account address, then the signer's own wallet.
+	address := e.vault
 	if address == "" {
-		address = e.vault
+		address = e.accountAddr
+	}
+	if address == "" && e.privateKey != nil {
+		address = crypto.PubkeyToAddress(e.privateKey.PublicKey).Hex()
 	}
 
 	userState, err := e.info.UserState(ctx, address, e.dex)
