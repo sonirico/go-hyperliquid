@@ -747,20 +747,27 @@ func (e *Exchange) TokenDelegate(
 ) (*TransferResponse, error) {
 	nonce := e.nextNonce()
 
-	action := TokenDelegateAction{
-		Type:         "tokenDelegate",
-		Validator:    validator,
-		Wei:          wei,
-		IsUndelegate: isUndelegate,
-		Nonce:        nonce,
+	action := map[string]any{
+		"type":         "tokenDelegate",
+		"validator":    validator,
+		"wei":          wei,
+		"isUndelegate": isUndelegate,
+		"nonce":        big.NewInt(nonce),
 	}
 
-	sig, err := e.signL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "validator", Type: "address"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "isUndelegate", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
 		ctx,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:TokenDelegate",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
@@ -1025,18 +1032,23 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, fmt.Errorf("failed to marshal signers: %w", err)
 	}
 
-	action := ConvertToMultiSigUserAction{
-		Type:    "convertToMultiSigUser",
-		Signers: string(signersJSON),
-		Nonce:   nonce,
+	action := map[string]any{
+		"type":    "convertToMultiSigUser",
+		"signers": string(signersJSON),
+		"nonce":   big.NewInt(nonce),
 	}
 
-	sig, err := e.signL1Action(
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "signers", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
 		ctx,
 		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		payloadTypes,
+		"HyperliquidTransaction:ConvertToMultiSigUser",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
