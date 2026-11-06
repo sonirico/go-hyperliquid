@@ -267,6 +267,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/Iamsohungrynow">
+                    <img src="https://avatars.githubusercontent.com/u/261225237?v=4" width="100;" alt="Iamsohungrynow"/>
+                    <br />
+                    <sub><b>Martina</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/07Vaishnavi-Singh">
                     <img src="https://avatars.githubusercontent.com/u/100015197?v=4" width="100;" alt="07Vaishnavi-Singh"/>
                     <br />
@@ -280,6 +287,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vladimir Babin</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/aaltergot">
                     <img src="https://avatars.githubusercontent.com/u/12907019?v=4" width="100;" alt="aaltergot"/>
@@ -287,8 +296,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Alexander Altergot</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/corverroos">
                     <img src="https://avatars.githubusercontent.com/u/29249923?v=4" width="100;" alt="corverroos"/>
