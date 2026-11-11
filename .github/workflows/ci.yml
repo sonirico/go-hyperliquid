@@ -88,4 +88,6 @@ jobs:
         go-version: '1.25'
 
     - name: Run Gosec Security Scanner
-      run: go install github.com/securego/gosec/v2/cmd/gosec@latest && gosec -exclude-dir=examples ./...
+      # gosec v2.30.0 and later require Go 1.26, so pin the last release that
+      # builds with the Go version set up above.
+      run: go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0 && gosec -exclude-dir=examples ./...
