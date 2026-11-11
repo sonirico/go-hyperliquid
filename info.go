@@ -1119,6 +1119,89 @@ func (i *Info) ApprovedBuilders(ctx context.Context, user string) ([]string, err
 	return result, nil
 }
 
+// UserRateLimit retrieves the API request usage and cap of a user.
+func (i *Info) UserRateLimit(ctx context.Context, user string) (*UserRateLimit, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userRateLimit",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch user rate limit: %w", err)
+	}
+
+	var result UserRateLimit
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal user rate limit: %w", err)
+	}
+	return &result, nil
+}
+
+// UserRole retrieves the role of an address: a regular user, an agent, a vault,
+// a sub-account, or "missing" when the address is unknown.
+func (i *Info) UserRole(ctx context.Context, user string) (*UserRole, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userRole",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch user role: %w", err)
+	}
+
+	var result UserRole
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal user role: %w", err)
+	}
+	return &result, nil
+}
+
+// MaxBuilderFee retrieves the maximum fee a user has approved for a builder, in
+// tenths of a basis point (1 means 0.001%).
+func (i *Info) MaxBuilderFee(ctx context.Context, user, builder string) (int, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":    "maxBuilderFee",
+		"user":    user,
+		"builder": builder,
+	})
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch max builder fee: %w", err)
+	}
+
+	var result int
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return 0, fmt.Errorf("failed to unmarshal max builder fee: %w", err)
+	}
+	return result, nil
+}
+
+// PredictedFundings retrieves the predicted funding rates of each coin on
+// Hyperliquid and other venues. Only the first perp dex is supported by the API.
+func (i *Info) PredictedFundings(ctx context.Context) ([]CoinPredictedFundings, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "predictedFundings",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch predicted fundings: %w", err)
+	}
+
+	var raw []Tuple2[string, []Tuple2[string, *PredictedFunding]]
+	if err := json.Unmarshal(resp, &raw); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal predicted fundings: %w", err)
+	}
+
+	result := make([]CoinPredictedFundings, 0, len(raw))
+	for _, coin := range raw {
+		venues := make([]VenuePredictedFunding, 0, len(coin.Second))
+		for _, venue := range coin.Second {
+			venues = append(venues, VenuePredictedFunding{
+				Venue:   venue.First,
+				Funding: venue.Second,
+			})
+		}
+		result = append(result, CoinPredictedFundings{Coin: coin.First, Venues: venues})
+	}
+	return result, nil
+}
+
 // Retrieve extra agents associated with a user
 func (i *Info) ExtraAgents(ctx context.Context, user string) ([]ExtraAgents, error) {
 	payload := map[string]any{
