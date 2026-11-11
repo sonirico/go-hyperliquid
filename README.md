@@ -260,6 +260,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/cryptokvc">
+                    <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
+                    <br />
+                    <sub><b>CryptoKVC</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/freeeverett">
                     <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
                     <br />
@@ -280,6 +287,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vaiz_07</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/chiliec">
                     <img src="https://avatars.githubusercontent.com/u/982358?v=4" width="100;" alt="chiliec"/>
@@ -287,8 +296,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vladimir Babin</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/aaltergot">
                     <img src="https://avatars.githubusercontent.com/u/12907019?v=4" width="100;" alt="aaltergot"/>
@@ -324,6 +331,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>tpkeeper</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/vyomshm">
                     <img src="https://avatars.githubusercontent.com/u/20184946?v=4" width="100;" alt="vyomshm"/>
