@@ -10,7 +10,7 @@ import (
 )
 
 func TestMetaAndAssetCtxs(t *testing.T) {
-	info := NewInfo(context.Background(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.Background(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "MetaAndAssetCtxs")
 
@@ -130,7 +130,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 }
 
 func TestSpotMetaAndAssetCtxs(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "SpotMetaAndAssetCtxs")
 
@@ -193,7 +193,7 @@ func TestSpotMetaAndAssetCtxs(t *testing.T) {
 }
 
 func TestMeta(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "Meta")
 
@@ -243,7 +243,7 @@ func TestMeta(t *testing.T) {
 }
 
 func TestSpotMeta(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "SpotMeta")
 
@@ -301,7 +301,7 @@ func TestSpotMeta(t *testing.T) {
 }
 
 func TestAllPerpMetas(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 	result, err := info.AllPerpMetas(context.TODO())
 	t.Logf("res: %+v", result)
 	t.Logf("err: %v", err)
@@ -358,7 +358,7 @@ func TestQueryOrderByOid(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	cases := []tc{
 		{
@@ -459,7 +459,7 @@ func TestQueryOrderByOid(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 			} else {
 				infoInstance = info
 			}
@@ -511,7 +511,7 @@ func TestUserFillsByTime(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	cases := []tc{
 		{
@@ -577,7 +577,7 @@ func TestUserFillsByTime(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 			} else {
 				infoInstance = info
 			}
@@ -628,7 +628,7 @@ func TestSpotUserState(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	cases := []tc{
 		{
@@ -671,7 +671,7 @@ func TestSpotUserState(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 			} else {
 				infoInstance = info
 			}
@@ -717,7 +717,7 @@ func TestUserActiveAssetData(t *testing.T) {
 		useTestnet   bool
 	}
 
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	cases := []tc{
 		{
@@ -747,7 +747,7 @@ func TestUserActiveAssetData(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, nil, nil, nil)
+				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 			} else {
 				infoInstance = info
 			}
@@ -775,7 +775,7 @@ func TestUserActiveAssetData(t *testing.T) {
 }
 
 func TestTokenDetails(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	type tc struct {
 		name    string
@@ -807,7 +807,7 @@ func TestTokenDetails(t *testing.T) {
 }
 
 func TestPerpDexs(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "PerpDexs")
 
@@ -831,7 +831,7 @@ func TestPerpDexs(t *testing.T) {
 }
 
 func TestMetaWithDex(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "Meta_WithDex")
 
@@ -851,7 +851,7 @@ func TestMetaWithDex(t *testing.T) {
 func TestUserStateWithDex(t *testing.T) {
 	// Use a known test address
 	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "UserState_WithDex")
 
@@ -868,7 +868,7 @@ func TestUserStateWithDex(t *testing.T) {
 }
 
 func TestAllMidsWithDex(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "AllMids_WithDex")
 
@@ -888,7 +888,7 @@ func TestAllMidsWithDex(t *testing.T) {
 func TestOpenOrdersWithDex(t *testing.T) {
 	// Use a known test address
 	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "OpenOrders_WithDex")
 
@@ -907,7 +907,7 @@ func TestOpenOrdersWithDex(t *testing.T) {
 func TestFrontendOpenOrdersWithDex(t *testing.T) {
 	// Use a known test address
 	testAddress := "0xcd5051944f780a621ee62e39e493c489668acf4d"
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "FrontendOpenOrders_WithDex")
 
@@ -924,7 +924,7 @@ func TestFrontendOpenOrdersWithDex(t *testing.T) {
 }
 
 func TestPerpDexLimits(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	// First get available DEXs
 	initRecorder(t, false, "PerpDexs_ForLimits")
@@ -965,7 +965,7 @@ func TestPerpDexLimits(t *testing.T) {
 }
 
 func TestPerpDexStatus(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	// First get available DEXs to test with a specific DEX
 	initRecorder(t, false, "PerpDexs_ForStatus")
@@ -999,7 +999,7 @@ func TestPerpDexStatus(t *testing.T) {
 }
 
 func TestPerpDeployAuctionStatus(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	initRecorder(t, false, "PerpDeployAuctionStatus")
 
@@ -1016,7 +1016,7 @@ func TestPerpDeployAuctionStatus(t *testing.T) {
 }
 
 func TestPerpDexLimits_RequiresNonEmptyDex(t *testing.T) {
-	info := NewInfo(context.TODO(), MainnetAPIURL, true, nil, nil, nil)
+	info := NewInfo(context.TODO(), MainnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
 
 	// PerpDexLimits should fail with empty dex
 	_, err := info.PerpDexLimits(context.TODO(), "")
