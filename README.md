@@ -223,6 +223,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/cryptokvc">
+                    <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
+                    <br />
+                    <sub><b>CryptoKVC</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/Debuggedd">
                     <img src="https://avatars.githubusercontent.com/u/16706921?v=4" width="100;" alt="Debuggedd"/>
                     <br />
@@ -236,6 +243,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Ivan</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/boyi">
                     <img src="https://avatars.githubusercontent.com/u/1566932?v=4" width="100;" alt="boyi"/>
@@ -243,20 +252,11 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>boyi</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/MarcSky">
                     <img src="https://avatars.githubusercontent.com/u/4164003?v=4" width="100;" alt="MarcSky"/>
                     <br />
                     <sub><b>Levan</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/cryptokvc">
-                    <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
-                    <br />
-                    <sub><b>CryptoKVC</b></sub>
                 </a>
             </td>
             <td align="center">
