@@ -216,17 +216,17 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/pucedoteth">
-                    <img src="https://avatars.githubusercontent.com/u/119044801?v=4" width="100;" alt="pucedoteth"/>
-                    <br />
-                    <sub><b>monem</b></sub>
-                </a>
-            </td>
-            <td align="center">
                 <a href="https://github.com/cryptokvc">
                     <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
                     <br />
                     <sub><b>CryptoKVC</b></sub>
+                </a>
+            </td>
+            <td align="center">
+                <a href="https://github.com/pucedoteth">
+                    <img src="https://avatars.githubusercontent.com/u/119044801?v=4" width="100;" alt="pucedoteth"/>
+                    <br />
+                    <sub><b>monem</b></sub>
                 </a>
             </td>
             <td align="center">
