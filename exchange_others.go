@@ -704,6 +704,14 @@ func (e *Exchange) SubAccountSpotTransfer(
 	token string,
 	amount float64,
 ) (*TransferResponse, error) {
+	// The API takes the amount as a decimal string, like the Python SDK's
+	// str(amount). A float64 here is hashed as a msgpack float, so the
+	// signature would not match the action the exchange decodes.
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := SubAccountSpotTransferAction{
@@ -711,7 +719,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 		SubAccountUser: subAccountUser,
 		IsDeposit:      isDeposit,
 		Token:          token,
-		Amount:         amount,
+		Amount:         amountWire,
 	}
 
 	sig, err := e.signL1Action(

@@ -1115,7 +1115,7 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid11(in *jlexer.Lexer, ou
 			if in.IsNull() {
 				in.Skip()
 			} else {
-				out.Amount = float64(in.Float64())
+				out.Amount = string(in.String())
 			}
 		default:
 			in.SkipRecursive()
@@ -1154,7 +1154,7 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid11(out *jwriter.Writer,
 	{
 		const prefix string = ",\"amount\":"
 		out.RawString(prefix)
-		out.Float64(float64(in.Amount))
+		out.String(string(in.Amount))
 	}
 	out.RawByte('}')
 }

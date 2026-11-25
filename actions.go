@@ -183,11 +183,11 @@ type PerpDexClassTransferAction struct {
 
 // SubAccountSpotTransferAction represents sub-account spot transfer
 type SubAccountSpotTransferAction struct {
-	Type           string  `json:"type"           msgpack:"type"`
-	SubAccountUser string  `json:"subAccountUser" msgpack:"subAccountUser"`
-	IsDeposit      bool    `json:"isDeposit"      msgpack:"isDeposit"`
-	Token          string  `json:"token"          msgpack:"token"`
-	Amount         float64 `json:"amount"         msgpack:"amount"`
+	Type           string `json:"type"           msgpack:"type"`
+	SubAccountUser string `json:"subAccountUser" msgpack:"subAccountUser"`
+	IsDeposit      bool   `json:"isDeposit"      msgpack:"isDeposit"`
+	Token          string `json:"token"          msgpack:"token"`
+	Amount         string `json:"amount"         msgpack:"amount"`
 }
 
 // ScheduleCancelAction represents schedule cancel action
