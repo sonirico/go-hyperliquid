@@ -340,6 +340,13 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vyom</b></sub>
                 </a>
             </td>
+            <td align="center">
+                <a href="https://github.com/wvydev">
+                    <img src="https://avatars.githubusercontent.com/u/356821562?v=4" width="100;" alt="wvydev"/>
+                    <br />
+                    <sub><b>wvydev</b></sub>
+                </a>
+            </td>
 		</tr>
 	<tbody>
 </table>
