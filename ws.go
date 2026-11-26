@@ -27,7 +27,20 @@ const (
 	// the server before treating the connection as stalled. Must exceed pingInterval
 	// so that normal pong responses do not trigger a false timeout.
 	wsReadTimeout = 90 * time.Second
+
+	// maxReconnectWait caps the exponential backoff between reconnect attempts.
+	maxReconnectWait = time.Minute
 )
+
+// WsServerError is an error message pushed by the server on the "error"
+// channel, e.g. when a subscription request is rejected.
+type WsServerError struct {
+	Message string
+}
+
+func (e WsServerError) Error() string {
+	return fmt.Sprintf("websocket server error: %s", e.Message)
+}
 
 type Subscription struct {
 	ID      string
@@ -46,10 +59,11 @@ type WebsocketClient struct {
 	nextSubID             atomic.Int64
 	done                  chan struct{}
 	closeOnce             sync.Once
-	reconnectWait         time.Duration
+	reconnectWait         time.Duration // initial wait between reconnect attempts
 	readTimeout           time.Duration
 	debug                 bool
 	logger                lol.Logger
+	errorHandler          func(error)
 }
 
 var upstreamHosts map[string]struct{}
@@ -131,6 +145,12 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 			ChannelWebData3:   NewMsgDispatcher[WebData3](ChannelWebData3),
 		},
 	}
+	cli.msgDispatcherRegistry[ChannelError] = msgDispatcherFunc[any](
+		func(_ []*uniqSubscriber, msg wsMessage) error {
+			cli.handleServerError(msg)
+			return nil
+		},
+	)
 
 	for _, opt := range opts {
 		opt.Apply(cli)
@@ -334,7 +354,28 @@ func (w *WebsocketClient) dispatch(msg wsMessage) error {
 	return dispatcher.Dispatch(subscribers, msg)
 }
 
+// handleServerError logs a message received on the "error" channel and passes
+// it to the error handler set with WsOptErrorHandler, if any.
+func (w *WebsocketClient) handleServerError(msg wsMessage) {
+	// The server usually sends the error as a JSON string; fall back to the raw
+	// payload for anything else.
+	var text string
+	if err := json.Unmarshal(msg.Data, &text); err != nil {
+		text = string(msg.Data)
+	}
+
+	srvErr := WsServerError{Message: text}
+	w.logErrf("%v", srvErr)
+
+	if w.errorHandler != nil {
+		w.errorHandler(srvErr)
+	}
+}
+
 func (w *WebsocketClient) reconnect(ctx context.Context) {
+	// The backoff starts from the initial wait on every outage, so a long
+	// outage in the past does not slow down recovery from the next one.
+	wait := w.reconnectWait
 	for {
 		select {
 		case <-w.done:
@@ -345,10 +386,10 @@ func (w *WebsocketClient) reconnect(ctx context.Context) {
 			if err := w.Connect(ctx); err == nil {
 				return
 			}
-			time.Sleep(w.reconnectWait)
-			w.reconnectWait *= 2 // TODO: configurable strategies such as exponential backoff and the like
-			if w.reconnectWait > time.Minute {
-				w.reconnectWait = time.Minute
+			time.Sleep(wait)
+			wait *= 2
+			if wait > maxReconnectWait {
+				wait = maxReconnectWait
 			}
 		}
 	}

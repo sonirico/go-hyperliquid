@@ -123,6 +123,16 @@ func WsOptReadTimeout(timeout time.Duration) WsOpt {
 	}
 }
 
+// WsOptErrorHandler sets a function that is called with a WsServerError
+// whenever the server sends a message on the "error" channel (for example when
+// a subscription is rejected). It runs on the read goroutine, so it must not
+// block. Server errors are also logged when a logger is set.
+func WsOptErrorHandler(handler func(error)) WsOpt {
+	return func(w *WebsocketClient) {
+		w.errorHandler = handler
+	}
+}
+
 // WsOptDialer allows setting a custom websocket.Dialer
 func WsOptDialer(dialer *websocket.Dialer) WsOpt {
 	return func(w *WebsocketClient) {
