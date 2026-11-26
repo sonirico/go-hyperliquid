@@ -25,6 +25,7 @@ const (
 	ChannelOpenOrders         string = "openOrders"
 	ChannelTwapStates         string = "twapStates"
 	ChannelWebData3           string = "webData3"
+	ChannelError              string = "error"
 )
 
 type wsMessage struct {
