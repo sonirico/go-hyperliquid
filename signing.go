@@ -708,13 +708,12 @@ func SignL1Action(
 	return signInner(privateKey, typedData)
 }
 
-type signUsdClassTransferAction struct {
-	Type   string  `msgpack:"type"`
-	Amount float64 `msgpack:"amount"`
-	ToPerp bool    `msgpack:"toPerp"`
-}
-
-// SignUsdClassTransferAction signs USD class transfer action
+// SignUsdClassTransferAction signs a usdClassTransfer action.
+//
+// usdClassTransfer is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:UsdClassTransfer, not as an L1 action. timestamp is
+// the action nonce. The action posted with this signature must carry the
+// amount formatted by floatToWire (e.g. "1", "12.5").
 func SignUsdClassTransferAction(
 	privateKey *ecdsa.PrivateKey,
 	amount float64,
@@ -722,23 +721,40 @@ func SignUsdClassTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signUsdClassTransferAction{
-		Type:   "usdClassTransfer",
-		Amount: amount,
-		ToPerp: toPerp,
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return SignatureResult{}, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	action := map[string]any{
+		"type":   "usdClassTransfer",
+		"amount": amountWire,
+		"toPerp": toPerp,
+		"nonce":  big.NewInt(timestamp),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "toPerp", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:UsdClassTransfer",
+		isMainnet,
+	)
 }
 
-type signSpotTransferAction struct {
-	Type        string  `msgpack:"type"`
-	Amount      float64 `msgpack:"amount"`
-	Destination string  `msgpack:"destination"`
-	Token       string  `msgpack:"token"`
-}
-
-// SignSpotTransferAction signs spot transfer action
+// SignSpotTransferAction signs a spotSend action.
+//
+// spotSend is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:SpotSend, not as an L1 action. timestamp is the
+// action's time field. The action posted with this signature must carry the
+// amount formatted by floatToWire.
 func SignSpotTransferAction(
 	privateKey *ecdsa.PrivateKey,
 	amount float64,
@@ -746,23 +762,42 @@ func SignSpotTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signSpotTransferAction{
-		Type:        "spotTransfer",
-		Amount:      amount,
-		Destination: destination,
-		Token:       token,
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return SignatureResult{}, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	action := map[string]any{
+		"type":        "spotSend",
+		"destination": destination,
+		"token":       token,
+		"amount":      amountWire,
+		"time":        big.NewInt(timestamp),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "token", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:SpotSend",
+		isMainnet,
+	)
 }
 
-type signUsdTransferAction struct {
-	Type        string  `msgpack:"type"`
-	Amount      float64 `msgpack:"amount"`
-	Destination string  `msgpack:"destination"`
-}
-
-// SignUsdTransferAction signs USD transfer action
+// SignUsdTransferAction signs a usdSend action.
+//
+// usdSend is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:UsdSend, not as an L1 action. timestamp is the
+// action's time field. The action posted with this signature must carry the
+// amount formatted by floatToWire.
 func SignUsdTransferAction(
 	privateKey *ecdsa.PrivateKey,
 	amount float64,
@@ -770,13 +805,32 @@ func SignUsdTransferAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signUsdTransferAction{
-		Type:        "usdTransfer",
-		Amount:      amount,
-		Destination: destination,
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return SignatureResult{}, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	action := map[string]any{
+		"type":        "usdSend",
+		"destination": destination,
+		"amount":      amountWire,
+		"time":        big.NewInt(timestamp),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:UsdSend",
+		isMainnet,
+	)
 }
 
 type signPerpDexClassTransferAction struct {
@@ -833,14 +887,15 @@ func SignTokenDelegateAction(
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
 }
 
-type signWithdrawFromBridgeAction struct {
-	Type        string  `msgpack:"type"`
-	Destination string  `msgpack:"destination"`
-	Amount      float64 `msgpack:"amount"`
-	Fee         float64 `msgpack:"fee"`
-}
-
-// SignWithdrawFromBridgeAction signs withdraw from bridge action
+// SignWithdrawFromBridgeAction signs a withdraw3 action.
+//
+// withdraw3 is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:Withdraw, not as an L1 action. timestamp is the
+// action's time field. The action posted with this signature must carry the
+// amount formatted by floatToWire.
+//
+// fee is ignored because withdraw3 has no fee field. The parameter is kept
+// for compatibility.
 func SignWithdrawFromBridgeAction(
 	privateKey *ecdsa.PrivateKey,
 	destination string,
@@ -848,14 +903,32 @@ func SignWithdrawFromBridgeAction(
 	timestamp int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signWithdrawFromBridgeAction{
-		Type:        "withdrawFromBridge",
-		Destination: destination,
-		Amount:      amount,
-		Fee:         fee,
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return SignatureResult{}, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	action := map[string]any{
+		"type":        "withdraw3",
+		"destination": destination,
+		"amount":      amountWire,
+		"time":        big.NewInt(timestamp),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:Withdraw",
+		isMainnet,
+	)
 }
 
 // SignAgent signs agent approval action using EIP-712 direct signing
