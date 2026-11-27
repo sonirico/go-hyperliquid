@@ -448,3 +448,91 @@ func TestActionHash_CancelWithLargeOrderID(t *testing.T) {
 	assert.False(t, bytes.Equal(hash1, make([]byte, 32)),
 		"hash must not be all zeros")
 }
+
+// The vectors below come from the Python SDK (hyperliquid-python-sdk). The usdSend
+// and withdraw3 ones are the vectors of its tests/signing_test.py; the spotSend and
+// usdClassTransfer ones were produced with sign_spot_transfer_action and
+// sign_usd_class_transfer_action on the same key, amount and timestamp.
+func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
+	privateKey, err := crypto.HexToECDSA(
+		"0123456789012345678901234567890123456789012345678901234567890123",
+	)
+	require.NoError(t, err)
+
+	const (
+		destination = "0x5e9ee1089755c3435139848e47e6635505d5a13a"
+		timestamp   = int64(1687816341423)
+	)
+
+	tests := []struct {
+		name string
+		sign func() (SignatureResult, error)
+		want SignatureResult
+	}{
+		{
+			name: "usdSend",
+			sign: func() (SignatureResult, error) {
+				return SignUsdTransferAction(privateKey, 1, destination, timestamp, false)
+			},
+			want: SignatureResult{
+				R: "0x637b37dd731507cdd24f46532ca8ba6eec616952c56218baeff04144e4a77073",
+				S: "0x11a6a24900e6e314136d2592e2f8d502cd89b7c15b198e1bee043c9589f9fad7",
+				V: 27,
+			},
+		},
+		{
+			name: "usdSend mainnet",
+			sign: func() (SignatureResult, error) {
+				return SignUsdTransferAction(privateKey, 1, destination, timestamp, true)
+			},
+			want: SignatureResult{
+				R: "0x9adbd066e8ae671f06b5d18e51fd2ec11b5443d64b13718028c7ff06905c71fb",
+				S: "0x1eba4172075f8a8037481400ae86ed56c5e5f672e3db084528a8e3b2daeff976",
+				V: 28,
+			},
+		},
+		{
+			name: "withdraw3",
+			sign: func() (SignatureResult, error) {
+				return SignWithdrawFromBridgeAction(privateKey, destination, 1, 0, timestamp, false)
+			},
+			want: SignatureResult{
+				R: "0x8363524c799e90ce9bc41022f7c39b4e9bdba786e5f9c72b20e43e1462c37cf9",
+				S: "0x58b1411a775938b83e29182e8ef74975f9054c8e97ebf5ec2dc8d51bfc893881",
+				V: 28,
+			},
+		},
+		{
+			name: "spotSend",
+			sign: func() (SignatureResult, error) {
+				return SignSpotTransferAction(
+					privateKey, 1, destination, "PURR:0xc4bf3f870c0e9465323c0b6ed28096c2", timestamp, false,
+				)
+			},
+			want: SignatureResult{
+				R: "0x165ba998a7f919dde45bbaf26259103007c135b7e426ecc6e2db98d32a00cb12",
+				S: "0x2f285400621dab9ae58270a9c337f9d66d575896c4543e4f13652d0867542a3",
+				V: 28,
+			},
+		},
+		{
+			name: "usdClassTransfer",
+			sign: func() (SignatureResult, error) {
+				return SignUsdClassTransferAction(privateKey, 1, true, timestamp, false)
+			},
+			want: SignatureResult{
+				R: "0xe265b4f0207b3e5ba5d7f863c150b41a25449bf6f6bda1cf278f4b2b6db25279",
+				S: "0x2469568d152f30acad5672b7657f0aa8e2f9d897fbd03b9b6b7dc3f443a1dff9",
+				V: 27,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.sign()
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
