@@ -157,3 +157,17 @@ func TestPredictedFundings_InvalidResponse(t *testing.T) {
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "failed to unmarshal predicted fundings")
 }
+
+func TestQueryVaultDetails_OmitsEmptyUser(t *testing.T) {
+	const vault = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
+
+	info, req := newInfoTestServer(t, `{}`)
+
+	_, err := info.QueryVaultDetails(context.TODO(), vault, "")
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":         "vaultDetails",
+		"vaultAddress": vault,
+	}, *req)
+}

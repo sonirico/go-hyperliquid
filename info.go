@@ -1036,7 +1036,9 @@ func (i *Info) QueryVaultDetails(ctx context.Context, VaultAddress string, user 
 	payload := map[string]any{
 		"type":         "vaultDetails",
 		"vaultAddress": VaultAddress,
-		"user":         user,
+	}
+	if user != "" {
+		payload["user"] = user
 	}
 	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {
