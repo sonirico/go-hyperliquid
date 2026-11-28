@@ -80,6 +80,10 @@ func (m WsUserTwapSliceFills) Key() string {
 	return keyUserTwapSliceFills(m.User)
 }
 
+func (m WsUserTwapHistory) Key() string {
+	return keyUserTwapHistory(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

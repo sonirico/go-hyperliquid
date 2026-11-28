@@ -203,6 +203,19 @@ func (p remoteUserTwapSliceFillsSubscriptionPayload) Key() string {
 	return keyUserTwapSliceFills(p.User)
 }
 
+type remoteUserTwapHistorySubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserTwapHistorySubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserTwapHistorySubscriptionPayload) Key() string {
+	return keyUserTwapHistory(p.User)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

@@ -365,6 +365,14 @@ func TestWsMessage_UserTwapSliceFills(t *testing.T) {
 	})
 }
 
+func TestWsMessage_UserTwapHistory(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userTwapHistory")
+
+		assertKeysCovered(t, raw, &WsUserTwapHistory{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -580,5 +588,27 @@ func TestUserTwapSliceFillsSubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.True(t, msg.IsSnapshot)
 		require.NotEmpty(t, msg.TwapSliceFills)
+	})
+}
+
+func TestUserTwapHistorySubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userTwapHistory"))
+		got := make(chan WsUserTwapHistory, 1)
+
+		_, err := f.client.UserTwapHistory(
+			UserTwapHistorySubscriptionParams{User: testWsTwapUser},
+			func(msg WsUserTwapHistory, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userTwapHistory","user":"`+testWsTwapUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+		require.NotEmpty(t, msg.History)
 	})
 }
