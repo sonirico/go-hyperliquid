@@ -186,3 +186,18 @@ func TestInfo_DelegatorHistory(t *testing.T) {
 	}, *req)
 	require.Len(t, history, 20)
 }
+
+func TestInfo_SpotDeployState(t *testing.T) {
+	const user = "0x1feb03de56381d4408701b3a6ec4c0c292b5da4f"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "spotDeployState")))
+
+	state, err := info.SpotDeployState(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "spotDeployState",
+		"user": user,
+	}, *req)
+	require.Len(t, state.States, 1)
+}

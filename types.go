@@ -793,6 +793,33 @@ type PerpDeployAuctionStatus struct {
 	EndGas           *string `json:"endGas"`
 }
 
+type SpotDeployTokenSpec struct {
+	Name        string `json:"name"`
+	SzDecimals  int    `json:"szDecimals"`
+	WeiDecimals int    `json:"weiDecimals"`
+}
+
+//easyjson:skip
+type SpotDeployTokenState struct {
+	Token                        int                      `json:"token"`
+	Spec                         SpotDeployTokenSpec      `json:"spec"`
+	FullName                     string                   `json:"fullName"`
+	DeployerTradingFeeShare      string                   `json:"deployerTradingFeeShare"`
+	Spots                        []int                    `json:"spots"`
+	MaxSupply                    *string                  `json:"maxSupply"`
+	HyperliquidityGenesisBalance string                   `json:"hyperliquidityGenesisBalance"`
+	TotalGenesisBalanceWei       string                   `json:"totalGenesisBalanceWei"`
+	UserGenesisBalances          []Tuple2[string, string] `json:"userGenesisBalances"`
+	ExistingTokenGenesisBalances []json.RawMessage        `json:"existingTokenGenesisBalances"`
+	BlacklistUsers               []json.RawMessage        `json:"blacklistUsers"`
+}
+
+//easyjson:skip
+type SpotDeployState struct {
+	States     []SpotDeployTokenState  `json:"states"`
+	GasAuction PerpDeployAuctionStatus `json:"gasAuction"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]

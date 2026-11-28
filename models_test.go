@@ -712,3 +712,11 @@ func TestDelegatorHistoryEntry_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]DelegatorHistoryEntry{})
 	})
 }
+
+func TestSpotDeployState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotDeployState")
+
+		assertKeysCovered(t, raw, &SpotDeployState{})
+	})
+}

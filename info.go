@@ -979,6 +979,22 @@ func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionS
 	return &result, nil
 }
 
+func (i *Info) SpotDeployState(ctx context.Context, user string) (*SpotDeployState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "spotDeployState",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch spot deploy state: %w", err)
+	}
+
+	var result SpotDeployState
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal spot deploy state: %w", err)
+	}
+	return &result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
