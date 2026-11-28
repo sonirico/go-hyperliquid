@@ -190,6 +190,19 @@ func (p remoteActiveAssetDataSubscriptionPayload) Key() string {
 	return keyActiveAssetData(p.User, p.Coin)
 }
 
+type remoteUserTwapSliceFillsSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserTwapSliceFillsSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserTwapSliceFillsSubscriptionPayload) Key() string {
+	return keyUserTwapSliceFills(p.User)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

@@ -29,6 +29,7 @@ const (
 	ChannelUserFundings                string = "userFundings"
 	ChannelUserNonFundingLedgerUpdates string = "userNonFundingLedgerUpdates"
 	ChannelActiveAssetData             string = "activeAssetData"
+	ChannelUserTwapSliceFills          string = "userTwapSliceFills"
 	ChannelError                       string = "error"
 )
 
@@ -206,6 +207,12 @@ type (
 		IsSnapshot              bool                          `json:"isSnapshot"`
 		User                    string                        `json:"user"`
 		NonFundingLedgerUpdates []UserNonFundingLedgerUpdates `json:"nonFundingLedgerUpdates"`
+	}
+
+	WsUserTwapSliceFills struct {
+		IsSnapshot     bool            `json:"isSnapshot"`
+		User           string          `json:"user"`
+		TwapSliceFills []TwapSliceFill `json:"twapSliceFills"`
 	}
 
 	FillLiquidation struct {

@@ -79,6 +79,10 @@ func keyActiveAssetData(user string, coin string) string {
 	return key(ChannelActiveAssetData, user, coin)
 }
 
+func keyUserTwapSliceFills(user string) string {
+	return key(ChannelUserTwapSliceFills, user)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

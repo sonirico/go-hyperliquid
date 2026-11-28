@@ -76,6 +76,10 @@ func (m UserActiveAssetData) Key() string {
 	return keyActiveAssetData(m.User, m.Coin)
 }
 
+func (m WsUserTwapSliceFills) Key() string {
+	return keyUserTwapSliceFills(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }
