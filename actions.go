@@ -711,6 +711,7 @@ type UserOutcomeAction struct {
 	SplitOutcome  *SplitOutcomeAction  `json:"splitOutcome,omitempty" msgpack:"splitOutcome,omitempty"`
 	MergeOutcome  *MergeOutcomeAction  `json:"mergeOutcome,omitempty" msgpack:"mergeOutcome,omitempty"`
 	MergeQuestion *MergeQuestionAction `json:"mergeQuestion,omitempty" msgpack:"mergeQuestion,omitempty"`
+	NegateOutcome *NegateOutcomeAction `json:"negateOutcome,omitempty" msgpack:"negateOutcome,omitempty"`
 }
 
 // SplitOutcomeAction represents the split outcome variant of user outcome action
@@ -729,4 +730,11 @@ type MergeOutcomeAction struct {
 type MergeQuestionAction struct {
 	Question int     `json:"question" msgpack:"question"`
 	Amount   *string `json:"amount"   msgpack:"amount"`
+}
+
+// NegateOutcomeAction represents the negate outcome variant of user outcome action
+type NegateOutcomeAction struct {
+	Question int    `json:"question" msgpack:"question"`
+	Outcome  int    `json:"outcome"  msgpack:"outcome"`
+	Amount   string `json:"amount"   msgpack:"amount"`
 }

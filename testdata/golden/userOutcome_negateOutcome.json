@@ -1,0 +1,31 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "userOutcome",
+    "negateOutcome": {
+      "question": 1,
+      "outcome": 2,
+      "amount": "1.5"
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x1a4b7c539e84a9250e2428cb7c03f208a1f27713b38bfe7ab20503db959ad904",
+    "s": "0x6aaa4aa494d31df2f3ea6ef918c762c71c8ebf001b97fe88eaa2a97a3e211414",
+    "v": 28
+  }
+}

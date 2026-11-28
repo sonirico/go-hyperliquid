@@ -636,6 +636,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.UserOutcomeMergeQuestion(ctx, 1, nil)
 			return err
 		}},
+		{name: "userOutcome_negateOutcome", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UserOutcomeNegate(ctx, 1, 2, 1.5)
+			return err
+		}},
 	}
 }
 

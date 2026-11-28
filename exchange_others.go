@@ -2859,3 +2859,42 @@ func (e *Exchange) UserOutcomeMergeQuestion(
 
 	return actionResponse(resp)
 }
+
+// UserOutcomeNegate negates an outcome of a question
+func (e *Exchange) UserOutcomeNegate(
+	ctx context.Context,
+	question int,
+	outcome int,
+	amount float64,
+) (json.RawMessage, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type:          "userOutcome",
+		NegateOutcome: &NegateOutcomeAction{Question: question, Outcome: outcome, Amount: amountWire},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
