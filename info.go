@@ -1011,7 +1011,10 @@ func (i *Info) SpotDeployState(ctx context.Context, user string) (*SpotDeploySta
 	return &result, nil
 }
 
-func (i *Info) BorrowLendReserveState(ctx context.Context, token int) (*BorrowLendReserveState, error) {
+func (i *Info) BorrowLendReserveState(
+	ctx context.Context,
+	token int,
+) (*BorrowLendReserveState, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type":  "borrowLendReserveState",
 		"token": token,
@@ -1027,7 +1030,10 @@ func (i *Info) BorrowLendReserveState(ctx context.Context, token int) (*BorrowLe
 	return &result, nil
 }
 
-func (i *Info) OutcomeDeployerLimits(ctx context.Context, venue string) (*OutcomeDeployerLimits, error) {
+func (i *Info) OutcomeDeployerLimits(
+	ctx context.Context,
+	venue string,
+) (*OutcomeDeployerLimits, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type":  "outcomeDeployerLimits",
 		"venue": venue,
@@ -1089,7 +1095,9 @@ func (i *Info) PerpCategories(ctx context.Context) ([]Tuple2[string, string], er
 	return result, nil
 }
 
-func (i *Info) PerpConciseAnnotations(ctx context.Context) ([]Tuple2[string, PerpConciseAnnotation], error) {
+func (i *Info) PerpConciseAnnotations(
+	ctx context.Context,
+) ([]Tuple2[string, PerpConciseAnnotation], error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "perpConciseAnnotations",
 	})
@@ -1207,7 +1215,11 @@ func (i *Info) QueryUserVaultEquities(ctx context.Context, user string) ([]Vault
 }
 
 // QueryVaultDetails returns the details of a vault.
-func (i *Info) QueryVaultDetails(ctx context.Context, VaultAddress string, user string) (*VaultDetails, error) {
+func (i *Info) QueryVaultDetails(
+	ctx context.Context,
+	VaultAddress string,
+	user string,
+) (*VaultDetails, error) {
 	payload := map[string]any{
 		"type":         "vaultDetails",
 		"vaultAddress": VaultAddress,

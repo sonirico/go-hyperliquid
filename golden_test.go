@@ -189,7 +189,16 @@ type goldenNoop struct {
 
 func signGoldenMultiSigL1Payload(pk *ecdsa.PrivateKey) (goldenSigned, error) {
 	action := goldenNoop{Type: "noop"}
-	sig, err := SignMultiSigL1ActionPayload(pk, action, "", goldenNonce, nil, goldenOther, goldenMixed, false)
+	sig, err := SignMultiSigL1ActionPayload(
+		pk,
+		action,
+		"",
+		goldenNonce,
+		nil,
+		goldenOther,
+		goldenMixed,
+		false,
+	)
 	return goldenSigned{action: action, signature: sig}, err
 }
 
@@ -315,14 +324,22 @@ func goldenRows(userAddress string) []goldenRow {
 		{name: "order_positionTpsl", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BulkOrders(
 				ctx,
-				[]CreateOrderRequest{goldenTriggerOrder(TakeProfit, 55000), goldenTriggerOrder(StopLoss, 49000)},
+				[]CreateOrderRequest{
+					goldenTriggerOrder(TakeProfit, 55000),
+					goldenTriggerOrder(StopLoss, 49000),
+				},
 				nil,
 				NewOrderGroupingPositionTpsl(),
 			)
 			return err
 		}},
 		{name: "order_priority", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.BulkOrders(ctx, []CreateOrderRequest{goldenLimitOrder()}, nil, NewOrderGroupingPriority(1))
+			_, err := ex.BulkOrders(
+				ctx,
+				[]CreateOrderRequest{goldenLimitOrder()},
+				nil,
+				NewOrderGroupingPriority(1),
+			)
 			return err
 		}},
 		{name: "modify", call: func(ctx context.Context, ex *Exchange) error {
@@ -444,67 +461,123 @@ func goldenRows(userAddress string) []goldenRow {
 			)
 			return err
 		}},
-		{name: "perp_deploy_set_fee_recipient", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetFeeRecipient(ctx, "test", goldenOther)
-			return err
-		}},
+		{
+			name: "perp_deploy_set_fee_recipient",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetFeeRecipient(ctx, "test", goldenOther)
+				return err
+			},
+		},
 		{name: "perp_deploy_disable_dex", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.PerpDeployDisableDex(ctx, "test")
 			return err
 		}},
-		{name: "perp_deploy_set_sub_deployers_empty", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetSubDeployers(ctx, "test", nil)
-			return err
-		}},
-		{name: "perp_deploy_set_sub_deployers", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetSubDeployers(ctx, "test", []SubDeployer{{Variant: "setOracle", User: goldenOther, Allowed: true}})
-			return err
-		}},
-		{name: "perp_deploy_set_funding_multipliers", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetFundingMultipliers(ctx, map[string]string{"test:X": "1.0"})
-			return err
-		}},
-		{name: "perp_deploy_set_funding_interest_rates", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetFundingInterestRates(ctx, map[string]string{"test:X": "0.0001"})
-			return err
-		}},
-		{name: "perp_deploy_set_funding_clamps", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetFundingClamps(ctx, map[string]string{"test:X": "0.01"})
-			return err
-		}},
-		{name: "perp_deploy_insert_margin_table", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeployInsertMarginTable(ctx, "test", PerpDeployMarginTable{
-				Description: "table",
-				MarginTiers: []PerpDeployMarginTier{{LowerBound: 0, MaxLeverage: 10}},
-			})
-			return err
-		}},
-		{name: "perp_deploy_set_margin_table_ids", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetMarginTableIds(ctx, map[string]int{"test:X": 10})
-			return err
-		}},
-		{name: "perp_deploy_set_open_interest_caps", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": &oiCap})
-			return err
-		}},
-		{name: "perp_deploy_set_open_interest_caps_nil", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": nil})
-			return err
-		}},
+		{
+			name: "perp_deploy_set_sub_deployers_empty",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetSubDeployers(ctx, "test", nil)
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_sub_deployers",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetSubDeployers(
+					ctx,
+					"test",
+					[]SubDeployer{{Variant: "setOracle", User: goldenOther, Allowed: true}},
+				)
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_funding_multipliers",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetFundingMultipliers(
+					ctx,
+					map[string]string{"test:X": "1.0"},
+				)
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_funding_interest_rates",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetFundingInterestRates(
+					ctx,
+					map[string]string{"test:X": "0.0001"},
+				)
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_funding_clamps",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetFundingClamps(ctx, map[string]string{"test:X": "0.01"})
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_insert_margin_table",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeployInsertMarginTable(ctx, "test", PerpDeployMarginTable{
+					Description: "table",
+					MarginTiers: []PerpDeployMarginTier{{LowerBound: 0, MaxLeverage: 10}},
+				})
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_margin_table_ids",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetMarginTableIds(ctx, map[string]int{"test:X": 10})
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_open_interest_caps",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": &oiCap})
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_open_interest_caps_nil",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": nil})
+				return err
+			},
+		},
 		{name: "perp_deploy_set_margin_modes", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetMarginModes(ctx, map[string]string{"test:X": "strictIsolated"})
+			_, err := ex.PerpDeploySetMarginModes(
+				ctx,
+				map[string]string{"test:X": "strictIsolated"},
+			)
 			return err
 		}},
-		{name: "perp_deploy_set_deployer_fees", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetDeployerFees(ctx, map[string]PerpDeployDeployerFee{
-				"test:X": {Scale: "1.0", GrowthMode: true},
-			})
-			return err
-		}},
-		{name: "perp_deploy_set_perp_annotation", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.PerpDeploySetPerpAnnotation(ctx, "test:X", "category", "description", nil, nil)
-			return err
-		}},
+		{
+			name: "perp_deploy_set_deployer_fees",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetDeployerFees(ctx, map[string]PerpDeployDeployerFee{
+					"test:X": {Scale: "1.0", GrowthMode: true},
+				})
+				return err
+			},
+		},
+		{
+			name: "perp_deploy_set_perp_annotation",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.PerpDeploySetPerpAnnotation(
+					ctx,
+					"test:X",
+					"category",
+					"description",
+					nil,
+					nil,
+				)
+				return err
+			},
+		},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err
@@ -518,7 +591,10 @@ func goldenRows(userAddress string) []goldenRow {
 			return err
 		}},
 		{name: "twap_order", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.TwapOrder(ctx, TwapOrderRequest{Coin: "BTC", IsBuy: true, Size: 0.1, Minutes: 30})
+			_, err := ex.TwapOrder(
+				ctx,
+				TwapOrderRequest{Coin: "BTC", IsBuy: true, Size: 0.1, Minutes: 30},
+			)
 			return err
 		}},
 		{name: "twap_cancel", call: func(ctx context.Context, ex *Exchange) error {
@@ -531,50 +607,74 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "spotDeploy_userGenesis", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployUserGenesis(
-				ctx, 1, [][2]string{{goldenOther, "100"}}, []SpotDeployExistingTokenWei{{Token: 0, Wei: "50"}},
+				ctx,
+				1,
+				[][2]string{{goldenOther, "100"}},
+				[]SpotDeployExistingTokenWei{{Token: 0, Wei: "50"}},
 			)
 			return err
 		}},
-		{name: "spotDeploy_userGenesis_mixedCase", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployUserGenesis(ctx, 1, [][2]string{{goldenMixed, "100"}}, nil)
-			return err
-		}},
-		{name: "spotDeploy_enableFreezePrivilege", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployEnableFreezePrivilege(ctx, 1)
-			return err
-		}},
+		{
+			name: "spotDeploy_userGenesis_mixedCase",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployUserGenesis(ctx, 1, [][2]string{{goldenMixed, "100"}}, nil)
+				return err
+			},
+		},
+		{
+			name: "spotDeploy_enableFreezePrivilege",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployEnableFreezePrivilege(ctx, 1)
+				return err
+			},
+		},
 		{name: "spotDeploy_freezeUser", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployFreezeUser(ctx, 1, goldenOther, true)
 			return err
 		}},
-		{name: "spotDeploy_revokeFreezePrivilege", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployRevokeFreezePrivilege(ctx, 1)
-			return err
-		}},
+		{
+			name: "spotDeploy_revokeFreezePrivilege",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployRevokeFreezePrivilege(ctx, 1)
+				return err
+			},
+		},
 		{name: "spotDeploy_genesis", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployGenesis(ctx, 1, "1000000", false)
 			return err
 		}},
-		{name: "spotDeploy_genesis_noHyperliquidity", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployGenesis(ctx, 1, "1000000", true)
-			return err
-		}},
+		{
+			name: "spotDeploy_genesis_noHyperliquidity",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployGenesis(ctx, 1, "1000000", true)
+				return err
+			},
+		},
 		{name: "spotDeploy_registerSpot", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployRegisterSpot(ctx, 1, 0)
 			return err
 		}},
-		{name: "spotDeploy_registerHyperliquidity", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, nil)
-			return err
-		}},
-		{name: "spotDeploy_registerHyperliquidity_nSeededLevels", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, &nSeededLevels)
-			return err
-		}},
-		{name: "spotDeploy_setDeployerTradingFeeShare", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeploySetDeployerTradingFeeShare(ctx, 1, "50%")
-			return err
-		}},
+		{
+			name: "spotDeploy_registerHyperliquidity",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, nil)
+				return err
+			},
+		},
+		{
+			name: "spotDeploy_registerHyperliquidity_nSeededLevels",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, &nSeededLevels)
+				return err
+			},
+		},
+		{
+			name: "spotDeploy_setDeployerTradingFeeShare",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeploySetDeployerTradingFeeShare(ctx, 1, "50%")
+				return err
+			},
+		},
 		{name: "spotDeploy_enableQuoteToken", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployEnableQuoteToken(ctx, 1)
 			return err
@@ -588,7 +688,17 @@ func goldenRows(userAddress string) []goldenRow {
 			return err
 		}},
 		{name: "cValidator_register", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.CValidatorRegister(ctx, "1.2.3.4", "val", "desc", false, 500, goldenOther, true, 100000000)
+			_, err := ex.CValidatorRegister(
+				ctx,
+				"1.2.3.4",
+				"val",
+				"desc",
+				false,
+				500,
+				goldenOther,
+				true,
+				100000000,
+			)
 			return err
 		}},
 		{name: "cValidator_changeProfile_nil", call: func(ctx context.Context, ex *Exchange) error {
@@ -596,7 +706,16 @@ func goldenRows(userAddress string) []goldenRow {
 			return err
 		}},
 		{name: "cValidator_changeProfile_set", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.CValidatorChangeProfile(ctx, &nodeIp, &validatorName, &validatorDescription, true, &disableDelegations, &commissionBps, &validatorSigner)
+			_, err := ex.CValidatorChangeProfile(
+				ctx,
+				&nodeIp,
+				&validatorName,
+				&validatorDescription,
+				true,
+				&disableDelegations,
+				&commissionBps,
+				&validatorSigner,
+			)
 			return err
 		}},
 		{name: "cValidator_unregister", call: func(ctx context.Context, ex *Exchange) error {
@@ -616,12 +735,26 @@ func goldenRows(userAddress string) []goldenRow {
 			return err
 		}, direct: signGoldenCreateVault},
 		{name: "sendToEvmWithData", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SendToEVMWithData(ctx, goldenToken, "1.5", "spot", goldenOther, "hex", 1337, 100000, "0xdeadbeef")
+			_, err := ex.SendToEVMWithData(
+				ctx,
+				goldenToken,
+				"1.5",
+				"spot",
+				goldenOther,
+				"hex",
+				1337,
+				100000,
+				"0xdeadbeef",
+			)
 			return err
 		}},
 		{name: "multiSig", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.MultiSig(
-				ctx, goldenOther, goldenNoop{Type: "noop"}, []SignatureResult{{R: "0x01", S: "0x02", V: 27}}, goldenNonce,
+				ctx,
+				goldenOther,
+				goldenNoop{Type: "noop"},
+				[]SignatureResult{{R: "0x01", S: "0x02", V: 27}},
+				goldenNonce,
 			)
 			return err
 		}, live: "Invalid multi-sig outer signer"},
@@ -632,11 +765,27 @@ func goldenRows(userAddress string) []goldenRow {
 			return err
 		}},
 		{name: "trailingStop_pct", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.TrailingStop(ctx, "BTC", true, 0.001, false, TrailingStopRetracement{Pct: "1.5"}, nil)
+			_, err := ex.TrailingStop(
+				ctx,
+				"BTC",
+				true,
+				0.001,
+				false,
+				TrailingStopRetracement{Pct: "1.5"},
+				nil,
+			)
 			return err
 		}},
 		{name: "trailingStop_px", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.TrailingStop(ctx, "BTC", false, 0.001, true, TrailingStopRetracement{Px: "500"}, &activationPx)
+			_, err := ex.TrailingStop(
+				ctx,
+				"BTC",
+				false,
+				0.001,
+				true,
+				TrailingStopRetracement{Px: "500"},
+				&activationPx,
+			)
 			return err
 		}},
 		{name: "topUpIsolatedOnlyMargin", call: func(ctx context.Context, ex *Exchange) error {
@@ -687,18 +836,24 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.UserOutcomeMerge(ctx, 1, &outcomeAmount)
 			return err
 		}},
-		{name: "userOutcome_mergeOutcome_nilAmount", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.UserOutcomeMerge(ctx, 1, nil)
-			return err
-		}},
+		{
+			name: "userOutcome_mergeOutcome_nilAmount",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.UserOutcomeMerge(ctx, 1, nil)
+				return err
+			},
+		},
 		{name: "userOutcome_mergeQuestion", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserOutcomeMergeQuestion(ctx, 1, &outcomeAmount)
 			return err
 		}},
-		{name: "userOutcome_mergeQuestion_nilAmount", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.UserOutcomeMergeQuestion(ctx, 1, nil)
-			return err
-		}},
+		{
+			name: "userOutcome_mergeQuestion_nilAmount",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.UserOutcomeMergeQuestion(ctx, 1, nil)
+				return err
+			},
+		},
 		{name: "userOutcome_negateOutcome", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserOutcomeNegate(ctx, 1, 2, 1.5)
 			return err
@@ -787,7 +942,9 @@ func TestGoldenReserveRequestWeightOmitsDestination(t *testing.T) {
 	t.Run("msgpack", func(t *testing.T) {
 		t.Parallel()
 
-		data, err := msgpack.Marshal(ReserveRequestWeightAction{Type: "reserveRequestWeight", Weight: 1})
+		data, err := msgpack.Marshal(
+			ReserveRequestWeightAction{Type: "reserveRequestWeight", Weight: 1},
+		)
 		require.NoError(t, err)
 
 		var action map[string]any

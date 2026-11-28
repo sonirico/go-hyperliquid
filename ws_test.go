@@ -206,7 +206,10 @@ func TestServerErrorChannelWithoutHandler(t *testing.T) {
 	// Non-string payloads are passed through as raw JSON.
 	var got error
 	client = NewWebsocketClient(MainnetAPIURL, WsOptErrorHandler(func(err error) { got = err }))
-	require.NoError(t, client.dispatch(wsMessage{Channel: ChannelError, Data: []byte(`{"code":1}`)}))
+	require.NoError(
+		t,
+		client.dispatch(wsMessage{Channel: ChannelError, Data: []byte(`{"code":1}`)}),
+	)
 	require.Equal(t, WsServerError{Message: `{"code":1}`}, got)
 }
 
@@ -599,7 +602,10 @@ func TestUserNonFundingLedgerUpdatesSubscription(t *testing.T) {
 		)
 		require.NoError(t, err)
 
-		f.requireSubscription(t, `{"type":"userNonFundingLedgerUpdates","user":"`+testWsVaultUser+`"}`)
+		f.requireSubscription(
+			t,
+			`{"type":"userNonFundingLedgerUpdates","user":"`+testWsVaultUser+`"}`,
+		)
 		msg := requireTestWsMessage(t, got)
 		require.True(t, msg.IsSnapshot)
 		require.NotEmpty(t, msg.NonFundingLedgerUpdates)
@@ -901,7 +907,12 @@ func TestWsPost_Info(t *testing.T) {
 		frames := make(chan testWsPostFrame, 1)
 		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
 			frames <- frame
-			return writeTestWsPostResponse(conn, frame.ID, "info", json.RawMessage(`{"mids":{"BTC":"1"}}`))
+			return writeTestWsPostResponse(
+				conn,
+				frame.ID,
+				"info",
+				json.RawMessage(`{"mids":{"BTC":"1"}}`),
+			)
 		})
 
 		got, err := client.Post(context.Background(), "info", map[string]string{"type": "allMids"})
@@ -918,7 +929,12 @@ func TestWsPost_Info(t *testing.T) {
 func TestWsPost_Error(t *testing.T) {
 	t.Run("turns an error response into an error", func(t *testing.T) {
 		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
-			return writeTestWsPostResponse(conn, frame.ID, "error", json.RawMessage(`"422 Failed to deserialize"`))
+			return writeTestWsPostResponse(
+				conn,
+				frame.ID,
+				"error",
+				json.RawMessage(`"422 Failed to deserialize"`),
+			)
 		})
 
 		got, err := client.Post(context.Background(), "info", map[string]string{"type": "nope"})

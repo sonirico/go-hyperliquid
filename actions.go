@@ -35,8 +35,8 @@ type CancelByCloidWire struct {
 
 // CancelByCloidAction represents the cancel by cloid action
 type CancelByCloidAction struct {
-	Type    string              `json:"type"          msgpack:"type"`
-	Cancels []CancelByCloidWire `json:"cancels"       msgpack:"cancels"`
+	Type    string              `json:"type"    msgpack:"type"`
+	Cancels []CancelByCloidWire `json:"cancels" msgpack:"cancels"`
 }
 
 // UsdClassTransferAction represents USD class transfer
@@ -227,8 +227,8 @@ type ModifyAction struct {
 
 // BatchModifyAction represents multiple order modifications
 type BatchModifyAction struct {
-	Type     string         `json:"type"          msgpack:"type"`
-	Modifies []ModifyAction `json:"modifies"      msgpack:"modifies"`
+	Type     string         `json:"type"     msgpack:"type"`
+	Modifies []ModifyAction `json:"modifies" msgpack:"modifies"`
 }
 
 // SubAccountSpotTransferAction represents sub-account spot transfer
@@ -623,7 +623,9 @@ func marshalVariantJSON(actionType, variant string, value any) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return []byte(`{"type":` + string(typeJSON) + `,` + string(variantJSON) + `:` + string(valueJSON) + `}`), nil
+	return []byte(
+		`{"type":` + string(typeJSON) + `,` + string(variantJSON) + `:` + string(valueJSON) + `}`,
+	), nil
 }
 
 // CSignerAction represents consensus signer action, exactly one variant is set
@@ -811,9 +813,9 @@ type Hip3LiquidatorTransferAction struct {
 
 // UserOutcomeAction represents user outcome action, with one variant set
 type UserOutcomeAction struct {
-	Type          string               `json:"type"                   msgpack:"type"`
-	SplitOutcome  *SplitOutcomeAction  `json:"splitOutcome,omitempty" msgpack:"splitOutcome,omitempty"`
-	MergeOutcome  *MergeOutcomeAction  `json:"mergeOutcome,omitempty" msgpack:"mergeOutcome,omitempty"`
+	Type          string               `json:"type"                    msgpack:"type"`
+	SplitOutcome  *SplitOutcomeAction  `json:"splitOutcome,omitempty"  msgpack:"splitOutcome,omitempty"`
+	MergeOutcome  *MergeOutcomeAction  `json:"mergeOutcome,omitempty"  msgpack:"mergeOutcome,omitempty"`
 	MergeQuestion *MergeQuestionAction `json:"mergeQuestion,omitempty" msgpack:"mergeQuestion,omitempty"`
 	NegateOutcome *NegateOutcomeAction `json:"negateOutcome,omitempty" msgpack:"negateOutcome,omitempty"`
 }

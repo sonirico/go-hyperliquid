@@ -270,22 +270,22 @@ type OpenOrder struct {
 }
 
 type FrontendOpenOrder struct {
-	Coin             string    `json:"coin"`
-	IsPositionTpSl   bool      `json:"isPositionTpsl"`
-	IsTrigger        bool      `json:"isTrigger"`
-	LimitPx          float64   `json:"limitPx,string"`
-	Oid              int64     `json:"oid"`
-	OrderType        string    `json:"orderType"`
-	OrigSz           float64   `json:"origSz,string"`
-	ReduceOnly       bool      `json:"reduceOnly"`
-	Side             OrderSide `json:"side"`
-	Sz               float64   `json:"sz,string"`
-	Timestamp        int64     `json:"timestamp"`
-	TriggerCondition string    `json:"triggerCondition"`
-	TriggerPx        float64   `json:"triggerPx,string"`
+	Coin             string              `json:"coin"`
+	IsPositionTpSl   bool                `json:"isPositionTpsl"`
+	IsTrigger        bool                `json:"isTrigger"`
+	LimitPx          float64             `json:"limitPx,string"`
+	Oid              int64               `json:"oid"`
+	OrderType        string              `json:"orderType"`
+	OrigSz           float64             `json:"origSz,string"`
+	ReduceOnly       bool                `json:"reduceOnly"`
+	Side             OrderSide           `json:"side"`
+	Sz               float64             `json:"sz,string"`
+	Timestamp        int64               `json:"timestamp"`
+	TriggerCondition string              `json:"triggerCondition"`
+	TriggerPx        float64             `json:"triggerPx,string"`
 	Children         []FrontendOpenOrder `json:"children"`
-	Tif              *string   `json:"tif"`
-	Cloid            *string   `json:"cloid"`
+	Tif              *string             `json:"tif"`
+	Cloid            *string             `json:"cloid"`
 }
 
 type OrderSide string

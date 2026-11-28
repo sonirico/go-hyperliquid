@@ -48,7 +48,10 @@ func newMarketCloseTestServer(
 			mu.Lock()
 			orders = append(orders, req.Action.Orders...)
 			mu.Unlock()
-			_, _ = io.WriteString(w, `{"status":"ok","response":{"type":"order","data":{"statuses":[{"filled":{"totalSz":"1","avgPx":"100000","oid":1}}]}}}`)
+			_, _ = io.WriteString(
+				w,
+				`{"status":"ok","response":{"type":"order","data":{"statuses":[{"filled":{"totalSz":"1","avgPx":"100000","oid":1}}]}}}`,
+			)
 			return
 		}
 
@@ -64,7 +67,10 @@ func newMarketCloseTestServer(
 		case "spotMeta":
 			_, _ = io.WriteString(w, `{"universe":[],"tokens":[]}`)
 		case "meta":
-			_, _ = io.WriteString(w, `{"universe":[{"name":"BTC","szDecimals":5}],"marginTables":[]}`)
+			_, _ = io.WriteString(
+				w,
+				`{"universe":[{"name":"BTC","szDecimals":5}],"marginTables":[]}`,
+			)
 		case "allMids":
 			_, _ = io.WriteString(w, `{"BTC":"100000"}`)
 		case "clearinghouseState":
@@ -75,7 +81,10 @@ func newMarketCloseTestServer(
 			if szi, ok := positions[strings.ToLower(req.User)]; ok {
 				positionsJSON = `[{"type":"oneWay","position":{"coin":"BTC","szi":"` + szi + `"}}]`
 			}
-			_, _ = io.WriteString(w, `{"assetPositions":`+positionsJSON+`,"marginSummary":{},"crossMarginSummary":{},"withdrawable":"0"}`)
+			_, _ = io.WriteString(
+				w,
+				`{"assetPositions":`+positionsJSON+`,"marginSummary":{},"crossMarginSummary":{},"withdrawable":"0"}`,
+			)
 		default:
 			t.Fatalf("unexpected info request type %q", req.Type)
 		}

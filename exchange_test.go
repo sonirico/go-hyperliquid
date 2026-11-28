@@ -351,7 +351,14 @@ func TestPostAction_VaultAddress(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			server, recorded := newUserSignedTestServer(t)
 			ex := NewExchange(
-				context.Background(), pk, server.URL, &Meta{}, goldenOther, "", &SpotMeta{}, &MixedArray{},
+				context.Background(),
+				pk,
+				server.URL,
+				&Meta{},
+				goldenOther,
+				"",
+				&SpotMeta{},
+				&MixedArray{},
 			)
 
 			callErr := tc.call(context.Background(), ex)

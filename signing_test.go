@@ -402,7 +402,12 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 			name: "spotSend",
 			sign: func() (SignatureResult, error) {
 				return SignSpotTransferAction(
-					privateKey, 1, destination, "PURR:0xc4bf3f870c0e9465323c0b6ed28096c2", timestamp, false,
+					privateKey,
+					1,
+					destination,
+					"PURR:0xc4bf3f870c0e9465323c0b6ed28096c2",
+					timestamp,
+					false,
 				)
 			},
 			want: SignatureResult{
@@ -425,7 +430,14 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 		{
 			name: "tokenDelegate",
 			sign: func() (SignatureResult, error) {
-				return SignTokenDelegateAction(privateKey, goldenOther, 100000000, false, goldenNonce, false)
+				return SignTokenDelegateAction(
+					privateKey,
+					goldenOther,
+					100000000,
+					false,
+					goldenNonce,
+					false,
+				)
 			},
 			want: golden["token_delegate"].Signature,
 		},
@@ -440,7 +452,10 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 			name: "convertToMultiSigUser",
 			sign: func() (SignatureResult, error) {
 				return SignConvertToMultiSigUserAction(
-					privateKey, `{"authorizedUsers":["`+goldenOther+`"],"threshold":1}`, goldenNonce, false,
+					privateKey,
+					`{"authorizedUsers":["`+goldenOther+`"],"threshold":1}`,
+					goldenNonce,
+					false,
 				)
 			},
 			want: golden["convert_to_multi_sig_user"].Signature,

@@ -80,7 +80,9 @@ func recoverUserSignedSigner(
 	require.NoError(t, err)
 	messageHash, err := hashStructLenient(typedData, primaryType, action)
 	require.NoError(t, err)
-	digest := crypto.Keccak256(append(append([]byte{0x19, 0x01}, domainSeparator...), messageHash...))
+	digest := crypto.Keccak256(
+		append(append([]byte{0x19, 0x01}, domainSeparator...), messageHash...),
+	)
 
 	sig := body["signature"].(map[string]any)
 	raw := make([]byte, 65)
@@ -106,7 +108,12 @@ func TestUserSignedActions_SignedByTheWallet(t *testing.T) {
 		{
 			name: "tokenDelegate",
 			call: func(ctx context.Context, e *Exchange) error {
-				_, err := e.TokenDelegate(ctx, "0x5ac99df645f3414876c816caa18b2d234024b487", 100000000, false)
+				_, err := e.TokenDelegate(
+					ctx,
+					"0x5ac99df645f3414876c816caa18b2d234024b487",
+					100000000,
+					false,
+				)
 				return err
 			},
 			primaryType: "HyperliquidTransaction:TokenDelegate",
@@ -151,7 +158,11 @@ func TestUserSignedActions_SignedByTheWallet(t *testing.T) {
 			action := bodies[0]["action"].(map[string]any)
 			require.Equal(t, "0x66eee", action["signatureChainId"])
 			require.Equal(t, "Testnet", action["hyperliquidChain"])
-			require.Equal(t, signer, recoverUserSignedSigner(t, bodies[0], tt.primaryType, tt.payloadTypes))
+			require.Equal(
+				t,
+				signer,
+				recoverUserSignedSigner(t, bodies[0], tt.primaryType, tt.payloadTypes),
+			)
 		})
 	}
 }
@@ -207,7 +218,14 @@ func TestUserSignedAmounts(t *testing.T) {
 			t.Run(tc.name+"/"+ac.wire, func(t *testing.T) {
 				server, recorded := newUserSignedTestServer(t)
 				exchange := NewExchange(
-					context.Background(), key, server.URL, &Meta{}, "", "", &SpotMeta{}, &MixedArray{},
+					context.Background(),
+					key,
+					server.URL,
+					&Meta{},
+					"",
+					"",
+					&SpotMeta{},
+					&MixedArray{},
 				)
 
 				callErr := tc.call(context.Background(), exchange, ac.amount)
@@ -231,7 +249,15 @@ func TestSendToEVMWithData_JSON(t *testing.T) {
 	)
 
 	_, callErr := exchange.SendToEVMWithData(
-		context.Background(), goldenToken, "1.5", "spot", goldenOther, "hex", 1337, 100000, "0xdeadbeef",
+		context.Background(),
+		goldenToken,
+		"1.5",
+		"spot",
+		goldenOther,
+		"hex",
+		1337,
+		100000,
+		"0xdeadbeef",
 	)
 
 	require.NoError(t, callErr)

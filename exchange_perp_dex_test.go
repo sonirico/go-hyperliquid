@@ -43,7 +43,10 @@ func newPerpDexTestServer(t *testing.T) (*httptest.Server, func() []int) {
 				orderAssets = append(orderAssets, o.Asset)
 			}
 			mu.Unlock()
-			_, _ = io.WriteString(w, `{"status":"ok","response":{"type":"order","data":{"statuses":[{"resting":{"oid":1}}]}}}`)
+			_, _ = io.WriteString(
+				w,
+				`{"status":"ok","response":{"type":"order","data":{"statuses":[{"resting":{"oid":1}}]}}}`,
+			)
 			return
 		}
 
@@ -61,7 +64,10 @@ func newPerpDexTestServer(t *testing.T) (*httptest.Server, func() []int) {
 			_, _ = io.WriteString(w, `{"universe":[],"tokens":[]}`)
 		case "meta":
 			if xyz {
-				_, _ = io.WriteString(w, `{"universe":[{"name":"xyz:XYZ100","szDecimals":4},{"name":"xyz:TSLA","szDecimals":3}],"marginTables":[]}`)
+				_, _ = io.WriteString(
+					w,
+					`{"universe":[{"name":"xyz:XYZ100","szDecimals":4},{"name":"xyz:TSLA","szDecimals":3}],"marginTables":[]}`,
+				)
 			} else {
 				_, _ = io.WriteString(w, `{"universe":[{"name":"BTC","szDecimals":5},{"name":"ETH","szDecimals":4}],"marginTables":[]}`)
 			}
@@ -73,7 +79,10 @@ func newPerpDexTestServer(t *testing.T) (*httptest.Server, func() []int) {
 			}
 		case "clearinghouseState":
 			if xyz {
-				_, _ = io.WriteString(w, `{"assetPositions":[{"type":"oneWay","position":{"coin":"xyz:TSLA","szi":"2.5"}}],"marginSummary":{},"crossMarginSummary":{},"withdrawable":"0"}`)
+				_, _ = io.WriteString(
+					w,
+					`{"assetPositions":[{"type":"oneWay","position":{"coin":"xyz:TSLA","szi":"2.5"}}],"marginSummary":{},"crossMarginSummary":{},"withdrawable":"0"}`,
+				)
 			} else {
 				_, _ = io.WriteString(w, `{"assetPositions":[],"marginSummary":{},"crossMarginSummary":{},"withdrawable":"0"}`)
 			}
@@ -93,7 +102,15 @@ func newPerpDexTestServer(t *testing.T) (*httptest.Server, func() []int) {
 func TestNewInfo_FetchesMetaForConfiguredPerpDex(t *testing.T) {
 	server, _ := newPerpDexTestServer(t)
 
-	info := NewInfo(context.Background(), server.URL, true, nil, nil, nil, InfoOptPerpDexName("xyz"))
+	info := NewInfo(
+		context.Background(),
+		server.URL,
+		true,
+		nil,
+		nil,
+		nil,
+		InfoOptPerpDexName("xyz"),
+	)
 
 	asset, ok := info.CoinToAsset("xyz:TSLA")
 	require.True(t, ok, "xyz:TSLA should be mapped")
@@ -106,7 +123,17 @@ func TestNewInfo_FetchesMetaForConfiguredPerpDex(t *testing.T) {
 func TestSlippagePrice_UsesConfiguredPerpDexMids(t *testing.T) {
 	server, _ := newPerpDexTestServer(t)
 
-	exchange := NewExchange(context.Background(), nil, server.URL, nil, "", "", nil, nil, ExchangeOptPerpDex("xyz"))
+	exchange := NewExchange(
+		context.Background(),
+		nil,
+		server.URL,
+		nil,
+		"",
+		"",
+		nil,
+		nil,
+		ExchangeOptPerpDex("xyz"),
+	)
 
 	price, err := exchange.SlippagePrice(context.Background(), "xyz:XYZ100", true, 0, nil)
 	require.NoError(t, err)
@@ -116,7 +143,17 @@ func TestSlippagePrice_UsesConfiguredPerpDexMids(t *testing.T) {
 func TestSlippagePrice_BuilderPerpUsesPerpDecimals(t *testing.T) {
 	server, _ := newPerpDexTestServer(t)
 
-	exchange := NewExchange(context.Background(), nil, server.URL, nil, "", "", nil, nil, ExchangeOptPerpDex("xyz"))
+	exchange := NewExchange(
+		context.Background(),
+		nil,
+		server.URL,
+		nil,
+		"",
+		"",
+		nil,
+		nil,
+		ExchangeOptPerpDex("xyz"),
+	)
 
 	// szDecimals is 3, so a perp price may have at most 6 - 3 = 3 decimals.
 	px := 1.23456
@@ -132,7 +169,17 @@ func TestMarketClose_FindsConfiguredPerpDexPosition(t *testing.T) {
 	require.NoError(t, err)
 	address := crypto.PubkeyToAddress(privateKey.PublicKey).Hex()
 
-	exchange := NewExchange(context.Background(), privateKey, server.URL, nil, "", address, nil, nil, ExchangeOptPerpDex("xyz"))
+	exchange := NewExchange(
+		context.Background(),
+		privateKey,
+		server.URL,
+		nil,
+		"",
+		address,
+		nil,
+		nil,
+		ExchangeOptPerpDex("xyz"),
+	)
 
 	px := 1.2
 	_, err = exchange.MarketClose(context.Background(), "xyz:TSLA", nil, &px, 0, nil, nil)

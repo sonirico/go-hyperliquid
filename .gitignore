@@ -36,3 +36,6 @@ go.work
 __debug*
 
 .claude/receipts/
+
+# Locally built tool binaries
+bin/

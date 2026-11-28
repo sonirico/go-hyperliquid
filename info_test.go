@@ -459,7 +459,14 @@ func TestQueryOrderByOid(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -577,7 +584,14 @@ func TestUserFillsByTime(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -671,7 +685,14 @@ func TestSpotUserState(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -747,7 +768,14 @@ func TestUserActiveAssetData(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}

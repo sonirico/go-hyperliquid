@@ -1582,8 +1582,11 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 	nonce := e.nextNonce()
 
 	action := SpotDeployAction{
-		Type:                       "spotDeploy",
-		SetDeployerTradingFeeShare: &SpotDeploySetDeployerTradingFeeShare{Token: token, Share: share},
+		Type: "spotDeploy",
+		SetDeployerTradingFeeShare: &SpotDeploySetDeployerTradingFeeShare{
+			Token: token,
+			Share: share,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -2936,7 +2939,12 @@ func (e *Exchange) Hip3LiquidatorTransfer(
 ) (json.RawMessage, error) {
 	nonce := e.nextNonce()
 
-	action := Hip3LiquidatorTransferAction{Type: "hip3LiquidatorTransfer", Dex: dex, Ntl: ntl, IsDeposit: isDeposit}
+	action := Hip3LiquidatorTransferAction{
+		Type:      "hip3LiquidatorTransfer",
+		Dex:       dex,
+		Ntl:       ntl,
+		IsDeposit: isDeposit,
+	}
 
 	sig, err := e.signL1Action(
 		ctx,
@@ -3095,8 +3103,12 @@ func (e *Exchange) UserOutcomeNegate(
 	nonce := e.nextNonce()
 
 	action := UserOutcomeAction{
-		Type:          "userOutcome",
-		NegateOutcome: &NegateOutcomeAction{Question: question, Outcome: outcome, Amount: amountWire},
+		Type: "userOutcome",
+		NegateOutcome: &NegateOutcomeAction{
+			Question: question,
+			Outcome:  outcome,
+			Amount:   amountWire,
+		},
 	}
 
 	sig, err := e.signL1Action(

@@ -46,10 +46,13 @@ func newTestLiveExchange(t *testing.T, pk *ecdsa.PrivateKey) (*Exchange, *liveTr
 
 func liveRows() []goldenRow {
 	return []goldenRow{
-		{name: "spotDeploy_registerHyperliquidity_integerPrices", call: func(ctx context.Context, ex *Exchange) error {
-			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 20, 4, 10, nil)
-			return err
-		}},
+		{
+			name: "spotDeploy_registerHyperliquidity_integerPrices",
+			call: func(ctx context.Context, ex *Exchange) error {
+				_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 20, 4, 10, nil)
+				return err
+			},
+		},
 	}
 }
 
