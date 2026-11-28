@@ -1042,6 +1042,8 @@ func (e *Exchange) SendToEVMWithData(
 		return nil, err
 	}
 
+	action["data"] = hexutil.Encode(dbyte)
+
 	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err

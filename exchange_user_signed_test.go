@@ -221,3 +221,22 @@ func TestUserSignedAmounts(t *testing.T) {
 		}
 	}
 }
+
+func TestSendToEVMWithData_JSON(t *testing.T) {
+	key, err := crypto.GenerateKey()
+	require.NoError(t, err)
+	server, recorded := newUserSignedTestServer(t)
+	exchange := NewExchange(
+		context.Background(), key, server.URL, &Meta{}, "", "", &SpotMeta{}, &MixedArray{},
+	)
+
+	_, callErr := exchange.SendToEVMWithData(
+		context.Background(), goldenToken, "1.5", "spot", goldenOther, "hex", 1337, 100000, "0xdeadbeef",
+	)
+
+	require.NoError(t, callErr)
+	bodies := recorded()
+	require.Len(t, bodies, 1)
+	action := bodies[0]["action"].(map[string]any)
+	require.Equal(t, "0xdeadbeef", action["data"])
+}

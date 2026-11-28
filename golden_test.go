@@ -468,6 +468,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CreateVault(ctx, "vault", "description", 1000000)
 			return err
 		}, direct: signGoldenCreateVault},
+		{name: "sendToEvmWithData", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SendToEVMWithData(ctx, goldenToken, "1.5", "spot", goldenOther, "hex", 1337, 100000, "0xdeadbeef")
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

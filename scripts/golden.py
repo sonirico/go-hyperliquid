@@ -89,6 +89,42 @@ def user(action, payload_types, primary_type):
     return ex._post_action(action, sig, NONCE)
 
 
+SEND_TO_EVM_WITH_DATA_SIGN_TYPES = [
+    {"name": "hyperliquidChain", "type": "string"},
+    {"name": "token", "type": "string"},
+    {"name": "amount", "type": "string"},
+    {"name": "sourceDex", "type": "string"},
+    {"name": "destinationRecipient", "type": "string"},
+    {"name": "addressEncoding", "type": "string"},
+    {"name": "destinationChainId", "type": "uint32"},
+    {"name": "gasLimit", "type": "uint64"},
+    {"name": "data", "type": "bytes"},
+    {"name": "nonce", "type": "uint64"},
+]
+
+
+def send_to_evm_with_data(data_hex):
+    action = {
+        "type": "sendToEvmWithData",
+        "token": TOKEN,
+        "amount": "1.5",
+        "sourceDex": "spot",
+        "destinationRecipient": OTHER,
+        "addressEncoding": "hex",
+        "destinationChainId": 1337,
+        "gasLimit": 100000,
+        "data": data_hex,
+        "nonce": NONCE,
+    }
+    signed = dict(action, data=bytes.fromhex(data_hex[2:]))
+    sig = sg.sign_user_signed_action(
+        wallet, signed, SEND_TO_EVM_WITH_DATA_SIGN_TYPES, "HyperliquidTransaction:SendToEvmWithData", False
+    )
+    action["signatureChainId"] = signed["signatureChainId"]
+    action["hyperliquidChain"] = signed["hyperliquidChain"]
+    return ex._post_action(action, sig, NONCE)
+
+
 def limit_modify(oid):
     return {
         "oid": oid,
@@ -209,6 +245,7 @@ cases = {
     "createVault": lambda: l1(
         {"type": "createVault", "name": "vault", "description": "description", "initialUsd": 1000000, "nonce": NONCE}
     ),
+    "sendToEvmWithData": lambda: send_to_evm_with_data("0xdeadbeef"),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 
