@@ -2651,3 +2651,32 @@ func (e *Exchange) CWithdraw(ctx context.Context, wei uint64) (json.RawMessage, 
 
 	return actionResponse(resp)
 }
+
+// CDeposit2 deposits into the staking balance
+func (e *Exchange) CDeposit2(
+	ctx context.Context,
+	wei int,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := CDeposit2Action{Type: "cDeposit2", Wei: wei}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

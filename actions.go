@@ -685,3 +685,9 @@ type AgentSendAssetAction struct {
 	FromSubAccount string `json:"fromSubAccount" msgpack:"fromSubAccount"`
 	Nonce          int64  `json:"nonce"          msgpack:"nonce"`
 }
+
+// CDeposit2Action represents c deposit 2 action
+type CDeposit2Action struct {
+	Type string `json:"type" msgpack:"type"`
+	Wei  int    `json:"wei"  msgpack:"wei"`
+}
