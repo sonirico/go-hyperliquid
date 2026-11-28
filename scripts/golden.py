@@ -283,6 +283,12 @@ cases = {
     "perp_deploy_set_margin_table_ids": lambda: l1(
         {"type": "perpDeploy", "setMarginTableIds": [["test:X", 10]]}
     ),
+    "perp_deploy_set_open_interest_caps": lambda: l1(
+        {"type": "perpDeploy", "setOpenInterestCaps": [["test:X", 1000000]]}
+    ),
+    "perp_deploy_set_open_interest_caps_nil": lambda: l1(
+        {"type": "perpDeploy", "setOpenInterestCaps": [["test:X", None]]}
+    ),
     "user_set_abstraction": lambda: ex.user_set_abstraction(wallet.address, "unifiedAccount"),
     "send_asset": lambda: ex.send_asset(OTHER, "", "spot", TOKEN, 1.5),
     "reserve_request_weight": lambda: l1({"type": "reserveRequestWeight", "weight": 1}),

@@ -262,6 +262,7 @@ func goldenRows(userAddress string) []goldenRow {
 	cloid := goldenCloid
 	oid := int64(123)
 	scheduleTime := int64(4102444800000)
+	oiCap := 1000000
 	maxGas := 1000000
 	nSeededLevels := 3
 	activationPx := 50000.0
@@ -479,6 +480,14 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "perp_deploy_set_margin_table_ids", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.PerpDeploySetMarginTableIds(ctx, map[string]int{"test:X": 10})
+			return err
+		}},
+		{name: "perp_deploy_set_open_interest_caps", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": &oiCap})
+			return err
+		}},
+		{name: "perp_deploy_set_open_interest_caps_nil", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": nil})
 			return err
 		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {

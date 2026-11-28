@@ -2053,6 +2053,19 @@ func (e *Exchange) PerpDeploySetMarginTableIds(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetOpenInterestCaps sets the open interest caps of builder-deployed DEX coins, a nil cap removes the cap
+func (e *Exchange) PerpDeploySetOpenInterestCaps(
+	ctx context.Context,
+	values map[string]*int,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetOpenInterestCapsAction{
+		Type:                "perpDeploy",
+		SetOpenInterestCaps: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
