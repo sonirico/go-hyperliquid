@@ -187,6 +187,7 @@ cases = {
     "spotDeploy_registerToken2": lambda: ex.spot_deploy_register_token("TKN", 2, 8, 1000000, "Token"),
     "spotDeploy_userGenesis": lambda: ex.spot_deploy_user_genesis(1, [(OTHER, "100")], [(0, "50")]),
     "spotDeploy_enableFreezePrivilege": lambda: ex.spot_deploy_enable_freeze_privilege(1),
+    "spotDeploy_freezeUser": lambda: ex.spot_deploy_freeze_user(1, OTHER, True),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

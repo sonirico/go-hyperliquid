@@ -1379,13 +1379,15 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 // SpotDeployFreezeUser freezes a user in spot trading
 func (e *Exchange) SpotDeployFreezeUser(
 	ctx context.Context,
+	token int,
 	userAddress string,
+	freeze bool,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":        "spotDeployFreezeUser",
-		"userAddress": userAddress,
+	action := SpotDeployAction{
+		Type:       "spotDeploy",
+		FreezeUser: &SpotDeployFreezeUser{Token: token, User: userAddress, Freeze: freeze},
 	}
 
 	sig, err := e.signL1Action(

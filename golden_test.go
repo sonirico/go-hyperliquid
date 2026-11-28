@@ -371,6 +371,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeployEnableFreezePrivilege(ctx, 1)
 			return err
 		}},
+		{name: "spotDeploy_freezeUser", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployFreezeUser(ctx, 1, goldenOther, true)
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err
