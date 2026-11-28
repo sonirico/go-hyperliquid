@@ -292,6 +292,28 @@ cases = {
     "multiSig_l1ActionPayload": multi_sig_l1_payload,
     "multiSig_userSignedActionPayload": multi_sig_user_signed_payload,
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
+    "trailingStop_pct": lambda: l1(
+        {
+            "type": "trailingStop",
+            "asset": 0,
+            "isBuy": True,
+            "sz": "0.001",
+            "reduceOnly": False,
+            "retracement": {"pct": "1.5"},
+            "activationPx": None,
+        }
+    ),
+    "trailingStop_px": lambda: l1(
+        {
+            "type": "trailingStop",
+            "asset": 0,
+            "isBuy": False,
+            "sz": "0.001",
+            "reduceOnly": True,
+            "retracement": {"px": "500"},
+            "activationPx": "50000",
+        }
+    ),
 }
 
 os.makedirs(out_dir, exist_ok=True)

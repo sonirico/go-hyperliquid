@@ -2332,3 +2332,68 @@ func (e *Exchange) BorrowLend(
 	}
 	return &result, nil
 }
+
+// TrailingStop places a trailing stop order
+func (e *Exchange) TrailingStop(
+	ctx context.Context,
+	coin string,
+	isBuy bool,
+	size float64,
+	reduceOnly bool,
+	retracement TrailingStopRetracement,
+	activationPx *float64,
+) (json.RawMessage, error) {
+	if (retracement.Pct == "") == (retracement.Px == "") {
+		return nil, fmt.Errorf("retracement needs exactly one of pct or px")
+	}
+
+	asset, ok := e.info.CoinToAsset(coin)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", coin)
+	}
+
+	sizeWire, err := floatToWire(size)
+	if err != nil {
+		return nil, fmt.Errorf("invalid size: %w", err)
+	}
+
+	var activationPxWire *string
+	if activationPx != nil {
+		wire, err := floatToWire(*activationPx)
+		if err != nil {
+			return nil, fmt.Errorf("invalid activation price: %w", err)
+		}
+		activationPxWire = &wire
+	}
+
+	nonce := e.nextNonce()
+
+	action := TrailingStopAction{
+		Type:         "trailingStop",
+		Asset:        asset,
+		IsBuy:        isBuy,
+		Sz:           sizeWire,
+		ReduceOnly:   reduceOnly,
+		Retracement:  retracement,
+		ActivationPx: activationPxWire,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

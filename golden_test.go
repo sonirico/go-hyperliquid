@@ -249,6 +249,7 @@ func goldenRows(userAddress string) []goldenRow {
 	scheduleTime := int64(4102444800000)
 	maxGas := 1000000
 	nSeededLevels := 3
+	activationPx := 50000.0
 	bot := "bot"
 	nodeIp := "1.2.3.4"
 	validatorName := "val"
@@ -549,6 +550,14 @@ func goldenRows(userAddress string) []goldenRow {
 		{name: "multiSig_userSignedActionPayload", direct: signGoldenMultiSigUserSignedPayload},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
+			return err
+		}},
+		{name: "trailingStop_pct", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.TrailingStop(ctx, "BTC", true, 0.001, false, TrailingStopRetracement{Pct: "1.5"}, nil)
+			return err
+		}},
+		{name: "trailingStop_px", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.TrailingStop(ctx, "BTC", false, 0.001, true, TrailingStopRetracement{Px: "500"}, &activationPx)
 			return err
 		}},
 	}

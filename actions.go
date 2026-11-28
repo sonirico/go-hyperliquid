@@ -631,3 +631,21 @@ func (a CValidatorAction) MarshalJSON() ([]byte, error) {
 	}
 	return marshalVariantJSON(a.Type, variant, value)
 }
+
+// TrailingStopRetracement represents the retracement of a trailing stop, exactly one of
+// Pct or Px is set
+type TrailingStopRetracement struct {
+	Pct string `json:"pct,omitempty" msgpack:"pct,omitempty"`
+	Px  string `json:"px,omitempty"  msgpack:"px,omitempty"`
+}
+
+// TrailingStopAction represents trailing stop action, unset activationPx is sent as null
+type TrailingStopAction struct {
+	Type         string                  `json:"type"         msgpack:"type"`
+	Asset        int                     `json:"asset"        msgpack:"asset"`
+	IsBuy        bool                    `json:"isBuy"        msgpack:"isBuy"`
+	Sz           string                  `json:"sz"           msgpack:"sz"`
+	ReduceOnly   bool                    `json:"reduceOnly"   msgpack:"reduceOnly"`
+	Retracement  TrailingStopRetracement `json:"retracement"  msgpack:"retracement"`
+	ActivationPx *string                 `json:"activationPx" msgpack:"activationPx"`
+}

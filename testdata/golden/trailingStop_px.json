@@ -1,0 +1,34 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "trailingStop",
+    "asset": 0,
+    "isBuy": false,
+    "sz": "0.001",
+    "reduceOnly": true,
+    "retracement": {
+      "px": "500"
+    },
+    "activationPx": "50000"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xc0828be360ecf765215ea76abef8a8edaa954dc65620763feaebaf59e0b2fc1d",
+    "s": "0x12857a92d6ed6ee5617ccc8e7d100b9d0b91e44b18bb3f1506b17360b9a97e7b",
+    "v": 27
+  }
+}

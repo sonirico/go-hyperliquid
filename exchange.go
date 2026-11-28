@@ -192,6 +192,20 @@ func actionError(resp []byte) error {
 	return errors.New(msg)
 }
 
+// actionResponse returns the raw response field of an ok body, or the server message of an err one
+func actionResponse(resp []byte) (json.RawMessage, error) {
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+	var raw struct {
+		Response json.RawMessage `json:"response"`
+	}
+	if err := json.Unmarshal(resp, &raw); err != nil {
+		return nil, err
+	}
+	return raw.Response, nil
+}
+
 func (e *Exchange) postAction(
 	ctx context.Context,
 	action any,
