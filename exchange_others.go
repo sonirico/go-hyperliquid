@@ -2127,9 +2127,7 @@ func (e *Exchange) CValidatorChangeProfile(
 func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "cValidatorUnregister",
-	}
+	action := CValidatorAction{Type: "CValidatorAction", Unregister: &struct{}{}}
 
 	sig, err := e.signL1Action(
 		ctx,

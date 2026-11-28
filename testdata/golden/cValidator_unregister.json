@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "CValidatorAction",
+    "unregister": null
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x50801a7f4fb2cdac9141efb255078b866462cd8c49cd187f9294b418d6fea63",
+    "s": "0x3f6b1d66574831dde1876e81ab54e0e30d12433c6c66e2df3f0f2a223bfb072a",
+    "v": 28
+  }
+}

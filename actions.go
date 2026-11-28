@@ -548,14 +548,17 @@ type CValidatorAction struct {
 	Type          string
 	Register      *CValidatorRegister
 	ChangeProfile *CValidatorChangeProfile
+	Unregister    *struct{}
 }
 
 func (a CValidatorAction) variant() (string, any, error) {
 	switch {
-	case a.Register != nil && a.ChangeProfile == nil:
+	case a.Register != nil && a.ChangeProfile == nil && a.Unregister == nil:
 		return "register", a.Register, nil
-	case a.ChangeProfile != nil && a.Register == nil:
+	case a.ChangeProfile != nil && a.Register == nil && a.Unregister == nil:
 		return "changeProfile", a.ChangeProfile, nil
+	case a.Unregister != nil && a.Register == nil && a.ChangeProfile == nil:
+		return "unregister", nil, nil
 	}
 	return "", nil, errors.New("CValidatorAction needs exactly one variant")
 }
