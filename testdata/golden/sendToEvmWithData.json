@@ -1,0 +1,69 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "sendToEvmWithData",
+    "token": "USDC:0x6d1e7cde53ba9467b783cb7c530ce054",
+    "amount": "1.5",
+    "sourceDex": "spot",
+    "destinationRecipient": "0x1111111111111111111111111111111111111111",
+    "addressEncoding": "hex",
+    "destinationChainId": 1337,
+    "gasLimit": 100000,
+    "data": "0xdeadbeef",
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:SendToEvmWithData",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "token",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "sourceDex",
+      "type": "string"
+    },
+    {
+      "name": "destinationRecipient",
+      "type": "string"
+    },
+    {
+      "name": "addressEncoding",
+      "type": "string"
+    },
+    {
+      "name": "destinationChainId",
+      "type": "uint32"
+    },
+    {
+      "name": "gasLimit",
+      "type": "uint64"
+    },
+    {
+      "name": "data",
+      "type": "bytes"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0x12bae109792f4b8ae2f6e4b122b66f0280969ec118c6c0b8b021919fd00906d6",
+    "s": "0x547443f46368231dcc891e224d7cdedae38d2daafde0a3db9baf369fa3220504",
+    "v": 27
+  }
+}

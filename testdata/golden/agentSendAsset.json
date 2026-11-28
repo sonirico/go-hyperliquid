@@ -1,0 +1,33 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "agentSendAsset",
+    "destination": "0x1111111111111111111111111111111111111111",
+    "sourceDex": "",
+    "destinationDex": "spot",
+    "token": "USDC:0x6d1e7cde53ba9467b783cb7c530ce054",
+    "amount": "1.5",
+    "fromSubAccount": "",
+    "nonce": 1700000000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x55cbc7146d742f9ed9481d9a3f8277b19a02a5446c20209457a89566af0d0d18",
+    "s": "0x2cafd2075240710eae762105d2f75ceb4cfdf7cc9d3f8486267808f960f1765f",
+    "v": 28
+  }
+}

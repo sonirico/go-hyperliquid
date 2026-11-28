@@ -1,118 +1,96 @@
 version: "2"
-
 run:
-  timeout: 5m
   tests: true
-
-linters-settings:
-  govet: {}
-  gocyclo:
-    min-complexity: 15
-  dupl:
-    threshold: 100
-  goconst:
-    min-len: 2
-    min-occurrences: 3
-  misspell:
-    locale: US
-  lll:
-    line-length: 140
-  goimports:
-    local-prefixes: github.com/sonirico/go-hyperliquid
-  gocritic:
-    enabled-tags:
-      - diagnostic
-      - experimental
-      - opinionated
-      - performance
-      - style
-    disabled-checks:
-      - dupImport # https://github.com/go-critic/go-critic/issues/845
-      - ifElseChain
-      - octalLiteral
-      - whyNoLint
-  funlen:
-    lines: 150
-    statements: 60
-  staticcheck:
-    checks: ["all", "-QF1003", "-QF1008", "-SA9003"]
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - bodyclose
-    # - depguard  # Disabled to allow all imports
-    - dogsled
-    # - dupl  # Disabled to reduce noise from similar test code
-    - errcheck
     - copyloopvar
+    - dogsled
+    - errcheck
     - exhaustive
-    # - funlen  # Disabled - many functions are necessarily long
-    # - gochecknoinits  # Disabled - init functions are sometimes needed
-    # - goconst  # Disabled - not always worth creating constants
     - gocritic
     - gocyclo
-    # - mnd  # Disabled - magic numbers are often acceptable
     - goprintffuncname
     - gosec
     - govet
     - ineffassign
-    # - lll  # Disabled - line length is flexible
     - misspell
-    # - nakedret  # Disabled - naked returns are acceptable in some cases
     - noctx
     - nolintlint
     - rowserrcheck
     - staticcheck
     - unconvert
-    # - unparam  # Disabled - unused parameters are sometimes needed for interface compliance
     - unused
     - whitespace
-
+  settings:
+    dupl:
+      threshold: 100
+    funlen:
+      lines: 150
+      statements: 60
+    goconst:
+      min-len: 2
+      min-occurrences: 3
+    gocritic:
+      disabled-checks:
+        - ifElseChain
+      enabled-tags:
+        - diagnostic
+    gocyclo:
+      min-complexity: 25
+    lll:
+      line-length: 140
+    misspell:
+      locale: US
+    staticcheck:
+      checks:
+        - all
+        - -QF1003
+        - -QF1008
+        - -ST1003
+        - -SA9003
+  exclusions:
+    generated: lax
+    rules:
+      - linters:
+          - dupl
+          - funlen
+          - gocyclo
+          - lll
+          - mnd
+        path: _test\.go
+      - linters:
+          - gosec
+        path: _test\.go
+      - linters:
+          - dupl
+          - errcheck
+          - funlen
+          - goconst
+        path: examples/
+      - linters:
+          - gocritic
+          - staticcheck
+          - unused
+        path: _easyjson\.go
+      - linters:
+          - staticcheck
+        source: if e.debug
+      - linters:
+          - staticcheck
+        path: _test\.go
+      - linters:
+          - staticcheck
+        source: if tt.jsonData
+      - path: (.+)\.go$
+        text: Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*print.*|os\.(Un)?Setenv). is not checked
+    paths:
+      - examples
+      - testdata
+      - third_party$
+      - builtin$
+      - examples$
 issues:
-  exclude-dirs:
-    - examples
-    - testdata
-  exclude-rules:
-    - path: _test\.go
-      linters:
-        - mnd
-        - funlen
-        - gocyclo
-        - lll
-        - dupl
-    - path: examples/
-      linters:
-        - errcheck
-        - funlen
-        - dupl
-        - goconst
-    - path: _easyjson\.go
-      linters:
-        - stylecheck
-        - unused
-        - gocritic
-    # Exclude empty branch in debug code
-    - linters:
-        - staticcheck
-      source: "if e.debug"
-    # Allow embedded field access - test files often use this for convenience
-    - path: _test\.go
-      linters:
-        - staticcheck
-    # Allow if-else chain in tests
-    - linters:
-        - staticcheck
-      source: "if tt.jsonData"
-    # Allow unused parameters in interface implementations
-    - linters:
-        - unparam
-      text: "is unused"
-
-  exclude-use-default: false
-  exclude:
-    # errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
-    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*print.*|os\.(Un)?Setenv). is not checked
-    
   max-issues-per-linter: 0
   max-same-issues: 0

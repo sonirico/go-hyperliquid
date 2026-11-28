@@ -48,7 +48,8 @@ func TestTwapActionHash_MatchesPythonSDK(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := actionHash(tc.action, "", tc.nonce, nil)
+			got, err := actionHash(tc.action, "", tc.nonce, nil)
+			require.NoError(t, err)
 			require.Equal(t, tc.want, hex.EncodeToString(got))
 		})
 	}
@@ -77,8 +78,10 @@ func newTwapTestExchange(t *testing.T, response string) (*Exchange, *map[string]
 
 func TestTwapOrder(t *testing.T) {
 	t.Run("running", func(t *testing.T) {
-		ex, body := newTwapTestExchange(t,
-			`{"status":"ok","response":{"type":"twapOrder","data":{"status":{"running":{"twapId":77738308}}}}}`)
+		ex, body := newTwapTestExchange(
+			t,
+			`{"status":"ok","response":{"type":"twapOrder","data":{"status":{"running":{"twapId":77738308}}}}}`,
+		)
 
 		res, err := ex.TwapOrder(context.TODO(), TwapOrderRequest{
 			Coin: "ETH", IsBuy: true, Size: 0.5, Minutes: 30, Randomize: true,
@@ -96,10 +99,15 @@ func TestTwapOrder(t *testing.T) {
 	})
 
 	t.Run("error status", func(t *testing.T) {
-		ex, _ := newTwapTestExchange(t,
-			`{"status":"ok","response":{"type":"twapOrder","data":{"status":{"error":"Invalid TWAP duration: 1 min(s)"}}}}`)
+		ex, _ := newTwapTestExchange(
+			t,
+			`{"status":"ok","response":{"type":"twapOrder","data":{"status":{"error":"Invalid TWAP duration: 1 min(s)"}}}}`,
+		)
 
-		res, err := ex.TwapOrder(context.TODO(), TwapOrderRequest{Coin: "BTC", Size: 0.001, Minutes: 1})
+		res, err := ex.TwapOrder(
+			context.TODO(),
+			TwapOrderRequest{Coin: "BTC", Size: 0.001, Minutes: 1},
+		)
 		require.EqualError(t, err, "Invalid TWAP duration: 1 min(s)")
 		require.NotNil(t, res)
 	})
@@ -127,8 +135,10 @@ func TestTwapCancel(t *testing.T) {
 	})
 
 	t.Run("error status", func(t *testing.T) {
-		ex, _ := newTwapTestExchange(t,
-			`{"status":"ok","response":{"type":"twapCancel","data":{"status":{"error":"TWAP was never placed, already canceled, or filled."}}}}`)
+		ex, _ := newTwapTestExchange(
+			t,
+			`{"status":"ok","response":{"type":"twapCancel","data":{"status":{"error":"TWAP was never placed, already canceled, or filled."}}}}`,
+		)
 
 		res, err := ex.TwapCancel(context.TODO(), "BTC", 1)
 		require.EqualError(t, err, "TWAP was never placed, already canceled, or filled.")

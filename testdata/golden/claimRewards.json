@@ -1,0 +1,26 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "claimRewards"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x500d8d170f6ae9f87ce8b72ee3fa43f7d0400a48ae009bad176ea5ab5ddf70ad",
+    "s": "0x3f713f8392a36b277e08b5d1cd8f11f33106ff49b90a65ff815d4752bc47f3c3",
+    "v": 27
+  }
+}

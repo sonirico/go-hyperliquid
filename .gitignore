@@ -34,3 +34,8 @@ go.work
 !.env.example
 !.env.testnet
 __debug*
+
+.claude/receipts/
+
+# Locally built tool binaries
+bin/

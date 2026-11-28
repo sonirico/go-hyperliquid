@@ -1,0 +1,44 @@
+{
+  "kind": "user",
+  "action": {
+    "validator": "0x1111111111111111111111111111111111111111",
+    "wei": 100000000,
+    "isUndelegate": false,
+    "nonce": 1700000000000,
+    "type": "tokenDelegate",
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:TokenDelegate",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "validator",
+      "type": "address"
+    },
+    {
+      "name": "wei",
+      "type": "uint64"
+    },
+    {
+      "name": "isUndelegate",
+      "type": "bool"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xbd82e372d2658cf5627f6d44fc81782ed4bfeb7b279342d3541bc2061e2ca07",
+    "s": "0x6ffe024a6ac6e7ef680fe6140d0137dd0646cba8e3391570ce071f7f7ab9af91",
+    "v": 27
+  }
+}

@@ -42,6 +42,13 @@ func (e WsServerError) Error() string {
 	return fmt.Sprintf("websocket server error: %s", e.Message)
 }
 
+var errWsConnectionClosed = errors.New("websocket connection closed")
+
+type wsPostResult struct {
+	Response wsPostResponse
+	Err      error
+}
+
 type Subscription struct {
 	ID      string
 	Payload any
@@ -57,6 +64,9 @@ type WebsocketClient struct {
 	subscribers           map[string]*uniqSubscriber
 	msgDispatcherRegistry map[string]msgDispatcher
 	nextSubID             atomic.Int64
+	nextPostID            atomic.Int64
+	postMu                sync.Mutex
+	pendingPosts          map[int64]chan wsPostResult
 	done                  chan struct{}
 	closeOnce             sync.Once
 	reconnectWait         time.Duration // initial wait between reconnect attempts
@@ -122,21 +132,52 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		reconnectWait: time.Second,
 		readTimeout:   wsReadTimeout,
 		subscribers:   make(map[string]*uniqSubscriber),
+		pendingPosts:  make(map[int64]chan wsPostResult),
 		msgDispatcherRegistry: map[string]msgDispatcher{
-			ChannelPong:             NewPongDispatcher(),
-			ChannelTrades:           NewMsgDispatcher[Trades](ChannelTrades),
-			ChannelActiveAssetCtx:   NewMsgDispatcher[ActiveAssetCtx](ChannelActiveAssetCtx),
-			ChannelFastAssetCtxs:    NewMsgDispatcher[WsFastAssetCtxs](ChannelFastAssetCtxs),
-			ChannelAllDexsAssetCtxs: NewMsgDispatcher[WsAllDexsAssetCtxs](ChannelAllDexsAssetCtxs),
-			ChannelL2Book:           NewMsgDispatcher[L2Book](ChannelL2Book),
-			ChannelCandle:           NewMsgDispatcher[Candle](ChannelCandle),
-			ChannelAllMids:          NewMsgDispatcher[AllMids](ChannelAllMids),
-			ChannelNotification:     NewMsgDispatcher[Notification](ChannelNotification),
-			ChannelOrderUpdates:     NewMsgDispatcher[WsOrders](ChannelOrderUpdates),
-			ChannelWebData2:         NewMsgDispatcher[WebData2](ChannelWebData2),
-			ChannelBbo:              NewMsgDispatcher[Bbo](ChannelBbo),
-			ChannelUserFills:        NewMsgDispatcher[WsOrderFills](ChannelUserFills),
-			ChannelSubResponse:      NewNoopDispatcher(),
+			ChannelPong:           NewPongDispatcher(),
+			ChannelTrades:         NewMsgDispatcher[Trades](ChannelTrades),
+			ChannelActiveAssetCtx: NewMsgDispatcher[ActiveAssetCtx](ChannelActiveAssetCtx),
+			ChannelActiveSpotAssetCtx: NewMsgDispatcher[ActiveAssetCtx](
+				ChannelActiveSpotAssetCtx,
+			),
+			ChannelFastAssetCtxs: NewMsgDispatcher[WsFastAssetCtxs](
+				ChannelFastAssetCtxs,
+			),
+			ChannelAllDexsAssetCtxs: NewMsgDispatcher[WsAllDexsAssetCtxs](
+				ChannelAllDexsAssetCtxs,
+			),
+			ChannelL2Book:       NewMsgDispatcher[L2Book](ChannelL2Book),
+			ChannelCandle:       NewMsgDispatcher[Candle](ChannelCandle),
+			ChannelAllMids:      NewMsgDispatcher[AllMids](ChannelAllMids),
+			ChannelNotification: NewMsgDispatcher[Notification](ChannelNotification),
+			ChannelOrderUpdates: NewMsgDispatcher[WsOrders](ChannelOrderUpdates),
+			ChannelBbo:          NewMsgDispatcher[Bbo](ChannelBbo),
+			ChannelUser:         NewMsgDispatcher[UserEvents](ChannelUser),
+			ChannelUserFundings: NewMsgDispatcher[UserFundings](ChannelUserFundings),
+			ChannelUserNonFundingLedgerUpdates: NewMsgDispatcher[WsUserNonFundingLedgerUpdates](
+				ChannelUserNonFundingLedgerUpdates,
+			),
+			ChannelActiveAssetData: NewMsgDispatcher[UserActiveAssetData](
+				ChannelActiveAssetData,
+			),
+			ChannelUserTwapSliceFills: NewMsgDispatcher[WsUserTwapSliceFills](
+				ChannelUserTwapSliceFills,
+			),
+			ChannelUserTwapHistory: NewMsgDispatcher[WsUserTwapHistory](
+				ChannelUserTwapHistory,
+			),
+			ChannelSpotState: NewMsgDispatcher[WsSpotState](ChannelSpotState),
+			ChannelAllDexsClearinghouseState: NewMsgDispatcher[WsAllDexsClearinghouseState](
+				ChannelAllDexsClearinghouseState,
+			),
+			ChannelOutcomeMetaUpdates: NewMsgDispatcher[OutcomeMetaUpdates](
+				ChannelOutcomeMetaUpdates,
+			),
+			ChannelL2:          NewMsgDispatcher[WsL2](ChannelL2),
+			ChannelPac:         NewMsgDispatcher[WsPac](ChannelPac),
+			ChannelSac:         NewMsgDispatcher[WsSac](ChannelSac),
+			ChannelUserFills:   NewMsgDispatcher[WsOrderFills](ChannelUserFills),
+			ChannelSubResponse: NewNoopDispatcher(),
 			ChannelClearinghouseState: NewMsgDispatcher[ClearinghouseStateMessage](
 				ChannelClearinghouseState,
 			),
@@ -149,6 +190,12 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		func(_ []*uniqSubscriber, msg wsMessage) error {
 			cli.handleServerError(msg)
 			return nil
+		},
+	)
+
+	cli.msgDispatcherRegistry[ChannelPost] = msgDispatcherFunc[any](
+		func(_ []*uniqSubscriber, msg wsMessage) error {
+			return cli.handlePostResponse(msg)
 		},
 	)
 
@@ -273,6 +320,8 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 		}
 		w.mu.Unlock()
 
+		w.failPendingPosts(errWsConnectionClosed)
+
 		if shouldReconnect {
 			w.reconnect(ctx)
 		}
@@ -352,6 +401,34 @@ func (w *WebsocketClient) dispatch(msg wsMessage) error {
 	w.mu.RUnlock()
 
 	return dispatcher.Dispatch(subscribers, msg)
+}
+
+func (w *WebsocketClient) handlePostResponse(msg wsMessage) error {
+	var post wsPostMessage
+	if err := json.Unmarshal(msg.Data, &post); err != nil {
+		return fmt.Errorf("failed to unmarshal post response: %w", err)
+	}
+
+	w.postMu.Lock()
+	respCh, ok := w.pendingPosts[post.ID]
+	delete(w.pendingPosts, post.ID)
+	w.postMu.Unlock()
+	if !ok {
+		return fmt.Errorf("no pending post request with id: %d", post.ID)
+	}
+
+	respCh <- wsPostResult{Response: post.Response}
+	return nil
+}
+
+func (w *WebsocketClient) failPendingPosts(err error) {
+	w.postMu.Lock()
+	defer w.postMu.Unlock()
+
+	for id, respCh := range w.pendingPosts {
+		respCh <- wsPostResult{Err: err}
+		delete(w.pendingPosts, id)
+	}
 }
 
 // handleServerError logs a message received on the "error" channel and passes

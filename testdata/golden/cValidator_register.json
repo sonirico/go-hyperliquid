@@ -1,0 +1,40 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "CValidatorAction",
+    "register": {
+      "profile": {
+        "node_ip": {
+          "Ip": "1.2.3.4"
+        },
+        "name": "val",
+        "description": "desc",
+        "delegations_disabled": false,
+        "commission_bps": 500,
+        "signer": "0x1111111111111111111111111111111111111111"
+      },
+      "unjailed": true,
+      "initial_wei": 100000000
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x6cd267c3185c1f032ba5ac9bd5b7732d684d6491337d4e16dfa362b5bc1bf835",
+    "s": "0xa49ec38bd1b0bc02c7dbd2765f6ef3aa4e16d74cead7d2dde4367d04db27bc5",
+    "v": 28
+  }
+}

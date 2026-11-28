@@ -1,6 +1,12 @@
 package hyperliquid
 
 import (
+	"bytes"
+	"compress/flate"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
 	"strings"
 
 	"github.com/sonirico/vago/fp"
@@ -61,10 +67,79 @@ func keyUserFills(user string) string {
 	return key(ChannelUserFills, user)
 }
 
-func keyWebData2(_ string) string {
-	// WebData2 messages are user-specific but don't contain user info in the message itself.
+func keyUserEvents(_ string) string {
+	// User events are user-specific but don't contain user info in the message itself.
 	// The dispatching is handled by the subscription system based on the subscription key.
-	return key(ChannelWebData2)
+	return key(ChannelUser)
+}
+
+func keyUserFundings(user string) string {
+	return key(ChannelUserFundings, user)
+}
+
+func keyUserNonFundingLedgerUpdates(user string) string {
+	return key(ChannelUserNonFundingLedgerUpdates, user)
+}
+
+func keyActiveAssetData(user string, coin string) string {
+	return key(ChannelActiveAssetData, user, coin)
+}
+
+func keyUserTwapSliceFills(user string) string {
+	return key(ChannelUserTwapSliceFills, user)
+}
+
+func keyUserTwapHistory(user string) string {
+	return key(ChannelUserTwapHistory, user)
+}
+
+func keySpotState(user string) string {
+	return key(ChannelSpotState, user)
+}
+
+func keyAllDexsClearinghouseState(user string) string {
+	return key(ChannelAllDexsClearinghouseState, user)
+}
+
+func keyOutcomeMetaUpdates() string {
+	return key(ChannelOutcomeMetaUpdates)
+}
+
+func keyL2(coin string) string {
+	return key(ChannelL2, coin)
+}
+
+// unmarshalCompressed decodes a base64 string holding a raw DEFLATE stream (RFC 1951, no zlib/gzip wrapper)
+// of JSON into v.
+func unmarshalCompressed(name string, data []byte, v any) error {
+	var b64 string
+	if err := json.Unmarshal(data, &b64); err != nil {
+		return fmt.Errorf("%s: data is not a string: %w", name, err)
+	}
+
+	compressed, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return fmt.Errorf("%s: base64 decode: %w", name, err)
+	}
+
+	raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(compressed)))
+	if err != nil {
+		return fmt.Errorf("%s: inflate: %w", name, err)
+	}
+
+	if err := json.Unmarshal(raw, v); err != nil {
+		return fmt.Errorf("%s: json decode: %w", name, err)
+	}
+
+	return nil
+}
+
+func keyPac() string {
+	return key(ChannelPac)
+}
+
+func keySac() string {
+	return key(ChannelSac)
 }
 
 func keyBbo(coin string) string {

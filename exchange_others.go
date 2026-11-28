@@ -34,8 +34,31 @@ func (e *Exchange) UpdateLeverage(
 		Leverage: leverage,
 	}
 
+	nonce := e.nextNonce()
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -51,15 +74,43 @@ func (e *Exchange) UpdateIsolatedMargin(
 		return nil, fmt.Errorf("coin %s not found in info", name)
 	}
 
+	ntli, err := floatToUsdInt(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
 		Asset: asset,
-		IsBuy: amount > 0,
-		Ntli:  abs(amount),
+		IsBuy: true,
+		Ntli:  ntli,
+	}
+
+	nonce := e.nextNonce()
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
 	}
 
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -140,8 +191,12 @@ func (e *Exchange) ScheduleCancel(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -171,8 +226,8 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	}
 
 	// Sign the action
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		"", // No vault address - reserve must be performed by main wallet
 		nonce,
@@ -184,10 +239,15 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	}
 
 	// Post to exchange
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, fmt.Errorf("failed to post reserve action: %w", err)
 	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	// Parse response — the "response" field is polymorphic:
 	// on success it is {"type":"..."}, on error it is a plain string.
 	var raw struct {
@@ -236,8 +296,12 @@ func (e *Exchange) SetReferrer(ctx context.Context, code string) (*SetReferrerRe
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -272,8 +336,12 @@ func (e *Exchange) CreateSubAccount(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -290,9 +358,13 @@ func (e *Exchange) UsdClassTransfer(
 	amount float64,
 	toPerp bool,
 ) (*TransferResponse, error) {
+	strAmount, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
-	strAmount := formatFloat(amount)
 	if e.vault != "" {
 		strAmount += " subaccount:" + e.vault
 	}
@@ -322,8 +394,12 @@ func (e *Exchange) UsdClassTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -362,8 +438,12 @@ func (e *Exchange) SubAccountTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -402,8 +482,12 @@ func (e *Exchange) VaultUsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -428,6 +512,7 @@ func (e *Exchange) CreateVault(
 		Name:        name,
 		Description: description,
 		InitialUsd:  initialUsd,
+		Nonce:       nonce,
 	}
 
 	sig, err := e.signL1Action(
@@ -442,8 +527,12 @@ func (e *Exchange) CreateVault(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -481,8 +570,12 @@ func (e *Exchange) VaultModify(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -518,8 +611,12 @@ func (e *Exchange) VaultDistribute(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -536,11 +633,16 @@ func (e *Exchange) UsdTransfer(
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"time":        big.NewInt(nonce),
 		"type":        "usdSend",
 	}
@@ -563,8 +665,12 @@ func (e *Exchange) UsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -581,11 +687,16 @@ func (e *Exchange) SpotTransfer(
 	amount float64,
 	destination, token string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"token":       token,
 		"time":        big.NewInt(nonce),
 		"type":        "spotSend",
@@ -610,8 +721,12 @@ func (e *Exchange) SpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -643,53 +758,16 @@ func (e *Exchange) UseBigBlocks(ctx context.Context, enable bool) (*ApprovalResp
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
 	var result ApprovalResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// PerpDexClassTransfer transfers tokens between perp dex classes
-func (e *Exchange) PerpDexClassTransfer(
-	ctx context.Context,
-	dex, token string,
-	amount float64,
-	toPerp bool,
-) (*TransferResponse, error) {
-	nonce := e.nextNonce()
-
-	action := PerpDexClassTransferAction{
-		Type:   "perpDexClassTransfer",
-		Dex:    dex,
-		Token:  token,
-		Amount: amount,
-		ToPerp: toPerp,
-	}
-
-	sig, err := e.signL1Action(
-		ctx,
-		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce)
-	if err != nil {
-		return nil, err
-	}
-
-	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
@@ -734,8 +812,12 @@ func (e *Exchange) SubAccountSpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -782,8 +864,12 @@ func (e *Exchange) TokenDelegate(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -800,11 +886,16 @@ func (e *Exchange) WithdrawFromBridge(
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"time":        big.NewInt(nonce),
 		"type":        "withdraw3",
 	}
@@ -827,8 +918,12 @@ func (e *Exchange) WithdrawFromBridge(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -902,8 +997,14 @@ func (e *Exchange) SendToEVMWithData(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	action["data"] = hexutil.Encode(dbyte)
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -962,8 +1063,12 @@ func (e *Exchange) ApproveAgent(
 		Nonce:            nonce,
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, "", err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, "", err
 	}
 
@@ -1007,8 +1112,12 @@ func (e *Exchange) ApproveBuilderFee(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1063,8 +1172,12 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1088,16 +1201,16 @@ func (e *Exchange) SpotDeployRegisterToken(
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeploy",
-		"registerToken2": map[string]any{
-			"spec": map[string]any{
-				"name":        tokenName,
-				"szDecimals":  szDecimals,
-				"weiDecimals": weiDecimals,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		RegisterToken2: &SpotDeployRegisterToken2{
+			Spec: SpotDeployTokenSpec{
+				Name:        tokenName,
+				SzDecimals:  szDecimals,
+				WeiDecimals: weiDecimals,
 			},
-			"maxGas":   maxGas,
-			"fullName": fullName,
+			MaxGas:   maxGas,
+			FullName: fullName,
 		},
 	}
 
@@ -1113,8 +1226,12 @@ func (e *Exchange) SpotDeployRegisterToken(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1125,16 +1242,38 @@ func (e *Exchange) SpotDeployRegisterToken(
 	return &result, nil
 }
 
+// SpotDeployExistingTokenWei is the amount of an existing token granted by userGenesis
+type SpotDeployExistingTokenWei struct {
+	Token int
+	Wei   string
+}
+
 // SpotDeployUserGenesis initializes user genesis for spot trading
 func (e *Exchange) SpotDeployUserGenesis(
 	ctx context.Context,
-	balances map[string]float64,
+	token int,
+	userAndWei [][2]string,
+	existingTokenAndWei []SpotDeployExistingTokenWei,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeployUserGenesis",
-		"balances": balances,
+	users := make([][2]string, len(userAndWei))
+	for i, item := range userAndWei {
+		users[i] = [2]string{strings.ToLower(item[0]), item[1]}
+	}
+
+	existing := make([][2]any, len(existingTokenAndWei))
+	for i, item := range existingTokenAndWei {
+		existing[i] = [2]any{item.Token, item.Wei}
+	}
+
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		UserGenesis: &SpotDeployUserGenesis{
+			Token:               token,
+			UserAndWei:          users,
+			ExistingTokenAndWei: existing,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -1149,8 +1288,12 @@ func (e *Exchange) SpotDeployUserGenesis(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1164,11 +1307,13 @@ func (e *Exchange) SpotDeployUserGenesis(
 // SpotDeployEnableFreezePrivilege enables freeze privilege for spot deployer
 func (e *Exchange) SpotDeployEnableFreezePrivilege(
 	ctx context.Context,
+	token int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeployEnableFreezePrivilege",
+	action := SpotDeployAction{
+		Type:                  "spotDeploy",
+		EnableFreezePrivilege: &SpotDeployEnableFreezePrivilege{Token: token},
 	}
 
 	sig, err := e.signL1Action(
@@ -1183,8 +1328,12 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1198,13 +1347,15 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 // SpotDeployFreezeUser freezes a user in spot trading
 func (e *Exchange) SpotDeployFreezeUser(
 	ctx context.Context,
+	token int,
 	userAddress string,
+	freeze bool,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":        "spotDeployFreezeUser",
-		"userAddress": userAddress,
+	action := SpotDeployAction{
+		Type:       "spotDeploy",
+		FreezeUser: &SpotDeployFreezeUser{Token: token, User: userAddress, Freeze: freeze},
 	}
 
 	sig, err := e.signL1Action(
@@ -1219,8 +1370,12 @@ func (e *Exchange) SpotDeployFreezeUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1234,11 +1389,13 @@ func (e *Exchange) SpotDeployFreezeUser(
 // SpotDeployRevokeFreezePrivilege revokes freeze privilege for spot deployer
 func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 	ctx context.Context,
+	token int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeployRevokeFreezePrivilege",
+	action := SpotDeployAction{
+		Type:                  "spotDeploy",
+		RevokeFreezePrivilege: &SpotDeployRevokeFreezePrivilege{Token: token},
 	}
 
 	sig, err := e.signL1Action(
@@ -1253,8 +1410,12 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1268,15 +1429,19 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 // SpotDeployGenesis initializes spot genesis
 func (e *Exchange) SpotDeployGenesis(
 	ctx context.Context,
-	deployer string,
-	dexName string,
+	token int,
+	maxSupply string,
+	noHyperliquidity bool,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeployGenesis",
-		"deployer": deployer,
-		"dexName":  dexName,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		Genesis: &SpotDeployGenesis{
+			Token:            token,
+			MaxSupply:        maxSupply,
+			NoHyperliquidity: noHyperliquidity,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -1291,8 +1456,12 @@ func (e *Exchange) SpotDeployGenesis(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1306,15 +1475,14 @@ func (e *Exchange) SpotDeployGenesis(
 // SpotDeployRegisterSpot registers spot market
 func (e *Exchange) SpotDeployRegisterSpot(
 	ctx context.Context,
-	baseToken string,
-	quoteToken string,
+	baseToken int,
+	quoteToken int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":       "spotDeployRegisterSpot",
-		"baseToken":  baseToken,
-		"quoteToken": quoteToken,
+	action := SpotDeployAction{
+		Type:         "spotDeploy",
+		RegisterSpot: &SpotDeployRegisterSpot{Tokens: [2]int{baseToken, quoteToken}},
 	}
 
 	sig, err := e.signL1Action(
@@ -1329,8 +1497,12 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1344,15 +1516,33 @@ func (e *Exchange) SpotDeployRegisterSpot(
 // SpotDeployRegisterHyperliquidity registers hyperliquidity spot
 func (e *Exchange) SpotDeployRegisterHyperliquidity(
 	ctx context.Context,
-	name string,
-	tokens []string,
+	spot int,
+	startPx float64,
+	orderSz float64,
+	nOrders int,
+	nSeededLevels *int,
 ) (*SpotDeployResponse, error) {
+	startPxWire, err := floatToWire(startPx)
+	if err != nil {
+		return nil, fmt.Errorf("invalid start price: %w", err)
+	}
+
+	orderSzWire, err := floatToWire(orderSz)
+	if err != nil {
+		return nil, fmt.Errorf("invalid order size: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":   "spotDeployRegisterHyperliquidity",
-		"name":   name,
-		"tokens": tokens,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		RegisterHyperliquidity: &SpotDeployRegisterHyperliquidity{
+			Spot:          spot,
+			StartPx:       startPxWire,
+			OrderSz:       orderSzWire,
+			NOrders:       nOrders,
+			NSeededLevels: nSeededLevels,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -1367,8 +1557,12 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1382,13 +1576,17 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 // SpotDeploySetDeployerTradingFeeShare sets deployer trading fee share
 func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 	ctx context.Context,
-	feeShare float64,
+	token int,
+	share string,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeploySetDeployerTradingFeeShare",
-		"feeShare": feeShare,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		SetDeployerTradingFeeShare: &SpotDeploySetDeployerTradingFeeShare{
+			Token: token,
+			Share: share,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -1403,8 +1601,52 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
+	var result SpotDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// SpotDeployEnableQuoteToken enables a token as a quote token
+func (e *Exchange) SpotDeployEnableQuoteToken(
+	ctx context.Context,
+	token int,
+) (*SpotDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	action := SpotDeployAction{
+		Type:             "spotDeploy",
+		EnableQuoteToken: &SpotDeployEnableQuoteToken{Token: token},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1453,8 +1695,12 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1489,8 +1735,8 @@ func (e *Exchange) PerpDeployRegisterAsset2(
 		action.RegisterAsset2.Schema = buildSchemaWire(schema)
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1501,8 +1747,12 @@ func (e *Exchange) PerpDeployRegisterAsset2(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1525,7 +1775,7 @@ func buildSchemaWire(schema *PerpDexSchemaInput) *RegisterAssetSchema {
 	return wire
 }
 
-// PerpHaltTrading halts or unhalts trading for a builder-deployed DEX
+// PerpDeployHaltTrading halts or unhalts trading for a builder-deployed DEX
 func (e *Exchange) PerpDeployHaltTrading(
 	ctx context.Context,
 	coin string,
@@ -1541,8 +1791,8 @@ func (e *Exchange) PerpDeployHaltTrading(
 		},
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1553,8 +1803,12 @@ func (e *Exchange) PerpDeployHaltTrading(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1633,8 +1887,12 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1645,15 +1903,11 @@ func (e *Exchange) PerpDeploySetOracle(
 	return &result, nil
 }
 
-// CSigner Methods
-
-// CSignerUnjailSelf unjails self as consensus signer
-func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, error) {
+func (e *Exchange) postPerpDeployAction(
+	ctx context.Context,
+	action any,
+) (*PerpDeployResponse, error) {
 	nonce := e.nextNonce()
-
-	action := map[string]any{
-		"type": "cSignerUnjailSelf",
-	}
 
 	sig, err := e.signL1Action(
 		ctx,
@@ -1667,8 +1921,234 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
+	var result PerpDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+func sortedPerpDeployPairs[V any](values map[string]V) [][]any {
+	pairs := make([][]any, 0, len(values))
+	for coin, value := range values {
+		pairs = append(pairs, []any{coin, value})
+	}
+	sort.Slice(pairs, func(i, j int) bool {
+		return pairs[i][0].(string) < pairs[j][0].(string)
+	})
+	return pairs
+}
+
+// PerpDeploySetFeeRecipient sets the fee recipient of a builder-deployed DEX
+func (e *Exchange) PerpDeploySetFeeRecipient(
+	ctx context.Context,
+	dex string,
+	feeRecipient string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFeeRecipientAction{
+		Type:            "perpDeploy",
+		SetFeeRecipient: SetFeeRecipient{Dex: dex, FeeRecipient: feeRecipient},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeployDisableDex disables a builder-deployed DEX
+func (e *Exchange) PerpDeployDisableDex(
+	ctx context.Context,
+	dex string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeployDisableDexAction{Type: "perpDeploy", DisableDex: dex}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetSubDeployers sets the sub deployers of a builder-deployed DEX
+func (e *Exchange) PerpDeploySetSubDeployers(
+	ctx context.Context,
+	dex string,
+	subDeployers []SubDeployer,
+) (*PerpDeployResponse, error) {
+	if subDeployers == nil {
+		subDeployers = []SubDeployer{}
+	}
+
+	action := PerpDeploySetSubDeployersAction{
+		Type:            "perpDeploy",
+		SetSubDeployers: SetSubDeployers{Dex: dex, SubDeployers: subDeployers},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetFundingMultipliers sets the funding multipliers of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingMultipliers(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingMultipliersAction{
+		Type:                  "perpDeploy",
+		SetFundingMultipliers: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetFundingInterestRates sets the funding interest rates of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingInterestRates(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingInterestRatesAction{
+		Type:                    "perpDeploy",
+		SetFundingInterestRates: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetFundingClamps sets the funding clamps of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingClamps(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingClampsAction{
+		Type:             "perpDeploy",
+		SetFundingClamps: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeployInsertMarginTable inserts a margin table into a builder-deployed DEX
+func (e *Exchange) PerpDeployInsertMarginTable(
+	ctx context.Context,
+	dex string,
+	marginTable PerpDeployMarginTable,
+) (*PerpDeployResponse, error) {
+	action := PerpDeployInsertMarginTableAction{
+		Type:              "perpDeploy",
+		InsertMarginTable: InsertMarginTable{Dex: dex, MarginTable: marginTable},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetMarginTableIds sets the margin table ids of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetMarginTableIds(
+	ctx context.Context,
+	values map[string]int,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetMarginTableIdsAction{
+		Type:              "perpDeploy",
+		SetMarginTableIds: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetOpenInterestCaps sets the open interest caps of builder-deployed DEX coins, a nil cap removes the cap
+func (e *Exchange) PerpDeploySetOpenInterestCaps(
+	ctx context.Context,
+	values map[string]*int,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetOpenInterestCapsAction{
+		Type:                "perpDeploy",
+		SetOpenInterestCaps: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetMarginModes sets the margin modes of builder-deployed DEX coins: strictIsolated, noCross or normal
+func (e *Exchange) PerpDeploySetMarginModes(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetMarginModesAction{
+		Type:           "perpDeploy",
+		SetMarginModes: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetDeployerFees sets the deployer fees of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetDeployerFees(
+	ctx context.Context,
+	fees map[string]PerpDeployDeployerFee,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetDeployerFeesAction{
+		Type:            "perpDeploy",
+		SetDeployerFees: sortedPerpDeployPairs(fees),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetPerpAnnotation sets the annotation of a builder-deployed DEX coin,
+// a nil displayName is sent as null
+func (e *Exchange) PerpDeploySetPerpAnnotation(
+	ctx context.Context,
+	coin string,
+	category string,
+	description string,
+	displayName *string,
+	keywords []string,
+) (*PerpDeployResponse, error) {
+	if keywords == nil {
+		keywords = []string{}
+	}
+
+	action := PerpDeploySetPerpAnnotationAction{
+		Type: "perpDeploy",
+		SetPerpAnnotation: SetPerpAnnotation{
+			Coin:        coin,
+			Category:    category,
+			Description: description,
+			DisplayName: displayName,
+			Keywords:    keywords,
+		},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// CSigner Methods
+
+// CSignerUnjailSelf unjails self as consensus signer
+func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, error) {
+	nonce := e.nextNonce()
+
+	action := CSignerAction{Type: "CSignerAction", UnjailSelf: &struct{}{}}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1683,9 +2163,7 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "cSignerJailSelf",
-	}
+	action := CSignerAction{Type: "CSignerAction", JailSelf: &struct{}{}}
 
 	sig, err := e.signL1Action(
 		ctx,
@@ -1699,44 +2177,12 @@ func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, err
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
 
-	var result ValidatorResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// CSignerInner executes inner consensus signer action
-func (e *Exchange) CSignerInner(
-	ctx context.Context,
-	innerAction map[string]any,
-) (*ValidatorResponse, error) {
-	nonce := e.nextNonce()
-
-	action := map[string]any{
-		"type":        "cSignerInner",
-		"innerAction": innerAction,
-	}
-
-	sig, err := e.signL1Action(
-		ctx,
-		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce)
-	if err != nil {
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1752,13 +2198,31 @@ func (e *Exchange) CSignerInner(
 // CValidatorRegister registers as consensus validator
 func (e *Exchange) CValidatorRegister(
 	ctx context.Context,
-	validatorProfile map[string]any,
+	nodeIp string,
+	name string,
+	description string,
+	delegationsDisabled bool,
+	commissionBps int,
+	signer string,
+	unjailed bool,
+	initialWei int,
 ) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":             "cValidatorRegister",
-		"validatorProfile": validatorProfile,
+	action := CValidatorAction{
+		Type: "CValidatorAction",
+		Register: &CValidatorRegister{
+			Profile: CValidatorProfile{
+				NodeIp:              CValidatorNodeIp{Ip: nodeIp},
+				Name:                name,
+				Description:         description,
+				DelegationsDisabled: delegationsDisabled,
+				CommissionBps:       commissionBps,
+				Signer:              signer,
+			},
+			Unjailed:   unjailed,
+			InitialWei: initialWei,
+		},
 	}
 
 	sig, err := e.signL1Action(
@@ -1773,8 +2237,12 @@ func (e *Exchange) CValidatorRegister(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1788,13 +2256,29 @@ func (e *Exchange) CValidatorRegister(
 // CValidatorChangeProfile changes validator profile
 func (e *Exchange) CValidatorChangeProfile(
 	ctx context.Context,
-	newProfile map[string]any,
+	nodeIp *string,
+	name *string,
+	description *string,
+	unjailed bool,
+	disableDelegations *bool,
+	commissionBps *int,
+	signer *string,
 ) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":       "cValidatorChangeProfile",
-		"newProfile": newProfile,
+	action := CValidatorAction{
+		Type: "CValidatorAction",
+		ChangeProfile: &CValidatorChangeProfile{
+			Name:               name,
+			Description:        description,
+			Unjailed:           unjailed,
+			DisableDelegations: disableDelegations,
+			CommissionBps:      commissionBps,
+			Signer:             signer,
+		},
+	}
+	if nodeIp != nil {
+		action.ChangeProfile.NodeIp = &CValidatorNodeIp{Ip: *nodeIp}
 	}
 
 	sig, err := e.signL1Action(
@@ -1809,8 +2293,12 @@ func (e *Exchange) CValidatorChangeProfile(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1825,9 +2313,7 @@ func (e *Exchange) CValidatorChangeProfile(
 func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "cValidatorUnregister",
-	}
+	action := CValidatorAction{Type: "CValidatorAction", Unregister: &struct{}{}}
 
 	sig, err := e.signL1Action(
 		ctx,
@@ -1841,8 +2327,12 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1855,33 +2345,44 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 
 func (e *Exchange) MultiSig(
 	ctx context.Context,
-	action map[string]any,
-	signers []string,
-	signatures []string,
+	multiSigUser string,
+	action any,
+	signatures []SignatureResult,
+	nonce int64,
 ) (*MultiSigResponse, error) {
-	nonce := e.nextNonce()
-
-	multiSigAction := map[string]any{
-		"type":       "multiSig",
-		"action":     action,
-		"signers":    signers,
-		"signatures": signatures,
+	multiSigAction := MultiSigAction{
+		Type:             "multiSig",
+		SignatureChainId: "0x66eee",
+		Signatures:       signatures,
+		Payload: MultiSigPayload{
+			MultiSigUser: strings.ToLower(multiSigUser),
+			OuterSigner:  strings.ToLower(crypto.PubkeyToAddress(e.privateKey.PublicKey).Hex()),
+			Action:       action,
+		},
 	}
 
-	sig, err := e.signL1Action(
+	envelope, err := newMultiSigEnvelope(multiSigAction, e.vault, nonce, e.expiresAfter)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := e.signUserSignedAction(
 		ctx,
-		multiSigAction,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		envelope,
+		multiSigEnvelopeTypes,
+		"HyperliquidTransaction:SendMultiSig",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, multiSigAction, sig, nonce)
+	resp, err := e.postAction(ctx, multiSigAction, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1925,8 +2426,12 @@ func (e *Exchange) UserSetAbstraction(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1937,52 +2442,7 @@ func (e *Exchange) UserSetAbstraction(
 	return &result, nil
 }
 
-// UserDexAbstraction Methods set dex abstraction
-func (e *Exchange) UserDexAbstraction(
-	ctx context.Context,
-	user string,
-	enabled bool,
-) (*ReserveRequestWeightResponse, error) {
-	nonce := e.nextNonce()
-
-	action := map[string]any{
-		"user":    user,
-		"enabled": enabled,
-		"nonce":   big.NewInt(nonce),
-		"type":    "userDexAbstraction",
-	}
-
-	payloadTypes := []apitypes.Type{
-		{Name: "hyperliquidChain", Type: "string"},
-		{Name: "user", Type: "address"},
-		{Name: "enabled", Type: "bool"},
-		{Name: "nonce", Type: "uint64"},
-	}
-
-	sig, err := e.signUserSignedAction(
-		ctx,
-		action,
-		payloadTypes,
-		"HyperliquidTransaction:UserDexAbstraction",
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce)
-	if err != nil {
-		return nil, err
-	}
-
-	var result ReserveRequestWeightResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// For the default perp dex use the empty string "" as name. For spot use "spot".
+// SendAsset transfers an asset between accounts or dexes. For the default perp dex use the empty string "" as name. For spot use "spot".
 // Token must match the collateral token if transferring to or from a perp dex.
 func (e *Exchange) SendAsset(
 	ctx context.Context,
@@ -1992,6 +2452,11 @@ func (e *Exchange) SendAsset(
 	token string,
 	amount float64,
 ) (*ReserveRequestWeightResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -1999,7 +2464,7 @@ func (e *Exchange) SendAsset(
 		"sourceDex":      sourceDex,
 		"destinationDex": destinationDex,
 		"token":          token,
-		"amount":         formatFloat(amount),
+		"amount":         amountWire,
 		"fromSubAccount": e.vault,
 		"nonce":          big.NewInt(nonce),
 		"type":           "sendAsset",
@@ -2027,8 +2492,12 @@ func (e *Exchange) SendAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -2039,20 +2508,25 @@ func (e *Exchange) SendAsset(
 	return &result, nil
 }
 
-// Borrow, repay, supply, or withdraw HIP-2 borrow/lend assets
+// BorrowLend borrows, repays, supplies, or withdraws HIP-2 borrow/lend assets
 func (e *Exchange) BorrowLend(
 	ctx context.Context,
 	amount float64,
 	operation string,
 	token int64,
 ) (*ReserveRequestWeightResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":      "borrowLend",
-		"operation": operation,
-		"token":     token,
-		"amount":    formatFloat(amount),
+	action := BorrowLendAction{
+		Type:      "borrowLend",
+		Operation: operation,
+		Token:     token,
+		Amount:    amountWire,
 	}
 
 	sig, err := e.signL1Action(
@@ -2067,8 +2541,12 @@ func (e *Exchange) BorrowLend(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 	var result ReserveRequestWeightResponse
@@ -2076,4 +2554,638 @@ func (e *Exchange) BorrowLend(
 		return nil, err
 	}
 	return &result, nil
+}
+
+// TrailingStop places a trailing stop order
+func (e *Exchange) TrailingStop(
+	ctx context.Context,
+	coin string,
+	isBuy bool,
+	size float64,
+	reduceOnly bool,
+	retracement TrailingStopRetracement,
+	activationPx *float64,
+) (json.RawMessage, error) {
+	if (retracement.Pct == "") == (retracement.Px == "") {
+		return nil, fmt.Errorf("retracement needs exactly one of pct or px")
+	}
+
+	asset, ok := e.info.CoinToAsset(coin)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", coin)
+	}
+
+	sizeWire, err := floatToWire(size)
+	if err != nil {
+		return nil, fmt.Errorf("invalid size: %w", err)
+	}
+
+	var activationPxWire *string
+	if activationPx != nil {
+		wire, err := floatToWire(*activationPx)
+		if err != nil {
+			return nil, fmt.Errorf("invalid activation price: %w", err)
+		}
+		activationPxWire = &wire
+	}
+
+	nonce := e.nextNonce()
+
+	action := TrailingStopAction{
+		Type:         "trailingStop",
+		Asset:        asset,
+		IsBuy:        isBuy,
+		Sz:           sizeWire,
+		ReduceOnly:   reduceOnly,
+		Retracement:  retracement,
+		ActivationPx: activationPxWire,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// TopUpIsolatedOnlyMargin tops up the margin of an isolated only position to the given leverage
+func (e *Exchange) TopUpIsolatedOnlyMargin(
+	ctx context.Context,
+	coin string,
+	leverage float64,
+) (json.RawMessage, error) {
+	asset, ok := e.info.CoinToAsset(coin)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", coin)
+	}
+
+	leverageWire, err := floatToWire(leverage)
+	if err != nil {
+		return nil, fmt.Errorf("invalid leverage: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := TopUpIsolatedOnlyMarginAction{
+		Type:     "topUpIsolatedOnlyMargin",
+		Asset:    asset,
+		Leverage: leverageWire,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// Noop sends a noop action with the given nonce
+func (e *Exchange) Noop(ctx context.Context, nonce int64) (json.RawMessage, error) {
+	action := NoopAction{Type: "noop"}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// AgentSetAbstraction sets the account abstraction of the signing agent, abstraction is i, u or p
+func (e *Exchange) AgentSetAbstraction(
+	ctx context.Context,
+	abstraction string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := AgentSetAbstractionAction{
+		Type:        "agentSetAbstraction",
+		Abstraction: abstraction,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// GossipPriorityBid bids for a gossip priority slot
+func (e *Exchange) GossipPriorityBid(
+	ctx context.Context,
+	slotID int,
+	ip string,
+	maxGas int,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := GossipPriorityBidAction{
+		Type:   "gossipPriorityBid",
+		SlotID: slotID,
+		Ip:     ip,
+		MaxGas: maxGas,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// AgentSendAsset sends an asset signed by an agent. It is posted with a null vaultAddress and
+// the vault, if any, travels in fromSubAccount.
+func (e *Exchange) AgentSendAsset(
+	ctx context.Context,
+	destination string,
+	sourceDex string,
+	destinationDex string,
+	token string,
+	amount float64,
+) (json.RawMessage, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := AgentSendAssetAction{
+		Type:           "agentSendAsset",
+		Destination:    destination,
+		SourceDex:      sourceDex,
+		DestinationDex: destinationDex,
+		Token:          token,
+		Amount:         amountWire,
+		FromSubAccount: e.vault,
+		Nonce:          nonce,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		"",
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// CDeposit deposits into the staking balance
+func (e *Exchange) CDeposit(ctx context.Context, wei uint64) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type":  "cDeposit",
+		"wei":   wei,
+		"nonce": big.NewInt(nonce),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:CDeposit",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// CWithdraw withdraws from the staking balance
+func (e *Exchange) CWithdraw(ctx context.Context, wei uint64) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type":  "cWithdraw",
+		"wei":   wei,
+		"nonce": big.NewInt(nonce),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:CWithdraw",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// CDeposit2 deposits into the staking balance
+func (e *Exchange) CDeposit2(
+	ctx context.Context,
+	wei int,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := CDeposit2Action{Type: "cDeposit2", Wei: wei}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// ClaimRewards claims the accrued rewards
+func (e *Exchange) ClaimRewards(ctx context.Context) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := ClaimRewardsAction{Type: "claimRewards"}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// Hip3LiquidatorTransfer moves notional between a hip3 liquidator and a dex
+func (e *Exchange) Hip3LiquidatorTransfer(
+	ctx context.Context,
+	dex string,
+	ntl int,
+	isDeposit bool,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := Hip3LiquidatorTransferAction{
+		Type:      "hip3LiquidatorTransfer",
+		Dex:       dex,
+		Ntl:       ntl,
+		IsDeposit: isDeposit,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// UserOutcomeSplit splits an amount into the outcome tokens
+func (e *Exchange) UserOutcomeSplit(
+	ctx context.Context,
+	outcome int,
+	amount float64,
+) (json.RawMessage, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type:         "userOutcome",
+		SplitOutcome: &SplitOutcomeAction{Outcome: outcome, Amount: amountWire},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// UserOutcomeMerge merges outcome tokens, all of them when amount is nil
+func (e *Exchange) UserOutcomeMerge(
+	ctx context.Context,
+	outcome int,
+	amount *float64,
+) (json.RawMessage, error) {
+	var amountWire *string
+	if amount != nil {
+		wireValue, err := floatToWire(*amount)
+		if err != nil {
+			return nil, fmt.Errorf("invalid amount: %w", err)
+		}
+		amountWire = &wireValue
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type:         "userOutcome",
+		MergeOutcome: &MergeOutcomeAction{Outcome: outcome, Amount: amountWire},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// UserOutcomeMergeQuestion merges the outcomes of a question, all of them when amount is nil
+func (e *Exchange) UserOutcomeMergeQuestion(
+	ctx context.Context,
+	question int,
+	amount *float64,
+) (json.RawMessage, error) {
+	var amountWire *string
+	if amount != nil {
+		wireValue, err := floatToWire(*amount)
+		if err != nil {
+			return nil, fmt.Errorf("invalid amount: %w", err)
+		}
+		amountWire = &wireValue
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type:          "userOutcome",
+		MergeQuestion: &MergeQuestionAction{Question: question, Amount: amountWire},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// UserOutcomeNegate negates an outcome of a question
+func (e *Exchange) UserOutcomeNegate(
+	ctx context.Context,
+	question int,
+	outcome int,
+	amount float64,
+) (json.RawMessage, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type: "userOutcome",
+		NegateOutcome: &NegateOutcomeAction{
+			Question: question,
+			Outcome:  outcome,
+			Amount:   amountWire,
+		},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// AuthorizeAqav2Role authorizes a role for a token
+func (e *Exchange) AuthorizeAqav2Role(
+	ctx context.Context,
+	token int,
+	role string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := AuthorizeAqav2RoleAction{Type: "authorizeAqav2Role", Token: token, Role: role}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
+
+// ValidatorL1Stream sets the risk free rate of the validator L1 stream
+func (e *Exchange) ValidatorL1Stream(
+	ctx context.Context,
+	riskFreeRate string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := ValidatorL1StreamAction{Type: "validatorL1Stream", RiskFreeRate: riskFreeRate}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
 }

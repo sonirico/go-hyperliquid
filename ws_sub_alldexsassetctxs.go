@@ -15,7 +15,8 @@ func (w *WebsocketClient) AllDexsAssetCtxs(
 		allDexsAssetCtxs, ok := msg.(WsAllDexsAssetCtxs)
 		if !ok {
 			callback(
-				WsAllDexsAssetCtxs{}, fmt.Errorf("SubscribeToAllDexsAssetCtxs invalid message type"),
+				WsAllDexsAssetCtxs{},
+				fmt.Errorf("SubscribeToAllDexsAssetCtxs invalid message type"),
 			)
 			return
 		}

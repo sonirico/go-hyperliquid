@@ -1,0 +1,34 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "cWithdraw",
+    "wei": 100000000,
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:CWithdraw",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "wei",
+      "type": "uint64"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0x19b1735d7056ef0db533a6bac2acae4753595aba31a5c4713a0bff8c27e928d5",
+    "s": "0x171e0684da1d9419dda11e4e1773b948702fe05b3a90e665b37dd126b70035cc",
+    "v": 27
+  }
+}

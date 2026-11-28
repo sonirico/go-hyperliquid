@@ -1,0 +1,32 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "cancel",
+    "cancels": [
+      {
+        "a": 0,
+        "o": 123
+      }
+    ]
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xc25c1951bcd8b152ead4db06d1d557f02bc8204c303a9b56d41b760dc51b5a12",
+    "s": "0x557c6ab9a53f7d5c63022fe2dbc361e33be5e4b3351b412a5f8069fe4d204423",
+    "v": 27
+  }
+}

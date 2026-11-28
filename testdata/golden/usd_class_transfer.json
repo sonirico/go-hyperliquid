@@ -1,0 +1,39 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "usdClassTransfer",
+    "amount": "1.5",
+    "toPerp": true,
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:UsdClassTransfer",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "toPerp",
+      "type": "bool"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xc3cdccc75f41b860ebae9247d91f00b1bb02bcaa2204161728628f2b5e6d4274",
+    "s": "0x44712598a8f8be2de50600d44054f4d719fbb0df6fc25efba9e714ef427c9681",
+    "v": 27
+  }
+}

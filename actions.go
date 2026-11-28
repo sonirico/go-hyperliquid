@@ -1,5 +1,12 @@
 package hyperliquid
 
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/vmihailenco/msgpack/v5"
+)
+
 //go:generate easyjson -all
 
 // Action structs with deterministic field ordering for consistent MessagePack serialization
@@ -13,9 +20,8 @@ type CancelOrderWire struct {
 
 // CancelAction represents the cancel action
 type CancelAction struct {
-	Type    string            `json:"type"          msgpack:"type"`
-	Dex     string            `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Cancels []CancelOrderWire `json:"cancels"       msgpack:"cancels"`
+	Type    string            `json:"type"    msgpack:"type"`
+	Cancels []CancelOrderWire `json:"cancels" msgpack:"cancels"`
 }
 
 // CancelByCloidWire represents cancel by cloid item wire format
@@ -29,9 +35,8 @@ type CancelByCloidWire struct {
 
 // CancelByCloidAction represents the cancel by cloid action
 type CancelByCloidAction struct {
-	Type    string              `json:"type"          msgpack:"type"`
-	Dex     string              `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Cancels []CancelByCloidWire `json:"cancels"       msgpack:"cancels"`
+	Type    string              `json:"type"    msgpack:"type"`
+	Cancels []CancelByCloidWire `json:"cancels" msgpack:"cancels"`
 }
 
 // UsdClassTransferAction represents USD class transfer
@@ -81,6 +86,7 @@ type CreateVaultAction struct {
 	Name        string `json:"name"        msgpack:"name"`
 	Description string `json:"description" msgpack:"description"`
 	InitialUsd  int    `json:"initialUsd"  msgpack:"initialUsd"`
+	Nonce       int64  `json:"nonce"       msgpack:"nonce"`
 }
 
 // VaultModifyAction represents vault modify action
@@ -108,10 +114,10 @@ type UpdateLeverageAction struct {
 
 // UpdateIsolatedMarginAction represents isolated margin update
 type UpdateIsolatedMarginAction struct {
-	Type  string  `json:"type"  msgpack:"type"`
-	Asset int     `json:"asset" msgpack:"asset"`
-	IsBuy bool    `json:"isBuy" msgpack:"isBuy"`
-	Ntli  float64 `json:"ntli"  msgpack:"ntli"`
+	Type  string `json:"type"  msgpack:"type"`
+	Asset int    `json:"asset" msgpack:"asset"`
+	IsBuy bool   `json:"isBuy" msgpack:"isBuy"`
+	Ntli  int64  `json:"ntli"  msgpack:"ntli"`
 }
 
 // OrderWire represents the wire format for orders with deterministic field ordering
@@ -147,38 +153,82 @@ type OrderWireTypeTrigger struct {
 	Tpsl      Tpsl   `json:"tpsl"      msgpack:"tpsl"`      // 3rd - "tp" or "sl"
 }
 
+// OrderGrouping represents the grouping of an order action: a name, or a
+// priority sent as {"p": n}
+//
+//easyjson:skip
+type OrderGrouping struct {
+	name     string
+	priority *int
+}
+
+func NewOrderGroupingNA() OrderGrouping {
+	return OrderGrouping{name: string(GroupingNA)}
+}
+
+func NewOrderGroupingNormalTpsl() OrderGrouping {
+	return OrderGrouping{name: string(GroupingNormalTpsl)}
+}
+
+func NewOrderGroupingPositionTpsl() OrderGrouping {
+	return OrderGrouping{name: string(GroupingPositionTpls)}
+}
+
+func NewOrderGroupingPriority(n int) OrderGrouping {
+	return OrderGrouping{priority: &n}
+}
+
+func (g OrderGrouping) value() any {
+	if g.priority != nil {
+		return map[string]int{"p": *g.priority}
+	}
+	return g.name
+}
+
+func (g OrderGrouping) EncodeMsgpack(enc *msgpack.Encoder) error {
+	return enc.Encode(g.value())
+}
+
+func (g OrderGrouping) MarshalJSON() ([]byte, error) {
+	return json.Marshal(g.value())
+}
+
+func (g *OrderGrouping) UnmarshalJSON(data []byte) error {
+	var priority struct {
+		P *int `json:"p"`
+	}
+	if err := json.Unmarshal(data, &priority); err == nil && priority.P != nil {
+		*g = NewOrderGroupingPriority(*priority.P)
+		return nil
+	}
+	var name string
+	if err := json.Unmarshal(data, &name); err != nil {
+		return err
+	}
+	*g = OrderGrouping{name: name}
+	return nil
+}
+
 // OrderAction represents the order action with deterministic field ordering
 // CRITICAL: Field order MUST match Python SDK insertion order for msgpack hash consistency
 type OrderAction struct {
-	Type     string       `json:"type"              msgpack:"type"`
-	Dex      string       `json:"dex,omitempty"     msgpack:"dex,omitempty"`
-	Orders   []OrderWire  `json:"orders"            msgpack:"orders"`
-	Grouping string       `json:"grouping"          msgpack:"grouping"`
-	Builder  *BuilderInfo `json:"builder,omitempty" msgpack:"builder,omitempty"`
+	Type     string        `json:"type"              msgpack:"type"`
+	Orders   []OrderWire   `json:"orders"            msgpack:"orders"`
+	Grouping OrderGrouping `json:"grouping"          msgpack:"grouping"`
+	Builder  *BuilderInfo  `json:"builder,omitempty" msgpack:"builder,omitempty"`
 }
 
 // ModifyAction represents a single order modification
 type ModifyAction struct {
 	Type  string    `json:"type,omitempty" msgpack:"type,omitempty"`
-	Dex   string    `json:"dex,omitempty"  msgpack:"dex,omitempty"`
 	Oid   any       `json:"oid"            msgpack:"oid"`
 	Order OrderWire `json:"order"          msgpack:"order"`
 }
 
 // BatchModifyAction represents multiple order modifications
 type BatchModifyAction struct {
-	Type     string         `json:"type"          msgpack:"type"`
-	Dex      string         `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Modifies []ModifyAction `json:"modifies"      msgpack:"modifies"`
-}
-
-// PerpDexClassTransferAction represents perp dex class transfer
-type PerpDexClassTransferAction struct {
-	Type   string  `json:"type"   msgpack:"type"`
-	Dex    string  `json:"dex"    msgpack:"dex"`
-	Token  string  `json:"token"  msgpack:"token"`
-	Amount float64 `json:"amount" msgpack:"amount"`
-	ToPerp bool    `json:"toPerp" msgpack:"toPerp"`
+	Type     string         `json:"type"     msgpack:"type"`
+	Modifies []ModifyAction `json:"modifies" msgpack:"modifies"`
 }
 
 // SubAccountSpotTransferAction represents sub-account spot transfer
@@ -188,6 +238,99 @@ type SubAccountSpotTransferAction struct {
 	IsDeposit      bool   `json:"isDeposit"      msgpack:"isDeposit"`
 	Token          string `json:"token"          msgpack:"token"`
 	Amount         string `json:"amount"         msgpack:"amount"`
+}
+
+// BorrowLendAction represents borrow/lend action
+type BorrowLendAction struct {
+	Type      string `json:"type"      msgpack:"type"`
+	Operation string `json:"operation" msgpack:"operation"`
+	Token     int64  `json:"token"     msgpack:"token"`
+	Amount    string `json:"amount"    msgpack:"amount"`
+}
+
+// SpotDeployTokenSpec represents the token spec of a spot deploy registerToken2
+type SpotDeployTokenSpec struct {
+	Name        string `json:"name"        msgpack:"name"`
+	SzDecimals  int    `json:"szDecimals"  msgpack:"szDecimals"`
+	WeiDecimals int    `json:"weiDecimals" msgpack:"weiDecimals"`
+}
+
+// SpotDeployRegisterToken2 represents the registerToken2 variant of a spot deploy action
+type SpotDeployRegisterToken2 struct {
+	Spec     SpotDeployTokenSpec `json:"spec"     msgpack:"spec"`
+	MaxGas   int                 `json:"maxGas"   msgpack:"maxGas"`
+	FullName string              `json:"fullName" msgpack:"fullName"`
+}
+
+// SpotDeployUserGenesis represents the userGenesis variant of a spot deploy action
+type SpotDeployUserGenesis struct {
+	Token               int         `json:"token"               msgpack:"token"`
+	UserAndWei          [][2]string `json:"userAndWei"          msgpack:"userAndWei"`
+	ExistingTokenAndWei [][2]any    `json:"existingTokenAndWei" msgpack:"existingTokenAndWei"`
+}
+
+// SpotDeployEnableFreezePrivilege represents the enableFreezePrivilege variant of a spot deploy action
+type SpotDeployEnableFreezePrivilege struct {
+	Token int `json:"token" msgpack:"token"`
+}
+
+// SpotDeployFreezeUser represents the freezeUser variant of a spot deploy action
+type SpotDeployFreezeUser struct {
+	Token  int    `json:"token"  msgpack:"token"`
+	User   string `json:"user"   msgpack:"user"`
+	Freeze bool   `json:"freeze" msgpack:"freeze"`
+}
+
+// SpotDeployRevokeFreezePrivilege represents the revokeFreezePrivilege variant of a spot deploy action
+type SpotDeployRevokeFreezePrivilege struct {
+	Token int `json:"token" msgpack:"token"`
+}
+
+// SpotDeployGenesis represents the genesis variant of a spot deploy action
+type SpotDeployGenesis struct {
+	Token            int    `json:"token"                      msgpack:"token"`
+	MaxSupply        string `json:"maxSupply"                  msgpack:"maxSupply"`
+	NoHyperliquidity bool   `json:"noHyperliquidity,omitempty" msgpack:"noHyperliquidity,omitempty"`
+}
+
+// SpotDeployRegisterSpot represents the registerSpot variant of a spot deploy action
+type SpotDeployRegisterSpot struct {
+	Tokens [2]int `json:"tokens" msgpack:"tokens"`
+}
+
+// SpotDeployRegisterHyperliquidity represents the registerHyperliquidity variant of a spot deploy action
+type SpotDeployRegisterHyperliquidity struct {
+	Spot          int    `json:"spot"                    msgpack:"spot"`
+	StartPx       string `json:"startPx"                 msgpack:"startPx"`
+	OrderSz       string `json:"orderSz"                 msgpack:"orderSz"`
+	NOrders       int    `json:"nOrders"                 msgpack:"nOrders"`
+	NSeededLevels *int   `json:"nSeededLevels,omitempty" msgpack:"nSeededLevels,omitempty"`
+}
+
+// SpotDeploySetDeployerTradingFeeShare represents the setDeployerTradingFeeShare variant of a spot deploy action
+type SpotDeploySetDeployerTradingFeeShare struct {
+	Token int    `json:"token" msgpack:"token"`
+	Share string `json:"share" msgpack:"share"`
+}
+
+// SpotDeployEnableQuoteToken represents the enableQuoteToken variant of a spot deploy action
+type SpotDeployEnableQuoteToken struct {
+	Token int `json:"token" msgpack:"token"`
+}
+
+// SpotDeployAction represents spot deploy action, exactly one variant is set
+type SpotDeployAction struct {
+	Type                       string                                `json:"type"                                 msgpack:"type"`
+	RegisterToken2             *SpotDeployRegisterToken2             `json:"registerToken2,omitempty"             msgpack:"registerToken2,omitempty"`
+	UserGenesis                *SpotDeployUserGenesis                `json:"userGenesis,omitempty"                msgpack:"userGenesis,omitempty"`
+	EnableFreezePrivilege      *SpotDeployEnableFreezePrivilege      `json:"enableFreezePrivilege,omitempty"      msgpack:"enableFreezePrivilege,omitempty"`
+	FreezeUser                 *SpotDeployFreezeUser                 `json:"freezeUser,omitempty"                 msgpack:"freezeUser,omitempty"`
+	RevokeFreezePrivilege      *SpotDeployRevokeFreezePrivilege      `json:"revokeFreezePrivilege,omitempty"      msgpack:"revokeFreezePrivilege,omitempty"`
+	Genesis                    *SpotDeployGenesis                    `json:"genesis,omitempty"                    msgpack:"genesis,omitempty"`
+	RegisterSpot               *SpotDeployRegisterSpot               `json:"registerSpot,omitempty"               msgpack:"registerSpot,omitempty"`
+	RegisterHyperliquidity     *SpotDeployRegisterHyperliquidity     `json:"registerHyperliquidity,omitempty"     msgpack:"registerHyperliquidity,omitempty"`
+	SetDeployerTradingFeeShare *SpotDeploySetDeployerTradingFeeShare `json:"setDeployerTradingFeeShare,omitempty" msgpack:"setDeployerTradingFeeShare,omitempty"`
+	EnableQuoteToken           *SpotDeployEnableQuoteToken           `json:"enableQuoteToken,omitempty"           msgpack:"enableQuoteToken,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action
@@ -263,12 +406,20 @@ type ConvertToMultiSigUserAction struct {
 	Nonce   int64  `json:"nonce"   msgpack:"nonce"`
 }
 
-// MultiSigAction represents multi-signature action
+// MultiSigPayload represents the payload of a multi-signature action
+type MultiSigPayload struct {
+	MultiSigUser string `json:"multiSigUser" msgpack:"multiSigUser"`
+	OuterSigner  string `json:"outerSigner"  msgpack:"outerSigner"`
+	Action       any    `json:"action"       msgpack:"action"`
+}
+
+// MultiSigAction represents multi-signature action. The type is not part of the
+// msgpack encoding because the signature covers the action without it
 type MultiSigAction struct {
-	Type       string         `json:"type"       msgpack:"type"`
-	Action     map[string]any `json:"action"     msgpack:"action"`
-	Signers    []string       `json:"signers"    msgpack:"signers"`
-	Signatures []string       `json:"signatures" msgpack:"signatures"`
+	Type             string            `json:"type"             msgpack:"-"`
+	SignatureChainId string            `json:"signatureChainId" msgpack:"signatureChainId"`
+	Signatures       []SignatureResult `json:"signatures"       msgpack:"signatures"`
+	Payload          MultiSigPayload   `json:"payload"          msgpack:"payload"`
 }
 
 type RegisterAssetSchema struct {
@@ -337,4 +488,372 @@ type SetOracle struct {
 type PerpDeploySetOracleAction struct {
 	Type      string    `json:"type"      msgpack:"type"`
 	SetOracle SetOracle `json:"setOracle" msgpack:"setOracle"`
+}
+
+type SetFeeRecipient struct {
+	Dex          string `json:"dex"          msgpack:"dex"`
+	FeeRecipient string `json:"feeRecipient" msgpack:"feeRecipient"`
+}
+
+type PerpDeploySetFeeRecipientAction struct {
+	Type            string          `json:"type"            msgpack:"type"`
+	SetFeeRecipient SetFeeRecipient `json:"setFeeRecipient" msgpack:"setFeeRecipient"`
+}
+
+type PerpDeployDisableDexAction struct {
+	Type       string `json:"type"       msgpack:"type"`
+	DisableDex string `json:"disableDex" msgpack:"disableDex"`
+}
+
+type SubDeployer struct {
+	Variant string `json:"variant" msgpack:"variant"`
+	User    string `json:"user"    msgpack:"user"`
+	Allowed bool   `json:"allowed" msgpack:"allowed"`
+}
+
+type SetSubDeployers struct {
+	Dex          string        `json:"dex"          msgpack:"dex"`
+	SubDeployers []SubDeployer `json:"subDeployers" msgpack:"subDeployers"`
+}
+
+type PerpDeploySetSubDeployersAction struct {
+	Type            string          `json:"type"            msgpack:"type"`
+	SetSubDeployers SetSubDeployers `json:"setSubDeployers" msgpack:"setSubDeployers"`
+}
+
+type PerpDeploySetFundingMultipliersAction struct {
+	Type                  string  `json:"type"                  msgpack:"type"`
+	SetFundingMultipliers [][]any `json:"setFundingMultipliers" msgpack:"setFundingMultipliers"`
+}
+
+type PerpDeploySetFundingInterestRatesAction struct {
+	Type                    string  `json:"type"                    msgpack:"type"`
+	SetFundingInterestRates [][]any `json:"setFundingInterestRates" msgpack:"setFundingInterestRates"`
+}
+
+type PerpDeploySetFundingClampsAction struct {
+	Type             string  `json:"type"             msgpack:"type"`
+	SetFundingClamps [][]any `json:"setFundingClamps" msgpack:"setFundingClamps"`
+}
+
+type PerpDeployMarginTier struct {
+	LowerBound  int `json:"lowerBound"  msgpack:"lowerBound"`
+	MaxLeverage int `json:"maxLeverage" msgpack:"maxLeverage"`
+}
+
+type PerpDeployMarginTable struct {
+	Description string                 `json:"description" msgpack:"description"`
+	MarginTiers []PerpDeployMarginTier `json:"marginTiers" msgpack:"marginTiers"`
+}
+
+type InsertMarginTable struct {
+	Dex         string                `json:"dex"         msgpack:"dex"`
+	MarginTable PerpDeployMarginTable `json:"marginTable" msgpack:"marginTable"`
+}
+
+type PerpDeployInsertMarginTableAction struct {
+	Type              string            `json:"type"              msgpack:"type"`
+	InsertMarginTable InsertMarginTable `json:"insertMarginTable" msgpack:"insertMarginTable"`
+}
+
+type PerpDeploySetMarginTableIdsAction struct {
+	Type              string  `json:"type"              msgpack:"type"`
+	SetMarginTableIds [][]any `json:"setMarginTableIds" msgpack:"setMarginTableIds"`
+}
+
+type PerpDeploySetOpenInterestCapsAction struct {
+	Type                string  `json:"type"                msgpack:"type"`
+	SetOpenInterestCaps [][]any `json:"setOpenInterestCaps" msgpack:"setOpenInterestCaps"`
+}
+
+type PerpDeploySetMarginModesAction struct {
+	Type           string  `json:"type"           msgpack:"type"`
+	SetMarginModes [][]any `json:"setMarginModes" msgpack:"setMarginModes"`
+}
+
+type PerpDeployDeployerFee struct {
+	Scale      string `json:"scale"      msgpack:"scale"`
+	GrowthMode bool   `json:"growthMode" msgpack:"growthMode"`
+}
+
+type PerpDeploySetDeployerFeesAction struct {
+	Type            string  `json:"type"            msgpack:"type"`
+	SetDeployerFees [][]any `json:"setDeployerFees" msgpack:"setDeployerFees"`
+}
+
+type SetPerpAnnotation struct {
+	Coin        string   `json:"coin"        msgpack:"coin"`
+	Category    string   `json:"category"    msgpack:"category"`
+	Description string   `json:"description" msgpack:"description"`
+	DisplayName *string  `json:"displayName" msgpack:"displayName"`
+	Keywords    []string `json:"keywords"    msgpack:"keywords"`
+}
+
+type PerpDeploySetPerpAnnotationAction struct {
+	Type              string            `json:"type"              msgpack:"type"`
+	SetPerpAnnotation SetPerpAnnotation `json:"setPerpAnnotation" msgpack:"setPerpAnnotation"`
+}
+
+func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
+	if err := enc.EncodeMapLen(2); err != nil {
+		return err
+	}
+	if err := enc.EncodeString("type"); err != nil {
+		return err
+	}
+	if err := enc.EncodeString(actionType); err != nil {
+		return err
+	}
+	if err := enc.EncodeString(variant); err != nil {
+		return err
+	}
+	return enc.Encode(value)
+}
+
+func marshalVariantJSON(actionType, variant string, value any) ([]byte, error) {
+	typeJSON, err := json.Marshal(actionType)
+	if err != nil {
+		return nil, err
+	}
+	variantJSON, err := json.Marshal(variant)
+	if err != nil {
+		return nil, err
+	}
+	valueJSON, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(
+		`{"type":` + string(typeJSON) + `,` + string(variantJSON) + `:` + string(valueJSON) + `}`,
+	), nil
+}
+
+// CSignerAction represents consensus signer action, exactly one variant is set
+// and it is sent with a null value
+//
+//easyjson:skip
+type CSignerAction struct {
+	Type       string
+	UnjailSelf *struct{}
+	JailSelf   *struct{}
+}
+
+func (a CSignerAction) variant() (string, error) {
+	switch {
+	case a.UnjailSelf != nil && a.JailSelf == nil:
+		return "unjailSelf", nil
+	case a.JailSelf != nil && a.UnjailSelf == nil:
+		return "jailSelf", nil
+	}
+	return "", errors.New("CSignerAction needs exactly one variant")
+}
+
+func (a CSignerAction) EncodeMsgpack(enc *msgpack.Encoder) error {
+	variant, err := a.variant()
+	if err != nil {
+		return err
+	}
+	return encodeVariantMsgpack(enc, a.Type, variant, nil)
+}
+
+func (a CSignerAction) MarshalJSON() ([]byte, error) {
+	variant, err := a.variant()
+	if err != nil {
+		return nil, err
+	}
+	return marshalVariantJSON(a.Type, variant, nil)
+}
+
+// CValidatorNodeIp represents the node ip of a validator profile
+type CValidatorNodeIp struct {
+	Ip string `json:"Ip" msgpack:"Ip"`
+}
+
+// CValidatorProfile represents the profile of a validator register
+type CValidatorProfile struct {
+	NodeIp              CValidatorNodeIp `json:"node_ip"              msgpack:"node_ip"`
+	Name                string           `json:"name"                 msgpack:"name"`
+	Description         string           `json:"description"          msgpack:"description"`
+	DelegationsDisabled bool             `json:"delegations_disabled" msgpack:"delegations_disabled"`
+	CommissionBps       int              `json:"commission_bps"       msgpack:"commission_bps"`
+	Signer              string           `json:"signer"               msgpack:"signer"`
+}
+
+// CValidatorRegister represents the register variant of a validator action
+type CValidatorRegister struct {
+	Profile    CValidatorProfile `json:"profile"     msgpack:"profile"`
+	Unjailed   bool              `json:"unjailed"    msgpack:"unjailed"`
+	InitialWei int               `json:"initial_wei" msgpack:"initial_wei"`
+}
+
+// CValidatorChangeProfile represents the changeProfile variant of a validator action,
+// unset fields are sent as null
+type CValidatorChangeProfile struct {
+	NodeIp             *CValidatorNodeIp `json:"node_ip"             msgpack:"node_ip"`
+	Name               *string           `json:"name"                msgpack:"name"`
+	Description        *string           `json:"description"         msgpack:"description"`
+	Unjailed           bool              `json:"unjailed"            msgpack:"unjailed"`
+	DisableDelegations *bool             `json:"disable_delegations" msgpack:"disable_delegations"`
+	CommissionBps      *int              `json:"commission_bps"      msgpack:"commission_bps"`
+	Signer             *string           `json:"signer"              msgpack:"signer"`
+}
+
+// CValidatorAction represents consensus validator action, exactly one variant is set
+//
+//easyjson:skip
+type CValidatorAction struct {
+	Type          string
+	Register      *CValidatorRegister
+	ChangeProfile *CValidatorChangeProfile
+	Unregister    *struct{}
+}
+
+func (a CValidatorAction) variant() (string, any, error) {
+	switch {
+	case a.Register != nil && a.ChangeProfile == nil && a.Unregister == nil:
+		return "register", a.Register, nil
+	case a.ChangeProfile != nil && a.Register == nil && a.Unregister == nil:
+		return "changeProfile", a.ChangeProfile, nil
+	case a.Unregister != nil && a.Register == nil && a.ChangeProfile == nil:
+		return "unregister", nil, nil
+	}
+	return "", nil, errors.New("CValidatorAction needs exactly one variant")
+}
+
+func (a CValidatorAction) EncodeMsgpack(enc *msgpack.Encoder) error {
+	variant, value, err := a.variant()
+	if err != nil {
+		return err
+	}
+	return encodeVariantMsgpack(enc, a.Type, variant, value)
+}
+
+func (a CValidatorAction) MarshalJSON() ([]byte, error) {
+	variant, value, err := a.variant()
+	if err != nil {
+		return nil, err
+	}
+	return marshalVariantJSON(a.Type, variant, value)
+}
+
+// TrailingStopRetracement represents the retracement of a trailing stop, exactly one of
+// Pct or Px is set
+type TrailingStopRetracement struct {
+	Pct string `json:"pct,omitempty" msgpack:"pct,omitempty"`
+	Px  string `json:"px,omitempty"  msgpack:"px,omitempty"`
+}
+
+// TrailingStopAction represents trailing stop action, unset activationPx is sent as null
+type TrailingStopAction struct {
+	Type         string                  `json:"type"         msgpack:"type"`
+	Asset        int                     `json:"asset"        msgpack:"asset"`
+	IsBuy        bool                    `json:"isBuy"        msgpack:"isBuy"`
+	Sz           string                  `json:"sz"           msgpack:"sz"`
+	ReduceOnly   bool                    `json:"reduceOnly"   msgpack:"reduceOnly"`
+	Retracement  TrailingStopRetracement `json:"retracement"  msgpack:"retracement"`
+	ActivationPx *string                 `json:"activationPx" msgpack:"activationPx"`
+}
+
+// TopUpIsolatedOnlyMarginAction represents top up isolated only margin action
+type TopUpIsolatedOnlyMarginAction struct {
+	Type     string `json:"type"     msgpack:"type"`
+	Asset    int    `json:"asset"    msgpack:"asset"`
+	Leverage string `json:"leverage" msgpack:"leverage"`
+}
+
+// NoopAction represents noop action
+type NoopAction struct {
+	Type string `json:"type" msgpack:"type"`
+}
+
+// AgentSetAbstractionAction represents agent set abstraction action, abstraction is i, u or p
+type AgentSetAbstractionAction struct {
+	Type        string `json:"type"        msgpack:"type"`
+	Abstraction string `json:"abstraction" msgpack:"abstraction"`
+}
+
+// GossipPriorityBidAction represents gossip priority bid action
+type GossipPriorityBidAction struct {
+	Type   string `json:"type"   msgpack:"type"`
+	SlotID int    `json:"slotId" msgpack:"slotId"`
+	Ip     string `json:"ip"     msgpack:"ip"`
+	MaxGas int    `json:"maxGas" msgpack:"maxGas"`
+}
+
+// AgentSendAssetAction represents agent send asset action
+type AgentSendAssetAction struct {
+	Type           string `json:"type"           msgpack:"type"`
+	Destination    string `json:"destination"    msgpack:"destination"`
+	SourceDex      string `json:"sourceDex"      msgpack:"sourceDex"`
+	DestinationDex string `json:"destinationDex" msgpack:"destinationDex"`
+	Token          string `json:"token"          msgpack:"token"`
+	Amount         string `json:"amount"         msgpack:"amount"`
+	FromSubAccount string `json:"fromSubAccount" msgpack:"fromSubAccount"`
+	Nonce          int64  `json:"nonce"          msgpack:"nonce"`
+}
+
+// CDeposit2Action represents c deposit 2 action
+type CDeposit2Action struct {
+	Type string `json:"type" msgpack:"type"`
+	Wei  int    `json:"wei"  msgpack:"wei"`
+}
+
+// ClaimRewardsAction represents claim rewards action
+type ClaimRewardsAction struct {
+	Type string `json:"type" msgpack:"type"`
+}
+
+// Hip3LiquidatorTransferAction represents hip3 liquidator transfer action
+type Hip3LiquidatorTransferAction struct {
+	Type      string `json:"type"      msgpack:"type"`
+	Dex       string `json:"dex"       msgpack:"dex"`
+	Ntl       int    `json:"ntl"       msgpack:"ntl"`
+	IsDeposit bool   `json:"isDeposit" msgpack:"isDeposit"`
+}
+
+// UserOutcomeAction represents user outcome action, with one variant set
+type UserOutcomeAction struct {
+	Type          string               `json:"type"                    msgpack:"type"`
+	SplitOutcome  *SplitOutcomeAction  `json:"splitOutcome,omitempty"  msgpack:"splitOutcome,omitempty"`
+	MergeOutcome  *MergeOutcomeAction  `json:"mergeOutcome,omitempty"  msgpack:"mergeOutcome,omitempty"`
+	MergeQuestion *MergeQuestionAction `json:"mergeQuestion,omitempty" msgpack:"mergeQuestion,omitempty"`
+	NegateOutcome *NegateOutcomeAction `json:"negateOutcome,omitempty" msgpack:"negateOutcome,omitempty"`
+}
+
+// SplitOutcomeAction represents the split outcome variant of user outcome action
+type SplitOutcomeAction struct {
+	Outcome int    `json:"outcome" msgpack:"outcome"`
+	Amount  string `json:"amount"  msgpack:"amount"`
+}
+
+// MergeOutcomeAction represents the merge outcome variant of user outcome action
+type MergeOutcomeAction struct {
+	Outcome int     `json:"outcome" msgpack:"outcome"`
+	Amount  *string `json:"amount"  msgpack:"amount"`
+}
+
+// MergeQuestionAction represents the merge question variant of user outcome action
+type MergeQuestionAction struct {
+	Question int     `json:"question" msgpack:"question"`
+	Amount   *string `json:"amount"   msgpack:"amount"`
+}
+
+// NegateOutcomeAction represents the negate outcome variant of user outcome action
+type NegateOutcomeAction struct {
+	Question int    `json:"question" msgpack:"question"`
+	Outcome  int    `json:"outcome"  msgpack:"outcome"`
+	Amount   string `json:"amount"   msgpack:"amount"`
+}
+
+// AuthorizeAqav2RoleAction represents authorize aqav2 role action
+type AuthorizeAqav2RoleAction struct {
+	Type  string `json:"type"  msgpack:"type"`
+	Token int    `json:"token" msgpack:"token"`
+	Role  string `json:"role"  msgpack:"role"`
+}
+
+// ValidatorL1StreamAction represents validator L1 stream action
+type ValidatorL1StreamAction struct {
+	Type         string `json:"type"         msgpack:"type"`
+	RiskFreeRate string `json:"riskFreeRate" msgpack:"riskFreeRate"`
 }

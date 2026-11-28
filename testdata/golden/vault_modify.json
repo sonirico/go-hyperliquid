@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "vaultModify",
+    "vaultAddress": "0x1111111111111111111111111111111111111111",
+    "allowDeposits": true,
+    "alwaysCloseOnWithdraw": false
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x42d9f90d4d509b1447782a7419afe3d1157e7c52b25ab4c446f45beff50c6d82",
+    "s": "0x1ab2a30059e34de44672286aede575b1d43e8fcf648e7fd126f0cc3e8cf67e97",
+    "v": 28
+  }
+}

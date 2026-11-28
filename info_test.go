@@ -24,11 +24,11 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.NotNil(t, res)
 	require.NotNil(
 		t,
-		res.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		res.Meta.Universe,
 	)
 	require.NotNil(
 		t,
-		res.Meta.MarginTables, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+		res.Meta.MarginTables,
 	)
 	require.NotNil(t, res.Ctxs)
 
@@ -36,7 +36,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.Greater(
 		t,
 		len(
-			res.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+			res.Meta.Universe,
 		),
 		0,
 	)
@@ -44,7 +44,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 
 	// Test specific known assets from the cassette data
 	var btcFound, ethFound bool
-	for _, asset := range res.Meta.Universe { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+	for _, asset := range res.Meta.Universe {
 		if asset.Name == "BTC" {
 			btcFound = true
 			require.Equal(t, 5, asset.SzDecimals)
@@ -65,7 +65,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.Greater(
 		t,
 		len(
-			res.Meta.MarginTables, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+			res.Meta.MarginTables,
 		),
 		0,
 	)
@@ -75,7 +75,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.Greater(t, len(res.Meta.MarginTables[0].MarginTiers), 0)
 
 	// Test specific margin table structure
-	for _, marginTable := range res.Meta.MarginTables { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+	for _, marginTable := range res.Meta.MarginTables {
 		require.NotNil(t, marginTable)
 		require.Greater(t, len(marginTable.MarginTiers), 0)
 		for _, tier := range marginTable.MarginTiers {
@@ -96,7 +96,7 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.Greater(
 		t,
 		len(
-			res2.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+			res2.Meta.Universe,
 		),
 		0,
 	)
@@ -110,14 +110,14 @@ func TestMetaAndAssetCtxs(t *testing.T) {
 	require.Greater(
 		t,
 		len(
-			res3.Meta.Universe, //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+			res3.Meta.Universe,
 		),
 		0,
 	)
 	require.Greater(t, len(res3.Ctxs), 0)
 
 	var xyzTslaFound bool
-	for _, asset := range res3.Meta.Universe { //nolint:staticcheck // Meta is embedded, but explicit access is clearer
+	for _, asset := range res3.Meta.Universe {
 		if asset.Name == "xyz:TSLA" {
 			xyzTslaFound = true
 			require.Equal(t, 3, asset.SzDecimals)
@@ -459,7 +459,14 @@ func TestQueryOrderByOid(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -577,7 +584,14 @@ func TestUserFillsByTime(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -671,7 +685,14 @@ func TestSpotUserState(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}
@@ -747,7 +768,14 @@ func TestUserActiveAssetData(t *testing.T) {
 
 			var infoInstance *Info
 			if tc.useTestnet {
-				infoInstance = NewInfo(context.TODO(), TestnetAPIURL, true, &Meta{}, &SpotMeta{}, nil)
+				infoInstance = NewInfo(
+					context.TODO(),
+					TestnetAPIURL,
+					true,
+					&Meta{},
+					&SpotMeta{},
+					nil,
+				)
 			} else {
 				infoInstance = info
 			}

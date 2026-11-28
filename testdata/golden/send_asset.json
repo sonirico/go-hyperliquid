@@ -1,0 +1,59 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "sendAsset",
+    "destination": "0x1111111111111111111111111111111111111111",
+    "sourceDex": "",
+    "destinationDex": "spot",
+    "token": "USDC:0x6d1e7cde53ba9467b783cb7c530ce054",
+    "amount": "1.5",
+    "fromSubAccount": "",
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:SendAsset",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "destination",
+      "type": "string"
+    },
+    {
+      "name": "sourceDex",
+      "type": "string"
+    },
+    {
+      "name": "destinationDex",
+      "type": "string"
+    },
+    {
+      "name": "token",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "fromSubAccount",
+      "type": "string"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xb9cb910fd74723bf116bca91af43cf53ff065c68c58c249ec0e451e0c3dab94d",
+    "s": "0x63b797a66d3d3d7b5b6a0514840a01f00c4daeb29a6a6726495bce7271ee7ded",
+    "v": 27
+  }
+}

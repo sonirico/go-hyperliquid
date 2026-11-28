@@ -1,0 +1,28 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "vaultDistribute",
+    "vaultAddress": "0x1111111111111111111111111111111111111111",
+    "usd": 1000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xb1beb5079930e4dea4f228d0a4825103261f5a8ecd678ae300d5a378cd550402",
+    "s": "0xbf16fd75a1a6daba8b32b0c39ef3245710d68d0d71d00cda6ccd088b3a8a8",
+    "v": 27
+  }
+}

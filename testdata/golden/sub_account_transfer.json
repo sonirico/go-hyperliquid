@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "subAccountTransfer",
+    "subAccountUser": "0x1111111111111111111111111111111111111111",
+    "isDeposit": true,
+    "usd": 1000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x167c1a97b6e65a2b267c589aab93db4a7f77742a8d040e006eb5d9da1ea7954b",
+    "s": "0x44c1e49f9f303d64f6f26236d2c99b2b7f7a2c60d56bdc9caf68b6381453280a",
+    "v": 27
+  }
+}

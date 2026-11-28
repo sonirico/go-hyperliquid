@@ -1,0 +1,41 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "userGenesis": {
+      "token": 1,
+      "userAndWei": [
+        [
+          "0x1111111111111111111111111111111111111111",
+          "100"
+        ]
+      ],
+      "existingTokenAndWei": [
+        [
+          0,
+          "50"
+        ]
+      ]
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xd31006a517f31855ae2df6fd2864d0500495daac201f0e49ed23b31feb2821eb",
+    "s": "0x546978aa4be415206179803b0bcc1c2c357f4f7ab3cb03ca1ad48803d5b763b3",
+    "v": 28
+  }
+}

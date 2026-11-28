@@ -3,13 +3,17 @@ package hyperliquid
 import (
 	"bytes"
 	"encoding/hex"
+	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/vmihailenco/msgpack/v5"
 )
 
 func TestSignL1Action(t *testing.T) {
@@ -278,7 +282,7 @@ func TestDebugActionHash(t *testing.T) {
 				},
 			},
 		}},
-		Grouping: "na",
+		Grouping: NewOrderGroupingNA(),
 	}
 
 	privateKey, _ := crypto.HexToECDSA(
@@ -290,7 +294,8 @@ func TestDebugActionHash(t *testing.T) {
 	isMainnet := false
 
 	// Debug: Print action hash components
-	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	hash, err := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	require.NoError(t, err)
 	t.Logf("Action hash: %x", hash)
 
 	// Debug: Print phantom agent
@@ -310,108 +315,9 @@ func TestDebugActionHash(t *testing.T) {
 	t.Logf("Generated signature: R=%s, S=%s, V=%d", signature.R, signature.S, signature.V)
 }
 
-// TestConvertStr16ToStr8_Uint64ContainingDA verifies that a uint64 value whose
-// big-endian representation contains 0xda (the str16 marker) is NOT corrupted.
-// order_id 361731063972 == 0x00_00_00_54_38_DA_00_A4; the old naive scanner
-// would match the embedded 0xda and destroy the payload.
-func TestConvertStr16ToStr8_Uint64ContainingDA(t *testing.T) {
-	action := CancelAction{
-		Type: "cancel",
-		Cancels: []CancelOrderWire{
-			{Asset: 0, OrderID: 361731063972},
-		},
-	}
-
-	var buf bytes.Buffer
-	enc := msgpack.NewEncoder(&buf)
-	enc.UseCompactInts(true)
-	err := enc.Encode(action)
-	require.NoError(t, err)
-
-	original := buf.Bytes()
-	converted := convertStr16ToStr8(original)
-
-	assert.Equal(t, original, converted,
-		"payload with uint64 containing 0xda byte must not be mutated; "+
-			"original=%s converted=%s",
-		hex.EncodeToString(original), hex.EncodeToString(converted))
-}
-
-// TestConvertStr16ToStr8_LegitimateStr16 verifies that a genuine str16-encoded
-// string (32-255 bytes) is correctly down-converted to str8, preserving the
-// Python-compatible compact encoding.
-func TestConvertStr16ToStr8_LegitimateStr16(t *testing.T) {
-	// Build a string of 100 bytes — short enough to fit in str8 but long
-	// enough that msgpack's str16 format kicks in when UseCompactInts isn't
-	// enough. We force str16 by manually constructing the payload.
-	payload := strings.Repeat("A", 100)
-
-	// Hand-craft a str16 encoding: 0xda + 2-byte big-endian length + data
-	str16 := []byte{0xda, 0x00, byte(len(payload))}
-	str16 = append(str16, []byte(payload)...)
-
-	converted := convertStr16ToStr8(str16)
-
-	// Expected: str8 encoding: 0xd9 + 1-byte length + data
-	expected := []byte{0xd9, byte(len(payload))}
-	expected = append(expected, []byte(payload)...)
-
-	assert.Equal(t, expected, converted,
-		"str16 with length < 256 must be converted to str8")
-}
-
-// TestConvertStr16ToStr8_NoMutation verifies that payloads without any 0xda
-// bytes pass through completely unchanged.
-func TestConvertStr16ToStr8_NoMutation(t *testing.T) {
-	// A simple fixmap with short fixstr keys and small integer values.
-	// No 0xda bytes anywhere in this payload.
-	action := map[string]int{"x": 1, "y": 2}
-
-	var buf bytes.Buffer
-	enc := msgpack.NewEncoder(&buf)
-	enc.UseCompactInts(true)
-	enc.SetSortMapKeys(true) // deterministic key order for assertion
-	err := enc.Encode(action)
-	require.NoError(t, err)
-
-	original := buf.Bytes()
-
-	// Sanity: confirm there's no 0xda in the raw payload
-	assert.False(t, bytes.Contains(original, []byte{0xda}),
-		"test precondition: payload should not contain 0xda")
-
-	converted := convertStr16ToStr8(original)
-	assert.Equal(t, original, converted,
-		"payload without 0xda must not be modified")
-}
-
-// TestConvertStr16ToStr8_NestedContainers verifies that str16 values nested
-// inside maps and arrays are correctly converted.
-func TestConvertStr16ToStr8_NestedContainers(t *testing.T) {
-	longStr := strings.Repeat("B", 200) // 200 bytes — fits in str8
-
-	// Hand-craft: fixarray(1) -> fixmap(1) -> fixstr key "k" -> str16 value
-	//
-	// fixarray of 1 element: 0x91
-	// fixmap of 1 pair:      0x81
-	// fixstr "k" (len 1):    0xa1 0x6b
-	// str16 of 200 bytes:    0xda 0x00 0xc8 + 200 bytes
-	input := []byte{0x91, 0x81, 0xa1, 0x6b, 0xda, 0x00, 0xc8}
-	input = append(input, []byte(longStr)...)
-
-	// Expected: same structure but str16 -> str8
-	expected := []byte{0x91, 0x81, 0xa1, 0x6b, 0xd9, 0xc8}
-	expected = append(expected, []byte(longStr)...)
-
-	converted := convertStr16ToStr8(input)
-	assert.Equal(t, expected, converted,
-		"str16 nested inside array -> map must be converted to str8")
-}
-
 // TestActionHash_CancelWithLargeOrderID verifies that actionHash produces a
-// stable (idempotent) hash for a CancelAction containing order_id 361731063972
-// whose uint64 encoding embeds 0xda. The hash must remain identical across
-// repeated calls and must not change when convertStr16ToStr8 is applied twice.
+// stable hash for a CancelAction containing order_id 361731063972 whose uint64
+// encoding embeds 0xda. The hash must remain identical across repeated calls.
 func TestActionHash_CancelWithLargeOrderID(t *testing.T) {
 	action := CancelAction{
 		Type: "cancel",
@@ -423,25 +329,13 @@ func TestActionHash_CancelWithLargeOrderID(t *testing.T) {
 	nonce := int64(1703001234567)
 	var expiresAfter *int64
 
-	hash1 := actionHash(action, vaultAddress, nonce, expiresAfter)
-	hash2 := actionHash(action, vaultAddress, nonce, expiresAfter)
+	hash1, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	require.NoError(t, err)
+	hash2, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	require.NoError(t, err)
 
 	assert.Equal(t, hash1, hash2,
 		"actionHash must be deterministic across repeated calls")
-
-	// Double-application test: encode, convert once, convert again — result
-	// must be identical to single conversion (idempotency).
-	var buf bytes.Buffer
-	enc := msgpack.NewEncoder(&buf)
-	enc.UseCompactInts(true)
-	err := enc.Encode(action)
-	require.NoError(t, err)
-
-	once := convertStr16ToStr8(buf.Bytes())
-	twice := convertStr16ToStr8(once)
-
-	assert.Equal(t, once, twice,
-		"convertStr16ToStr8 must be idempotent — double application must not change output")
 
 	// Verify the hash is non-zero / non-trivial
 	assert.Len(t, hash1, 32, "keccak256 hash must be 32 bytes")
@@ -463,6 +357,8 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 		destination = "0x5e9ee1089755c3435139848e47e6635505d5a13a"
 		timestamp   = int64(1687816341423)
 	)
+
+	golden := loadTestGoldenFiles(t)
 
 	tests := []struct {
 		name string
@@ -506,7 +402,12 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 			name: "spotSend",
 			sign: func() (SignatureResult, error) {
 				return SignSpotTransferAction(
-					privateKey, 1, destination, "PURR:0xc4bf3f870c0e9465323c0b6ed28096c2", timestamp, false,
+					privateKey,
+					1,
+					destination,
+					"PURR:0xc4bf3f870c0e9465323c0b6ed28096c2",
+					timestamp,
+					false,
 				)
 			},
 			want: SignatureResult{
@@ -526,6 +427,39 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 				V: 27,
 			},
 		},
+		{
+			name: "tokenDelegate",
+			sign: func() (SignatureResult, error) {
+				return SignTokenDelegateAction(
+					privateKey,
+					goldenOther,
+					100000000,
+					false,
+					goldenNonce,
+					false,
+				)
+			},
+			want: golden["token_delegate"].Signature,
+		},
+		{
+			name: "approveBuilderFee",
+			sign: func() (SignatureResult, error) {
+				return SignApproveBuilderFee(privateKey, goldenOther, "0.001%", goldenNonce, false)
+			},
+			want: golden["approve_builder_fee"].Signature,
+		},
+		{
+			name: "convertToMultiSigUser",
+			sign: func() (SignatureResult, error) {
+				return SignConvertToMultiSigUserAction(
+					privateKey,
+					`{"authorizedUsers":["`+goldenOther+`"],"threshold":1}`,
+					goldenNonce,
+					false,
+				)
+			},
+			want: golden["convert_to_multi_sig_user"].Signature,
+		},
 	}
 
 	for _, tt := range tests {
@@ -533,6 +467,181 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 			got, err := tt.sign()
 			require.NoError(t, err)
 			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestSignL1Action_Errors(t *testing.T) {
+	privateKey, err := crypto.HexToECDSA(goldenKey)
+	require.NoError(t, err)
+
+	type testCase struct {
+		name   string
+		action any
+		vault  string
+	}
+
+	testCases := []testCase{
+		{"unencodable action", map[string]any{"type": "x", "ch": make(chan int)}, ""},
+		{"invalid vault address", ScheduleCancelAction{Type: "scheduleCancel"}, "0xzz"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var signErr error
+
+			require.NotPanics(t, func() {
+				_, signErr = SignL1Action(privateKey, tc.action, tc.vault, goldenNonce, nil, false)
+			})
+
+			require.Error(t, signErr)
+		})
+	}
+}
+
+func TestActionHash_StringLengths(t *testing.T) {
+	type stringAction struct {
+		Type string `msgpack:"type"`
+		S    string `msgpack:"s"`
+	}
+
+	type testCase struct {
+		length int
+		want   string
+	}
+
+	testCases := []testCase{
+		{31, "8990311da53cec86e043b70a119e2551c8bccd94621b8f4515199cad1e1cc25e"},
+		{32, "8c15c0929a7153e88658a669988012a1643278841ced5e9058a4fc6921cfae0f"},
+		{255, "12dd929de28b6c4317625693dc0a88284f79e952df4624b0a5e800e72f6c7371"},
+		{256, "05518d2798201cb64642268f10b6dbfa49134cc0edc3c3685ea8988a3920a5b3"},
+		{65535, "c3daac5955d48dacfead4ce436bb75ab8fe41fa771d0e894acf654c241067ddf"},
+		{65536, "a8fe998805f978fcd05c87030c2ff4f034d72b85b6d9d33d73bef1655c2e3a3b"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(fmt.Sprintf("length_%d", tc.length), func(t *testing.T) {
+			t.Parallel()
+			action := stringAction{Type: "x", S: strings.Repeat("a", tc.length)}
+
+			got, err := actionHash(action, "", goldenNonce, nil)
+
+			require.NoError(t, err)
+			require.Equal(t, tc.want, hex.EncodeToString(got))
+		})
+	}
+}
+
+func TestFloatToUsdInt(t *testing.T) {
+	type testCase struct {
+		name  string
+		value float64
+		want  int
+	}
+
+	tests := []testCase{
+		{name: "2.01", value: 2.01, want: 2010000},
+		{name: "2.03", value: 2.03, want: 2030000},
+		{name: "2.05", value: 2.05, want: 2050000},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := FloatToUsdInt(tc.value)
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
+func isMapStringAnyType(expr ast.Expr) bool {
+	mapType, ok := expr.(*ast.MapType)
+	if !ok {
+		return false
+	}
+	key, ok := mapType.Key.(*ast.Ident)
+	if !ok || key.Name != "string" {
+		return false
+	}
+	switch value := mapType.Value.(type) {
+	case *ast.Ident:
+		return value.Name == "any"
+	case *ast.InterfaceType:
+		return len(value.Methods.List) == 0
+	}
+	return false
+}
+
+func mapActionIdents(fn *ast.FuncDecl) map[string]bool {
+	maps := make(map[string]bool)
+	ast.Inspect(fn, func(n ast.Node) bool {
+		switch node := n.(type) {
+		case *ast.AssignStmt:
+			for i, rhs := range node.Rhs {
+				lit, ok := rhs.(*ast.CompositeLit)
+				if !ok || !isMapStringAnyType(lit.Type) || i >= len(node.Lhs) {
+					continue
+				}
+				if ident, ok := node.Lhs[i].(*ast.Ident); ok {
+					maps[ident.Name] = true
+				}
+			}
+		case *ast.ValueSpec:
+			if !isMapStringAnyType(node.Type) {
+				return true
+			}
+			for _, name := range node.Names {
+				maps[name.Name] = true
+			}
+		}
+		return true
+	})
+	return maps
+}
+
+func TestNoMapL1Actions(t *testing.T) {
+	files, err := filepath.Glob("exchange*.go")
+	require.NoError(t, err)
+	require.NotEmpty(t, files)
+
+	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
+		t.Run(file, func(t *testing.T) {
+			t.Parallel()
+			fset := token.NewFileSet()
+			parsed, err := parser.ParseFile(fset, file, nil, 0)
+			require.NoError(t, err)
+
+			for _, decl := range parsed.Decls {
+				fn, ok := decl.(*ast.FuncDecl)
+				if !ok || fn.Body == nil {
+					continue
+				}
+				maps := mapActionIdents(fn)
+				ast.Inspect(fn, func(n ast.Node) bool {
+					call, ok := n.(*ast.CallExpr)
+					if !ok {
+						return true
+					}
+					sel, ok := call.Fun.(*ast.SelectorExpr)
+					if !ok || (sel.Sel.Name != "signL1Action" && sel.Sel.Name != "SignL1Action") {
+						return true
+					}
+					for _, arg := range call.Args {
+						switch a := arg.(type) {
+						case *ast.Ident:
+							assert.False(t, maps[a.Name], "%s: %s passes map %s to %s", fset.Position(a.Pos()), fn.Name.Name, a.Name, sel.Sel.Name)
+						case *ast.CompositeLit:
+							assert.False(t, isMapStringAnyType(a.Type), "%s: %s passes a map literal to %s", fset.Position(a.Pos()), fn.Name.Name, sel.Sel.Name)
+						}
+					}
+					return true
+				})
+			}
 		})
 	}
 }

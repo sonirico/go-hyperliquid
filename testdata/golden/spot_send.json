@@ -1,0 +1,44 @@
+{
+  "kind": "user",
+  "action": {
+    "destination": "0x1111111111111111111111111111111111111111",
+    "amount": "1.5",
+    "token": "USDC:0x6d1e7cde53ba9467b783cb7c530ce054",
+    "time": 1700000000000,
+    "type": "spotSend",
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:SpotSend",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "destination",
+      "type": "string"
+    },
+    {
+      "name": "token",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "time",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0x94250790900f2fda130b75e165e00fb5401075868c477e5443ad4db0a004aa89",
+    "s": "0x454f4346150ac2ea6858e2bebd4fc0a181a081afd61e81bb4ba8660fc6702cbe",
+    "v": 28
+  }
+}

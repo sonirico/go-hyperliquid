@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "CSignerAction",
+    "unjailSelf": null
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xa106604a42265d6415b987a87960a72778c00504d15fb326704b5ea3e24559ed",
+    "s": "0x466129d4b6ad1e6b47681b3d1ad07cd506a7087f4e31b5321ea15c2209232cf5",
+    "v": 27
+  }
+}

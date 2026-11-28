@@ -1,0 +1,32 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setMarginTableIds": [
+      [
+        "test:X",
+        10
+      ]
+    ]
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x128ff3394cc115f3ec91dbee98bde85a76c9f05cf661473dda1200d890bfc98c",
+    "s": "0x6729ae4b4578e8191e17b4acd45d19655f7e24d35db6571953fb64fe069512db",
+    "v": 27
+  }
+}

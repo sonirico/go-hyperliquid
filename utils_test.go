@@ -67,7 +67,7 @@ func TestParseFloatStrict(t *testing.T) {
 	for _, s := range []string{"", "abc", "1.2.3", "NaNaN", "0x10", " "} {
 		_, err := parseFloatStrict(s)
 		assert.Error(t, err, "input %q must be rejected", s)
-		// Document the dangerous legacy behaviour the strict variant guards against.
+		// Document the dangerous legacy behavior the strict variant guards against.
 		assert.Equal(t, 0.0, parseFloat(s), "parseFloat silently returns 0 for %q", s)
 	}
 }

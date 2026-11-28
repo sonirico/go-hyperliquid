@@ -1,0 +1,28 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "authorizeAqav2Role",
+    "token": 1,
+    "role": "technical"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x5f3ae9187751e0dcafb6a69c6444fff25bbb1154334f03b11ff768025cd75690",
+    "s": "0x26f896b4dd77099a19187ffaf2f0e90b6625e6284cc096aa626cdb4f17233d8c",
+    "v": 28
+  }
+}

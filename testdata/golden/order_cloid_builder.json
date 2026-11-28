@@ -1,0 +1,46 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "order",
+    "orders": [
+      {
+        "a": 0,
+        "b": true,
+        "p": "50000",
+        "s": "0.001",
+        "r": false,
+        "t": {
+          "limit": {
+            "tif": "Gtc"
+          }
+        },
+        "c": "0x00000000000000000000000000000001"
+      }
+    ],
+    "grouping": "na",
+    "builder": {
+      "b": "0x1111111111111111111111111111111111111111",
+      "f": 10
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xdc0ad6583a0f9325335b78a87d42b3263c5a07ad838c019f43f979af1b62efe9",
+    "s": "0xe54b73700dc42e3f78933232a03deaa0635e6197e63b70cf38d329816be99d3",
+    "v": 27
+  }
+}

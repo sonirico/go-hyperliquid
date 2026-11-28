@@ -1,0 +1,32 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "cancelByCloid",
+    "cancels": [
+      {
+        "asset": 0,
+        "cloid": "0x00000000000000000000000000000001"
+      }
+    ]
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x2cd955fece7370ae4966770d9cc84dd210fdb0be55c76990dac1052e9cd76545",
+    "s": "0x184f430d6943231a58efaf738b7f8fe0f67bf33bf953f14292549e5fffe91759",
+    "v": 27
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setSubDeployers": {
+      "dex": "test",
+      "subDeployers": [
+        {
+          "variant": "setOracle",
+          "user": "0x1111111111111111111111111111111111111111",
+          "allowed": true
+        }
+      ]
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x81813e553474bf10396b67a2ad2125d6f5202d41facc7c58f25f1c1fc1a6927c",
+    "s": "0x52b39b8a6e341b003a2d7448eb694d406f2b1b62a2887172b6c1c3573745ee21",
+    "v": 27
+  }
+}

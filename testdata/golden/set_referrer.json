@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "setReferrer",
+    "code": "ABC"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xbe19fa3d2eed1f7099647fea936734ba0522e827241f1cfcf734f8294d5a107c",
+    "s": "0x5e27c5b95392521a5a119fd6ec4705c0ffe3a2f26cd413c36dca1778f3595604",
+    "v": 27
+  }
+}

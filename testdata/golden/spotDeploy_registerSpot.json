@@ -1,0 +1,32 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "registerSpot": {
+      "tokens": [
+        1,
+        0
+      ]
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x930469953c13acaa7f09bfd44de41723807ca2337b42389115e0f0e129d7c973",
+    "s": "0x5d6a47b7d2f9795200b13ab8e6c6b8f80cd2a94300778a86b12273b2aa49164b",
+    "v": 27
+  }
+}

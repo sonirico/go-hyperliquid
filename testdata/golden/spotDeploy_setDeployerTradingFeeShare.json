@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "setDeployerTradingFeeShare": {
+      "token": 1,
+      "share": "50%"
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x6399ab5550ab88489acac3a15e00a869b0363a798198d10fcd421653d046d30f",
+    "s": "0x2d0252ced718738b17dfa1f565d5f562fb25c58fa0bd5bb7a96906292c173de6",
+    "v": 28
+  }
+}

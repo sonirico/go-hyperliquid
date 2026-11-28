@@ -1,0 +1,38 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "registerAsset": {
+      "maxGas": 1000000,
+      "assetRequest": {
+        "coin": "test:X",
+        "szDecimals": 2,
+        "oraclePx": "10.0",
+        "marginTableId": 10,
+        "onlyIsolated": false
+      },
+      "dex": "test",
+      "schema": null
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x3b30f51b61c1f7670d791a4ada2f058f5a254d50e11c9b8c61172df2a300b34f",
+    "s": "0x2cdca9d6cd2d201b87fc7ffe9f7ee203d278bfc2c98030c31155a010ae90f449",
+    "v": 27
+  }
+}

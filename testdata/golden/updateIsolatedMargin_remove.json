@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "updateIsolatedMargin",
+    "asset": 0,
+    "isBuy": true,
+    "ntli": -1500000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xffcb269632c50fbbac2756597b5fe8c888ec33257cc609b47ff61d848b57cf4f",
+    "s": "0x4fdb079ac57e3548f3f0d4db030aa52e0172303e191bde3f7f11d4aa4e216814",
+    "v": 28
+  }
+}

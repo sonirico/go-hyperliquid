@@ -27,6 +27,8 @@ This Go SDK provides **full feature parity** with the official Python SDK, inclu
 - **Advanced Trading**: Market open/close with slippage protection, scheduled cancellations
 - **TWAP Orders**: Place and cancel TWAP orders
 - **Builder Support**: Order routing through builders with fee structures
+- **Order Grouping**: `na`, `normalTpsl`, `positionTpsl` and priority grouping through `OrderGrouping`
+- **Trailing Stops**: `TrailingStop`, `TopUpIsolatedOnlyMargin`
 
 ### Account Management
 
@@ -38,9 +40,10 @@ This Go SDK provides **full feature parity** with the official Python SDK, inclu
 ### Asset Management
 
 - **USD Transfers**: Cross-chain USD transfers, spot transfers
-- **Class Transfers**: USD class transfers (perp ↔ spot), perp dex transfers
+- **Class Transfers**: USD class transfers (perp ↔ spot)
 - **Bridge Operations**: Withdraw from bridge with fee management
-- **Token Delegation**: Stake tokens with validators
+- **Token Delegation**: Stake tokens with validators, `CDeposit`, `CWithdraw`, `CDeposit2`, `ClaimRewards`
+- **Asset Sends**: `SendAsset`, `AgentSendAsset`, `Hip3LiquidatorTransfer`
 - **Spot Trading**: Full spot market support
 
 ### Advanced Features
@@ -48,24 +51,53 @@ This Go SDK provides **full feature parity** with the official Python SDK, inclu
 - **Agent Approval**: Approve trading agents with permissions
 - **Builder Fee Management**: Approve and manage builder fees
 - **Big Blocks**: Enable/disable big block usage
+- **Account Abstraction**: `UserSetAbstraction`, `AgentSetAbstraction`
+- **Outcome Markets**: `UserOutcomeSplit`, `UserOutcomeMerge`, `UserOutcomeMergeQuestion`, `UserOutcomeNegate`, `AuthorizeAqav2Role`
+- **Misc Actions**: `Noop`, `GossipPriorityBid`
 
 ### Deployment Features (Advanced)
 
-- **Spot Deployment**: Token registration, genesis, freeze privileges
-- **Perp Deployment**: Asset registration, oracle management
+- **Spot Deployment**: Token registration, genesis, freeze privileges, `SpotDeployEnableQuoteToken`
+- **Perp Deployment**: Asset registration, oracle management, `PerpDeploySetFeeRecipient`, `PerpDeployDisableDex`, `PerpDeploySetSubDeployers`, `PerpDeploySetFundingMultipliers`, `PerpDeploySetFundingInterestRates`, `PerpDeploySetFundingClamps`, `PerpDeployInsertMarginTable`, `PerpDeploySetMarginTableIds`, `PerpDeploySetOpenInterestCaps`, `PerpDeploySetMarginModes`, `PerpDeploySetDeployerFees`, `PerpDeploySetPerpAnnotation`
 - **Hyperliquidity**: Register hyperliquidity assets
 
 ### Consensus Layer (Validators)
 
 - **Validator Operations**: Register, unregister, profile management
 - **Signer Operations**: Jail/unjail self, inner actions
-- **Consensus Actions**: Full consensus layer interaction
+- **Consensus Actions**: Full consensus layer interaction, `ValidatorL1Stream`
 
 ### WebSocket Features
 
 - **Market Data**: Real-time L2 book, trades, candles, mid prices
-- **User Events**: Order updates, fills, funding, ledger updates
-- **Advanced Streams**: BBO, active asset context, web data v2
+- **User Events**: Order updates, fills, funding, ledger updates, `UserEvents`, `UserFundings`, `UserNonFundingLedgerUpdates`, `UserTwapSliceFills`, `UserTwapHistory`
+- **Account Streams**: `SpotState`, `AllDexsClearinghouseState`, `ActiveAssetData`, `OutcomeMetaUpdates`
+- **Advanced Streams**: BBO, active asset context, web data v3, `L2`, `Pac`, `Sac`
+- **Post Requests**: `WebsocketClient.Post` sends `info` and `action` requests over the websocket
+
+### Info Queries
+
+- **Staking and TWAP**: `DelegatorHistory`, `UserTwapSliceFills`
+- **Spot and Borrow/Lend**: `SpotDeployState`, `SpotPairDeployAuctionStatus`, `BorrowLendReserveState`
+- **Outcomes**: `OutcomeDeployerLimits`, `OutcomeTemplates`, `SettledOutcome`
+- **Perps**: `PerpAnnotation`, `PerpCategories`, `PerpConciseAnnotations`, `PerpsAtOpenInterestCap`
+
+### Breaking changes
+
+Signatures and types changed to match the API wire format:
+
+- `BulkOrders` takes a trailing `grouping OrderGrouping`; pass `NewOrderGroupingNA()` for the previous behavior
+- `SpotDeployUserGenesis`, `SpotDeployEnableFreezePrivilege`, `SpotDeployFreezeUser`, `SpotDeployRevokeFreezePrivilege`, `SpotDeployGenesis`, `SpotDeployRegisterSpot`, `SpotDeployRegisterHyperliquidity` and `SpotDeploySetDeployerTradingFeeShare` take the same fields as the API (token index, wire strings) instead of maps and addresses
+- `CValidatorRegister` and `CValidatorChangeProfile` take typed parameters instead of a `map[string]any`
+- `CSignerInner` is removed; `CSignerJailSelf` and `CSignerUnjailSelf` use `CSignerAction`
+- `MultiSig` takes `multiSigUser`, `action any`, `signatures []SignatureResult` and `nonce`
+- `Info.QueryUserToMultiSigSigners` returns `*MultiSigSigner` (fields `AuthorizedUsers`, `Threshold`) instead of a slice
+- `SubAccount` has the fields `Name`, `SubAccountUser`, `Master`, `ClearinghouseState`, `SpotState`
+- `ReferralState` has the fields of the API response
+- The websocket `OpenOrders` message carries `[]FrontendOpenOrder` instead of `[]WsBasicOrder`
+- The `webData2` websocket subscription and the `WebData2` types are removed; use `WebData3`
+- `PerpDexClassTransfer`, `SignPerpDexClassTransferAction`, `UserDexAbstraction` and `QueryUserDexAbstractionState` are removed; use `UserSetAbstraction`
+- `SignTokenDelegateAction`, `SignApproveBuilderFee`, `SignConvertToMultiSigUserAction` and `SignMultiSigAction` take the fields the API signs (see their signatures)
 
 ## Usage
 

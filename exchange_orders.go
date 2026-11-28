@@ -84,6 +84,7 @@ func newCreateOrderAction(
 	e *Exchange,
 	orders []CreateOrderRequest,
 	info *BuilderInfo,
+	grouping OrderGrouping,
 ) (OrderAction, error) {
 	orderRequests := make([]OrderWire, len(orders))
 	for i, order := range orders {
@@ -129,7 +130,7 @@ func newCreateOrderAction(
 	res := OrderAction{
 		Type:     "order",
 		Orders:   orderRequests,
-		Grouping: string(GroupingNA),
+		Grouping: grouping,
 		Builder:  info,
 	}
 
@@ -141,7 +142,7 @@ func (e *Exchange) Order(
 	req CreateOrderRequest,
 	builder *BuilderInfo,
 ) (result OrderStatus, err error) {
-	resp, err := e.BulkOrders(ctx, []CreateOrderRequest{req}, builder)
+	resp, err := e.BulkOrders(ctx, []CreateOrderRequest{req}, builder, NewOrderGroupingNA())
 	if err != nil {
 		return
 	}
@@ -164,8 +165,9 @@ func (e *Exchange) BulkOrders(
 	ctx context.Context,
 	orders []CreateOrderRequest,
 	builder *BuilderInfo,
+	grouping OrderGrouping,
 ) (result *APIResponse[OrderResponse], err error) {
-	action, err := newCreateOrderAction(e, orders, builder)
+	action, err := newCreateOrderAction(e, orders, builder, grouping)
 	if err != nil {
 		return nil, err
 	}
@@ -225,20 +227,6 @@ func newModifyOrderAction(
 		return ModifyAction{}, fmt.Errorf("failed to wire size: %w", err)
 	}
 
-	// Build order type map with proper field ordering
-	orderTypeMap := make(map[string]any)
-	if modifyRequest.Order.OrderType.Limit != nil {
-		orderTypeMap["limit"] = map[string]any{
-			"tif": modifyRequest.Order.OrderType.Limit.Tif,
-		}
-	} else if modifyRequest.Order.OrderType.Trigger != nil {
-		orderTypeMap["trigger"] = map[string]any{
-			"triggerPx": modifyRequest.Order.OrderType.Trigger.TriggerPx,
-			"isMarket":  modifyRequest.Order.OrderType.Trigger.IsMarket,
-			"tpsl":      modifyRequest.Order.OrderType.Trigger.Tpsl,
-		}
-	}
-
 	asset, ok := e.info.CoinToAsset(modifyRequest.Order.Coin)
 	if !ok {
 		return ModifyAction{}, fmt.Errorf("coin %s not found in info", modifyRequest.Order.Coin)
@@ -283,7 +271,6 @@ func newModifyOrdersAction(
 			return BatchModifyAction{}, fmt.Errorf("failed to create modify request %d: %w", i, err)
 		}
 		modify.Type = ""
-		modify.Dex = ""
 		modifies[i] = modify
 	}
 
@@ -416,7 +403,12 @@ func (e *Exchange) MarketClose(
 
 		szi, err := parseFloatStrict(pos.Szi)
 		if err != nil {
-			return OrderStatus{}, fmt.Errorf("invalid position size %q for coin %s: %w", pos.Szi, coin, err)
+			return OrderStatus{}, fmt.Errorf(
+				"invalid position size %q for coin %s: %w",
+				pos.Szi,
+				coin,
+				err,
+			)
 		}
 		var size float64
 		if sz != nil {

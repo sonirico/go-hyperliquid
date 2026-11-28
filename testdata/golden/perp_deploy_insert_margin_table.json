@@ -1,0 +1,38 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "insertMarginTable": {
+      "dex": "test",
+      "marginTable": {
+        "description": "table",
+        "marginTiers": [
+          {
+            "lowerBound": 0,
+            "maxLeverage": 10
+          }
+        ]
+      }
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xd0667879ca4dc5a02089e86bb79563e1318fc1998d7d5231dd1ea860e30126ac",
+    "s": "0x227d9475b023f002dcc12105c0e5b19ad830a45f70ab37ab5e0a27b66a776628",
+    "v": 28
+  }
+}

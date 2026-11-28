@@ -1,0 +1,32 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setOpenInterestCaps": [
+      [
+        "test:X",
+        null
+      ]
+    ]
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x77c745b65a2cc497a559d3a975bd54043cb26d9e3a38082377a25745d928cfa6",
+    "s": "0x7957266e51c2a622da3497f2b208bb757bd3501c4f34602ead741f605e5e0028",
+    "v": 28
+  }
+}

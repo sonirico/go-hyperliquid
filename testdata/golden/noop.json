@@ -1,0 +1,26 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "noop"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x4b9af944e3380469044c5ec5d33a9da8cfb406c8e06d5b758f7b9d5bc4d095f",
+    "s": "0x862f995ef927f761c5dadc2c7a91d39dab55e6991c9b01e10b5f6ab1d3cfaeb",
+    "v": 27
+  }
+}

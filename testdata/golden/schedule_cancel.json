@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "scheduleCancel",
+    "time": 4102444800000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xe027401ffe3ae9e203dc48533eb2ae33cdfdbdd1162ac70dec650421ff7a14d",
+    "s": "0x3efb9924bc4fc7893aeb325b854b0b8773fe0226c7fc32aa64430269a9c376d1",
+    "v": 28
+  }
+}

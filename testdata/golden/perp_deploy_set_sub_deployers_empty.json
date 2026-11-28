@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setSubDeployers": {
+      "dex": "test",
+      "subDeployers": []
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x2468aeb51dd5908f7e295fae2b9d7ef707ab9956123d0de54e4a2f9adb08ded8",
+    "s": "0x50027ffb848445805af262f851327f0d170b6ec4e4442aeb79239cc138ea3042",
+    "v": 27
+  }
+}

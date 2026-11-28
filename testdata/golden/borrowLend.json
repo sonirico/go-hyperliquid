@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "borrowLend",
+    "operation": "supply",
+    "token": 0,
+    "amount": "1.5"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xebd7cc055ddb2f202fceb9837c59e1da6f9a452473a0a3e898562c777eb62525",
+    "s": "0x2175c8c789dc0231c50af3ce025e487883d7ca5011f3d8a4a0f9bcdd056c5d7e",
+    "v": 28
+  }
+}

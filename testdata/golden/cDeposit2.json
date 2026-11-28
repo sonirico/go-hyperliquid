@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "cDeposit2",
+    "wei": 100000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xa07d60a702fc6140d67d5a0bfbaafa866e60c8ec87a76af2695cd7b2b1e5926e",
+    "s": "0x69eda0790df1821920c4e8ea69aae93951a9cdeeb74b03d5fbbd500eb9c53a86",
+    "v": 27
+  }
+}

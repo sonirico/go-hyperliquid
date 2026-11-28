@@ -13,12 +13,10 @@ const (
 	SideBid Side = "B"
 )
 
-type Grouping string
-
 const (
-	GroupingNA           Grouping = "na"
-	GroupingNormalTpsl   Grouping = "normalTpsl"
-	GroupingPositionTpls Grouping = "positionTpsl"
+	GroupingNA           = "na"
+	GroupingNormalTpsl   = "normalTpsl"
+	GroupingPositionTpls = "positionTpsl"
 )
 
 // Constants for default values
@@ -46,12 +44,16 @@ const (
 )
 
 type AssetInfo struct {
-	Name          string `json:"name"`
-	SzDecimals    int    `json:"szDecimals"`
-	MaxLeverage   int    `json:"maxLeverage"`
-	MarginTableId int    `json:"marginTableId"`
-	OnlyIsolated  bool   `json:"onlyIsolated"`
-	IsDelisted    bool   `json:"isDelisted"`
+	Name                   string `json:"name"`
+	SzDecimals             int    `json:"szDecimals"`
+	MaxLeverage            int    `json:"maxLeverage"`
+	MarginTableId          int    `json:"marginTableId"`
+	OnlyIsolated           bool   `json:"onlyIsolated"`
+	IsDelisted             bool   `json:"isDelisted"`
+	MarginMode             string `json:"marginMode,omitempty"`
+	GrowthMode             string `json:"growthMode,omitempty"`
+	DeployerFeeScale       string `json:"deployerFeeScale,omitempty"`
+	LastFeeScaleChangeTime string `json:"lastFeeScaleChangeTime,omitempty"`
 }
 
 type MarginTier struct {
@@ -92,7 +94,7 @@ type MetaAndAssetCtxsParams struct {
 	Dex *string
 }
 
-// This type has no JSON annotation because it cannot be directly unmarshalled from the response
+// MetaAndAssetCtxs has no JSON annotation because it cannot be directly unmarshalled from the response
 type MetaAndAssetCtxs struct {
 	Meta
 	Ctxs []AssetCtx
@@ -111,14 +113,16 @@ type EvmContract struct {
 }
 
 type SpotTokenInfo struct {
-	Name        string       `json:"name"`
-	SzDecimals  int          `json:"szDecimals"`
-	WeiDecimals int          `json:"weiDecimals"`
-	Index       int          `json:"index"`
-	TokenID     string       `json:"tokenId"`
-	IsCanonical bool         `json:"isCanonical"`
-	EvmContract *EvmContract `json:"evmContract"`
-	FullName    *string      `json:"fullName"`
+	Name                    string       `json:"name"`
+	SzDecimals              int          `json:"szDecimals"`
+	WeiDecimals             int          `json:"weiDecimals"`
+	Index                   int          `json:"index"`
+	TokenID                 string       `json:"tokenId"`
+	IsCanonical             bool         `json:"isCanonical"`
+	EvmContract             *EvmContract `json:"evmContract"`
+	FullName                *string      `json:"fullName"`
+	DeployerTradingFeeShare string       `json:"deployerTradingFeeShare"`
+	DeployerLabel           *string      `json:"deployerLabel,omitempty"`
 }
 
 type SpotMeta struct {
@@ -133,9 +137,11 @@ type SpotAssetCtx struct {
 	PrevDayPx         string  `json:"prevDayPx"`
 	CirculatingSupply string  `json:"circulatingSupply"`
 	Coin              string  `json:"coin"`
+	TotalSupply       string  `json:"totalSupply"`
+	DayBaseVlm        string  `json:"dayBaseVlm"`
 }
 
-// This type has no JSON annotation because it cannot be directly unmarshalled from the response
+// SpotMetaAndAssetCtxs has no JSON annotation because it cannot be directly unmarshalled from the response
 type SpotMetaAndAssetCtxs struct {
 	Meta SpotMeta
 	Ctxs []SpotAssetCtx
@@ -207,6 +213,7 @@ type Position struct {
 	Szi            string      `json:"szi"`
 	UnrealizedPnl  string      `json:"unrealizedPnl"`
 	CumFunding     *CumFunding `json:"cumFunding,omitempty"`
+	MaxLeverage    int         `json:"maxLeverage"`
 }
 
 type Leverage struct {
@@ -222,10 +229,12 @@ type CumFunding struct {
 }
 
 type UserState struct {
-	AssetPositions     []AssetPosition `json:"assetPositions"`
-	CrossMarginSummary MarginSummary   `json:"crossMarginSummary"`
-	MarginSummary      MarginSummary   `json:"marginSummary"`
-	Withdrawable       string          `json:"withdrawable"`
+	AssetPositions             []AssetPosition `json:"assetPositions"`
+	CrossMarginSummary         MarginSummary   `json:"crossMarginSummary"`
+	MarginSummary              MarginSummary   `json:"marginSummary"`
+	Withdrawable               string          `json:"withdrawable"`
+	Time                       int64           `json:"time"`
+	CrossMaintenanceMarginUsed string          `json:"crossMaintenanceMarginUsed"`
 }
 
 type SpotBalance struct {
@@ -236,8 +245,10 @@ type SpotBalance struct {
 	EntryNtl string `json:"entryNtl"`
 }
 
+//easyjson:skip
 type SpotUserState struct {
-	Balances []SpotBalance `json:"balances"`
+	Balances                         []SpotBalance         `json:"balances"`
+	TokenToAvailableAfterMaintenance []Tuple2[int, string] `json:"tokenToAvailableAfterMaintenance"`
 }
 
 type MarginSummary struct {
@@ -259,19 +270,22 @@ type OpenOrder struct {
 }
 
 type FrontendOpenOrder struct {
-	Coin             string    `json:"coin"`
-	IsPositionTpSl   bool      `json:"isPositionTpsl"`
-	IsTrigger        bool      `json:"isTrigger"`
-	LimitPx          float64   `json:"limitPx,string"`
-	Oid              int64     `json:"oid"`
-	OrderType        string    `json:"orderType"`
-	OrigSz           float64   `json:"origSz,string"`
-	ReduceOnly       bool      `json:"reduceOnly"`
-	Side             OrderSide `json:"side"`
-	Sz               float64   `json:"sz,string"`
-	Timestamp        int64     `json:"timestamp"`
-	TriggerCondition string    `json:"triggerCondition"`
-	TriggerPx        float64   `json:"triggerPx,string"`
+	Coin             string              `json:"coin"`
+	IsPositionTpSl   bool                `json:"isPositionTpsl"`
+	IsTrigger        bool                `json:"isTrigger"`
+	LimitPx          float64             `json:"limitPx,string"`
+	Oid              int64               `json:"oid"`
+	OrderType        string              `json:"orderType"`
+	OrigSz           float64             `json:"origSz,string"`
+	ReduceOnly       bool                `json:"reduceOnly"`
+	Side             OrderSide           `json:"side"`
+	Sz               float64             `json:"sz,string"`
+	Timestamp        int64               `json:"timestamp"`
+	TriggerCondition string              `json:"triggerCondition"`
+	TriggerPx        float64             `json:"triggerPx,string"`
+	Children         []FrontendOpenOrder `json:"children"`
+	Tif              *string             `json:"tif"`
+	Cloid            *string             `json:"cloid"`
 }
 
 type OrderSide string
@@ -382,21 +396,23 @@ type OrderQueryResult struct {
 }
 
 type Fill struct {
-	ClosedPnl     string `json:"closedPnl"`
-	Coin          string `json:"coin"`
-	Crossed       bool   `json:"crossed"`
-	Dir           string `json:"dir"`
-	Hash          string `json:"hash"`
-	Oid           int64  `json:"oid"`
-	Price         string `json:"px"`
-	Side          string `json:"side"`
-	StartPosition string `json:"startPosition"`
-	Size          string `json:"sz"`
-	Time          int64  `json:"time"`
-	Fee           string `json:"fee"`
-	FeeToken      string `json:"feeToken"`
-	BuilderFee    string `json:"builderFee,omitempty"`
-	Tid           int64  `json:"tid"`
+	ClosedPnl     string  `json:"closedPnl"`
+	Coin          string  `json:"coin"`
+	Crossed       bool    `json:"crossed"`
+	Dir           string  `json:"dir"`
+	Hash          string  `json:"hash"`
+	Oid           int64   `json:"oid"`
+	Price         string  `json:"px"`
+	Side          string  `json:"side"`
+	StartPosition string  `json:"startPosition"`
+	Size          string  `json:"sz"`
+	Time          int64   `json:"time"`
+	Fee           string  `json:"fee"`
+	FeeToken      string  `json:"feeToken"`
+	BuilderFee    string  `json:"builderFee,omitempty"`
+	Tid           int64   `json:"tid"`
+	Cloid         *string `json:"cloid,omitempty"`
+	TwapId        *int64  `json:"twapId"`
 }
 
 type UserFillsParams struct {
@@ -420,6 +436,7 @@ type UserFundingHistory struct {
 type Delta struct {
 	Coin        string `json:"coin"`
 	FundingRate string `json:"fundingRate"`
+	NSamples    *int   `json:"nSamples"`
 	Size        string `json:"szi"`
 	Type        string `json:"type"`
 	USDC        string `json:"usdc"`
@@ -476,13 +493,23 @@ type LiquidatedPosition struct {
 }
 
 type UserFees struct {
-	ActiveReferralDiscount string       `json:"activeReferralDiscount"`
-	DailyUserVolume        []UserVolume `json:"dailyUserVlm"`
-	FeeSchedule            FeeSchedule  `json:"feeSchedule"`
-	UserAddRate            string       `json:"userAddRate"`
-	UserCrossRate          string       `json:"userCrossRate"`
-	UserSpotCrossRate      string       `json:"userSpotCrossRate"`
-	UserSpotAddRate        string       `json:"userSpotAddRate"`
+	ActiveReferralDiscount      string          `json:"activeReferralDiscount"`
+	DailyUserVolume             []UserVolume    `json:"dailyUserVlm"`
+	FeeSchedule                 FeeSchedule     `json:"feeSchedule"`
+	UserAddRate                 string          `json:"userAddRate"`
+	UserCrossRate               string          `json:"userCrossRate"`
+	UserSpotCrossRate           string          `json:"userSpotCrossRate"`
+	UserSpotAddRate             string          `json:"userSpotAddRate"`
+	ActiveStakingDiscount       StakingDiscount `json:"activeStakingDiscount"`
+	FeeTrialEscrow              string          `json:"feeTrialEscrow"`
+	NextTrialAvailableTimestamp *int64          `json:"nextTrialAvailableTimestamp"`
+	StakingLink                 json.RawMessage `json:"stakingLink"`
+	Trial                       json.RawMessage `json:"trial"`
+}
+
+type StakingDiscount struct {
+	BpsOfMaxSupply string `json:"bpsOfMaxSupply"`
+	Discount       string `json:"discount"`
 }
 
 type UserActiveAssetData struct {
@@ -502,10 +529,13 @@ type UserVolume struct {
 }
 
 type FeeSchedule struct {
-	Add              string `json:"add"`
-	Cross            string `json:"cross"`
-	ReferralDiscount string `json:"referralDiscount"`
-	Tiers            Tiers  `json:"tiers"`
+	Add                  string            `json:"add"`
+	Cross                string            `json:"cross"`
+	ReferralDiscount     string            `json:"referralDiscount"`
+	Tiers                Tiers             `json:"tiers"`
+	SpotAdd              string            `json:"spotAdd"`
+	SpotCross            string            `json:"spotCross"`
+	StakingDiscountTiers []StakingDiscount `json:"stakingDiscountTiers"`
 }
 
 type Tiers struct {
@@ -522,6 +552,8 @@ type VIPTier struct {
 	Add       string `json:"add"`
 	Cross     string `json:"cross"`
 	NtlCutoff string `json:"ntlCutoff"`
+	SpotAdd   string `json:"spotAdd"`
+	SpotCross string `json:"spotCross"`
 }
 
 type StakingSummary struct {
@@ -543,21 +575,57 @@ type StakingReward struct {
 	TotalAmount string `json:"totalAmount"`
 }
 
+type TwapSliceFill struct {
+	Fill   Fill  `json:"fill"`
+	TwapId int64 `json:"twapId"`
+}
+
+type DelegatorHistoryEntry struct {
+	Time  int64           `json:"time"`
+	Hash  string          `json:"hash"`
+	Delta json.RawMessage `json:"delta"`
+}
+
+type ReferralReferredBy struct {
+	Code     string `json:"code"`
+	Referrer string `json:"referrer"`
+}
+
+type ReferralTokenState struct {
+	CumVlm           string `json:"cumVlm"`
+	UnclaimedRewards string `json:"unclaimedRewards"`
+	ClaimedRewards   string `json:"claimedRewards"`
+	BuilderRewards   string `json:"builderRewards"`
+}
+
+type ReferrerState struct {
+	Stage string          `json:"stage"`
+	Data  json.RawMessage `json:"data,omitempty"`
+}
+
+//easyjson:skip
 type ReferralState struct {
-	ReferralCode string   `json:"referralCode"`
-	Referrer     string   `json:"referrer"`
-	Referred     []string `json:"referred"`
+	ReferredBy       *ReferralReferredBy               `json:"referredBy"`
+	CumVlm           string                            `json:"cumVlm"`
+	UnclaimedRewards string                            `json:"unclaimedRewards"`
+	ClaimedRewards   string                            `json:"claimedRewards"`
+	BuilderRewards   string                            `json:"builderRewards"`
+	ReferrerState    ReferrerState                     `json:"referrerState"`
+	RewardHistory    []json.RawMessage                 `json:"rewardHistory"`
+	TokenToState     []Tuple2[int, ReferralTokenState] `json:"tokenToState"`
 }
 
 type SubAccount struct {
-	Name        string   `json:"name"`
-	User        string   `json:"user"`
-	Permissions []string `json:"permissions"`
+	Name               string        `json:"name"`
+	SubAccountUser     string        `json:"subAccountUser"`
+	Master             string        `json:"master"`
+	ClearinghouseState UserState     `json:"clearinghouseState"`
+	SpotState          SpotUserState `json:"spotState"`
 }
 
 type MultiSigSigner struct {
-	User      string `json:"user"`
-	Threshold int    `json:"threshold"`
+	AuthorizedUsers []string `json:"authorizedUsers"`
+	Threshold       int      `json:"threshold"`
 }
 
 type BulkOrderResponse struct {
@@ -729,6 +797,60 @@ type PerpDeployAuctionStatus struct {
 	EndGas           *string `json:"endGas"`
 }
 
+//easyjson:skip
+type SpotDeployTokenState struct {
+	Token                        int                      `json:"token"`
+	Spec                         SpotDeployTokenSpec      `json:"spec"`
+	FullName                     string                   `json:"fullName"`
+	DeployerTradingFeeShare      string                   `json:"deployerTradingFeeShare"`
+	Spots                        []int                    `json:"spots"`
+	MaxSupply                    *string                  `json:"maxSupply"`
+	HyperliquidityGenesisBalance string                   `json:"hyperliquidityGenesisBalance"`
+	TotalGenesisBalanceWei       string                   `json:"totalGenesisBalanceWei"`
+	UserGenesisBalances          []Tuple2[string, string] `json:"userGenesisBalances"`
+	ExistingTokenGenesisBalances []json.RawMessage        `json:"existingTokenGenesisBalances"`
+	BlacklistUsers               []json.RawMessage        `json:"blacklistUsers"`
+}
+
+//easyjson:skip
+type SpotDeployState struct {
+	States     []SpotDeployTokenState  `json:"states"`
+	GasAuction PerpDeployAuctionStatus `json:"gasAuction"`
+}
+
+type OutcomeDeployerLimits struct {
+	NDailyOutcomesRemaining  int `json:"nDailyOutcomesRemaining"`
+	NActiveOutcomesRemaining int `json:"nActiveOutcomesRemaining"`
+}
+
+//easyjson:skip
+type OutcomeTemplate struct {
+	ID          string                   `json:"id"`
+	Role        json.RawMessage          `json:"role"`
+	Name        string                   `json:"name"`
+	Description string                   `json:"description"`
+	Keywords    []Tuple2[string, string] `json:"keywords"`
+}
+
+type PerpAnnotation struct {
+	Category    string   `json:"category"`
+	Description string   `json:"description"`
+	DisplayName *string  `json:"displayName"`
+	Keywords    []string `json:"keywords"`
+}
+
+type PerpConciseAnnotation struct {
+	Category    string   `json:"category"`
+	DisplayName *string  `json:"displayName"`
+	Keywords    []string `json:"keywords"`
+}
+
+type SettledOutcome struct {
+	Spec           OutcomeMetaOutcome `json:"spec"`
+	SettleFraction string             `json:"settleFraction"`
+	Details        string             `json:"details"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]
@@ -782,16 +904,28 @@ type VaultDetails struct {
 	AlwaysCloseOnWithdraw bool               `json:"alwaysCloseOnWithdraw"`
 }
 
+//easyjson:skip
 type OutcomeMeta struct {
 	Outcomes  []OutcomeMetaOutcome  `json:"outcomes"`
 	Questions []OutcomeMetaQuestion `json:"questions"`
+	Deployers []OutcomeMetaDeployer `json:"deployers"`
+	FeeScale  string                `json:"feeScale"`
+}
+
+//easyjson:skip
+type OutcomeMetaDeployer struct {
+	Deployer     string                     `json:"deployer"`
+	SubDeployers []Tuple2[string, []string] `json:"subDeployers"`
+	Venue        string                     `json:"venue"`
 }
 type OutcomeMetaOutcome struct {
-	Outcome     int               `json:"outcome"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	SideSpecs   []OutcomeSideSpec `json:"sideSpecs"`
-	QuoteToken  string            `json:"quoteToken"`
+	Outcome          int               `json:"outcome"`
+	Name             string            `json:"name"`
+	Description      string            `json:"description"`
+	SideSpecs        []OutcomeSideSpec `json:"sideSpecs"`
+	QuoteToken       string            `json:"quoteToken"`
+	Venue            string            `json:"venue,omitempty"`
+	DeployerFeeScale string            `json:"deployerFeeScale,omitempty"`
 }
 type OutcomeSideSpec struct {
 	Name string `json:"name"`

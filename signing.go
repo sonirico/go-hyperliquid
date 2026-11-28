@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	stdmath "math"
 	"math/big"
 	"strconv"
 	"strings"
@@ -20,298 +21,16 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-func addressToBytes(address string) []byte {
+func addressToBytes(address string) ([]byte, error) {
 	address = strings.TrimPrefix(address, "0x")
-	bytes, _ := hex.DecodeString(address)
-	return bytes
+	bytes, err := hex.DecodeString(address)
+	if err != nil {
+		return nil, fmt.Errorf("invalid address %q: %w", address, err)
+	}
+	return bytes, nil
 }
 
-// convertStr16ToStr8 converts msgpack str16 (0xda + 2 byte length) to str8 (0xd9 + 1 byte length)
-// for strings <256 bytes to match Python msgpack behavior.
-// Uses a structure-aware msgpack walker to avoid corrupting non-string data
-// that happens to contain 0xda as a data byte (e.g. inside uint64 values).
-func convertStr16ToStr8(data []byte) []byte {
-	result := make([]byte, 0, len(data))
-	pos := 0
-	for pos < len(data) {
-		consumed := walkMsgpackValue(data, pos, &result)
-		if consumed <= 0 {
-			// Malformed data: copy remaining bytes as-is (fail-safe)
-			result = append(result, data[pos:]...)
-			break
-		}
-		pos += consumed
-	}
-	return result
-}
-
-// walkMsgpackValue parses one msgpack value at data[pos], appends the
-// (possibly converted) bytes to *result, and returns the number of bytes
-// consumed from data. Returns 0 if the data is truncated/malformed.
-func walkMsgpackValue(data []byte, pos int, result *[]byte) int {
-	if pos >= len(data) {
-		return 0
-	}
-	b := data[pos]
-	remaining := len(data) - pos
-
-	// --- Fixed-length single-byte types ---
-	// positive fixint 0x00-0x7f, negative fixint 0xe0-0xff, nil 0xc0, never used 0xc1, bool 0xc2-0xc3
-	if b <= 0x7f || b >= 0xe0 || (b >= 0xc0 && b <= 0xc3) {
-		*result = append(*result, b)
-		return 1
-	}
-
-	// --- fixstr (0xa0-0xbf): 1 header + N data bytes ---
-	if b >= 0xa0 && b <= 0xbf {
-		n := int(b & 0x1f)
-		total := 1 + n
-		if remaining < total {
-			return 0
-		}
-		*result = append(*result, data[pos:pos+total]...)
-		return total
-	}
-
-	// --- fixmap (0x80-0x8f): N key-value pairs ---
-	if b >= 0x80 && b <= 0x8f {
-		count := int(b & 0x0f)
-		*result = append(*result, b)
-		consumed := 1
-		for i := 0; i < count*2; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-	}
-
-	// --- fixarray (0x90-0x9f): N elements ---
-	if b >= 0x90 && b <= 0x9f {
-		count := int(b & 0x0f)
-		*result = append(*result, b)
-		consumed := 1
-		for i := 0; i < count; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-	}
-
-	switch b {
-	// --- float32, float64 ---
-	case 0xca: // float32: 1+4
-		return copyFixed(data, pos, 5, result)
-	case 0xcb: // float64: 1+8
-		return copyFixed(data, pos, 9, result)
-
-	// --- unsigned integers ---
-	case 0xcc: // uint8: 1+1
-		return copyFixed(data, pos, 2, result)
-	case 0xcd: // uint16: 1+2
-		return copyFixed(data, pos, 3, result)
-	case 0xce: // uint32: 1+4
-		return copyFixed(data, pos, 5, result)
-	case 0xcf: // uint64: 1+8
-		return copyFixed(data, pos, 9, result)
-
-	// --- signed integers ---
-	case 0xd0: // int8: 1+1
-		return copyFixed(data, pos, 2, result)
-	case 0xd1: // int16: 1+2
-		return copyFixed(data, pos, 3, result)
-	case 0xd2: // int32: 1+4
-		return copyFixed(data, pos, 5, result)
-	case 0xd3: // int64: 1+8
-		return copyFixed(data, pos, 9, result)
-
-	// --- fixext 1/2/4/8/16 ---
-	case 0xd4: // fixext1: 1+1+1
-		return copyFixed(data, pos, 3, result)
-	case 0xd5: // fixext2: 1+1+2
-		return copyFixed(data, pos, 4, result)
-	case 0xd6: // fixext4: 1+1+4
-		return copyFixed(data, pos, 6, result)
-	case 0xd7: // fixext8: 1+1+8
-		return copyFixed(data, pos, 10, result)
-	case 0xd8: // fixext16: 1+1+16
-		return copyFixed(data, pos, 18, result)
-
-	// --- bin 8/16/32 ---
-	case 0xc4: // bin8: 1 + 1-byte len + data
-		return copyVarLen(data, pos, 1, result)
-	case 0xc5: // bin16: 1 + 2-byte len + data
-		return copyVarLen(data, pos, 2, result)
-	case 0xc6: // bin32: 1 + 4-byte len + data
-		return copyVarLen(data, pos, 4, result)
-
-	// --- ext 8/16/32 ---
-	case 0xc7: // ext8: 1 + 1-byte len + 1 type + data
-		return copyExtVarLen(data, pos, 1, result)
-	case 0xc8: // ext16: 1 + 2-byte len + 1 type + data
-		return copyExtVarLen(data, pos, 2, result)
-	case 0xc9: // ext32: 1 + 4-byte len + 1 type + data
-		return copyExtVarLen(data, pos, 4, result)
-
-	// --- str8 (0xd9): already compact, just copy ---
-	case 0xd9: // str8: 1 + 1-byte len + data
-		return copyVarLen(data, pos, 1, result)
-
-	// --- str16 (0xda): THE conversion target ---
-	case 0xda: // str16: 1 + 2-byte len + data
-		if remaining < 3 {
-			return 0
-		}
-		length := (int(data[pos+1]) << 8) | int(data[pos+2])
-		total := 3 + length
-		if remaining < total {
-			return 0
-		}
-		if length < 256 {
-			*result = append(*result, 0xd9)
-			*result = append(*result, byte(length)) // #nosec G115 -- length is guaranteed < 256 by the if-guard above
-			*result = append(*result, data[pos+3:pos+total]...)
-		} else {
-			*result = append(*result, data[pos:pos+total]...)
-		}
-		return total
-
-	// --- str32 (0xdb): just copy ---
-	case 0xdb: // str32: 1 + 4-byte len + data
-		return copyVarLen(data, pos, 4, result)
-
-	// --- array16/32 ---
-	case 0xdc: // array16: 1 + 2-byte count
-		if remaining < 3 {
-			return 0
-		}
-		count := (int(data[pos+1]) << 8) | int(data[pos+2])
-		*result = append(*result, data[pos:pos+3]...)
-		consumed := 3
-		for i := 0; i < count; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-	case 0xdd: // array32: 1 + 4-byte count
-		if remaining < 5 {
-			return 0
-		}
-		count := (int(data[pos+1]) << 24) | (int(data[pos+2]) << 16) | (int(data[pos+3]) << 8) | int(data[pos+4])
-		*result = append(*result, data[pos:pos+5]...)
-		consumed := 5
-		for i := 0; i < count; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-
-	// --- map16/32 ---
-	case 0xde: // map16: 1 + 2-byte count
-		if remaining < 3 {
-			return 0
-		}
-		count := (int(data[pos+1]) << 8) | int(data[pos+2])
-		*result = append(*result, data[pos:pos+3]...)
-		consumed := 3
-		for i := 0; i < count*2; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-	case 0xdf: // map32: 1 + 4-byte count
-		if remaining < 5 {
-			return 0
-		}
-		count := (int(data[pos+1]) << 24) | (int(data[pos+2]) << 16) | (int(data[pos+3]) << 8) | int(data[pos+4])
-		*result = append(*result, data[pos:pos+5]...)
-		consumed := 5
-		for i := 0; i < count*2; i++ {
-			c := walkMsgpackValue(data, pos+consumed, result)
-			if c <= 0 {
-				return 0
-			}
-			consumed += c
-		}
-		return consumed
-
-	default:
-		// Unknown type: copy single byte as fail-safe
-		*result = append(*result, b)
-		return 1
-	}
-}
-
-// copyFixed copies exactly `size` bytes from data[pos:] to result.
-// Returns 0 if data is truncated.
-func copyFixed(data []byte, pos, size int, result *[]byte) int {
-	if len(data)-pos < size {
-		return 0
-	}
-	*result = append(*result, data[pos:pos+size]...)
-	return size
-}
-
-// copyVarLen handles msgpack types with a variable-length data payload:
-// header(1) + length(lenBytes) + data(length). Copies as-is.
-func copyVarLen(data []byte, pos, lenBytes int, result *[]byte) int {
-	headerSize := 1 + lenBytes
-	if len(data)-pos < headerSize {
-		return 0
-	}
-	length := readLen(data, pos+1, lenBytes)
-	total := headerSize + length
-	if len(data)-pos < total {
-		return 0
-	}
-	*result = append(*result, data[pos:pos+total]...)
-	return total
-}
-
-// copyExtVarLen handles ext types: header(1) + length(lenBytes) + type(1) + data(length).
-func copyExtVarLen(data []byte, pos, lenBytes int, result *[]byte) int {
-	headerSize := 1 + lenBytes + 1 // format + len + type byte
-	if len(data)-pos < headerSize {
-		return 0
-	}
-	length := readLen(data, pos+1, lenBytes)
-	total := headerSize + length
-	if len(data)-pos < total {
-		return 0
-	}
-	*result = append(*result, data[pos:pos+total]...)
-	return total
-}
-
-// readLen reads a big-endian unsigned integer of 1, 2, or 4 bytes.
-func readLen(data []byte, pos, size int) int {
-	switch size {
-	case 1:
-		return int(data[pos])
-	case 2:
-		return (int(data[pos]) << 8) | int(data[pos+1])
-	case 4:
-		return (int(data[pos]) << 24) | (int(data[pos+1]) << 16) | (int(data[pos+2]) << 8) | int(data[pos+3])
-	default:
-		return 0
-	}
-}
-
-func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) []byte {
+func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) ([]byte, error) {
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
 	// CRITICAL: Do NOT use SetSortMapKeys(true) - Python preserves insertion order
@@ -320,18 +39,13 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	err := enc.Encode(action)
 	if err != nil {
-		panic(fmt.Sprintf("failed to marshal action: %v", err))
+		return nil, fmt.Errorf("failed to marshal action: %w", err)
 	}
 	data := buf.Bytes()
 
-	// Convert fixstr to str8 for Python compatibility
-	data = convertStr16ToStr8(data)
-
-	// fmt.Printf("🔍 DEBUG actionHash msgpack: %s\n", hex.EncodeToString(data))
-
 	// Add nonce as 8 bytes big endian
 	if nonce < 0 {
-		panic(fmt.Sprintf("nonce cannot be negative: %d", nonce))
+		return nil, fmt.Errorf("nonce cannot be negative: %d", nonce)
 	}
 	nonceBytes := make([]byte, 8)
 	binary.BigEndian.PutUint64(nonceBytes, uint64(nonce))
@@ -342,13 +56,17 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 		data = append(data, 0x00)
 	} else {
 		data = append(data, 0x01)
-		data = append(data, addressToBytes(vaultAddress)...)
+		vaultBytes, err := addressToBytes(vaultAddress)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, vaultBytes...)
 	}
 
 	// Add expires_after if provided
 	if expiresAfter != nil {
 		if *expiresAfter < 0 {
-			panic(fmt.Sprintf("expiresAfter cannot be negative: %d", *expiresAfter))
+			return nil, fmt.Errorf("expiresAfter cannot be negative: %d", *expiresAfter)
 		}
 		data = append(data, 0x00)
 		expiresAfterBytes := make([]byte, 8)
@@ -358,9 +76,7 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	// Return keccak256 hash
 	hash := crypto.Keccak256(data)
-	// fmt.Printf("   Msgpack data: %s\n", hex.EncodeToString(data))
-	// fmt.Printf("   Action hash: %s\n", hex.EncodeToString(hash))
-	return hash
+	return hash, nil
 }
 
 func constructPhantomAgent(hash []byte, isMainnet bool) map[string]any {
@@ -404,9 +120,9 @@ func l1Payload(phantomAgent map[string]any, isMainnet bool) apitypes.TypedData {
 
 // SignatureResult represents the structured signature result
 type SignatureResult struct {
-	R string `json:"r"`
-	S string `json:"s"`
-	V int    `json:"v"`
+	R string `json:"r" msgpack:"r"`
+	S string `json:"s" msgpack:"s"`
+	V int    `json:"v" msgpack:"v"`
 }
 
 // L1ActionSigner signs L1 actions (msgpack + phantom agent EIP-712).
@@ -695,8 +411,10 @@ func SignL1Action(
 	isMainnet bool,
 ) (SignatureResult, error) {
 	// Step 1: Create action hash
-	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
-	// fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
+	hash, err := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	if err != nil {
+		return SignatureResult{}, err
+	}
 
 	// Step 2: Construct phantom agent
 	phantomAgent := constructPhantomAgent(hash, isMainnet)
@@ -833,58 +551,42 @@ func SignUsdTransferAction(
 	)
 }
 
-type signPerpDexClassTransferAction struct {
-	Type   string  `msgpack:"type"`
-	Dex    string  `msgpack:"dex"`
-	Token  string  `msgpack:"token"`
-	Amount float64 `msgpack:"amount"`
-	ToPerp bool    `msgpack:"toPerp"`
-}
-
-// SignPerpDexClassTransferAction signs perp dex class transfer action
-func SignPerpDexClassTransferAction(
-	privateKey *ecdsa.PrivateKey,
-	dex, token string,
-	amount float64,
-	toPerp bool,
-	timestamp int64,
-	isMainnet bool,
-) (SignatureResult, error) {
-	action := signPerpDexClassTransferAction{
-		Type:   "perpDexClassTransfer",
-		Dex:    dex,
-		Token:  token,
-		Amount: amount,
-		ToPerp: toPerp,
-	}
-
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
-}
-
-type signTokenDelegateAction struct {
-	Type             string  `msgpack:"type"`
-	Token            string  `msgpack:"token"`
-	Amount           float64 `msgpack:"amount"`
-	ValidatorAddress string  `msgpack:"validatorAddress"`
-}
-
-// SignTokenDelegateAction signs token delegate action
+// SignTokenDelegateAction signs a tokenDelegate action.
+//
+// tokenDelegate is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:TokenDelegate, not as an L1 action. nonce is the
+// action nonce.
 func SignTokenDelegateAction(
 	privateKey *ecdsa.PrivateKey,
-	token string,
-	amount float64,
-	validatorAddress string,
-	timestamp int64,
+	validator string,
+	wei uint64,
+	isUndelegate bool,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signTokenDelegateAction{
-		Type:             "tokenDelegate",
-		Token:            token,
-		Amount:           amount,
-		ValidatorAddress: validatorAddress,
+	action := map[string]any{
+		"type":         "tokenDelegate",
+		"validator":    validator,
+		"wei":          wei,
+		"isUndelegate": isUndelegate,
+		"nonce":        big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "validator", Type: "address"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "isUndelegate", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:TokenDelegate",
+		isMainnet,
+	)
 }
 
 // SignWithdrawFromBridgeAction signs a withdraw3 action.
@@ -971,84 +673,171 @@ func SignAgent(
 	)
 }
 
-type signApproveBuilderFee struct {
-	Type string `msgpack:"type"`
-	// BuilderAddress is the address of the builder
-	BuilderAddress string `msgpack:"builderAddress"`
-	// MaxFeeRate is the maximum fee rate the user is willing to pay
-	MaxFeeRate float64 `msgpack:"maxFeeRate"`
-}
-
-// SignApproveBuilderFee signs approve builder fee action
+// SignApproveBuilderFee signs an approveBuilderFee action.
+//
+// approveBuilderFee is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:ApproveBuilderFee, not as an L1 action. nonce is the
+// action nonce.
 func SignApproveBuilderFee(
 	privateKey *ecdsa.PrivateKey,
-	builderAddress string,
-	maxFeeRate float64,
-	timestamp int64,
+	builder string,
+	maxFeeRate string,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signApproveBuilderFee{
-		Type:           "approveBuilderFee",
-		BuilderAddress: builderAddress,
-		MaxFeeRate:     maxFeeRate,
+	action := map[string]any{
+		"type":       "approveBuilderFee",
+		"maxFeeRate": maxFeeRate,
+		"builder":    builder,
+		"nonce":      big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "maxFeeRate", Type: "string"},
+		{Name: "builder", Type: "address"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:ApproveBuilderFee",
+		isMainnet,
+	)
 }
 
-type signConvertToMultiSigUserAction struct {
-	Type      string   `msgpack:"type"`
-	Signers   []string `msgpack:"signers"`
-	Threshold int      `msgpack:"threshold"`
-}
-
-// SignConvertToMultiSigUserAction signs convert to multi-sig user action
+// SignConvertToMultiSigUserAction signs a convertToMultiSigUser action.
+//
+// convertToMultiSigUser is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:ConvertToMultiSigUser, not as an L1 action. nonce is
+// the action nonce and signersJSON the compact JSON the action carries.
 func SignConvertToMultiSigUserAction(
 	privateKey *ecdsa.PrivateKey,
-	signers []string,
-	threshold int,
-	timestamp int64,
+	signersJSON string,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signConvertToMultiSigUserAction{
-		Type:      "convertToMultiSigUser",
-		Signers:   signers,
-		Threshold: threshold,
+	action := map[string]any{
+		"type":    "convertToMultiSigUser",
+		"signers": signersJSON,
+		"nonce":   big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "signers", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:ConvertToMultiSigUser",
+		isMainnet,
+	)
 }
 
-type signMultiSigAction struct {
-	Type       string         `msgpack:"type"`
-	Action     map[string]any `msgpack:"action"`
-	Signers    []string       `msgpack:"signers"`
-	Signatures []string       `msgpack:"signatures"`
+var multiSigEnvelopeTypes = []apitypes.Type{
+	{Name: "hyperliquidChain", Type: "string"},
+	{Name: "multiSigActionHash", Type: "bytes32"},
+	{Name: "nonce", Type: "uint64"},
 }
 
-// SignMultiSigAction signs multi-signature action
+func newMultiSigEnvelope(
+	action MultiSigAction,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
+) (map[string]any, error) {
+	hash, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	if err != nil {
+		return nil, err
+	}
+
+	return map[string]any{
+		"multiSigActionHash": hash,
+		"nonce":              big.NewInt(nonce),
+	}, nil
+}
+
+// SignMultiSigAction signs multi-signature action as the outer signer
 func SignMultiSigAction(
 	privateKey *ecdsa.PrivateKey,
-	innerAction map[string]any,
-	signers []string,
-	signatures []string,
-	timestamp int64,
+	action MultiSigAction,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signMultiSigAction{
-		Type:       "multiSig",
-		Action:     innerAction,
-		Signers:    signers,
-		Signatures: signatures,
+	envelope, err := newMultiSigEnvelope(action, vaultAddress, nonce, expiresAfter)
+	if err != nil {
+		return SignatureResult{}, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	return SignUserSignedAction(
+		privateKey,
+		envelope,
+		multiSigEnvelopeTypes,
+		"HyperliquidTransaction:SendMultiSig",
+		isMainnet,
+	)
+}
+
+// SignMultiSigL1ActionPayload signs an L1 action as one of the signers of a multi-sig user
+func SignMultiSigL1ActionPayload(
+	privateKey *ecdsa.PrivateKey,
+	action any,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
+	multiSigUser string,
+	outerSigner string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	envelope := []any{strings.ToLower(multiSigUser), strings.ToLower(outerSigner), action}
+
+	return SignL1Action(privateKey, envelope, vaultAddress, nonce, expiresAfter, isMainnet)
+}
+
+// SignMultiSigUserSignedActionPayload signs a user-signed action as one of the signers of a multi-sig user
+func SignMultiSigUserSignedActionPayload(
+	privateKey *ecdsa.PrivateKey,
+	action map[string]any,
+	payloadTypes []apitypes.Type,
+	primaryType string,
+	multiSigUser string,
+	outerSigner string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	envelope := make(map[string]any, len(action)+2)
+	for key, value := range action {
+		envelope[key] = value
+	}
+	envelope["payloadMultiSigUser"] = strings.ToLower(multiSigUser)
+	envelope["outerSigner"] = strings.ToLower(outerSigner)
+
+	envelopeTypes := make([]apitypes.Type, 0, len(payloadTypes)+2)
+	for _, payloadType := range payloadTypes {
+		envelopeTypes = append(envelopeTypes, payloadType)
+		if payloadType.Name == "hyperliquidChain" {
+			envelopeTypes = append(
+				envelopeTypes,
+				apitypes.Type{Name: "payloadMultiSigUser", Type: "address"},
+				apitypes.Type{Name: "outerSigner", Type: "address"},
+			)
+		}
+	}
+
+	return SignUserSignedAction(privateKey, envelope, envelopeTypes, primaryType, isMainnet)
 }
 
 // FloatToUsdInt converts float to USD integer representation
 func FloatToUsdInt(value float64) int {
 	// Convert float USD to integer representation (assuming 6 decimals for USDC)
-	return int(value * 1e6)
+	return int(stdmath.Round(value * 1e6))
 }
 
 // GetTimestampMs returns current timestamp in milliseconds

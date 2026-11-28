@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "userOutcome",
+    "mergeQuestion": {
+      "question": 1,
+      "amount": null
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xb3fe583bb51e2b96063d4e27cbed3afcede74a2ea8222e003ec91f02290127d1",
+    "s": "0x34b9ac149a786e0ac0416515cd2ac71cf76d82ce94c7c25f730a2d2a1ced3e15",
+    "v": 27
+  }
+}

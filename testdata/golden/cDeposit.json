@@ -1,0 +1,34 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "cDeposit",
+    "wei": 100000000,
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:CDeposit",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "wei",
+      "type": "uint64"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xce565b18b7825a83ddb5cd6950b78429b76bf85458ec830954b0a0e58ce5fdb7",
+    "s": "0x26cca9c05d08d9f72d772394ed9fe33d7b19106f29f7a1f3cdffae7aacb512ea",
+    "v": 28
+  }
+}

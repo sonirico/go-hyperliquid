@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "haltTrading": {
+      "coin": "test:X",
+      "isHalted": true
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x17dfb7fc9477faf5fc0a1e237cee19d3173c4ed627a5960ac3a18df490dfddac",
+    "s": "0x44d50be7d79909a3120c4a3bc64ae1d2ea495f056793562743b34aaf60bbd41",
+    "v": 27
+  }
+}

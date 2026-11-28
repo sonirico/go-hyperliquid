@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
+	"errors"
 	"sync/atomic"
 	"time"
 
@@ -163,7 +164,7 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 		return err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return err
 	}
@@ -175,11 +176,42 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 	return nil
 }
 
+// actionError returns the server message when the body is a status err response
+func actionError(resp []byte) error {
+	var raw struct {
+		Status   string          `json:"status"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := json.Unmarshal(resp, &raw); err != nil || raw.Status != "err" {
+		return nil
+	}
+	var msg string
+	if err := json.Unmarshal(raw.Response, &msg); err != nil {
+		return errors.New(string(raw.Response))
+	}
+	return errors.New(msg)
+}
+
+// actionResponse returns the raw response field of an ok body, or the server message of an err one
+func actionResponse(resp []byte) (json.RawMessage, error) {
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+	var raw struct {
+		Response json.RawMessage `json:"response"`
+	}
+	if err := json.Unmarshal(resp, &raw); err != nil {
+		return nil, err
+	}
+	return raw.Response, nil
+}
+
 func (e *Exchange) postAction(
 	ctx context.Context,
 	action any,
 	signature SignatureResult,
 	nonce int64,
+	vault string,
 ) ([]byte, error) {
 	payload := map[string]any{
 		"action":    action,
@@ -188,32 +220,16 @@ func (e *Exchange) postAction(
 	}
 
 	if e.vault != "" {
-		// Handle vault address based on action type
-		if actionMap, ok := action.(map[string]any); ok {
-			if actionMap["type"] != "usdClassTransfer" {
-				payload["vaultAddress"] = e.vault
-			} else {
-				payload["vaultAddress"] = nil
-			}
+		if vault == "" {
+			payload["vaultAddress"] = nil
 		} else {
-			// For struct types, we need to use reflection or type assertion
-			// For now, assume it's not usdClassTransfer
-			payload["vaultAddress"] = e.vault
+			payload["vaultAddress"] = vault
 		}
 	}
 
 	// Add expiration time if set
 	if e.expiresAfter != nil {
 		payload["expiresAfter"] = *e.expiresAfter
-	}
-
-	// Debug logging
-	if e.debug { //nolint:staticcheck // Empty branch for future debugging
-		// if jsonPayload, err := json.MarshalIndent(payload, "", "  "); err == nil {
-		// 	println("=== OUTGOING EXCHANGE PAYLOAD ===")
-		// 	println(string(jsonPayload))
-		// 	println("=================================")
-		// }
 	}
 
 	return e.client.post(ctx, "/exchange", payload)

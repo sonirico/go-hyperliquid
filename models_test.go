@@ -133,7 +133,7 @@ func TestPosition_MarshalJSON(t *testing.T) {
 					SinceOpen:   "-0.001129",
 				},
 			},
-			expected: `{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0","cumFunding":{"allTime":"0.03621","sinceOpen":"-0.001129","sinceChange":"-0.001129"}}`,
+			expected: `{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0","cumFunding":{"allTime":"0.03621","sinceOpen":"-0.001129","sinceChange":"-0.001129"},"maxLeverage":0}`,
 		},
 		{
 			name: "no_position",
@@ -148,7 +148,7 @@ func TestPosition_MarshalJSON(t *testing.T) {
 				Szi:            "0.0",
 				UnrealizedPnl:  "0.0",
 			},
-			expected: `{"coin":"ETH","entryPx":null,"leverage":{"type":"isolated","value":5,"rawUsd":"1000.0"},"liquidationPx":null,"marginUsed":"0.0","positionValue":"0.0","returnOnEquity":"0.0","szi":"0.0","unrealizedPnl":"0.0"}`,
+			expected: `{"coin":"ETH","entryPx":null,"leverage":{"type":"isolated","value":5,"rawUsd":"1000.0"},"liquidationPx":null,"marginUsed":"0.0","positionValue":"0.0","returnOnEquity":"0.0","szi":"0.0","unrealizedPnl":"0.0","maxLeverage":0}`,
 		},
 	}
 
@@ -257,7 +257,7 @@ func TestUserState_MarshalJSON(t *testing.T) {
 				},
 				Withdrawable: "95000.0",
 			},
-			expected: `{"assetPositions":[{"position":{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0"},"type":"oneWay"}],"crossMarginSummary":{"accountValue":"100000.0","totalMarginUsed":"5000.0","totalNtlPos":"50000.0","totalRawUsd":"100000.0"},"marginSummary":{"accountValue":"100000.0","totalMarginUsed":"5000.0","totalNtlPos":"50000.0","totalRawUsd":"100000.0"},"withdrawable":"95000.0"}`,
+			expected: `{"assetPositions":[{"position":{"coin":"BTC","entryPx":"50000.0","leverage":{"type":"cross","value":10},"liquidationPx":"45000.0","marginUsed":"5000.0","positionValue":"50000.0","returnOnEquity":"0.05","szi":"1.0","unrealizedPnl":"2500.0","maxLeverage":0},"type":"oneWay"}],"crossMarginSummary":{"accountValue":"100000.0","totalMarginUsed":"5000.0","totalNtlPos":"50000.0","totalRawUsd":"100000.0"},"marginSummary":{"accountValue":"100000.0","totalMarginUsed":"5000.0","totalNtlPos":"50000.0","totalRawUsd":"100000.0"},"withdrawable":"95000.0","time":0,"crossMaintenanceMarginUsed":""}`,
 		},
 		{
 			name: "empty_user_state",
@@ -277,7 +277,7 @@ func TestUserState_MarshalJSON(t *testing.T) {
 				},
 				Withdrawable: "0.0",
 			},
-			expected: `{"assetPositions":[],"crossMarginSummary":{"accountValue":"0.0","totalMarginUsed":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0"},"marginSummary":{"accountValue":"0.0","totalMarginUsed":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0"},"withdrawable":"0.0"}`,
+			expected: `{"assetPositions":[],"crossMarginSummary":{"accountValue":"0.0","totalMarginUsed":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0"},"marginSummary":{"accountValue":"0.0","totalMarginUsed":"0.0","totalNtlPos":"0.0","totalRawUsd":"0.0"},"withdrawable":"0.0","time":0,"crossMaintenanceMarginUsed":""}`,
 		},
 	}
 
@@ -359,7 +359,6 @@ func TestLevel_UnmarshalJSON_StringToFloat(t *testing.T) {
 }
 
 func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
-
 	int64Ptr := func(i int64) *int64 { return &i }
 	boolPtr := func(b bool) *bool { return &b }
 
@@ -542,6 +541,261 @@ func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 	}
 }
 
+func TestReferralState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "referral")
+
+		assertKeysCovered(t, raw, &ReferralState{})
+	})
+}
+
+func TestVaultDetails_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "vaultDetails")
+
+		assertKeysCovered(t, raw, &VaultDetails{})
+	})
+}
+
+func TestFill_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userFills")
+
+		assertKeysCovered(t, raw, &[]Fill{})
+	})
+}
+
+func TestUserState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "clearinghouseState")
+
+		assertKeysCovered(t, raw, &UserState{})
+	})
+}
+
+func TestSpotUserState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotClearinghouseState")
+
+		assertKeysCovered(t, raw, &SpotUserState{})
+	})
+}
+
+func TestUserFees_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userFees")
+
+		assertKeysCovered(t, raw, &UserFees{})
+	})
+}
+
+func TestMetaUniverse_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response universe entries", func(t *testing.T) {
+		var metas []struct {
+			Universe json.RawMessage `json:"universe"`
+		}
+		require.NoError(t, json.Unmarshal(newTestLiveFixture(t, "allPerpMetas"), &metas))
+		universes := make([]json.RawMessage, len(metas))
+		for i, meta := range metas {
+			universes[i] = meta.Universe
+		}
+		raw, err := json.Marshal(universes)
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &[][]AssetInfo{})
+	})
+}
+
+func TestSpotMeta_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotMeta")
+
+		assertKeysCovered(t, raw, &SpotMeta{})
+	})
+}
+
+func TestSpotAssetCtx_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response ctx rows", func(t *testing.T) {
+		var response []json.RawMessage
+		require.NoError(t, json.Unmarshal(newTestLiveFixture(t, "spotMetaAndAssetCtxs"), &response))
+		require.Len(t, response, 2)
+
+		assertKeysCovered(t, response[1], &[]SpotAssetCtx{})
+	})
+}
+
+func TestOutcomeMeta_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeMeta")
+
+		assertKeysCovered(t, raw, &OutcomeMeta{})
+	})
+}
+
+func TestOpenOrder_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "openOrders")
+
+		assertKeysCovered(t, raw, &[]OpenOrder{})
+	})
+}
+
+func TestFrontendOpenOrder_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "frontendOpenOrders")
+
+		assertKeysCovered(t, raw, &[]FrontendOpenOrder{})
+	})
+}
+
+func TestStakingDelegation_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "delegations")
+
+		assertKeysCovered(t, raw, &[]StakingDelegation{})
+	})
+}
+
+func TestStakingReward_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "delegatorRewards")
+
+		assertKeysCovered(t, raw, &[]StakingReward{})
+	})
+}
+
+func TestSubAccount_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "subAccounts")
+
+		assertKeysCovered(t, raw, &[]SubAccount{})
+	})
+}
+
+func TestExtraAgents_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "extraAgents")
+
+		assertKeysCovered(t, raw, &[]ExtraAgents{})
+	})
+}
+
+func TestBorrowLendUserState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "borrowLendUserState")
+
+		assertKeysCovered(t, raw, &BorrowLendUserState{})
+	})
+}
+
+func TestOrderQueryResult_Cloid_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "orderStatusCloid")
+
+		assertKeysCovered(t, raw, &OrderQueryResult{})
+	})
+}
+
+func TestMultiSigSigner_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userToMultiSigSigners")
+
+		assertKeysCovered(t, raw, &MultiSigSigner{})
+	})
+}
+
+func TestDelegatorHistoryEntry_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "delegatorHistory")
+
+		assertKeysCovered(t, raw, &[]DelegatorHistoryEntry{})
+	})
+}
+
+func TestSpotDeployState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotDeployState")
+
+		assertKeysCovered(t, raw, &SpotDeployState{})
+	})
+}
+
+func TestTwapSliceFill_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userTwapSliceFills")
+
+		assertKeysCovered(t, raw, &[]TwapSliceFill{})
+	})
+}
+
+func TestBorrowLendReserveState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "borrowLendReserveState")
+
+		assertKeysCovered(t, raw, &BorrowLendReserveState{})
+	})
+}
+
+func TestOutcomeDeployerLimits_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeDeployerLimits")
+
+		assertKeysCovered(t, raw, &OutcomeDeployerLimits{})
+	})
+}
+
+func TestOutcomeTemplate_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeTemplates")
+
+		assertKeysCovered(t, raw, &[]OutcomeTemplate{})
+	})
+}
+
+func TestPerpAnnotation_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpAnnotation")
+
+		assertKeysCovered(t, raw, &PerpAnnotation{})
+	})
+}
+
+func TestPerpCategories_UnmarshalJSON(t *testing.T) {
+	t.Run("decodes coin and category pairs", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpCategories")
+
+		var got []Tuple2[string, string]
+		require.NoError(t, json.Unmarshal(raw, &got))
+
+		require.Len(t, got, 20)
+		require.Equal(t, Tuple2[string, string]{First: "flx:BTC", Second: "crypto"}, got[0])
+	})
+}
+
+func TestPerpConciseAnnotation_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpConciseAnnotations")
+
+		assertKeysCovered(t, raw, &[]Tuple2[string, PerpConciseAnnotation]{})
+	})
+}
+
+func TestSettledOutcome_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "settledOutcome")
+
+		assertKeysCovered(t, raw, &SettledOutcome{})
+	})
+}
+
+func TestSpotPairDeployAuctionStatus_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotPairDeployAuctionStatus")
+
+		assertKeysCovered(t, raw, &PerpDeployAuctionStatus{})
+	})
+}
+
 func TestUserFundingHistory_UnmarshalJSON(t *testing.T) {
 	// captured from mainnet userFunding, 2026-11-28
 	jsonData := `{"time":1795802400039,"hash":"0x0000000000000000000000000000000000000000000000000000000000000000","delta":{"type":"funding","coin":"BTC","usdc":"0.018294","szi":"-0.08169","fundingRate":"0.0000037383","nSamples":null}}`
@@ -558,4 +812,6 @@ func TestUserFundingHistory_UnmarshalJSON(t *testing.T) {
 		Size:        "-0.08169",
 		FundingRate: "0.0000037383",
 	}, funding.Delta)
+
+	assertKeysCovered(t, []byte(jsonData), &UserFundingHistory{})
 }

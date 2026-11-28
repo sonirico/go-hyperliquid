@@ -5,9 +5,21 @@ GOINSTALL =$(GOCMD) install
 GOMOD=$(GOCMD) mod
 GOGENERATE=$(GOCMD) generate
 
+EASYJSON_VERSION=v0.9.2
+GOIMPORTS_VERSION=v0.53.0
+GOLINES_VERSION=v0.13.0
+GOLANGCI_LINT_VERSION=v2.15.0
+GOSEC_VERSION=v2.30.0
+
+GOBIN_DIR := $(shell go env GOBIN)
+ifeq ($(GOBIN_DIR),)
+GOBIN_DIR := $(shell go env GOPATH)/bin
+endif
+export PATH := $(GOBIN_DIR):$(PATH)
+
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 
-.PHONY: all test coverage deps generate lint fmt vet check examples help
+.PHONY: all test verify-live coverage deps generate lint fmt vet check examples help install-tools
 
 all: deps generate fmt vet lint test ## Run all development tasks
 
@@ -23,6 +35,9 @@ test-verbose: ## Run tests with verbose output
 
 test-short: ## Run short tests only
 	$(GOTEST) -short $(shell go list ./... | grep -v examples)
+
+verify-live: ## Check signatures against the testnet (network, build tag live)
+	$(GOTEST) -tags live -run TestLive -count=1 .
 
 coverage: ## Run tests with coverage
 	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic $(shell go list ./... | grep -v examples)
@@ -51,7 +66,7 @@ generate: ## Run go generate
 	$(GOGENERATE) ./...
 
 lint: ## Run golangci-lint
-	@which golangci-lint > /dev/null || (echo "golangci-lint not found. Install it with: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest" && exit 1)
+	@which golangci-lint > /dev/null || (echo "golangci-lint not found. Run: make install-tools" && exit 1)
 	golangci-lint run
 
 fmt: ## Format code
@@ -67,8 +82,9 @@ check: fmt vet lint ## Run all checks (format, vet, lint)
 mod-verify: ## Verify dependencies
 	$(GOMOD) verify
 
-install-tools: ## Install development tools
-	$(GOINSTALL) github.com/mailru/easyjson/easyjson@latest
-	$(GOINSTALL) github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	$(GOINSTALL) golang.org/x/tools/cmd/goimports@latest
-	$(GOINSTALL) github.com/segmentio/golines@latest
+install-tools: ## Install development tools at pinned versions
+	$(GOINSTALL) github.com/mailru/easyjson/easyjson@$(EASYJSON_VERSION)
+	$(GOINSTALL) github.com/golangci/golangci-lint/v2/cmd/golangci-lint@$(GOLANGCI_LINT_VERSION)
+	$(GOINSTALL) golang.org/x/tools/cmd/goimports@$(GOIMPORTS_VERSION)
+	$(GOINSTALL) github.com/segmentio/golines@$(GOLINES_VERSION)
+	$(GOINSTALL) github.com/securego/gosec/v2/cmd/gosec@$(GOSEC_VERSION)

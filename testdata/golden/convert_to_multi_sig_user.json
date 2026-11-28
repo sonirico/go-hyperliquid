@@ -1,0 +1,34 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "convertToMultiSigUser",
+    "signers": "{\"authorizedUsers\":[\"0x1111111111111111111111111111111111111111\"],\"threshold\":1}",
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:ConvertToMultiSigUser",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "signers",
+      "type": "string"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xd3556519abbb258b83d68c76ad600b2be222bea488670ad572fdfde668c33de9",
+    "s": "0x6e83650bbbe99806e58ef52d54c841650cbcb04608953f6dbc32af95c0d482b8",
+    "v": 28
+  }
+}

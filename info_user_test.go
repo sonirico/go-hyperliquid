@@ -157,3 +157,204 @@ func TestPredictedFundings_InvalidResponse(t *testing.T) {
 	require.Error(t, err)
 	require.Contains(t, err.Error(), "failed to unmarshal predicted fundings")
 }
+
+func TestQueryVaultDetails_OmitsEmptyUser(t *testing.T) {
+	const vault = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
+
+	info, req := newInfoTestServer(t, `{}`)
+
+	_, err := info.QueryVaultDetails(context.TODO(), vault, "")
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":         "vaultDetails",
+		"vaultAddress": vault,
+	}, *req)
+}
+
+func TestInfo_DelegatorHistory(t *testing.T) {
+	const user = "0x000000000056f99d36b6f2e0c51fd41496bbacb8"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "delegatorHistory")))
+
+	history, err := info.DelegatorHistory(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "delegatorHistory",
+		"user": user,
+	}, *req)
+	require.Len(t, history, 20)
+}
+
+func TestInfo_SpotDeployState(t *testing.T) {
+	const user = "0x1feb03de56381d4408701b3a6ec4c0c292b5da4f"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "spotDeployState")))
+
+	state, err := info.SpotDeployState(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "spotDeployState",
+		"user": user,
+	}, *req)
+	require.Len(t, state.States, 1)
+}
+
+func TestInfo_UserTwapSliceFills(t *testing.T) {
+	const user = "0xdcea581d9d582a0053261bbab53604066f293c74"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "userTwapSliceFills")))
+
+	fills, err := info.UserTwapSliceFills(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "userTwapSliceFills",
+		"user": user,
+	}, *req)
+	require.Len(t, fills, 20)
+}
+
+func TestInfo_BorrowLendReserveState(t *testing.T) {
+	const token = 0
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "borrowLendReserveState")))
+
+	state, err := info.BorrowLendReserveState(context.TODO(), token)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":  "borrowLendReserveState",
+		"token": float64(token),
+	}, *req)
+	require.Equal(t, "1.0", state.OraclePx)
+}
+
+func TestInfo_OutcomeDeployerLimits(t *testing.T) {
+	const venue = "skew"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "outcomeDeployerLimits")))
+
+	limits, err := info.OutcomeDeployerLimits(context.TODO(), venue)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":  "outcomeDeployerLimits",
+		"venue": venue,
+	}, *req)
+	require.Equal(t, 968, limits.NDailyOutcomesRemaining)
+}
+
+func TestInfo_OutcomeTemplates(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "outcomeTemplates")))
+
+	templates, err := info.OutcomeTemplates(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "outcomeTemplates",
+	}, *req)
+	require.Len(t, templates, 10)
+}
+
+func TestInfo_PerpAnnotation(t *testing.T) {
+	const coin = "io:AAPL"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpAnnotation")))
+
+	annotation, err := info.PerpAnnotation(context.TODO(), coin)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpAnnotation",
+		"coin": coin,
+	}, *req)
+	require.Equal(t, "stocks", annotation.Category)
+}
+
+func TestInfo_PerpAnnotation_Null(t *testing.T) {
+	info, _ := newInfoTestServer(t, "null")
+
+	annotation, err := info.PerpAnnotation(context.TODO(), "BTC")
+	require.NoError(t, err)
+
+	require.Nil(t, annotation)
+}
+
+func TestInfo_PerpCategories(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpCategories")))
+
+	categories, err := info.PerpCategories(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpCategories",
+	}, *req)
+	require.Len(t, categories, 20)
+}
+
+func TestInfo_PerpConciseAnnotations(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpConciseAnnotations")))
+
+	annotations, err := info.PerpConciseAnnotations(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpConciseAnnotations",
+	}, *req)
+	require.Len(t, annotations, 20)
+}
+
+func TestInfo_PerpsAtOpenInterestCap(t *testing.T) {
+	t.Run("sends only the type without a dex", func(t *testing.T) {
+		info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpsAtOpenInterestCap")))
+
+		coins, err := info.PerpsAtOpenInterestCap(context.TODO())
+		require.NoError(t, err)
+
+		require.Equal(t, map[string]any{"type": "perpsAtOpenInterestCap"}, *req)
+		require.Equal(t, "ACE", coins[0])
+		require.Len(t, coins, 9)
+	})
+
+	t.Run("sends the dex when given", func(t *testing.T) {
+		info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpsAtOpenInterestCap")))
+
+		_, err := info.PerpsAtOpenInterestCap(context.TODO(), "flx")
+		require.NoError(t, err)
+
+		require.Equal(t, map[string]any{
+			"type": "perpsAtOpenInterestCap",
+			"dex":  "flx",
+		}, *req)
+	})
+}
+
+func TestInfo_SettledOutcome(t *testing.T) {
+	const outcome = 0
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "settledOutcome")))
+
+	settled, err := info.SettledOutcome(context.TODO(), outcome)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":    "settledOutcome",
+		"outcome": float64(outcome),
+	}, *req)
+	require.Equal(t, "price:78212.4", settled.Details)
+}
+
+func TestInfo_SpotPairDeployAuctionStatus(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "spotPairDeployAuctionStatus")))
+
+	status, err := info.SpotPairDeployAuctionStatus(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "spotPairDeployAuctionStatus",
+	}, *req)
+	require.Equal(t, "500.0", status.StartGas)
+}
