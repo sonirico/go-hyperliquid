@@ -606,9 +606,11 @@ type ReferralState struct {
 }
 
 type SubAccount struct {
-	Name        string   `json:"name"`
-	User        string   `json:"user"`
-	Permissions []string `json:"permissions"`
+	Name               string        `json:"name"`
+	SubAccountUser     string        `json:"subAccountUser"`
+	Master             string        `json:"master"`
+	ClearinghouseState UserState     `json:"clearinghouseState"`
+	SpotState          SpotUserState `json:"spotState"`
 }
 
 type MultiSigSigner struct {
