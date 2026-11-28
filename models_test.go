@@ -744,3 +744,11 @@ func TestOutcomeDeployerLimits_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &OutcomeDeployerLimits{})
 	})
 }
+
+func TestOutcomeTemplate_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeTemplates")
+
+		assertKeysCovered(t, raw, &[]OutcomeTemplate{})
+	})
+}

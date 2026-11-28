@@ -246,3 +246,15 @@ func TestInfo_OutcomeDeployerLimits(t *testing.T) {
 	}, *req)
 	require.Equal(t, 968, limits.NDailyOutcomesRemaining)
 }
+
+func TestInfo_OutcomeTemplates(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "outcomeTemplates")))
+
+	templates, err := info.OutcomeTemplates(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "outcomeTemplates",
+	}, *req)
+	require.Len(t, templates, 10)
+}

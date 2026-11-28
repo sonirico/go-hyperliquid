@@ -830,6 +830,15 @@ type OutcomeDeployerLimits struct {
 	NActiveOutcomesRemaining int `json:"nActiveOutcomesRemaining"`
 }
 
+//easyjson:skip
+type OutcomeTemplate struct {
+	ID          string                   `json:"id"`
+	Role        json.RawMessage          `json:"role"`
+	Name        string                   `json:"name"`
+	Description string                   `json:"description"`
+	Keywords    []Tuple2[string, string] `json:"keywords"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]

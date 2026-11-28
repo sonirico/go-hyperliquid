@@ -1043,6 +1043,21 @@ func (i *Info) OutcomeDeployerLimits(ctx context.Context, venue string) (*Outcom
 	return &result, nil
 }
 
+func (i *Info) OutcomeTemplates(ctx context.Context) ([]OutcomeTemplate, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "outcomeTemplates",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch outcome templates: %w", err)
+	}
+
+	var result []OutcomeTemplate
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal outcome templates: %w", err)
+	}
+	return result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
