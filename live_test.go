@@ -44,6 +44,15 @@ func newTestLiveExchange(t *testing.T, pk *ecdsa.PrivateKey) (*Exchange, *liveTr
 	return ex, transport
 }
 
+func liveRows() []goldenRow {
+	return []goldenRow{
+		{name: "spotDeploy_registerHyperliquidity_integerPrices", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 20, 4, 10, nil)
+			return err
+		}},
+	}
+}
+
 // The key is generated per run and never funded: the testnet rejects the
 // action with an error that names the address recovered from the signature,
 // so finding our own address in the response proves the signature verifies.
@@ -52,7 +61,7 @@ func TestLive(t *testing.T) {
 	require.NoError(t, err)
 	address := strings.ToLower(crypto.PubkeyToAddress(pk.PublicKey).Hex())
 
-	for _, row := range goldenRows(goldenOther) {
+	for _, row := range append(goldenRows(goldenOther), liveRows()...) {
 		t.Run(row.name, func(t *testing.T) {
 			ex, transport := newTestLiveExchange(t, pk)
 
