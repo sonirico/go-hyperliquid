@@ -220,3 +220,11 @@ func TestWsMessage_L2Book(t *testing.T) {
 		assertKeysCovered(t, raw, &L2Book{})
 	})
 }
+
+func TestWsMessage_Trades(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_trades")
+
+		assertKeysCovered(t, raw, &Trades{})
+	})
+}
