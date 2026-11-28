@@ -7,30 +7,64 @@ import (
 //go:generate easyjson -all
 
 const (
-	ChannelPong               string = "pong"
-	ChannelTrades             string = "trades"
-	ChannelActiveAssetCtx     string = "activeAssetCtx"
-	ChannelFastAssetCtxs      string = "fastAssetCtxs"
-	ChannelAllDexsAssetCtxs   string = "allDexsAssetCtxs"
-	ChannelL2Book             string = "l2Book"
-	ChannelCandle             string = "candle"
-	ChannelAllMids            string = "allMids"
-	ChannelNotification       string = "notification"
-	ChannelOrderUpdates       string = "orderUpdates"
-	ChannelUserFills          string = "userFills"
-	ChannelWebData2           string = "webData2"
-	ChannelBbo                string = "bbo"
-	ChannelSubResponse        string = "subscriptionResponse"
-	ChannelClearinghouseState string = "clearinghouseState"
-	ChannelOpenOrders         string = "openOrders"
-	ChannelTwapStates         string = "twapStates"
-	ChannelWebData3           string = "webData3"
-	ChannelError              string = "error"
+	ChannelPong                        string = "pong"
+	ChannelTrades                      string = "trades"
+	ChannelActiveAssetCtx              string = "activeAssetCtx"
+	ChannelActiveSpotAssetCtx          string = "activeSpotAssetCtx"
+	ChannelFastAssetCtxs               string = "fastAssetCtxs"
+	ChannelAllDexsAssetCtxs            string = "allDexsAssetCtxs"
+	ChannelL2Book                      string = "l2Book"
+	ChannelCandle                      string = "candle"
+	ChannelAllMids                     string = "allMids"
+	ChannelNotification                string = "notification"
+	ChannelOrderUpdates                string = "orderUpdates"
+	ChannelUser                        string = "user"
+	ChannelUserFills                   string = "userFills"
+	ChannelBbo                         string = "bbo"
+	ChannelSubResponse                 string = "subscriptionResponse"
+	ChannelClearinghouseState          string = "clearinghouseState"
+	ChannelOpenOrders                  string = "openOrders"
+	ChannelTwapStates                  string = "twapStates"
+	ChannelWebData3                    string = "webData3"
+	ChannelUserFundings                string = "userFundings"
+	ChannelUserNonFundingLedgerUpdates string = "userNonFundingLedgerUpdates"
+	ChannelActiveAssetData             string = "activeAssetData"
+	ChannelUserTwapSliceFills          string = "userTwapSliceFills"
+	ChannelUserTwapHistory             string = "userTwapHistory"
+	ChannelSpotState                   string = "spotState"
+	ChannelAllDexsClearinghouseState   string = "allDexsClearinghouseState"
+	ChannelOutcomeMetaUpdates          string = "outcomeMetaUpdates"
+	ChannelL2                          string = "l2"
+	ChannelPac                         string = "pac"
+	ChannelSac                         string = "sac"
+	ChannelPost                        string = "post"
+	ChannelError                       string = "error"
 )
 
 type wsMessage struct {
 	Channel string          `json:"channel"`
 	Data    json.RawMessage `json:"data"`
+}
+
+type wsPostCommand struct {
+	Method  string        `json:"method"`
+	ID      int64         `json:"id"`
+	Request wsPostRequest `json:"request"`
+}
+
+type wsPostRequest struct {
+	Type    string `json:"type"`
+	Payload any    `json:"payload"`
+}
+
+type wsPostMessage struct {
+	ID       int64          `json:"id"`
+	Response wsPostResponse `json:"response"`
+}
+
+type wsPostResponse struct {
+	Type    string          `json:"type"`
+	Payload json.RawMessage `json:"payload"`
 }
 
 type wsCommand struct {
@@ -71,13 +105,19 @@ type (
 		MarkPx    float64 `json:"markPx,string"`
 		MidPx     float64 `json:"midPx,string"`
 
+		DayBaseVlm float64 `json:"dayBaseVlm,string"`
+
 		// PerpsAssetCtx
-		Funding      float64 `json:"funding,string,omitempty"`
-		OpenInterest float64 `json:"openInterest,string,omitempty"`
-		OraclePx     float64 `json:"oraclePx,string,omitempty"`
+		Funding      float64  `json:"funding,string,omitempty"`
+		OpenInterest float64  `json:"openInterest,string,omitempty"`
+		OraclePx     float64  `json:"oraclePx,string,omitempty"`
+		Premium      float64  `json:"premium,string,omitempty"`
+		ImpactPxs    []string `json:"impactPxs,omitempty"`
 
 		// SpotAssetCtx
 		CirculatingSupply float64 `json:"circulatingSupply,string,omitempty"`
+		Coin              string  `json:"coin,omitempty"`
+		TotalSupply       float64 `json:"totalSupply,string,omitempty"`
 	}
 
 	AllMids struct {
@@ -86,51 +126,6 @@ type (
 
 	Notification struct {
 		Notification string `json:"notification"`
-	}
-
-	//easyjson:skip
-	WebData2 struct {
-		ClearinghouseState     *ClearinghouseState `json:"clearinghouseState,omitempty"`
-		LeadingVaults          []any               `json:"leadingVaults,omitempty"`
-		TotalVaultEquity       string              `json:"totalVaultEquity,omitempty"`
-		OpenOrders             []WsBasicOrder      `json:"openOrders,omitempty"`
-		AgentAddress           *string             `json:"agentAddress,omitempty"`
-		AgentValidUntil        *int64              `json:"agentValidUntil,omitempty"`
-		CumLedger              string              `json:"cumLedger,omitempty"`
-		Meta                   *WebData2Meta       `json:"meta,omitempty"`
-		AssetCtxs              []AssetCtx          `json:"assetCtxs,omitempty"`
-		ServerTime             int64               `json:"serverTime,omitempty"`
-		IsVault                bool                `json:"isVault,omitempty"`
-		User                   string              `json:"user,omitempty"`
-		TwapStates             []any               `json:"twapStates,omitempty"`
-		SpotState              *SpotState          `json:"spotState,omitempty"`
-		SpotAssetCtxs          []SpotAssetCtx      `json:"spotAssetCtxs,omitempty"`
-		PerpsAtOpenInterestCap []string            `json:"perpsAtOpenInterestCap,omitempty"`
-	}
-
-	//easyjson:skip
-	WebData2Meta struct {
-		Universe     []WebData2AssetInfo                `json:"universe,omitempty"`
-		MarginTables []Tuple2[int, WebData2MarginTable] `json:"marginTables,omitempty"`
-	}
-
-	WebData2AssetInfo struct {
-		SzDecimals    int    `json:"szDecimals,omitempty"`
-		Name          string `json:"name,omitempty"`
-		MaxLeverage   int    `json:"maxLeverage,omitempty"`
-		MarginTableID int    `json:"marginTableId,omitempty"`
-		IsDelisted    bool   `json:"isDelisted,omitempty"`
-		OnlyIsolated  bool   `json:"onlyIsolated,omitempty"`
-	}
-
-	WebData2MarginTable struct {
-		Description string               `json:"description,omitempty"`
-		MarginTiers []WebData2MarginTier `json:"marginTiers,omitempty"`
-	}
-
-	WebData2MarginTier struct {
-		LowerBound  string `json:"lowerBound,omitempty"`
-		MaxLeverage int    `json:"maxLeverage,omitempty"`
 	}
 
 	ClearinghouseState struct {
@@ -143,7 +138,7 @@ type (
 	}
 
 	ClearinghouseStateMessage struct {
-		Dex                string             `json:"dex,omitempty"`
+		Dex                string             `json:"dex"`
 		User               string             `json:"user,omitempty"`
 		ClearinghouseState ClearinghouseState `json:"clearinghouseState"`
 	}
@@ -153,9 +148,9 @@ type (
 	}
 
 	OpenOrders struct {
-		Dex    string         `json:"dex"`
-		User   string         `json:"user"`
-		Orders []WsBasicOrder `json:"orders"`
+		Dex    string              `json:"dex"`
+		User   string              `json:"user"`
+		Orders []FrontendOpenOrder `json:"orders"`
 	}
 
 	WsOrder struct {
@@ -198,6 +193,137 @@ type (
 		Liquidation   *FillLiquidation `json:"liquidation,omitempty"`
 		FeeToken      string           `json:"feeToken"`             // the token the fee was paid in
 		BuilderFee    *string          `json:"builderFee,omitempty"` // amount paid to builder, also included in fee
+		Cloid         *string          `json:"cloid,omitempty"`
+		TwapId        *int64           `json:"twapId"`
+	}
+
+	UserEvents struct {
+		Fills         []WsOrderFill     `json:"fills,omitempty"`
+		Funding       *WsUserFunding    `json:"funding,omitempty"`
+		Liquidation   *WsLiquidation    `json:"liquidation,omitempty"`
+		NonUserCancel []WsNonUserCancel `json:"nonUserCancel,omitempty"`
+	}
+
+	WsUserFunding struct {
+		Time        int64  `json:"time"`
+		Coin        string `json:"coin"`
+		Usdc        string `json:"usdc"`
+		Szi         string `json:"szi"`
+		FundingRate string `json:"fundingRate"`
+		NSamples    *int   `json:"nSamples"`
+	}
+
+	WsLiquidation struct {
+		Lid                    int64  `json:"lid"`
+		Liquidator             string `json:"liquidator"`
+		LiquidatedUser         string `json:"liquidated_user"`
+		LiquidatedNtlPos       string `json:"liquidated_ntl_pos"`
+		LiquidatedAccountValue string `json:"liquidated_account_value"`
+	}
+
+	WsNonUserCancel struct {
+		Coin string `json:"coin"`
+		Oid  int64  `json:"oid"`
+	}
+
+	UserFundings struct {
+		IsSnapshot bool            `json:"isSnapshot"`
+		User       string          `json:"user"`
+		Fundings   []WsUserFunding `json:"fundings"`
+	}
+
+	WsUserNonFundingLedgerUpdates struct {
+		IsSnapshot              bool                          `json:"isSnapshot"`
+		User                    string                        `json:"user"`
+		NonFundingLedgerUpdates []UserNonFundingLedgerUpdates `json:"nonFundingLedgerUpdates"`
+	}
+
+	WsUserTwapSliceFills struct {
+		IsSnapshot     bool            `json:"isSnapshot"`
+		User           string          `json:"user"`
+		TwapSliceFills []TwapSliceFill `json:"twapSliceFills"`
+	}
+
+	WsUserTwapHistory struct {
+		IsSnapshot bool            `json:"isSnapshot"`
+		User       string          `json:"user"`
+		History    []WsTwapHistory `json:"history"`
+	}
+
+	WsTwapHistory struct {
+		State  TwapState    `json:"state"`
+		Status WsTwapStatus `json:"status"`
+		Time   int64        `json:"time"`
+		TwapId int64        `json:"twapId"`
+	}
+
+	WsTwapStatus struct {
+		Status      string `json:"status"`
+		Description string `json:"description"`
+	}
+
+	WsSpotState struct {
+		User      string        `json:"user"`
+		SpotState SpotUserState `json:"spotState"`
+	}
+
+	//easyjson:skip
+	WsAllDexsClearinghouseState struct {
+		User                string                      `json:"user"`
+		ClearinghouseStates []Tuple2[string, UserState] `json:"clearinghouseStates"`
+	}
+
+	OutcomeMetaUpdates []OutcomeMetaUpdate
+
+	OutcomeMetaUpdate struct {
+		OutcomeCreated  *OutcomeMetaOutcome  `json:"outcomeCreated,omitempty"`
+		OutcomeSettled  *int                 `json:"outcomeSettled,omitempty"`
+		QuestionUpdated *OutcomeMetaQuestion `json:"questionUpdated,omitempty"`
+		QuestionSettled *int                 `json:"questionSettled,omitempty"`
+	}
+
+	//easyjson:skip
+	WsL2 struct {
+		S *L2Book   `json:"s,omitempty"`
+		U *WsL2Diff `json:"u,omitempty"`
+	}
+
+	WsL2Diff struct {
+		Coin    string              `json:"c"`
+		Time    int64               `json:"t"`
+		Levels  [][]WsL2LevelUpdate `json:"l"`
+		Removed [][]int             `json:"r"`
+	}
+
+	WsL2LevelUpdate struct {
+		Px string `json:"p"`
+		Sz string `json:"s"`
+	}
+
+	//easyjson:skip
+	WsPac []Tuple2[string, []PacAssetCtx]
+
+	PacAssetCtx struct {
+		Funding      *float64 `json:"funding,string,omitempty"`
+		OpenInterest *float64 `json:"openInterest,string,omitempty"`
+		OraclePx     *float64 `json:"oraclePx,string,omitempty"`
+		PrevDayPx    *float64 `json:"prevDayPx,string,omitempty"`
+		DayNtlVlm    *float64 `json:"dayNtlVlm,string,omitempty"`
+		MarkPx       *float64 `json:"markPx,string,omitempty"`
+		MidPx        *float64 `json:"midPx,string,omitempty"`
+		DayBaseVlm   *float64 `json:"dayBaseVlm,string,omitempty"`
+	}
+
+	//easyjson:skip
+	WsSac map[string]SacAssetCtx
+
+	SacAssetCtx struct {
+		PrevDayPx         *float64 `json:"prevDayPx,string,omitempty"`
+		DayNtlVlm         *float64 `json:"dayNtlVlm,string,omitempty"`
+		MarkPx            *float64 `json:"markPx,string,omitempty"`
+		MidPx             *float64 `json:"midPx,string"`
+		DayBaseVlm        *float64 `json:"dayBaseVlm,string,omitempty"`
+		CirculatingSupply *float64 `json:"circulatingSupply,string,omitempty"`
 	}
 
 	FillLiquidation struct {
@@ -245,16 +371,18 @@ type (
 	}
 
 	TwapState struct {
-		Coin        string  `json:"coin"`
-		User        string  `json:"user"`
-		Side        string  `json:"side"`
-		Sz          float64 `json:"sz,string"`
-		ExecutedSz  float64 `json:"executedSz,string"`
-		ExecutedNtl float64 `json:"executedNtl,string"`
-		Minutes     int     `json:"minutes"`
-		ReduceOnly  bool    `json:"reduceOnly"`
-		Randomize   bool    `json:"randomize"`
-		Timestamp   int64   `json:"timestamp"`
+		Coin        string          `json:"coin"`
+		User        string          `json:"user"`
+		Side        string          `json:"side"`
+		Sz          float64         `json:"sz,string"`
+		ExecutedSz  float64         `json:"executedSz,string"`
+		ExecutedNtl float64         `json:"executedNtl,string"`
+		Minutes     int             `json:"minutes"`
+		ReduceOnly  bool            `json:"reduceOnly"`
+		Randomize   bool            `json:"randomize"`
+		Timestamp   int64           `json:"timestamp"`
+		Trigger     json.RawMessage `json:"trigger"`
+		StopPx      json.RawMessage `json:"stopPx"`
 	}
 
 	//easyjson:skip
@@ -264,14 +392,15 @@ type (
 	}
 
 	WebData3UserState struct {
-		AgentAddress          *string `json:"agentAddress,omitempty"`
-		AgentValidUntil       *int64  `json:"agentValidUntil,omitempty"`
+		AgentAddress          *string `json:"agentAddress"`
+		AgentValidUntil       *int64  `json:"agentValidUntil"`
 		ServerTime            int64   `json:"serverTime"`
 		CumLedger             float64 `json:"cumLedger,string"`
 		IsVault               bool    `json:"isVault"`
 		User                  string  `json:"user"`
 		OptOutOfSpotDusting   *bool   `json:"optOutOfSpotDusting,omitempty"`
 		DexAbstractionEnabled *bool   `json:"dexAbstractionEnabled,omitempty"`
+		Abstraction           string  `json:"abstraction"`
 	}
 
 	PerpDexState struct {

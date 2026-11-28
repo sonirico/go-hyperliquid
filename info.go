@@ -776,6 +776,22 @@ func (i *Info) UserStakingRewards(ctx context.Context, address string) ([]Stakin
 	return result, nil
 }
 
+func (i *Info) DelegatorHistory(ctx context.Context, user string) ([]DelegatorHistoryEntry, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "delegatorHistory",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch delegator history: %w", err)
+	}
+
+	var result []DelegatorHistoryEntry
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal delegator history: %w", err)
+	}
+	return result, nil
+}
+
 func (i *Info) QueryOrderByOid(
 	ctx context.Context,
 	user string,
@@ -852,7 +868,7 @@ func (i *Info) QuerySubAccounts(ctx context.Context, user string) ([]SubAccount,
 func (i *Info) QueryUserToMultiSigSigners(
 	ctx context.Context,
 	multiSigUser string,
-) ([]MultiSigSigner, error) {
+) (*MultiSigSigner, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userToMultiSigSigners",
 		"user": multiSigUser,
@@ -861,7 +877,7 @@ func (i *Info) QueryUserToMultiSigSigners(
 		return nil, fmt.Errorf("failed to fetch multi-sig signers: %w", err)
 	}
 
-	var result []MultiSigSigner
+	var result *MultiSigSigner
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal multi-sig signers: %w", err)
 	}
@@ -963,6 +979,182 @@ func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionS
 	return &result, nil
 }
 
+func (i *Info) UserTwapSliceFills(ctx context.Context, user string) ([]TwapSliceFill, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userTwapSliceFills",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch twap slice fills: %w", err)
+	}
+
+	var result []TwapSliceFill
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal twap slice fills: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) SpotDeployState(ctx context.Context, user string) (*SpotDeployState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "spotDeployState",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch spot deploy state: %w", err)
+	}
+
+	var result SpotDeployState
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal spot deploy state: %w", err)
+	}
+	return &result, nil
+}
+
+func (i *Info) BorrowLendReserveState(ctx context.Context, token int) (*BorrowLendReserveState, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":  "borrowLendReserveState",
+		"token": token,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch borrow/lend reserve state: %w", err)
+	}
+
+	var result BorrowLendReserveState
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal borrow/lend reserve state: %w", err)
+	}
+	return &result, nil
+}
+
+func (i *Info) OutcomeDeployerLimits(ctx context.Context, venue string) (*OutcomeDeployerLimits, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":  "outcomeDeployerLimits",
+		"venue": venue,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch outcome deployer limits: %w", err)
+	}
+
+	var result OutcomeDeployerLimits
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal outcome deployer limits: %w", err)
+	}
+	return &result, nil
+}
+
+func (i *Info) OutcomeTemplates(ctx context.Context) ([]OutcomeTemplate, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "outcomeTemplates",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch outcome templates: %w", err)
+	}
+
+	var result []OutcomeTemplate
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal outcome templates: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) PerpAnnotation(ctx context.Context, coin string) (*PerpAnnotation, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpAnnotation",
+		"coin": coin,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp annotation: %w", err)
+	}
+
+	var result *PerpAnnotation
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp annotation: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) PerpCategories(ctx context.Context) ([]Tuple2[string, string], error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpCategories",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp categories: %w", err)
+	}
+
+	var result []Tuple2[string, string]
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp categories: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) PerpConciseAnnotations(ctx context.Context) ([]Tuple2[string, PerpConciseAnnotation], error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpConciseAnnotations",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp concise annotations: %w", err)
+	}
+
+	var result []Tuple2[string, PerpConciseAnnotation]
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp concise annotations: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) PerpsAtOpenInterestCap(ctx context.Context, dex ...string) ([]string, error) {
+	payload := map[string]any{
+		"type": "perpsAtOpenInterestCap",
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perps at open interest cap: %w", err)
+	}
+
+	var result []string
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perps at open interest cap: %w", err)
+	}
+	return result, nil
+}
+
+func (i *Info) SettledOutcome(ctx context.Context, outcome int) (*SettledOutcome, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":    "settledOutcome",
+		"outcome": outcome,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch settled outcome: %w", err)
+	}
+
+	var result SettledOutcome
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal settled outcome: %w", err)
+	}
+	return &result, nil
+}
+
+func (i *Info) SpotPairDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionStatus, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "spotPairDeployAuctionStatus",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch spot pair deploy auction status: %w", err)
+	}
+
+	var result PerpDeployAuctionStatus
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal spot pair deploy auction status: %w", err)
+	}
+	return &result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
@@ -1019,7 +1211,9 @@ func (i *Info) QueryVaultDetails(ctx context.Context, VaultAddress string, user 
 	payload := map[string]any{
 		"type":         "vaultDetails",
 		"vaultAddress": VaultAddress,
-		"user":         user,
+	}
+	if user != "" {
+		payload["user"] = user
 	}
 	resp, err := i.client.post(ctx, "/info", payload)
 	if err != nil {

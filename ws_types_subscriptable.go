@@ -56,13 +56,63 @@ func (w WsOrders) Key() string {
 	return ChannelOrderUpdates
 }
 
-func (w WebData2) Key() string {
-	// WebData2 messages are user-specific but don't contain user info in the message itself.
+func (w Bbo) Key() string { return keyBbo(w.Coin) }
+
+func (u UserEvents) Key() string {
+	// UserEvents messages are user-specific but don't contain user info in the message itself.
 	// The dispatching is handled by the subscription system based on the subscription key.
-	return ChannelWebData2
+	return ChannelUser
 }
 
-func (w Bbo) Key() string { return keyBbo(w.Coin) }
+func (m UserFundings) Key() string {
+	return keyUserFundings(m.User)
+}
+
+func (m WsUserNonFundingLedgerUpdates) Key() string {
+	return keyUserNonFundingLedgerUpdates(m.User)
+}
+
+func (m UserActiveAssetData) Key() string {
+	return keyActiveAssetData(m.User, m.Coin)
+}
+
+func (m WsUserTwapSliceFills) Key() string {
+	return keyUserTwapSliceFills(m.User)
+}
+
+func (m WsUserTwapHistory) Key() string {
+	return keyUserTwapHistory(m.User)
+}
+
+func (m WsSpotState) Key() string {
+	return keySpotState(m.User)
+}
+
+func (m WsAllDexsClearinghouseState) Key() string {
+	return keyAllDexsClearinghouseState(m.User)
+}
+
+func (OutcomeMetaUpdates) Key() string {
+	return keyOutcomeMetaUpdates()
+}
+
+func (l WsL2) Key() string {
+	if l.S != nil {
+		return keyL2(l.S.Coin)
+	}
+	if l.U != nil {
+		return keyL2(l.U.Coin)
+	}
+	return keyL2("")
+}
+
+func (WsPac) Key() string {
+	return keyPac()
+}
+
+func (WsSac) Key() string {
+	return keySac()
+}
 
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)

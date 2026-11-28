@@ -137,17 +137,161 @@ func (p remoteOrderFillsSubscriptionPayload) Key() string {
 	return keyUserFills(p.User)
 }
 
-type remoteWebData2SubscriptionPayload struct {
+type remoteUserEventsSubscriptionPayload struct {
 	Type string `json:"type"`
 	User string `json:"user"`
 }
 
-func (p remoteWebData2SubscriptionPayload) Channel() string {
+func (p remoteUserEventsSubscriptionPayload) Channel() string {
 	return p.Type
 }
 
-func (p remoteWebData2SubscriptionPayload) Key() string {
-	return keyWebData2(p.User)
+func (p remoteUserEventsSubscriptionPayload) Key() string {
+	return keyUserEvents(p.User)
+}
+
+type remoteUserFundingsSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserFundingsSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserFundingsSubscriptionPayload) Key() string {
+	return keyUserFundings(p.User)
+}
+
+type remoteUserNonFundingLedgerUpdatesSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserNonFundingLedgerUpdatesSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserNonFundingLedgerUpdatesSubscriptionPayload) Key() string {
+	return keyUserNonFundingLedgerUpdates(p.User)
+}
+
+type remoteActiveAssetDataSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+	Coin string `json:"coin"`
+}
+
+func (p remoteActiveAssetDataSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteActiveAssetDataSubscriptionPayload) Key() string {
+	return keyActiveAssetData(p.User, p.Coin)
+}
+
+type remoteUserTwapSliceFillsSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserTwapSliceFillsSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserTwapSliceFillsSubscriptionPayload) Key() string {
+	return keyUserTwapSliceFills(p.User)
+}
+
+type remoteUserTwapHistorySubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserTwapHistorySubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserTwapHistorySubscriptionPayload) Key() string {
+	return keyUserTwapHistory(p.User)
+}
+
+type remoteSpotStateSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteSpotStateSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteSpotStateSubscriptionPayload) Key() string {
+	return keySpotState(p.User)
+}
+
+type remoteAllDexsClearinghouseStateSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteAllDexsClearinghouseStateSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteAllDexsClearinghouseStateSubscriptionPayload) Key() string {
+	return keyAllDexsClearinghouseState(p.User)
+}
+
+type remoteOutcomeMetaUpdatesSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remoteOutcomeMetaUpdatesSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteOutcomeMetaUpdatesSubscriptionPayload) Key() string {
+	return keyOutcomeMetaUpdates()
+}
+
+type remoteL2SubscriptionPayload struct {
+	Type     string `json:"type"`
+	Coin     string `json:"c"`
+	NSigFigs int    `json:"s,omitempty"`
+	Mantissa int    `json:"m,omitempty"`
+}
+
+func (p remoteL2SubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteL2SubscriptionPayload) Key() string {
+	// Deliberately exclude NSigFigs and Mantissa.
+	return keyL2(p.Coin)
+}
+
+type remotePacSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remotePacSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remotePacSubscriptionPayload) Key() string {
+	return keyPac()
+}
+
+type remoteSacSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remoteSacSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteSacSubscriptionPayload) Key() string {
+	return keySac()
 }
 
 type remoteBboSubscriptionPayload struct {

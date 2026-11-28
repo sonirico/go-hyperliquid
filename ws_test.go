@@ -1,8 +1,13 @@
 package hyperliquid
 
 import (
+	"bytes"
+	"compress/flate"
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -203,4 +208,785 @@ func TestServerErrorChannelWithoutHandler(t *testing.T) {
 	client = NewWebsocketClient(MainnetAPIURL, WsOptErrorHandler(func(err error) { got = err }))
 	require.NoError(t, client.dispatch(wsMessage{Channel: ChannelError, Data: []byte(`{"code":1}`)}))
 	require.Equal(t, WsServerError{Message: `{"code":1}`}, got)
+}
+
+func TestWsMessage_AllMids(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allMids")
+
+		assertKeysCovered(t, raw, &AllMids{})
+	})
+}
+
+func TestWsMessage_L2Book(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_l2Book")
+
+		assertKeysCovered(t, raw, &L2Book{})
+	})
+}
+
+func TestWsMessage_Trades(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_trades")
+
+		assertKeysCovered(t, raw, &Trades{})
+	})
+}
+
+func TestWsMessage_Bbo(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_bbo")
+
+		assertKeysCovered(t, raw, &Bbo{})
+	})
+}
+
+func TestWsMessage_Candle(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_candle")
+
+		assertKeysCovered(t, raw, &Candle{})
+	})
+}
+
+func TestWsMessage_ActiveAssetCtx(t *testing.T) {
+	t.Run("covers every key of the perp message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeAssetCtx")
+
+		assertKeysCovered(t, raw, &ActiveAssetCtx{})
+	})
+
+	t.Run("covers every key of the spot message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeSpotAssetCtx")
+
+		assertKeysCovered(t, raw, &ActiveAssetCtx{})
+	})
+}
+
+func TestWsMessage_AllDexsAssetCtxs(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allDexsAssetCtxs")
+
+		assertKeysCovered(t, raw, &WsAllDexsAssetCtxs{})
+	})
+}
+
+func TestWsMessage_FastAssetCtxs(t *testing.T) {
+	t.Run("covers every key of the inflated message data", func(t *testing.T) {
+		var compressed string
+		require.NoError(t, json.Unmarshal(newTestWsFixtureData(t, "ws_fastAssetCtxs"), &compressed))
+		packed, err := base64.StdEncoding.DecodeString(compressed)
+		require.NoError(t, err)
+		raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(packed)))
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &map[string]FastAssetCtx{})
+	})
+}
+
+func TestWsMessage_ClearinghouseState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_clearinghouseState")
+
+		assertKeysCovered(t, raw, &ClearinghouseStateMessage{})
+	})
+}
+
+func TestWsMessage_OpenOrders(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_openOrders")
+
+		assertKeysCovered(t, raw, &OpenOrders{})
+	})
+}
+
+func TestWsMessage_UserFills(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userFills")
+
+		assertKeysCovered(t, raw, &WsOrderFills{})
+	})
+}
+
+func TestWsMessage_OrderUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_orderUpdates")
+
+		assertKeysCovered(t, raw, &WsOrders{})
+	})
+}
+
+func TestWsMessage_TwapStates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_twapStates")
+
+		assertKeysCovered(t, raw, &TwapStates{})
+	})
+}
+
+func TestWsMessage_UserEvents(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userEvents")
+
+		assertKeysCovered(t, raw, &UserEvents{})
+	})
+}
+
+func TestWsMessage_UserFundings(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userFundings")
+
+		assertKeysCovered(t, raw, &UserFundings{})
+	})
+}
+
+func TestWsMessage_UserNonFundingLedgerUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userNonFundingLedgerUpdates")
+
+		assertKeysCovered(t, raw, &WsUserNonFundingLedgerUpdates{})
+	})
+}
+
+func TestWsMessage_ActiveAssetData(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeAssetData")
+
+		assertKeysCovered(t, raw, &UserActiveAssetData{})
+	})
+}
+
+func TestWsMessage_UserTwapSliceFills(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userTwapSliceFills")
+
+		assertKeysCovered(t, raw, &WsUserTwapSliceFills{})
+	})
+}
+
+func TestWsMessage_UserTwapHistory(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userTwapHistory")
+
+		assertKeysCovered(t, raw, &WsUserTwapHistory{})
+	})
+}
+
+func TestWsMessage_SpotState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_spotState")
+
+		assertKeysCovered(t, raw, &WsSpotState{})
+	})
+}
+
+func TestWsMessage_AllDexsClearinghouseState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allDexsClearinghouseState")
+
+		assertKeysCovered(t, raw, &WsAllDexsClearinghouseState{})
+	})
+}
+
+func TestWsMessage_OutcomeMetaUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_outcomeMetaUpdates_docs")
+
+		assertKeysCovered(t, raw, &OutcomeMetaUpdates{})
+	})
+}
+
+func TestWsMessage_L2(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_l2")
+
+		assertKeysCovered(t, raw, &WsL2{})
+	})
+}
+
+func TestWsMessage_Pac(t *testing.T) {
+	t.Run("covers every key of the inflated message data", func(t *testing.T) {
+		var compressed string
+		require.NoError(t, json.Unmarshal(newTestWsFixtureData(t, "ws_pac"), &compressed))
+		packed, err := base64.StdEncoding.DecodeString(compressed)
+		require.NoError(t, err)
+		raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(packed)))
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &[]Tuple2[string, []PacAssetCtx]{})
+	})
+}
+
+func TestWsMessage_Sac(t *testing.T) {
+	t.Run("covers every key of the inflated message data", func(t *testing.T) {
+		var compressed string
+		require.NoError(t, json.Unmarshal(newTestWsFixtureData(t, "ws_sac"), &compressed))
+		packed, err := base64.StdEncoding.DecodeString(compressed)
+		require.NoError(t, err)
+		raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(packed)))
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &map[string]SacAssetCtx{})
+	})
+}
+
+func TestWsMessage_WebData3(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_webData3")
+
+		assertKeysCovered(t, raw, &WebData3{})
+	})
+}
+
+func TestWsMessage_Notification(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_notification_docs")
+
+		assertKeysCovered(t, raw, &Notification{})
+	})
+}
+
+const (
+	testWsWait      = 3 * time.Second
+	testWsUser      = "0xb19e5191b3a97657807c704d58e2ffd33aa4ccdf"
+	testWsVaultUser = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
+	testWsTwapUser  = "0xdcea581d9d582a0053261bbab53604066f293c74"
+)
+
+type testWsSubscribe struct {
+	client  *WebsocketClient
+	payload chan []byte
+}
+
+// newTestWsSubscribe starts a fake ws server that answers every frame it
+// receives with the fixture and hands the received frames to payload.
+func newTestWsSubscribe(t *testing.T, fixture []byte) testWsSubscribe {
+	t.Helper()
+
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(*http.Request) bool { return true },
+	}
+	payload := make(chan []byte, 8)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		for {
+			_, frame, err := conn.ReadMessage()
+			if err != nil {
+				return
+			}
+			payload <- frame
+			if err := conn.WriteMessage(websocket.TextMessage, fixture); err != nil {
+				return
+			}
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	ctx, cancel := context.WithTimeout(context.Background(), testWsWait)
+	t.Cleanup(cancel)
+	client := NewWebsocketClient(server.URL)
+	require.NoError(t, client.Connect(ctx))
+	t.Cleanup(func() { require.NoError(t, client.Close()) })
+
+	return testWsSubscribe{client: client, payload: payload}
+}
+
+func (f testWsSubscribe) requireSubscription(t *testing.T, want string) {
+	t.Helper()
+
+	select {
+	case frame := <-f.payload:
+		require.JSONEq(t, `{"method":"subscribe","subscription":`+want+`}`, string(frame))
+	case <-time.After(testWsWait):
+		t.Fatal("no subscribe frame received")
+	}
+}
+
+func requireTestWsMessage[T any](t *testing.T, got <-chan T) T {
+	t.Helper()
+
+	select {
+	case msg := <-got:
+		return msg
+	case <-time.After(testWsWait):
+		t.Fatal("callback was not called")
+		panic("unreachable")
+	}
+}
+
+func TestActiveAssetCtxSubscription(t *testing.T) {
+	t.Run("delivers a spot activeAssetCtx message", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_activeSpotAssetCtx"))
+		got := make(chan ActiveAssetCtx, 1)
+
+		_, err := f.client.ActiveAssetCtx(
+			ActiveAssetCtxSubscriptionParams{Coin: "@107"},
+			func(msg ActiveAssetCtx, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, "@107", msg.Coin)
+		require.Equal(t, 62.572, msg.Ctx.MarkPx)
+	})
+}
+
+func TestUserEventsSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userEvents"))
+		got := make(chan UserEvents, 1)
+
+		_, err := f.client.UserEvents(
+			UserEventsSubscriptionParams{User: testWsUser},
+			func(msg UserEvents, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userEvents","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Len(t, msg.Fills, 1)
+		require.Equal(t, "BTC", msg.Fills[0].Coin)
+	})
+}
+
+func TestUserFundingsSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userFundings"))
+		got := make(chan UserFundings, 1)
+
+		_, err := f.client.UserFundings(
+			UserFundingsSubscriptionParams{User: testWsUser},
+			func(msg UserFundings, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userFundings","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+	})
+}
+
+func TestUserNonFundingLedgerUpdatesSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userNonFundingLedgerUpdates"))
+		got := make(chan WsUserNonFundingLedgerUpdates, 1)
+
+		_, err := f.client.UserNonFundingLedgerUpdates(
+			UserNonFundingLedgerUpdatesSubscriptionParams{User: testWsVaultUser},
+			func(msg WsUserNonFundingLedgerUpdates, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userNonFundingLedgerUpdates","user":"`+testWsVaultUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+		require.NotEmpty(t, msg.NonFundingLedgerUpdates)
+	})
+}
+
+func TestActiveAssetDataSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_activeAssetData"))
+		got := make(chan UserActiveAssetData, 1)
+
+		_, err := f.client.ActiveAssetData(
+			ActiveAssetDataSubscriptionParams{User: testWsUser, Coin: "BTC"},
+			func(msg UserActiveAssetData, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"activeAssetData","user":"`+testWsUser+`","coin":"BTC"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, "BTC", msg.Coin)
+	})
+}
+
+func TestUserTwapSliceFillsSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userTwapSliceFills"))
+		got := make(chan WsUserTwapSliceFills, 1)
+
+		_, err := f.client.UserTwapSliceFills(
+			UserTwapSliceFillsSubscriptionParams{User: testWsTwapUser},
+			func(msg WsUserTwapSliceFills, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userTwapSliceFills","user":"`+testWsTwapUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+		require.NotEmpty(t, msg.TwapSliceFills)
+	})
+}
+
+func TestUserTwapHistorySubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userTwapHistory"))
+		got := make(chan WsUserTwapHistory, 1)
+
+		_, err := f.client.UserTwapHistory(
+			UserTwapHistorySubscriptionParams{User: testWsTwapUser},
+			func(msg WsUserTwapHistory, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userTwapHistory","user":"`+testWsTwapUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+		require.NotEmpty(t, msg.History)
+	})
+}
+
+func TestSpotStateSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_spotState"))
+		got := make(chan WsSpotState, 1)
+
+		_, err := f.client.SpotState(
+			SpotStateSubscriptionParams{User: testWsUser},
+			func(msg WsSpotState, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"spotState","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, testWsUser, msg.User)
+	})
+}
+
+func TestAllDexsClearinghouseStateSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_allDexsClearinghouseState"))
+		got := make(chan WsAllDexsClearinghouseState, 1)
+
+		_, err := f.client.AllDexsClearinghouseState(
+			AllDexsClearinghouseStateSubscriptionParams{User: testWsUser},
+			func(msg WsAllDexsClearinghouseState, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"allDexsClearinghouseState","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotEmpty(t, msg.ClearinghouseStates)
+		require.Equal(t, "", msg.ClearinghouseStates[0].First)
+	})
+}
+
+func TestOutcomeMetaUpdatesSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_outcomeMetaUpdates_docs"))
+		got := make(chan OutcomeMetaUpdates, 1)
+
+		_, err := f.client.OutcomeMetaUpdates(
+			func(msg OutcomeMetaUpdates, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"outcomeMetaUpdates"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Len(t, msg, 4)
+		require.Equal(t, 1, msg[0].OutcomeCreated.Outcome)
+	})
+}
+
+func TestWsL2_UnmarshalJSON(t *testing.T) {
+	const diff = `{"c":"BTC","t":1,"l":[[{"p":"10","s":"2"}],[]],"r":[[],[0]]}`
+	want := WsL2Diff{
+		Coin:    "BTC",
+		Time:    1,
+		Levels:  [][]WsL2LevelUpdate{{{Px: "10", Sz: "2"}}, {}},
+		Removed: [][]int{{}, {0}},
+	}
+
+	t.Run("decodes an uncompressed diff", func(t *testing.T) {
+		var got WsL2
+
+		require.NoError(t, json.Unmarshal([]byte(`{"u":`+diff+`}`), &got))
+
+		require.Equal(t, &want, got.U)
+		require.Nil(t, got.S)
+	})
+
+	t.Run("decodes a compressed diff", func(t *testing.T) {
+		var packed bytes.Buffer
+		writer, err := flate.NewWriter(&packed, flate.DefaultCompression)
+		require.NoError(t, err)
+		_, err = writer.Write([]byte(diff))
+		require.NoError(t, err)
+		require.NoError(t, writer.Close())
+		var got WsL2
+
+		require.NoError(t, json.Unmarshal(
+			[]byte(`{"c":"`+base64.StdEncoding.EncodeToString(packed.Bytes())+`"}`), &got))
+
+		require.Equal(t, &want, got.U)
+	})
+}
+
+func TestL2Subscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_l2"))
+		got := make(chan WsL2, 1)
+
+		_, err := f.client.L2(
+			L2SubscriptionParams{Coin: "BTC", NSigFigs: 5},
+			func(msg WsL2, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"l2","c":"BTC","s":5}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotNil(t, msg.S)
+		require.Equal(t, "BTC", msg.S.Coin)
+	})
+}
+
+func TestPacSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_pac"))
+		got := make(chan WsPac, 1)
+
+		_, err := f.client.Pac(func(msg WsPac, err error) {
+			if err == nil {
+				got <- msg
+			}
+		})
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"pac"}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotEmpty(t, msg)
+		require.Equal(t, "", msg[0].First)
+		require.NotEmpty(t, msg[0].Second)
+	})
+}
+
+func TestSacSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_sac"))
+		got := make(chan WsSac, 1)
+
+		_, err := f.client.Sac(func(msg WsSac, err error) {
+			if err == nil {
+				got <- msg
+			}
+		})
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"sac"}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotEmpty(t, msg)
+	})
+}
+
+type testWsPostFrame struct {
+	Method  string `json:"method"`
+	ID      int64  `json:"id"`
+	Request struct {
+		Type    string          `json:"type"`
+		Payload json.RawMessage `json:"payload"`
+	} `json:"request"`
+}
+
+// newTestWsPostClient connects a client to a fake ws server that hands every
+// post frame to handle. The server closes the connection if handle fails.
+func newTestWsPostClient(
+	t *testing.T,
+	handle func(conn *websocket.Conn, frame testWsPostFrame) error,
+) *WebsocketClient {
+	t.Helper()
+
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(*http.Request) bool { return true },
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		for {
+			var frame testWsPostFrame
+			if err := conn.ReadJSON(&frame); err != nil {
+				return
+			}
+			if err := handle(conn, frame); err != nil {
+				return
+			}
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	ctx, cancel := context.WithTimeout(context.Background(), testWsWait)
+	t.Cleanup(cancel)
+	client := NewWebsocketClient(server.URL)
+	require.NoError(t, client.Connect(ctx))
+	t.Cleanup(func() { require.NoError(t, client.Close()) })
+
+	return client
+}
+
+func writeTestWsPostResponse(
+	conn *websocket.Conn,
+	id int64,
+	responseType string,
+	payload json.RawMessage,
+) error {
+	return conn.WriteJSON(map[string]any{
+		"channel": ChannelPost,
+		"data": map[string]any{
+			"id":       id,
+			"response": map[string]any{"type": responseType, "payload": payload},
+		},
+	})
+}
+
+func echoTestWsPost(conn *websocket.Conn, frame testWsPostFrame) error {
+	return writeTestWsPostResponse(conn, frame.ID, frame.Request.Type, frame.Request.Payload)
+}
+
+func TestWsPost_Info(t *testing.T) {
+	t.Run("sends the request and returns the response payload", func(t *testing.T) {
+		frames := make(chan testWsPostFrame, 1)
+		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
+			frames <- frame
+			return writeTestWsPostResponse(conn, frame.ID, "info", json.RawMessage(`{"mids":{"BTC":"1"}}`))
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "allMids"})
+
+		require.NoError(t, err)
+		require.JSONEq(t, `{"mids":{"BTC":"1"}}`, string(got))
+		frame := <-frames
+		require.Equal(t, "post", frame.Method)
+		require.Equal(t, "info", frame.Request.Type)
+		require.JSONEq(t, `{"type":"allMids"}`, string(frame.Request.Payload))
+	})
+}
+
+func TestWsPost_Error(t *testing.T) {
+	t.Run("turns an error response into an error", func(t *testing.T) {
+		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
+			return writeTestWsPostResponse(conn, frame.ID, "error", json.RawMessage(`"422 Failed to deserialize"`))
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "nope"})
+
+		require.EqualError(t, err, "422 Failed to deserialize")
+		require.Nil(t, got)
+	})
+}
+
+func TestWsPost_ContextCancel(t *testing.T) {
+	t.Run("returns when the context is cancelled and forgets the request", func(t *testing.T) {
+		received := make(chan struct{}, 1)
+		client := newTestWsPostClient(t, func(_ *websocket.Conn, _ testWsPostFrame) error {
+			received <- struct{}{}
+			return nil
+		})
+		ctx, cancel := context.WithCancel(context.Background())
+		go func() {
+			<-received
+			cancel()
+		}()
+
+		got, err := client.Post(ctx, "info", map[string]string{"type": "allMids"})
+
+		require.ErrorIs(t, err, context.Canceled)
+		require.Nil(t, got)
+		client.postMu.Lock()
+		defer client.postMu.Unlock()
+		require.Empty(t, client.pendingPosts)
+	})
+}
+
+func TestWsPost_ConcurrentIDs(t *testing.T) {
+	t.Run("routes each response to its own request", func(t *testing.T) {
+		const posts = 20
+		client := newTestWsPostClient(t, echoTestWsPost)
+		results := make([]json.RawMessage, posts)
+		errs := make([]error, posts)
+		var wg sync.WaitGroup
+
+		for i := range posts {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				results[i], errs[i] = client.Post(
+					context.Background(), "info", map[string]int{"n": i})
+			}()
+		}
+		wg.Wait()
+
+		for i := range posts {
+			require.NoError(t, errs[i])
+			want, err := json.Marshal(map[string]int{"n": i})
+			require.NoError(t, err)
+			require.JSONEq(t, string(want), string(results[i]))
+		}
+	})
+}
+
+func TestWsPost_ConnectionClosed(t *testing.T) {
+	t.Run("fails the pending request when the connection drops", func(t *testing.T) {
+		client := newTestWsPostClient(t, func(_ *websocket.Conn, _ testWsPostFrame) error {
+			return errors.New("drop the connection")
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "allMids"})
+
+		require.ErrorIs(t, err, errWsConnectionClosed)
+		require.Nil(t, got)
+	})
 }
