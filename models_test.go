@@ -589,3 +589,20 @@ func TestUserFees_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &UserFees{})
 	})
 }
+
+func TestMetaUniverse_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response universe entries", func(t *testing.T) {
+		var metas []struct {
+			Universe json.RawMessage `json:"universe"`
+		}
+		require.NoError(t, json.Unmarshal(newTestLiveFixture(t, "allPerpMetas"), &metas))
+		universes := make([]json.RawMessage, len(metas))
+		for i, meta := range metas {
+			universes[i] = meta.Universe
+		}
+		raw, err := json.Marshal(universes)
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &[][]AssetInfo{})
+	})
+}

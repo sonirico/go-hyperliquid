@@ -7785,7 +7785,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Universe == nil {
 					if !in.IsDelim(']') {
-						out.Universe = make([]AssetInfo, 0, 1)
+						out.Universe = make([]AssetInfo, 0, 0)
 					} else {
 						out.Universe = []AssetInfo{}
 					}
@@ -7952,7 +7952,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Universe == nil {
 					if !in.IsDelim(']') {
-						out.Universe = make([]AssetInfo, 0, 1)
+						out.Universe = make([]AssetInfo, 0, 0)
 					} else {
 						out.Universe = []AssetInfo{}
 					}
@@ -11573,6 +11573,30 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(in *jlexer.Lexer, ou
 			} else {
 				out.IsDelisted = bool(in.Bool())
 			}
+		case "marginMode":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MarginMode = string(in.String())
+			}
+		case "growthMode":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.GrowthMode = string(in.String())
+			}
+		case "deployerFeeScale":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DeployerFeeScale = string(in.String())
+			}
+		case "lastFeeScaleChangeTime":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.LastFeeScaleChangeTime = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -11616,6 +11640,26 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(out *jwriter.Writer,
 		const prefix string = ",\"isDelisted\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.IsDelisted))
+	}
+	if in.MarginMode != "" {
+		const prefix string = ",\"marginMode\":"
+		out.RawString(prefix)
+		out.String(string(in.MarginMode))
+	}
+	if in.GrowthMode != "" {
+		const prefix string = ",\"growthMode\":"
+		out.RawString(prefix)
+		out.String(string(in.GrowthMode))
+	}
+	if in.DeployerFeeScale != "" {
+		const prefix string = ",\"deployerFeeScale\":"
+		out.RawString(prefix)
+		out.String(string(in.DeployerFeeScale))
+	}
+	if in.LastFeeScaleChangeTime != "" {
+		const prefix string = ",\"lastFeeScaleChangeTime\":"
+		out.RawString(prefix)
+		out.String(string(in.LastFeeScaleChangeTime))
 	}
 	out.RawByte('}')
 }

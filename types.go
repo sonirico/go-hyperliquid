@@ -46,12 +46,16 @@ const (
 )
 
 type AssetInfo struct {
-	Name          string `json:"name"`
-	SzDecimals    int    `json:"szDecimals"`
-	MaxLeverage   int    `json:"maxLeverage"`
-	MarginTableId int    `json:"marginTableId"`
-	OnlyIsolated  bool   `json:"onlyIsolated"`
-	IsDelisted    bool   `json:"isDelisted"`
+	Name                   string `json:"name"`
+	SzDecimals             int    `json:"szDecimals"`
+	MaxLeverage            int    `json:"maxLeverage"`
+	MarginTableId          int    `json:"marginTableId"`
+	OnlyIsolated           bool   `json:"onlyIsolated"`
+	IsDelisted             bool   `json:"isDelisted"`
+	MarginMode             string `json:"marginMode,omitempty"`
+	GrowthMode             string `json:"growthMode,omitempty"`
+	DeployerFeeScale       string `json:"deployerFeeScale,omitempty"`
+	LastFeeScaleChangeTime string `json:"lastFeeScaleChangeTime,omitempty"`
 }
 
 type MarginTier struct {
