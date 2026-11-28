@@ -614,3 +614,13 @@ func TestSpotMeta_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &SpotMeta{})
 	})
 }
+
+func TestSpotAssetCtx_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response ctx rows", func(t *testing.T) {
+		var response []json.RawMessage
+		require.NoError(t, json.Unmarshal(newTestLiveFixture(t, "spotMetaAndAssetCtxs"), &response))
+		require.Len(t, response, 2)
+
+		assertKeysCovered(t, response[1], &[]SpotAssetCtx{})
+	})
+}

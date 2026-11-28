@@ -139,6 +139,8 @@ type SpotAssetCtx struct {
 	PrevDayPx         string  `json:"prevDayPx"`
 	CirculatingSupply string  `json:"circulatingSupply"`
 	Coin              string  `json:"coin"`
+	TotalSupply       string  `json:"totalSupply"`
+	DayBaseVlm        string  `json:"dayBaseVlm"`
 }
 
 // This type has no JSON annotation because it cannot be directly unmarshalled from the response

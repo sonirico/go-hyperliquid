@@ -253,7 +253,7 @@ func TestSpotAssetCtx_MarshalJSON(t *testing.T) {
 				CirculatingSupply: "1000000000",
 				Coin:              "USDC",
 			},
-			expected: `{"dayNtlVlm":"1000000.50","markPx":"1.0001","midPx":"1.0002","prevDayPx":"1.0000","circulatingSupply":"1000000000","coin":"USDC"}`,
+			expected: `{"dayNtlVlm":"1000000.50","markPx":"1.0001","midPx":"1.0002","prevDayPx":"1.0000","circulatingSupply":"1000000000","coin":"USDC","totalSupply":"","dayBaseVlm":""}`,
 		},
 		{
 			name: "null_mid_price",
@@ -265,7 +265,7 @@ func TestSpotAssetCtx_MarshalJSON(t *testing.T) {
 				CirculatingSupply: "21000000",
 				Coin:              "BTC",
 			},
-			expected: `{"dayNtlVlm":"500000.25","markPx":"50000.00","midPx":null,"prevDayPx":"49950.00","circulatingSupply":"21000000","coin":"BTC"}`,
+			expected: `{"dayNtlVlm":"500000.25","markPx":"50000.00","midPx":null,"prevDayPx":"49950.00","circulatingSupply":"21000000","coin":"BTC","totalSupply":"","dayBaseVlm":""}`,
 		},
 	}
 

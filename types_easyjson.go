@@ -4146,6 +4146,18 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid31(in *jlexer.Lexer, ou
 			} else {
 				out.Coin = string(in.String())
 			}
+		case "totalSupply":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TotalSupply = string(in.String())
+			}
+		case "dayBaseVlm":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DayBaseVlm = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -4193,6 +4205,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid31(out *jwriter.Writer,
 		const prefix string = ",\"coin\":"
 		out.RawString(prefix)
 		out.String(string(in.Coin))
+	}
+	{
+		const prefix string = ",\"totalSupply\":"
+		out.RawString(prefix)
+		out.String(string(in.TotalSupply))
+	}
+	{
+		const prefix string = ",\"dayBaseVlm\":"
+		out.RawString(prefix)
+		out.String(string(in.DayBaseVlm))
 	}
 	out.RawByte('}')
 }
