@@ -611,6 +611,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.ClaimRewards(ctx)
 			return err
 		}},
+		{name: "hip3LiquidatorTransfer", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.Hip3LiquidatorTransfer(ctx, "xyz", 1000000, true)
+			return err
+		}},
 	}
 }
 

@@ -2706,3 +2706,34 @@ func (e *Exchange) ClaimRewards(ctx context.Context) (json.RawMessage, error) {
 
 	return actionResponse(resp)
 }
+
+// Hip3LiquidatorTransfer moves notional between a hip3 liquidator and a dex
+func (e *Exchange) Hip3LiquidatorTransfer(
+	ctx context.Context,
+	dex string,
+	ntl int,
+	isDeposit bool,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := Hip3LiquidatorTransferAction{Type: "hip3LiquidatorTransfer", Dex: dex, Ntl: ntl, IsDeposit: isDeposit}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

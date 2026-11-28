@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "hip3LiquidatorTransfer",
+    "dex": "xyz",
+    "ntl": 1000000,
+    "isDeposit": true
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xf170dca1fd5b2de4f691263912fb2eba852dfbd990d6017146085b8188b8d160",
+    "s": "0x49a158f0004739f39ec6e244a6f4d40c345c25fd5f6c6db65d4425262c26d481",
+    "v": 27
+  }
+}

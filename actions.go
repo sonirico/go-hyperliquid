@@ -696,3 +696,11 @@ type CDeposit2Action struct {
 type ClaimRewardsAction struct {
 	Type string `json:"type" msgpack:"type"`
 }
+
+// Hip3LiquidatorTransferAction represents hip3 liquidator transfer action
+type Hip3LiquidatorTransferAction struct {
+	Type      string `json:"type"      msgpack:"type"`
+	Dex       string `json:"dex"       msgpack:"dex"`
+	Ntl       int    `json:"ntl"       msgpack:"ntl"`
+	IsDeposit bool   `json:"isDeposit" msgpack:"isDeposit"`
+}

@@ -350,6 +350,7 @@ cases = {
     ),
     "cDeposit2": lambda: l1({"type": "cDeposit2", "wei": 100000000}),
     "claimRewards": lambda: l1({"type": "claimRewards"}),
+    "hip3LiquidatorTransfer": lambda: l1({"type": "hip3LiquidatorTransfer", "dex": "xyz", "ntl": 1000000, "isDeposit": True}),
 }
 
 os.makedirs(out_dir, exist_ok=True)
