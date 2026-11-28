@@ -581,6 +581,19 @@ type PerpDeploySetDeployerFeesAction struct {
 	SetDeployerFees [][]any `json:"setDeployerFees" msgpack:"setDeployerFees"`
 }
 
+type SetPerpAnnotation struct {
+	Coin        string   `json:"coin"        msgpack:"coin"`
+	Category    string   `json:"category"    msgpack:"category"`
+	Description string   `json:"description" msgpack:"description"`
+	DisplayName *string  `json:"displayName" msgpack:"displayName"`
+	Keywords    []string `json:"keywords"    msgpack:"keywords"`
+}
+
+type PerpDeploySetPerpAnnotationAction struct {
+	Type              string            `json:"type"              msgpack:"type"`
+	SetPerpAnnotation SetPerpAnnotation `json:"setPerpAnnotation" msgpack:"setPerpAnnotation"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

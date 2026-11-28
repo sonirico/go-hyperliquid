@@ -2092,6 +2092,34 @@ func (e *Exchange) PerpDeploySetDeployerFees(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetPerpAnnotation sets the annotation of a builder-deployed DEX coin,
+// a nil displayName is sent as null
+func (e *Exchange) PerpDeploySetPerpAnnotation(
+	ctx context.Context,
+	coin string,
+	category string,
+	description string,
+	displayName *string,
+	keywords []string,
+) (*PerpDeployResponse, error) {
+	if keywords == nil {
+		keywords = []string{}
+	}
+
+	action := PerpDeploySetPerpAnnotationAction{
+		Type: "perpDeploy",
+		SetPerpAnnotation: SetPerpAnnotation{
+			Coin:        coin,
+			Category:    category,
+			Description: description,
+			DisplayName: displayName,
+			Keywords:    keywords,
+		},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer

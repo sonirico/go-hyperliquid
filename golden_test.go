@@ -500,6 +500,10 @@ func goldenRows(userAddress string) []goldenRow {
 			})
 			return err
 		}},
+		{name: "perp_deploy_set_perp_annotation", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetPerpAnnotation(ctx, "test:X", "category", "description", nil, nil)
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

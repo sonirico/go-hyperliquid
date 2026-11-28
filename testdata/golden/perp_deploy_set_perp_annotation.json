@@ -1,0 +1,33 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setPerpAnnotation": {
+      "coin": "test:X",
+      "category": "category",
+      "description": "description",
+      "displayName": null,
+      "keywords": []
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xef1d595c8c59e0623b209463ae748aa41a35dd2956c8b164efe11e01145307db",
+    "s": "0x185bd53237962a9f4e931612db5d716383725bf3ae39aadeb0a893342cb53455",
+    "v": 28
+  }
+}
