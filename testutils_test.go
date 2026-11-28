@@ -1,6 +1,8 @@
 package hyperliquid
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -38,4 +40,12 @@ func TestAssertKeysCovered(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, []string{".b.d[].e"}, missing)
 	})
+}
+
+func newTestLiveFixture(t *testing.T, name string) []byte {
+	t.Helper()
+
+	raw, err := os.ReadFile(filepath.Join("testdata", "live", name+".json"))
+	require.NoError(t, err)
+	return raw
 }

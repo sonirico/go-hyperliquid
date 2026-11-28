@@ -543,10 +543,33 @@ type StakingReward struct {
 	TotalAmount string `json:"totalAmount"`
 }
 
+type ReferralReferredBy struct {
+	Code     string `json:"code"`
+	Referrer string `json:"referrer"`
+}
+
+type ReferralTokenState struct {
+	CumVlm           string `json:"cumVlm"`
+	UnclaimedRewards string `json:"unclaimedRewards"`
+	ClaimedRewards   string `json:"claimedRewards"`
+	BuilderRewards   string `json:"builderRewards"`
+}
+
+type ReferrerState struct {
+	Stage string          `json:"stage"`
+	Data  json.RawMessage `json:"data,omitempty"`
+}
+
+//easyjson:skip
 type ReferralState struct {
-	ReferralCode string   `json:"referralCode"`
-	Referrer     string   `json:"referrer"`
-	Referred     []string `json:"referred"`
+	ReferredBy       *ReferralReferredBy               `json:"referredBy"`
+	CumVlm           string                            `json:"cumVlm"`
+	UnclaimedRewards string                            `json:"unclaimedRewards"`
+	ClaimedRewards   string                            `json:"claimedRewards"`
+	BuilderRewards   string                            `json:"builderRewards"`
+	ReferrerState    ReferrerState                     `json:"referrerState"`
+	RewardHistory    []json.RawMessage                 `json:"rewardHistory"`
+	TokenToState     []Tuple2[int, ReferralTokenState] `json:"tokenToState"`
 }
 
 type SubAccount struct {
