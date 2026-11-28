@@ -349,6 +349,7 @@ cases = {
         "HyperliquidTransaction:CWithdraw",
     ),
     "cDeposit2": lambda: l1({"type": "cDeposit2", "wei": 100000000}),
+    "claimRewards": lambda: l1({"type": "claimRewards"}),
 }
 
 os.makedirs(out_dir, exist_ok=True)

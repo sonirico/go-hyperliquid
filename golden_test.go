@@ -607,6 +607,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CDeposit2(ctx, 100000000)
 			return err
 		}},
+		{name: "claimRewards", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.ClaimRewards(ctx)
+			return err
+		}},
 	}
 }
 

@@ -691,3 +691,8 @@ type CDeposit2Action struct {
 	Type string `json:"type" msgpack:"type"`
 	Wei  int    `json:"wei"  msgpack:"wei"`
 }
+
+// ClaimRewardsAction represents claim rewards action
+type ClaimRewardsAction struct {
+	Type string `json:"type" msgpack:"type"`
+}

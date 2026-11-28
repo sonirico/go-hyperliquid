@@ -2680,3 +2680,29 @@ func (e *Exchange) CDeposit2(
 
 	return actionResponse(resp)
 }
+
+// ClaimRewards claims the accrued rewards
+func (e *Exchange) ClaimRewards(ctx context.Context) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := ClaimRewardsAction{Type: "claimRewards"}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
