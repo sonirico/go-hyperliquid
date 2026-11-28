@@ -1074,6 +1074,21 @@ func (i *Info) PerpAnnotation(ctx context.Context, coin string) (*PerpAnnotation
 	return result, nil
 }
 
+func (i *Info) PerpCategories(ctx context.Context) ([]Tuple2[string, string], error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpCategories",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp categories: %w", err)
+	}
+
+	var result []Tuple2[string, string]
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp categories: %w", err)
+	}
+	return result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{

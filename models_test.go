@@ -760,3 +760,15 @@ func TestPerpAnnotation_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &PerpAnnotation{})
 	})
 }
+
+func TestPerpCategories_UnmarshalJSON(t *testing.T) {
+	t.Run("decodes coin and category pairs", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpCategories")
+
+		var got []Tuple2[string, string]
+		require.NoError(t, json.Unmarshal(raw, &got))
+
+		require.Len(t, got, 20)
+		require.Equal(t, Tuple2[string, string]{First: "flx:BTC", Second: "crypto"}, got[0])
+	})
+}

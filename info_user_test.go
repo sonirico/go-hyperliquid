@@ -282,3 +282,15 @@ func TestInfo_PerpAnnotation_Null(t *testing.T) {
 
 	require.Nil(t, annotation)
 }
+
+func TestInfo_PerpCategories(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpCategories")))
+
+	categories, err := info.PerpCategories(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpCategories",
+	}, *req)
+	require.Len(t, categories, 20)
+}
