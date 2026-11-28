@@ -483,13 +483,23 @@ type LiquidatedPosition struct {
 }
 
 type UserFees struct {
-	ActiveReferralDiscount string       `json:"activeReferralDiscount"`
-	DailyUserVolume        []UserVolume `json:"dailyUserVlm"`
-	FeeSchedule            FeeSchedule  `json:"feeSchedule"`
-	UserAddRate            string       `json:"userAddRate"`
-	UserCrossRate          string       `json:"userCrossRate"`
-	UserSpotCrossRate      string       `json:"userSpotCrossRate"`
-	UserSpotAddRate        string       `json:"userSpotAddRate"`
+	ActiveReferralDiscount      string          `json:"activeReferralDiscount"`
+	DailyUserVolume             []UserVolume    `json:"dailyUserVlm"`
+	FeeSchedule                 FeeSchedule     `json:"feeSchedule"`
+	UserAddRate                 string          `json:"userAddRate"`
+	UserCrossRate               string          `json:"userCrossRate"`
+	UserSpotCrossRate           string          `json:"userSpotCrossRate"`
+	UserSpotAddRate             string          `json:"userSpotAddRate"`
+	ActiveStakingDiscount       StakingDiscount `json:"activeStakingDiscount"`
+	FeeTrialEscrow              string          `json:"feeTrialEscrow"`
+	NextTrialAvailableTimestamp *int64          `json:"nextTrialAvailableTimestamp"`
+	StakingLink                 json.RawMessage `json:"stakingLink"`
+	Trial                       json.RawMessage `json:"trial"`
+}
+
+type StakingDiscount struct {
+	BpsOfMaxSupply string `json:"bpsOfMaxSupply"`
+	Discount       string `json:"discount"`
 }
 
 type UserActiveAssetData struct {
@@ -509,10 +519,13 @@ type UserVolume struct {
 }
 
 type FeeSchedule struct {
-	Add              string `json:"add"`
-	Cross            string `json:"cross"`
-	ReferralDiscount string `json:"referralDiscount"`
-	Tiers            Tiers  `json:"tiers"`
+	Add                  string            `json:"add"`
+	Cross                string            `json:"cross"`
+	ReferralDiscount     string            `json:"referralDiscount"`
+	Tiers                Tiers             `json:"tiers"`
+	SpotAdd              string            `json:"spotAdd"`
+	SpotCross            string            `json:"spotCross"`
+	StakingDiscountTiers []StakingDiscount `json:"stakingDiscountTiers"`
 }
 
 type Tiers struct {
@@ -529,6 +542,8 @@ type VIPTier struct {
 	Add       string `json:"add"`
 	Cross     string `json:"cross"`
 	NtlCutoff string `json:"ntlCutoff"`
+	SpotAdd   string `json:"spotAdd"`
+	SpotCross string `json:"spotCross"`
 }
 
 type StakingSummary struct {

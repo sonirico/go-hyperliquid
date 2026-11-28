@@ -581,3 +581,11 @@ func TestSpotUserState_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &SpotUserState{})
 	})
 }
+
+func TestUserFees_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userFees")
+
+		assertKeysCovered(t, raw, &UserFees{})
+	})
+}
