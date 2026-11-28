@@ -8,6 +8,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	stdmath "math"
 	"math/big"
 	"strconv"
 	"strings"
@@ -841,7 +842,7 @@ func SignMultiSigUserSignedActionPayload(
 // FloatToUsdInt converts float to USD integer representation
 func FloatToUsdInt(value float64) int {
 	// Convert float USD to integer representation (assuming 6 decimals for USDC)
-	return int(value * 1e6)
+	return int(stdmath.Round(value * 1e6))
 }
 
 // GetTimestampMs returns current timestamp in milliseconds

@@ -512,3 +512,27 @@ func TestActionHash_StringLengths(t *testing.T) {
 		})
 	}
 }
+
+func TestFloatToUsdInt(t *testing.T) {
+	type testCase struct {
+		name  string
+		value float64
+		want  int
+	}
+
+	tests := []testCase{
+		{name: "2.01", value: 2.01, want: 2010000},
+		{name: "2.03", value: 2.03, want: 2030000},
+		{name: "2.05", value: 2.05, want: 2050000},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := FloatToUsdInt(tc.value)
+
+			assert.Equal(t, tc.want, got)
+		})
+	}
+}
