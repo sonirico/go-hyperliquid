@@ -37,7 +37,7 @@ jobs:
       run: go mod download
 
     - name: Install tools
-      run: go install github.com/mailru/easyjson/...@latest
+      run: make install-tools
 
     - name: Verify dependencies
       run: go mod verify
@@ -47,23 +47,16 @@ jobs:
 
     - name: Check formatting
       run: |
-        UNFORMATTED=$(find . -name "*.go" -not -name "*_easyjson.go" -not -path "./examples/*" | xargs gofmt -s -l)
-        if [ -n "$UNFORMATTED" ]; then
-          echo "The following files are not formatted:"
-          echo "$UNFORMATTED"
-          exit 1
-        fi
+        make fmt
+        git diff --exit-code
 
     - name: Check generated files
       run: |
-        go generate ./...
-        CHANGES=$(git status --porcelain | grep "_easyjson.go$" || true)
-        if [ -n "$CHANGES" ]; then
-          echo "Generated easyjson files are not up to date. Please run 'go generate ./...' and commit the changes."
-          echo "Files with changes:"
-          echo "$CHANGES"
-          exit 1
-        fi
+        make generate
+        git diff --exit-code
+
+    - name: Lint
+      run: make lint
 
     - name: Run tests (excluding examples)
       run: go test -v -race -coverprofile=coverage.out $(go list ./... | grep -v examples)
@@ -87,7 +80,26 @@ jobs:
       with:
         go-version: '1.27.4'
 
+    - name: Install tools
+      run: make install-tools
+
     - name: Run Gosec Security Scanner
-      # gosec v2.30.0 and later require Go 1.26, so pin the last release that
-      # builds with the Go version set up above.
-      run: go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0 && gosec -exclude-dir=examples ./...
+      run: gosec -exclude-dir=examples ./...
+
+  live:
+    name: Live signature checks
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
+
+    - name: Set up Go
+      uses: actions/setup-go@v7
+      with:
+        go-version: '1.27.4'
+
+    - name: Verify signatures against the testnet
+      run: make verify-live
+
+    - name: Verify websocket post against the testnet
+      run: go test -tags live -run TestLiveWsPost -count=1 .
