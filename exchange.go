@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ecdsa"
 	"encoding/json"
+	"errors"
 	"sync/atomic"
 	"time"
 
@@ -173,6 +174,22 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 	}
 
 	return nil
+}
+
+// actionError returns the server message when the body is a status err response
+func actionError(resp []byte) error {
+	var raw struct {
+		Status   string          `json:"status"`
+		Response json.RawMessage `json:"response"`
+	}
+	if err := json.Unmarshal(resp, &raw); err != nil || raw.Status != "err" {
+		return nil
+	}
+	var msg string
+	if err := json.Unmarshal(raw.Response, &msg); err != nil {
+		return errors.New(string(raw.Response))
+	}
+	return errors.New(msg)
 }
 
 func (e *Exchange) postAction(

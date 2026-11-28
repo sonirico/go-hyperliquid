@@ -32,11 +32,8 @@ func TestPerpDeployHaltTrading(t *testing.T) {
 		exchange := setupExchange(t)
 		initRecorder(t, false, "PerpDeployHaltTrading_Error")
 
-		res, err := exchange.PerpDeployHaltTrading(context.TODO(), "test:BTC", true)
-		require.NoError(t, err)
-		require.NotNil(t, res)
-		require.Equal(t, "err", res.Status)
-		require.NotEmpty(t, res.Response)
+		_, err := exchange.PerpDeployHaltTrading(context.TODO(), "test:BTC", true)
+		require.ErrorContains(t, err, "Unknown coin test:BTC")
 	})
 }
 
@@ -96,7 +93,7 @@ func TestPerpDeployRegisterAsset(t *testing.T) {
 		exchange := setupExchange(t)
 		initRecorder(t, false, "PerpDeployRegisterAsset_Error")
 
-		res, err := exchange.PerpDeployRegisterAsset(
+		_, err := exchange.PerpDeployRegisterAsset(
 			context.TODO(),
 			"test",
 			nil,
@@ -109,10 +106,7 @@ func TestPerpDeployRegisterAsset(t *testing.T) {
 			},
 			nil,
 		)
-		require.NoError(t, err)
-		require.NotNil(t, res)
-		require.Equal(t, "err", res.Status)
-		require.NotEmpty(t, res.Response)
+		require.ErrorContains(t, err, "Deployer has not staked enough")
 	})
 }
 

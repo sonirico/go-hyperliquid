@@ -34,8 +34,31 @@ func (e *Exchange) UpdateLeverage(
 		Leverage: leverage,
 	}
 
+	nonce := e.nextNonce()
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -58,8 +81,31 @@ func (e *Exchange) UpdateIsolatedMargin(
 		Ntli:  abs(amount),
 	}
 
+	nonce := e.nextNonce()
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result UserState
-	if err := e.executeAction(ctx, action, &result); err != nil {
+	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
 	}
 	return &result, nil
@@ -145,6 +191,10 @@ func (e *Exchange) ScheduleCancel(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ScheduleCancelResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -188,6 +238,11 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	if err != nil {
 		return nil, fmt.Errorf("failed to post reserve action: %w", err)
 	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	// Parse response — the "response" field is polymorphic:
 	// on success it is {"type":"..."}, on error it is a plain string.
 	var raw struct {
@@ -241,6 +296,10 @@ func (e *Exchange) SetReferrer(ctx context.Context, code string) (*SetReferrerRe
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SetReferrerResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -274,6 +333,10 @@ func (e *Exchange) CreateSubAccount(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -327,6 +390,10 @@ func (e *Exchange) UsdClassTransfer(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -364,6 +431,10 @@ func (e *Exchange) SubAccountTransfer(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -407,6 +478,10 @@ func (e *Exchange) VaultUsdTransfer(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -444,6 +519,10 @@ func (e *Exchange) CreateVault(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -486,6 +565,10 @@ func (e *Exchange) VaultModify(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -520,6 +603,10 @@ func (e *Exchange) VaultDistribute(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -565,6 +652,10 @@ func (e *Exchange) UsdTransfer(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -615,6 +706,10 @@ func (e *Exchange) SpotTransfer(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -645,6 +740,10 @@ func (e *Exchange) UseBigBlocks(ctx context.Context, enable bool) (*ApprovalResp
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -686,6 +785,10 @@ func (e *Exchange) PerpDexClassTransfer(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -739,6 +842,10 @@ func (e *Exchange) SubAccountSpotTransfer(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -787,6 +894,10 @@ func (e *Exchange) TokenDelegate(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -829,6 +940,10 @@ func (e *Exchange) WithdrawFromBridge(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -907,6 +1022,10 @@ func (e *Exchange) SendToEVMWithData(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result TransferResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -967,6 +1086,10 @@ func (e *Exchange) ApproveAgent(
 		return nil, "", err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, "", err
+	}
+
 	var result AgentApprovalResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, "", err
@@ -1009,6 +1132,10 @@ func (e *Exchange) ApproveBuilderFee(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1068,6 +1195,10 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result MultiSigConversionResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1118,6 +1249,10 @@ func (e *Exchange) SpotDeployRegisterToken(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SpotDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1154,6 +1289,10 @@ func (e *Exchange) SpotDeployUserGenesis(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SpotDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1185,6 +1324,10 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1224,6 +1367,10 @@ func (e *Exchange) SpotDeployFreezeUser(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SpotDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1255,6 +1402,10 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1296,6 +1447,10 @@ func (e *Exchange) SpotDeployGenesis(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SpotDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1331,6 +1486,10 @@ func (e *Exchange) SpotDeployRegisterSpot(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1372,6 +1531,10 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result SpotDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1405,6 +1568,10 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1458,6 +1625,10 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result PerpDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1503,6 +1674,10 @@ func (e *Exchange) PerpDeployRegisterAsset2(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1555,6 +1730,10 @@ func (e *Exchange) PerpDeployHaltTrading(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1638,6 +1817,10 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result PerpDeployResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1672,6 +1855,10 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ValidatorResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1701,6 +1888,10 @@ func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, err
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1737,6 +1928,10 @@ func (e *Exchange) CSignerInner(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1778,6 +1973,10 @@ func (e *Exchange) CValidatorRegister(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ValidatorResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1814,6 +2013,10 @@ func (e *Exchange) CValidatorChangeProfile(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ValidatorResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1843,6 +2046,10 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1882,6 +2089,10 @@ func (e *Exchange) MultiSig(
 
 	resp, err := e.postAction(ctx, multiSigAction, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -1930,6 +2141,10 @@ func (e *Exchange) UserSetAbstraction(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ReserveRequestWeightResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -1972,6 +2187,10 @@ func (e *Exchange) UserDexAbstraction(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 
@@ -2032,6 +2251,10 @@ func (e *Exchange) SendAsset(
 		return nil, err
 	}
 
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
 	var result ReserveRequestWeightResponse
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, err
@@ -2069,6 +2292,10 @@ func (e *Exchange) BorrowLend(
 
 	resp, err := e.postAction(ctx, action, sig, nonce)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
 		return nil, err
 	}
 	var result ReserveRequestWeightResponse

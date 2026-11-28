@@ -1,11 +1,18 @@
 package hyperliquid
 
 import (
+	"context"
+	"io"
+	"net/http"
+	"net/http/httptest"
 	"sync"
 	"testing"
 	"time"
 
 	"testing/synctest"
+
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNextNonce(t *testing.T) {
@@ -143,4 +150,174 @@ func TestNextNonce_ConcurrencyUniqueness(t *testing.T) {
 			t.Fatalf("max=%d want %d", max, base+N-1)
 		}
 	})
+}
+
+func newTestStatusErrExchange(t *testing.T) *Exchange {
+	t.Helper()
+	pk, err := crypto.HexToECDSA(goldenKey)
+	require.NoError(t, err)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, err := io.WriteString(w, `{"status":"err","response":"boom"}`)
+		require.NoError(t, err)
+	}))
+	t.Cleanup(server.Close)
+	meta := &Meta{Universe: []AssetInfo{{Name: "BTC", SzDecimals: 5}}}
+	return NewExchange(context.Background(), pk, server.URL, meta, "", "", &SpotMeta{}, nil)
+}
+
+func TestActionError_StatusErr(t *testing.T) {
+	maxGas := 1000000
+	scheduleTime := int64(4102444800000)
+	bot := "bot"
+
+	type testCase struct {
+		name string
+		call func(ctx context.Context, ex *Exchange) error
+	}
+
+	testCases := []testCase{
+		{"ScheduleCancel", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.ScheduleCancel(ctx, &scheduleTime)
+			return err
+		}},
+		{"UpdateLeverage", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UpdateLeverage(ctx, 5, "BTC", true)
+			return err
+		}},
+		{"UpdateIsolatedMargin", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UpdateIsolatedMargin(ctx, 10, "BTC")
+			return err
+		}},
+		{"SetReferrer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SetReferrer(ctx, "ABC")
+			return err
+		}},
+		{"CreateSubAccount", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CreateSubAccount(ctx, "sub1")
+			return err
+		}},
+		{"UsdClassTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UsdClassTransfer(ctx, 1.5, true)
+			return err
+		}},
+		{"SubAccountTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SubAccountTransfer(ctx, goldenOther, true, 1000000)
+			return err
+		}},
+		{"SubAccountSpotTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SubAccountSpotTransfer(ctx, goldenOther, true, goldenToken, 1.5)
+			return err
+		}},
+		{"VaultUsdTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.VaultUsdTransfer(ctx, goldenOther, true, 1000000)
+			return err
+		}},
+		{"CreateVault", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CreateVault(ctx, "vault", "description", 1000000)
+			return err
+		}},
+		{"VaultModify", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.VaultModify(ctx, goldenOther, true, false)
+			return err
+		}},
+		{"VaultDistribute", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.VaultDistribute(ctx, goldenOther, 1000000)
+			return err
+		}},
+		{"UsdTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UsdTransfer(ctx, 1.5, goldenOther)
+			return err
+		}},
+		{"SpotTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotTransfer(ctx, 1.5, goldenOther, goldenToken)
+			return err
+		}},
+		{"UseBigBlocks", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UseBigBlocks(ctx, true)
+			return err
+		}},
+		{"TokenDelegate", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.TokenDelegate(ctx, goldenOther, 100000000, false)
+			return err
+		}},
+		{"WithdrawFromBridge", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.WithdrawFromBridge(ctx, 1.5, goldenOther)
+			return err
+		}},
+		{"SendToEVMWithData", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SendToEVMWithData(
+				ctx, goldenToken, "1.5", "", goldenOther, "hex", 1337, 100000, "0x",
+			)
+			return err
+		}},
+		{"ApproveAgent", func(ctx context.Context, ex *Exchange) error {
+			_, _, err := ex.ApproveAgent(ctx, &bot)
+			return err
+		}},
+		{"ApproveBuilderFee", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.ApproveBuilderFee(ctx, goldenOther, "0.001%")
+			return err
+		}},
+		{"ConvertToMultiSigUser", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.ConvertToMultiSigUser(ctx, []string{goldenOther}, 1)
+			return err
+		}},
+		{"SpotDeployRegisterToken", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterToken(ctx, "TKN", 2, 8, 1000000, "Token")
+			return err
+		}},
+		{"PerpDeployRegisterAsset", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployRegisterAsset(ctx, "test", &maxGas, AssetRequest{
+				Coin: "test:X", SzDecimals: 2, OraclePx: "10.0", MarginTableID: 10,
+			}, nil)
+			return err
+		}},
+		{"PerpDeployRegisterAsset2", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployRegisterAsset2(ctx, "test", &maxGas, AssetRequest2{
+				Coin: "test:X", SzDecimals: 2, OraclePx: "10.0", MarginTableID: 10, MarginMode: "strictIsolated",
+			}, nil)
+			return err
+		}},
+		{"PerpDeployHaltTrading", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployHaltTrading(ctx, "test:X", true)
+			return err
+		}},
+		{"PerpDeploySetOracle", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetOracle(
+				ctx, "test",
+				map[string]string{"test:X": "10.0"},
+				[]map[string]string{{"test:X": "10.0"}},
+				map[string]string{"test:X": "10.0"},
+			)
+			return err
+		}},
+		{"Reserve", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.Reserve(ctx, 1)
+			return err
+		}},
+		{"UserSetAbstraction", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UserSetAbstraction(ctx, goldenOther, "unifiedAccount")
+			return err
+		}},
+		{"SendAsset", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SendAsset(ctx, goldenOther, "", "spot", goldenToken, 1.5)
+			return err
+		}},
+		{"BorrowLend", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
+			return err
+		}},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Parallel()
+			ex := newTestStatusErrExchange(t)
+
+			err := tc.call(context.Background(), ex)
+
+			require.ErrorContains(t, err, "boom")
+		})
+	}
 }
