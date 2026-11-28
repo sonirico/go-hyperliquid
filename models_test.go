@@ -656,3 +656,11 @@ func TestStakingDelegation_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]StakingDelegation{})
 	})
 }
+
+func TestStakingReward_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "delegatorRewards")
+
+		assertKeysCovered(t, raw, &[]StakingReward{})
+	})
+}
