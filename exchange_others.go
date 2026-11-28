@@ -1339,11 +1339,13 @@ func (e *Exchange) SpotDeployUserGenesis(
 // SpotDeployEnableFreezePrivilege enables freeze privilege for spot deployer
 func (e *Exchange) SpotDeployEnableFreezePrivilege(
 	ctx context.Context,
+	token int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeployEnableFreezePrivilege",
+	action := SpotDeployAction{
+		Type:                  "spotDeploy",
+		EnableFreezePrivilege: &SpotDeployEnableFreezePrivilege{Token: token},
 	}
 
 	sig, err := e.signL1Action(

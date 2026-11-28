@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "enableFreezePrivilege": {
+      "token": 1
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x7c9c52dc68e239f38a1521b23f5ce0804e977a2988a0b3de66a32652f8388023",
+    "s": "0x7ad65184e5b9b3cfbf78c4228b9fce721dea4aac2003e7e3d90bd5c391f1992a",
+    "v": 27
+  }
+}
