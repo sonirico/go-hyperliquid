@@ -233,6 +233,16 @@ func goldenLimitOrder() CreateOrderRequest {
 	}
 }
 
+func goldenTriggerOrder(tpsl Tpsl, triggerPx float64) CreateOrderRequest {
+	order := goldenLimitOrder()
+	order.IsBuy = false
+	order.ReduceOnly = true
+	order.OrderType = OrderType{
+		Trigger: &TriggerOrderType{TriggerPx: triggerPx, IsMarket: true, Tpsl: tpsl},
+	}
+	return order
+}
+
 func goldenRows(userAddress string) []goldenRow {
 	cloid := goldenCloid
 	oid := int64(123)
@@ -270,6 +280,30 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "order_trigger", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.Order(ctx, triggerOrder, nil)
+			return err
+		}},
+		{name: "order_normalTpsl", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.BulkOrders(
+				ctx,
+				[]CreateOrderRequest{
+					goldenLimitOrder(), goldenTriggerOrder(TakeProfit, 55000), goldenTriggerOrder(StopLoss, 49000),
+				},
+				nil,
+				NewOrderGroupingNormalTpsl(),
+			)
+			return err
+		}},
+		{name: "order_positionTpsl", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.BulkOrders(
+				ctx,
+				[]CreateOrderRequest{goldenTriggerOrder(TakeProfit, 55000), goldenTriggerOrder(StopLoss, 49000)},
+				nil,
+				NewOrderGroupingPositionTpsl(),
+			)
+			return err
+		}},
+		{name: "order_priority", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.BulkOrders(ctx, []CreateOrderRequest{goldenLimitOrder()}, nil, NewOrderGroupingPriority(1))
 			return err
 		}},
 		{name: "modify", call: func(ctx context.Context, ex *Exchange) error {

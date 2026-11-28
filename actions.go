@@ -154,13 +154,69 @@ type OrderWireTypeTrigger struct {
 	Tpsl      Tpsl   `json:"tpsl"      msgpack:"tpsl"`      // 3rd - "tp" or "sl"
 }
 
+// OrderGrouping represents the grouping of an order action: a name, or a
+// priority sent as {"p": n}
+//
+//easyjson:skip
+type OrderGrouping struct {
+	name     string
+	priority *int
+}
+
+func NewOrderGroupingNA() OrderGrouping {
+	return OrderGrouping{name: string(GroupingNA)}
+}
+
+func NewOrderGroupingNormalTpsl() OrderGrouping {
+	return OrderGrouping{name: string(GroupingNormalTpsl)}
+}
+
+func NewOrderGroupingPositionTpsl() OrderGrouping {
+	return OrderGrouping{name: string(GroupingPositionTpls)}
+}
+
+func NewOrderGroupingPriority(n int) OrderGrouping {
+	return OrderGrouping{priority: &n}
+}
+
+func (g OrderGrouping) value() any {
+	if g.priority != nil {
+		return map[string]int{"p": *g.priority}
+	}
+	return g.name
+}
+
+func (g OrderGrouping) EncodeMsgpack(enc *msgpack.Encoder) error {
+	return enc.Encode(g.value())
+}
+
+func (g OrderGrouping) MarshalJSON() ([]byte, error) {
+	return json.Marshal(g.value())
+}
+
+func (g *OrderGrouping) UnmarshalJSON(data []byte) error {
+	var priority struct {
+		P *int `json:"p"`
+	}
+	if err := json.Unmarshal(data, &priority); err == nil && priority.P != nil {
+		*g = NewOrderGroupingPriority(*priority.P)
+		return nil
+	}
+	var name string
+	if err := json.Unmarshal(data, &name); err != nil {
+		return err
+	}
+	*g = OrderGrouping{name: name}
+	return nil
+}
+
 // OrderAction represents the order action with deterministic field ordering
 // CRITICAL: Field order MUST match Python SDK insertion order for msgpack hash consistency
 type OrderAction struct {
-	Type     string       `json:"type"              msgpack:"type"`
-	Orders   []OrderWire  `json:"orders"            msgpack:"orders"`
-	Grouping string       `json:"grouping"          msgpack:"grouping"`
-	Builder  *BuilderInfo `json:"builder,omitempty" msgpack:"builder,omitempty"`
+	Type     string        `json:"type"              msgpack:"type"`
+	Orders   []OrderWire   `json:"orders"            msgpack:"orders"`
+	Grouping OrderGrouping `json:"grouping"          msgpack:"grouping"`
+	Builder  *BuilderInfo  `json:"builder,omitempty" msgpack:"builder,omitempty"`
 }
 
 // ModifyAction represents a single order modification

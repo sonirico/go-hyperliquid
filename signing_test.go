@@ -278,7 +278,7 @@ func TestDebugActionHash(t *testing.T) {
 				},
 			},
 		}},
-		Grouping: "na",
+		Grouping: NewOrderGroupingNA(),
 	}
 
 	privateKey, _ := crypto.HexToECDSA(

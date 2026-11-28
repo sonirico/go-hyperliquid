@@ -28,7 +28,7 @@ func TestMsgpackOrderSerialization(t *testing.T) {
 	action := OrderAction{
 		Type:     "order",
 		Orders:   []OrderWire{orderWire},
-		Grouping: "na",
+		Grouping: NewOrderGroupingNA(),
 		Builder:  nil,
 	}
 

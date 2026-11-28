@@ -154,6 +154,27 @@ def limit_modify(oid):
     }
 
 
+def trigger_order(tpsl, trigger_px):
+    return {
+        "coin": "BTC",
+        "is_buy": False,
+        "sz": 0.001,
+        "limit_px": 50000.0,
+        "order_type": {"trigger": {"triggerPx": trigger_px, "isMarket": True, "tpsl": tpsl}},
+        "reduce_only": True,
+    }
+
+
+ENTRY_ORDER = {
+    "coin": "BTC",
+    "is_buy": True,
+    "sz": 0.001,
+    "limit_px": 50000.0,
+    "order_type": LIMIT_GTC,
+    "reduce_only": False,
+}
+
+
 def compact_signers(run):
     dumps = json.dumps
     json.dumps = lambda obj: dumps(obj, separators=(",", ":"))
@@ -171,6 +192,13 @@ cases = {
     "order_trigger": lambda: ex.order(
         "BTC", False, 0.001, 50000.0, {"trigger": {"triggerPx": 49000.0, "isMarket": True, "tpsl": "sl"}}, True
     ),
+    "order_normalTpsl": lambda: ex.bulk_orders(
+        [ENTRY_ORDER, trigger_order("tp", 55000.0), trigger_order("sl", 49000.0)], grouping="normalTpsl"
+    ),
+    "order_positionTpsl": lambda: ex.bulk_orders(
+        [trigger_order("tp", 55000.0), trigger_order("sl", 49000.0)], grouping="positionTpsl"
+    ),
+    "order_priority": lambda: ex.bulk_orders([ENTRY_ORDER], grouping={"p": 1}),
     "modify": lambda: l1(
         {
             "type": "modify",

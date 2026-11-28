@@ -84,6 +84,7 @@ func newCreateOrderAction(
 	e *Exchange,
 	orders []CreateOrderRequest,
 	info *BuilderInfo,
+	grouping OrderGrouping,
 ) (OrderAction, error) {
 	orderRequests := make([]OrderWire, len(orders))
 	for i, order := range orders {
@@ -129,7 +130,7 @@ func newCreateOrderAction(
 	res := OrderAction{
 		Type:     "order",
 		Orders:   orderRequests,
-		Grouping: string(GroupingNA),
+		Grouping: grouping,
 		Builder:  info,
 	}
 
@@ -141,7 +142,7 @@ func (e *Exchange) Order(
 	req CreateOrderRequest,
 	builder *BuilderInfo,
 ) (result OrderStatus, err error) {
-	resp, err := e.BulkOrders(ctx, []CreateOrderRequest{req}, builder)
+	resp, err := e.BulkOrders(ctx, []CreateOrderRequest{req}, builder, NewOrderGroupingNA())
 	if err != nil {
 		return
 	}
@@ -164,8 +165,9 @@ func (e *Exchange) BulkOrders(
 	ctx context.Context,
 	orders []CreateOrderRequest,
 	builder *BuilderInfo,
+	grouping OrderGrouping,
 ) (result *APIResponse[OrderResponse], err error) {
-	action, err := newCreateOrderAction(e, orders, builder)
+	action, err := newCreateOrderAction(e, orders, builder, grouping)
 	if err != nil {
 		return nil, err
 	}
