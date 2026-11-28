@@ -477,6 +477,10 @@ func goldenRows(userAddress string) []goldenRow {
 			})
 			return err
 		}},
+		{name: "perp_deploy_set_margin_table_ids", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetMarginTableIds(ctx, map[string]int{"test:X": 10})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

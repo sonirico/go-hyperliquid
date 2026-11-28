@@ -556,6 +556,11 @@ type PerpDeployInsertMarginTableAction struct {
 	InsertMarginTable InsertMarginTable `json:"insertMarginTable" msgpack:"insertMarginTable"`
 }
 
+type PerpDeploySetMarginTableIdsAction struct {
+	Type              string  `json:"type"              msgpack:"type"`
+	SetMarginTableIds [][]any `json:"setMarginTableIds" msgpack:"setMarginTableIds"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

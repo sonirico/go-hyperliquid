@@ -2040,6 +2040,19 @@ func (e *Exchange) PerpDeployInsertMarginTable(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetMarginTableIds sets the margin table ids of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetMarginTableIds(
+	ctx context.Context,
+	values map[string]int,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetMarginTableIdsAction{
+		Type:              "perpDeploy",
+		SetMarginTableIds: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
