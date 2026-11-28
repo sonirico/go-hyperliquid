@@ -387,6 +387,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeployGenesis(ctx, 1, "1000000", true)
 			return err
 		}},
+		{name: "spotDeploy_registerSpot", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterSpot(ctx, 1, 0)
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

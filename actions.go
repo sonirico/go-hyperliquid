@@ -243,6 +243,11 @@ type SpotDeployGenesis struct {
 	NoHyperliquidity bool   `json:"noHyperliquidity,omitempty" msgpack:"noHyperliquidity,omitempty"`
 }
 
+// SpotDeployRegisterSpot represents the registerSpot variant of a spot deploy action
+type SpotDeployRegisterSpot struct {
+	Tokens [2]int `json:"tokens" msgpack:"tokens"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
 	Type                  string                           `json:"type"                            msgpack:"type"`
@@ -252,6 +257,7 @@ type SpotDeployAction struct {
 	FreezeUser            *SpotDeployFreezeUser            `json:"freezeUser,omitempty"            msgpack:"freezeUser,omitempty"`
 	RevokeFreezePrivilege *SpotDeployRevokeFreezePrivilege `json:"revokeFreezePrivilege,omitempty" msgpack:"revokeFreezePrivilege,omitempty"`
 	Genesis               *SpotDeployGenesis               `json:"genesis,omitempty"               msgpack:"genesis,omitempty"`
+	RegisterSpot          *SpotDeployRegisterSpot          `json:"registerSpot,omitempty"          msgpack:"registerSpot,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

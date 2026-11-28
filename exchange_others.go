@@ -1507,15 +1507,14 @@ func (e *Exchange) SpotDeployGenesis(
 // SpotDeployRegisterSpot registers spot market
 func (e *Exchange) SpotDeployRegisterSpot(
 	ctx context.Context,
-	baseToken string,
-	quoteToken string,
+	baseToken int,
+	quoteToken int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":       "spotDeployRegisterSpot",
-		"baseToken":  baseToken,
-		"quoteToken": quoteToken,
+	action := SpotDeployAction{
+		Type:         "spotDeploy",
+		RegisterSpot: &SpotDeployRegisterSpot{Tokens: [2]int{baseToken, quoteToken}},
 	}
 
 	sig, err := e.signL1Action(
