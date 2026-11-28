@@ -324,3 +324,11 @@ func TestWsMessage_TwapStates(t *testing.T) {
 		assertKeysCovered(t, raw, &TwapStates{})
 	})
 }
+
+func TestWsMessage_WebData3(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_webData3")
+
+		assertKeysCovered(t, raw, &WebData3{})
+	})
+}

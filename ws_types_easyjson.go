@@ -921,6 +921,12 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid6(in *jlexer.Lexer, out
 					*out.DexAbstractionEnabled = bool(in.Bool())
 				}
 			}
+		case "abstraction":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Abstraction = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -935,30 +941,27 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid6(out *jwriter.Writer, 
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.AgentAddress != nil {
+	{
 		const prefix string = ",\"agentAddress\":"
-		first = false
 		out.RawString(prefix[1:])
-		out.String(string(*in.AgentAddress))
-	}
-	if in.AgentValidUntil != nil {
-		const prefix string = ",\"agentValidUntil\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
+		if in.AgentAddress == nil {
+			out.RawString("null")
 		} else {
-			out.RawString(prefix)
+			out.String(string(*in.AgentAddress))
 		}
-		out.Int64(int64(*in.AgentValidUntil))
+	}
+	{
+		const prefix string = ",\"agentValidUntil\":"
+		out.RawString(prefix)
+		if in.AgentValidUntil == nil {
+			out.RawString("null")
+		} else {
+			out.Int64(int64(*in.AgentValidUntil))
+		}
 	}
 	{
 		const prefix string = ",\"serverTime\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.Int64(int64(in.ServerTime))
 	}
 	{
@@ -985,6 +988,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid6(out *jwriter.Writer, 
 		const prefix string = ",\"dexAbstractionEnabled\":"
 		out.RawString(prefix)
 		out.Bool(bool(*in.DexAbstractionEnabled))
+	}
+	{
+		const prefix string = ",\"abstraction\":"
+		out.RawString(prefix)
+		out.String(string(in.Abstraction))
 	}
 	out.RawByte('}')
 }

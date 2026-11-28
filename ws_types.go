@@ -274,14 +274,15 @@ type (
 	}
 
 	WebData3UserState struct {
-		AgentAddress          *string `json:"agentAddress,omitempty"`
-		AgentValidUntil       *int64  `json:"agentValidUntil,omitempty"`
+		AgentAddress          *string `json:"agentAddress"`
+		AgentValidUntil       *int64  `json:"agentValidUntil"`
 		ServerTime            int64   `json:"serverTime"`
 		CumLedger             float64 `json:"cumLedger,string"`
 		IsVault               bool    `json:"isVault"`
 		User                  string  `json:"user"`
 		OptOutOfSpotDusting   *bool   `json:"optOutOfSpotDusting,omitempty"`
 		DexAbstractionEnabled *bool   `json:"dexAbstractionEnabled,omitempty"`
+		Abstraction           string  `json:"abstraction"`
 	}
 
 	PerpDexState struct {
