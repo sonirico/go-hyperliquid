@@ -1,0 +1,31 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "genesis": {
+      "token": 1,
+      "maxSupply": "1000000",
+      "noHyperliquidity": true
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x285688189320a7db89890354b6ad3d3f8a03f6983dfaf52caa4f5e2552d78fa8",
+    "s": "0x7b0b1e0b7e0d8ee0b77297a53de2f9a6617fff60695af76d4c66295746133ba",
+    "v": 27
+  }
+}

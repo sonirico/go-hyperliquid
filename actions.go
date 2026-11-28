@@ -236,6 +236,13 @@ type SpotDeployRevokeFreezePrivilege struct {
 	Token int `json:"token" msgpack:"token"`
 }
 
+// SpotDeployGenesis represents the genesis variant of a spot deploy action
+type SpotDeployGenesis struct {
+	Token            int    `json:"token"                      msgpack:"token"`
+	MaxSupply        string `json:"maxSupply"                  msgpack:"maxSupply"`
+	NoHyperliquidity bool   `json:"noHyperliquidity,omitempty" msgpack:"noHyperliquidity,omitempty"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
 	Type                  string                           `json:"type"                            msgpack:"type"`
@@ -244,6 +251,7 @@ type SpotDeployAction struct {
 	EnableFreezePrivilege *SpotDeployEnableFreezePrivilege `json:"enableFreezePrivilege,omitempty" msgpack:"enableFreezePrivilege,omitempty"`
 	FreezeUser            *SpotDeployFreezeUser            `json:"freezeUser,omitempty"            msgpack:"freezeUser,omitempty"`
 	RevokeFreezePrivilege *SpotDeployRevokeFreezePrivilege `json:"revokeFreezePrivilege,omitempty" msgpack:"revokeFreezePrivilege,omitempty"`
+	Genesis               *SpotDeployGenesis               `json:"genesis,omitempty"               msgpack:"genesis,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

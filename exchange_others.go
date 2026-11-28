@@ -1461,15 +1461,19 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 // SpotDeployGenesis initializes spot genesis
 func (e *Exchange) SpotDeployGenesis(
 	ctx context.Context,
-	deployer string,
-	dexName string,
+	token int,
+	maxSupply string,
+	noHyperliquidity bool,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeployGenesis",
-		"deployer": deployer,
-		"dexName":  dexName,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		Genesis: &SpotDeployGenesis{
+			Token:            token,
+			MaxSupply:        maxSupply,
+			NoHyperliquidity: noHyperliquidity,
+		},
 	}
 
 	sig, err := e.signL1Action(
