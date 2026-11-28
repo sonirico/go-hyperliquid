@@ -536,6 +536,26 @@ type PerpDeploySetFundingClampsAction struct {
 	SetFundingClamps [][]any `json:"setFundingClamps" msgpack:"setFundingClamps"`
 }
 
+type PerpDeployMarginTier struct {
+	LowerBound  int `json:"lowerBound"  msgpack:"lowerBound"`
+	MaxLeverage int `json:"maxLeverage" msgpack:"maxLeverage"`
+}
+
+type PerpDeployMarginTable struct {
+	Description string                 `json:"description" msgpack:"description"`
+	MarginTiers []PerpDeployMarginTier `json:"marginTiers" msgpack:"marginTiers"`
+}
+
+type InsertMarginTable struct {
+	Dex         string                `json:"dex"         msgpack:"dex"`
+	MarginTable PerpDeployMarginTable `json:"marginTable" msgpack:"marginTable"`
+}
+
+type PerpDeployInsertMarginTableAction struct {
+	Type              string            `json:"type"              msgpack:"type"`
+	InsertMarginTable InsertMarginTable `json:"insertMarginTable" msgpack:"insertMarginTable"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

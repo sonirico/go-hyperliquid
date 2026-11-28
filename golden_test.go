@@ -470,6 +470,13 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeploySetFundingClamps(ctx, map[string]string{"test:X": "0.01"})
 			return err
 		}},
+		{name: "perp_deploy_insert_margin_table", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployInsertMarginTable(ctx, "test", PerpDeployMarginTable{
+				Description: "table",
+				MarginTiers: []PerpDeployMarginTier{{LowerBound: 0, MaxLeverage: 10}},
+			})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

@@ -2026,6 +2026,20 @@ func (e *Exchange) PerpDeploySetFundingClamps(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeployInsertMarginTable inserts a margin table into a builder-deployed DEX
+func (e *Exchange) PerpDeployInsertMarginTable(
+	ctx context.Context,
+	dex string,
+	marginTable PerpDeployMarginTable,
+) (*PerpDeployResponse, error) {
+	action := PerpDeployInsertMarginTableAction{
+		Type:              "perpDeploy",
+		InsertMarginTable: InsertMarginTable{Dex: dex, MarginTable: marginTable},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
