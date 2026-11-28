@@ -95,6 +95,10 @@ func keyAllDexsClearinghouseState(user string) string {
 	return key(ChannelAllDexsClearinghouseState, user)
 }
 
+func keyOutcomeMetaUpdates() string {
+	return key(ChannelOutcomeMetaUpdates)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

@@ -389,6 +389,14 @@ func TestWsMessage_AllDexsClearinghouseState(t *testing.T) {
 	})
 }
 
+func TestWsMessage_OutcomeMetaUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_outcomeMetaUpdates_docs")
+
+		assertKeysCovered(t, raw, &OutcomeMetaUpdates{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -669,5 +677,26 @@ func TestAllDexsClearinghouseStateSubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.NotEmpty(t, msg.ClearinghouseStates)
 		require.Equal(t, "", msg.ClearinghouseStates[0].First)
+	})
+}
+
+func TestOutcomeMetaUpdatesSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_outcomeMetaUpdates_docs"))
+		got := make(chan OutcomeMetaUpdates, 1)
+
+		_, err := f.client.OutcomeMetaUpdates(
+			func(msg OutcomeMetaUpdates, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"outcomeMetaUpdates"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Len(t, msg, 4)
+		require.Equal(t, 1, msg[0].OutcomeCreated.Outcome)
 	})
 }

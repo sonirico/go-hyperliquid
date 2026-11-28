@@ -92,6 +92,10 @@ func (m WsAllDexsClearinghouseState) Key() string {
 	return keyAllDexsClearinghouseState(m.User)
 }
 
+func (OutcomeMetaUpdates) Key() string {
+	return keyOutcomeMetaUpdates()
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

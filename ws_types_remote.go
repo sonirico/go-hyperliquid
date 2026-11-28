@@ -242,6 +242,18 @@ func (p remoteAllDexsClearinghouseStateSubscriptionPayload) Key() string {
 	return keyAllDexsClearinghouseState(p.User)
 }
 
+type remoteOutcomeMetaUpdatesSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remoteOutcomeMetaUpdatesSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteOutcomeMetaUpdatesSubscriptionPayload) Key() string {
+	return keyOutcomeMetaUpdates()
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

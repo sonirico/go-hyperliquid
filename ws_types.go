@@ -33,6 +33,7 @@ const (
 	ChannelUserTwapHistory             string = "userTwapHistory"
 	ChannelSpotState                   string = "spotState"
 	ChannelAllDexsClearinghouseState   string = "allDexsClearinghouseState"
+	ChannelOutcomeMetaUpdates          string = "outcomeMetaUpdates"
 	ChannelError                       string = "error"
 )
 
@@ -245,6 +246,15 @@ type (
 	WsAllDexsClearinghouseState struct {
 		User                string                      `json:"user"`
 		ClearinghouseStates []Tuple2[string, UserState] `json:"clearinghouseStates"`
+	}
+
+	OutcomeMetaUpdates []OutcomeMetaUpdate
+
+	OutcomeMetaUpdate struct {
+		OutcomeCreated  *OutcomeMetaOutcome  `json:"outcomeCreated,omitempty"`
+		OutcomeSettled  *int                 `json:"outcomeSettled,omitempty"`
+		QuestionUpdated *OutcomeMetaQuestion `json:"questionUpdated,omitempty"`
+		QuestionSettled *int                 `json:"questionSettled,omitempty"`
 	}
 
 	FillLiquidation struct {
