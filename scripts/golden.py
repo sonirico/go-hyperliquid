@@ -292,6 +292,9 @@ cases = {
     "perp_deploy_set_margin_modes": lambda: l1(
         {"type": "perpDeploy", "setMarginModes": [["test:X", "strictIsolated"]]}
     ),
+    "perp_deploy_set_deployer_fees": lambda: l1(
+        {"type": "perpDeploy", "setDeployerFees": [["test:X", {"scale": "1.0", "growthMode": True}]]}
+    ),
     "user_set_abstraction": lambda: ex.user_set_abstraction(wallet.address, "unifiedAccount"),
     "send_asset": lambda: ex.send_asset(OTHER, "", "spot", TOKEN, 1.5),
     "reserve_request_weight": lambda: l1({"type": "reserveRequestWeight", "weight": 1}),

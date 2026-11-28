@@ -571,6 +571,16 @@ type PerpDeploySetMarginModesAction struct {
 	SetMarginModes [][]any `json:"setMarginModes" msgpack:"setMarginModes"`
 }
 
+type PerpDeployDeployerFee struct {
+	Scale      string `json:"scale"      msgpack:"scale"`
+	GrowthMode bool   `json:"growthMode" msgpack:"growthMode"`
+}
+
+type PerpDeploySetDeployerFeesAction struct {
+	Type            string  `json:"type"            msgpack:"type"`
+	SetDeployerFees [][]any `json:"setDeployerFees" msgpack:"setDeployerFees"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

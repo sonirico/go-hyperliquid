@@ -2079,6 +2079,19 @@ func (e *Exchange) PerpDeploySetMarginModes(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetDeployerFees sets the deployer fees of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetDeployerFees(
+	ctx context.Context,
+	fees map[string]PerpDeployDeployerFee,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetDeployerFeesAction{
+		Type:            "perpDeploy",
+		SetDeployerFees: sortedPerpDeployPairs(fees),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
