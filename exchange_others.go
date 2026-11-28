@@ -1943,9 +1943,7 @@ func (e *Exchange) PerpDeploySetOracle(
 func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "cSignerUnjailSelf",
-	}
+	action := CSignerAction{Type: "CSignerAction", UnjailSelf: &struct{}{}}
 
 	sig, err := e.signL1Action(
 		ctx,
@@ -1979,49 +1977,7 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "cSignerJailSelf",
-	}
-
-	sig, err := e.signL1Action(
-		ctx,
-		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := actionError(resp); err != nil {
-		return nil, err
-	}
-
-	var result ValidatorResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
-// CSignerInner executes inner consensus signer action
-func (e *Exchange) CSignerInner(
-	ctx context.Context,
-	innerAction map[string]any,
-) (*ValidatorResponse, error) {
-	nonce := e.nextNonce()
-
-	action := map[string]any{
-		"type":        "cSignerInner",
-		"innerAction": innerAction,
-	}
+	action := CSignerAction{Type: "CSignerAction", JailSelf: &struct{}{}}
 
 	sig, err := e.signL1Action(
 		ctx,

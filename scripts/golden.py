@@ -198,6 +198,8 @@ cases = {
     "spotDeploy_registerHyperliquidity_nSeededLevels": lambda: ex.spot_deploy_register_hyperliquidity(0, 1.5, 0.5, 10, 3),
     "spotDeploy_setDeployerTradingFeeShare": lambda: ex.spot_deploy_set_deployer_trading_fee_share(1, "50%"),
     "spotDeploy_enableQuoteToken": lambda: ex.spot_deploy_enable_quote_token(1),
+    "cSigner_unjailSelf": lambda: ex.c_signer_unjail_self(),
+    "cSigner_jailSelf": lambda: ex.c_signer_jail_self(),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

@@ -1,5 +1,12 @@
 package hyperliquid
 
+import (
+	"encoding/json"
+	"errors"
+
+	"github.com/vmihailenco/msgpack/v5"
+)
+
 //go:generate easyjson -all
 
 // Action structs with deterministic field ordering for consistent MessagePack serialization
@@ -430,4 +437,72 @@ type SetOracle struct {
 type PerpDeploySetOracleAction struct {
 	Type      string    `json:"type"      msgpack:"type"`
 	SetOracle SetOracle `json:"setOracle" msgpack:"setOracle"`
+}
+
+func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
+	if err := enc.EncodeMapLen(2); err != nil {
+		return err
+	}
+	if err := enc.EncodeString("type"); err != nil {
+		return err
+	}
+	if err := enc.EncodeString(actionType); err != nil {
+		return err
+	}
+	if err := enc.EncodeString(variant); err != nil {
+		return err
+	}
+	return enc.Encode(value)
+}
+
+func marshalVariantJSON(actionType, variant string, value any) ([]byte, error) {
+	typeJSON, err := json.Marshal(actionType)
+	if err != nil {
+		return nil, err
+	}
+	variantJSON, err := json.Marshal(variant)
+	if err != nil {
+		return nil, err
+	}
+	valueJSON, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
+	}
+	return []byte(`{"type":` + string(typeJSON) + `,` + string(variantJSON) + `:` + string(valueJSON) + `}`), nil
+}
+
+// CSignerAction represents consensus signer action, exactly one variant is set
+// and it is sent with a null value
+//
+//easyjson:skip
+type CSignerAction struct {
+	Type       string
+	UnjailSelf *struct{}
+	JailSelf   *struct{}
+}
+
+func (a CSignerAction) variant() (string, error) {
+	switch {
+	case a.UnjailSelf != nil && a.JailSelf == nil:
+		return "unjailSelf", nil
+	case a.JailSelf != nil && a.UnjailSelf == nil:
+		return "jailSelf", nil
+	}
+	return "", errors.New("CSignerAction needs exactly one variant")
+}
+
+func (a CSignerAction) EncodeMsgpack(enc *msgpack.Encoder) error {
+	variant, err := a.variant()
+	if err != nil {
+		return err
+	}
+	return encodeVariantMsgpack(enc, a.Type, variant, nil)
+}
+
+func (a CSignerAction) MarshalJSON() ([]byte, error) {
+	variant, err := a.variant()
+	if err != nil {
+		return nil, err
+	}
+	return marshalVariantJSON(a.Type, variant, nil)
 }
