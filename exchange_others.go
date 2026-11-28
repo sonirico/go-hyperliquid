@@ -2898,3 +2898,33 @@ func (e *Exchange) UserOutcomeNegate(
 
 	return actionResponse(resp)
 }
+
+// AuthorizeAqav2Role authorizes a role for a token
+func (e *Exchange) AuthorizeAqav2Role(
+	ctx context.Context,
+	token int,
+	role string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := AuthorizeAqav2RoleAction{Type: "authorizeAqav2Role", Token: token, Role: role}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

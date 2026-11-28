@@ -640,6 +640,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.UserOutcomeNegate(ctx, 1, 2, 1.5)
 			return err
 		}},
+		{name: "authorizeAqav2Role", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.AuthorizeAqav2Role(ctx, 1, "technical")
+			return err
+		}},
 	}
 }
 

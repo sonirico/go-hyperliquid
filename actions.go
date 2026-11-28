@@ -738,3 +738,10 @@ type NegateOutcomeAction struct {
 	Outcome  int    `json:"outcome"  msgpack:"outcome"`
 	Amount   string `json:"amount"   msgpack:"amount"`
 }
+
+// AuthorizeAqav2RoleAction represents authorize aqav2 role action
+type AuthorizeAqav2RoleAction struct {
+	Type  string `json:"type"  msgpack:"type"`
+	Token int    `json:"token" msgpack:"token"`
+	Role  string `json:"role"  msgpack:"role"`
+}
