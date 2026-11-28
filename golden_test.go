@@ -191,6 +191,7 @@ func goldenRows(userAddress string) []goldenRow {
 	oid := int64(123)
 	scheduleTime := int64(4102444800000)
 	maxGas := 1000000
+	nSeededLevels := 3
 	bot := "bot"
 	assetRequest2 := AssetRequest2{
 		Coin: "test:X", SzDecimals: 2, OraclePx: "10.0", MarginTableID: 10, MarginMode: "strictIsolated",
@@ -389,6 +390,14 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "spotDeploy_registerSpot", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotDeployRegisterSpot(ctx, 1, 0)
+			return err
+		}},
+		{name: "spotDeploy_registerHyperliquidity", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, nil)
+			return err
+		}},
+		{name: "spotDeploy_registerHyperliquidity_nSeededLevels", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, &nSeededLevels)
 			return err
 		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {

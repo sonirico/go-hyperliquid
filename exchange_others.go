@@ -1548,15 +1548,33 @@ func (e *Exchange) SpotDeployRegisterSpot(
 // SpotDeployRegisterHyperliquidity registers hyperliquidity spot
 func (e *Exchange) SpotDeployRegisterHyperliquidity(
 	ctx context.Context,
-	name string,
-	tokens []string,
+	spot int,
+	startPx float64,
+	orderSz float64,
+	nOrders int,
+	nSeededLevels *int,
 ) (*SpotDeployResponse, error) {
+	startPxWire, err := floatToWire(startPx)
+	if err != nil {
+		return nil, fmt.Errorf("invalid start price: %w", err)
+	}
+
+	orderSzWire, err := floatToWire(orderSz)
+	if err != nil {
+		return nil, fmt.Errorf("invalid order size: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":   "spotDeployRegisterHyperliquidity",
-		"name":   name,
-		"tokens": tokens,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		RegisterHyperliquidity: &SpotDeployRegisterHyperliquidity{
+			Spot:          spot,
+			StartPx:       startPxWire,
+			OrderSz:       orderSzWire,
+			NOrders:       nOrders,
+			NSeededLevels: nSeededLevels,
+		},
 	}
 
 	sig, err := e.signL1Action(

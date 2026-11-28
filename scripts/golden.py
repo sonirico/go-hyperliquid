@@ -192,6 +192,8 @@ cases = {
     "spotDeploy_genesis": lambda: ex.spot_deploy_genesis(1, "1000000", False),
     "spotDeploy_genesis_noHyperliquidity": lambda: ex.spot_deploy_genesis(1, "1000000", True),
     "spotDeploy_registerSpot": lambda: ex.spot_deploy_register_spot(1, 0),
+    "spotDeploy_registerHyperliquidity": lambda: ex.spot_deploy_register_hyperliquidity(0, 1.5, 0.5, 10, None),
+    "spotDeploy_registerHyperliquidity_nSeededLevels": lambda: ex.spot_deploy_register_hyperliquidity(0, 1.5, 0.5, 10, 3),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

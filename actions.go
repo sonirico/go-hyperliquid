@@ -248,16 +248,26 @@ type SpotDeployRegisterSpot struct {
 	Tokens [2]int `json:"tokens" msgpack:"tokens"`
 }
 
+// SpotDeployRegisterHyperliquidity represents the registerHyperliquidity variant of a spot deploy action
+type SpotDeployRegisterHyperliquidity struct {
+	Spot          int    `json:"spot"                    msgpack:"spot"`
+	StartPx       string `json:"startPx"                 msgpack:"startPx"`
+	OrderSz       string `json:"orderSz"                 msgpack:"orderSz"`
+	NOrders       int    `json:"nOrders"                 msgpack:"nOrders"`
+	NSeededLevels *int   `json:"nSeededLevels,omitempty" msgpack:"nSeededLevels,omitempty"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
-	Type                  string                           `json:"type"                            msgpack:"type"`
-	RegisterToken2        *SpotDeployRegisterToken2        `json:"registerToken2,omitempty"        msgpack:"registerToken2,omitempty"`
-	UserGenesis           *SpotDeployUserGenesis           `json:"userGenesis,omitempty"           msgpack:"userGenesis,omitempty"`
-	EnableFreezePrivilege *SpotDeployEnableFreezePrivilege `json:"enableFreezePrivilege,omitempty" msgpack:"enableFreezePrivilege,omitempty"`
-	FreezeUser            *SpotDeployFreezeUser            `json:"freezeUser,omitempty"            msgpack:"freezeUser,omitempty"`
-	RevokeFreezePrivilege *SpotDeployRevokeFreezePrivilege `json:"revokeFreezePrivilege,omitempty" msgpack:"revokeFreezePrivilege,omitempty"`
-	Genesis               *SpotDeployGenesis               `json:"genesis,omitempty"               msgpack:"genesis,omitempty"`
-	RegisterSpot          *SpotDeployRegisterSpot          `json:"registerSpot,omitempty"          msgpack:"registerSpot,omitempty"`
+	Type                   string                            `json:"type"                             msgpack:"type"`
+	RegisterToken2         *SpotDeployRegisterToken2         `json:"registerToken2,omitempty"         msgpack:"registerToken2,omitempty"`
+	UserGenesis            *SpotDeployUserGenesis            `json:"userGenesis,omitempty"            msgpack:"userGenesis,omitempty"`
+	EnableFreezePrivilege  *SpotDeployEnableFreezePrivilege  `json:"enableFreezePrivilege,omitempty"  msgpack:"enableFreezePrivilege,omitempty"`
+	FreezeUser             *SpotDeployFreezeUser             `json:"freezeUser,omitempty"             msgpack:"freezeUser,omitempty"`
+	RevokeFreezePrivilege  *SpotDeployRevokeFreezePrivilege  `json:"revokeFreezePrivilege,omitempty"  msgpack:"revokeFreezePrivilege,omitempty"`
+	Genesis                *SpotDeployGenesis                `json:"genesis,omitempty"                msgpack:"genesis,omitempty"`
+	RegisterSpot           *SpotDeployRegisterSpot           `json:"registerSpot,omitempty"           msgpack:"registerSpot,omitempty"`
+	RegisterHyperliquidity *SpotDeployRegisterHyperliquidity `json:"registerHyperliquidity,omitempty" msgpack:"registerHyperliquidity,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

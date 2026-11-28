@@ -1,0 +1,33 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "registerHyperliquidity": {
+      "spot": 0,
+      "startPx": "1.5",
+      "orderSz": "0.5",
+      "nOrders": 10,
+      "nSeededLevels": 3
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xa27f6066ed8e0b1f1ac0de8aed2dac021772f070daebf09e5ff0b35325f8a975",
+    "s": "0x1907f3805f08331dfa50eca4a289cc926424c0a4d1fc77df80765ca42a960519",
+    "v": 28
+  }
+}
