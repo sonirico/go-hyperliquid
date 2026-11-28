@@ -1089,6 +1089,21 @@ func (i *Info) PerpCategories(ctx context.Context) ([]Tuple2[string, string], er
 	return result, nil
 }
 
+func (i *Info) PerpConciseAnnotations(ctx context.Context) ([]Tuple2[string, PerpConciseAnnotation], error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpConciseAnnotations",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp concise annotations: %w", err)
+	}
+
+	var result []Tuple2[string, PerpConciseAnnotation]
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp concise annotations: %w", err)
+	}
+	return result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{

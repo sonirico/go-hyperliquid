@@ -294,3 +294,15 @@ func TestInfo_PerpCategories(t *testing.T) {
 	}, *req)
 	require.Len(t, categories, 20)
 }
+
+func TestInfo_PerpConciseAnnotations(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpConciseAnnotations")))
+
+	annotations, err := info.PerpConciseAnnotations(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpConciseAnnotations",
+	}, *req)
+	require.Len(t, annotations, 20)
+}

@@ -772,3 +772,11 @@ func TestPerpCategories_UnmarshalJSON(t *testing.T) {
 		require.Equal(t, Tuple2[string, string]{First: "flx:BTC", Second: "crypto"}, got[0])
 	})
 }
+
+func TestPerpConciseAnnotation_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpConciseAnnotations")
+
+		assertKeysCovered(t, raw, &[]Tuple2[string, PerpConciseAnnotation]{})
+	})
+}
