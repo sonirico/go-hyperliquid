@@ -103,6 +103,15 @@ def limit_modify(oid):
     }
 
 
+def compact_signers(run):
+    dumps = json.dumps
+    json.dumps = lambda obj: dumps(obj, separators=(",", ":"))
+    try:
+        return run()
+    finally:
+        json.dumps = dumps
+
+
 cases = {
     "order_limit": lambda: ex.order("BTC", True, 0.001, 50000.0, LIMIT_GTC, False),
     "order_cloid_builder": lambda: ex.order(
@@ -141,7 +150,7 @@ cases = {
     "approve_agent_named": lambda: ex.approve_agent("bot"),
     "approve_agent_unnamed": lambda: ex.approve_agent(),
     "approve_builder_fee": lambda: ex.approve_builder_fee(OTHER, "0.001%"),
-    "convert_to_multi_sig_user": lambda: ex.convert_to_multi_sig_user([OTHER], 1),
+    "convert_to_multi_sig_user": lambda: compact_signers(lambda: ex.convert_to_multi_sig_user([OTHER], 1)),
     "perp_deploy_register_asset": lambda: ex.perp_deploy_register_asset(
         "test", 1000000, "test:X", 2, "10.0", 10, False, None
     ),

@@ -2,7 +2,7 @@
   "kind": "user",
   "action": {
     "type": "convertToMultiSigUser",
-    "signers": "{\"authorizedUsers\": [\"0x1111111111111111111111111111111111111111\"], \"threshold\": 1}",
+    "signers": "{\"authorizedUsers\":[\"0x1111111111111111111111111111111111111111\"],\"threshold\":1}",
     "nonce": 1700000000000,
     "signatureChainId": "0x66eee",
     "hyperliquidChain": "Testnet"
@@ -27,8 +27,8 @@
     }
   ],
   "signature": {
-    "r": "0xb9f01190f46b9fecbae314dd0e60dd74ced661dd13dc2bee4ac86a1cf98056d4",
-    "s": "0x5c3f1b8e36367e921bb75c35348d20d3e1639882b8f0aca005b54b3af2433f45",
+    "r": "0xd3556519abbb258b83d68c76ad600b2be222bea488670ad572fdfde668c33de9",
+    "s": "0x6e83650bbbe99806e58ef52d54c841650cbcb04608953f6dbc32af95c0d482b8",
     "v": 28
   }
 }

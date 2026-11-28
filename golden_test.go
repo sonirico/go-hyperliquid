@@ -26,9 +26,6 @@ const (
 	goldenOther    = "0x1111111111111111111111111111111111111111"
 	goldenToken    = "USDC:0x6d1e7cde53ba9467b783cb7c530ce054"
 	goldenCloid    = "0x00000000000000000000000000000001"
-
-	goldenSkipAmount      = `formatFloat renders the amount as "1.500000", the Python SDK sends "1.5"`
-	goldenSkipSignersJSON = `signers is compact JSON, json.dumps in the Python SDK separates with ", " and ": "`
 )
 
 type goldenType struct {
@@ -258,7 +255,7 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CreateSubAccount(ctx, "sub1")
 			return err
 		}},
-		{name: "usd_class_transfer", skip: goldenSkipAmount, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "usd_class_transfer", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UsdClassTransfer(ctx, 1.5, true)
 			return err
 		}},
@@ -282,11 +279,11 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.VaultDistribute(ctx, goldenOther, 1000000)
 			return err
 		}},
-		{name: "usd_send", skip: goldenSkipAmount, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "usd_send", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UsdTransfer(ctx, 1.5, goldenOther)
 			return err
 		}},
-		{name: "spot_send", skip: goldenSkipAmount, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "spot_send", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SpotTransfer(ctx, 1.5, goldenOther, goldenToken)
 			return err
 		}},
@@ -298,7 +295,7 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.TokenDelegate(ctx, goldenOther, 100000000, false)
 			return err
 		}},
-		{name: "withdraw3", skip: goldenSkipAmount, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "withdraw3", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.WithdrawFromBridge(ctx, 1.5, goldenOther)
 			return err
 		}},
@@ -318,7 +315,7 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.ApproveBuilderFee(ctx, goldenOther, "0.001%")
 			return err
 		}},
-		{name: "convert_to_multi_sig_user", skip: goldenSkipSignersJSON, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "convert_to_multi_sig_user", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.ConvertToMultiSigUser(ctx, []string{goldenOther}, 1)
 			return err
 		}},
@@ -361,7 +358,7 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err
 		}},
-		{name: "send_asset", skip: goldenSkipAmount, call: func(ctx context.Context, ex *Exchange) error {
+		{name: "send_asset", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.SendAsset(ctx, goldenOther, "", "spot", goldenToken, 1.5)
 			return err
 		}},

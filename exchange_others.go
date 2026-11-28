@@ -353,9 +353,13 @@ func (e *Exchange) UsdClassTransfer(
 	amount float64,
 	toPerp bool,
 ) (*TransferResponse, error) {
+	strAmount, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
-	strAmount := formatFloat(amount)
 	if e.vault != "" {
 		strAmount += " subaccount:" + e.vault
 	}
@@ -623,11 +627,16 @@ func (e *Exchange) UsdTransfer(
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"time":        big.NewInt(nonce),
 		"type":        "usdSend",
 	}
@@ -672,11 +681,16 @@ func (e *Exchange) SpotTransfer(
 	amount float64,
 	destination, token string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"token":       token,
 		"time":        big.NewInt(nonce),
 		"type":        "spotSend",
@@ -911,11 +925,16 @@ func (e *Exchange) WithdrawFromBridge(
 	amount float64,
 	destination string,
 ) (*TransferResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"destination": destination,
-		"amount":      formatFloat(amount),
+		"amount":      amountWire,
 		"time":        big.NewInt(nonce),
 		"type":        "withdraw3",
 	}
@@ -2211,6 +2230,11 @@ func (e *Exchange) SendAsset(
 	token string,
 	amount float64,
 ) (*ReserveRequestWeightResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
@@ -2218,7 +2242,7 @@ func (e *Exchange) SendAsset(
 		"sourceDex":      sourceDex,
 		"destinationDex": destinationDex,
 		"token":          token,
-		"amount":         formatFloat(amount),
+		"amount":         amountWire,
 		"fromSubAccount": e.vault,
 		"nonce":          big.NewInt(nonce),
 		"type":           "sendAsset",
@@ -2269,13 +2293,18 @@ func (e *Exchange) BorrowLend(
 	operation string,
 	token int64,
 ) (*ReserveRequestWeightResponse, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	nonce := e.nextNonce()
 
 	action := map[string]any{
 		"type":      "borrowLend",
 		"operation": operation,
 		"token":     token,
-		"amount":    formatFloat(amount),
+		"amount":    amountWire,
 	}
 
 	sig, err := e.signL1Action(

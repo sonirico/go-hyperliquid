@@ -42,11 +42,6 @@ func abs(x float64) float64 {
 	return x
 }
 
-// formatFloat formats a float64 to string with 6 decimal places.
-func formatFloat(f float64) string {
-	return fmt.Sprintf("%.6f", f)
-}
-
 // floatToWire converts a float64 to a wire-compatible string format
 func floatToWire(x float64) (string, error) {
 	// Format to 8 decimal places
