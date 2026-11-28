@@ -2397,3 +2397,47 @@ func (e *Exchange) TrailingStop(
 
 	return actionResponse(resp)
 }
+
+// TopUpIsolatedOnlyMargin tops up the margin of an isolated only position to the given leverage
+func (e *Exchange) TopUpIsolatedOnlyMargin(
+	ctx context.Context,
+	coin string,
+	leverage float64,
+) (json.RawMessage, error) {
+	asset, ok := e.info.CoinToAsset(coin)
+	if !ok {
+		return nil, fmt.Errorf("coin %s not found in info", coin)
+	}
+
+	leverageWire, err := floatToWire(leverage)
+	if err != nil {
+		return nil, fmt.Errorf("invalid leverage: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := TopUpIsolatedOnlyMarginAction{
+		Type:     "topUpIsolatedOnlyMargin",
+		Asset:    asset,
+		Leverage: leverageWire,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

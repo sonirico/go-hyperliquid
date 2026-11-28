@@ -649,3 +649,10 @@ type TrailingStopAction struct {
 	Retracement  TrailingStopRetracement `json:"retracement"  msgpack:"retracement"`
 	ActivationPx *string                 `json:"activationPx" msgpack:"activationPx"`
 }
+
+// TopUpIsolatedOnlyMarginAction represents top up isolated only margin action
+type TopUpIsolatedOnlyMarginAction struct {
+	Type     string `json:"type"     msgpack:"type"`
+	Asset    int    `json:"asset"    msgpack:"asset"`
+	Leverage string `json:"leverage" msgpack:"leverage"`
+}

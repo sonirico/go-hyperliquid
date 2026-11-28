@@ -314,6 +314,7 @@ cases = {
             "activationPx": "50000",
         }
     ),
+    "topUpIsolatedOnlyMargin": lambda: l1({"type": "topUpIsolatedOnlyMargin", "asset": 0, "leverage": "5"}),
 }
 
 os.makedirs(out_dir, exist_ok=True)

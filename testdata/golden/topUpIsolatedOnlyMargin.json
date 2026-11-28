@@ -1,0 +1,28 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "topUpIsolatedOnlyMargin",
+    "asset": 0,
+    "leverage": "5"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x81e09bd06b42fdc5efcfa2d602a104c61257a634d819c5800734972613d09c07",
+    "s": "0x7c1d9ab10516a4e5ce71409695e9443babe4c7a780ca41f4d4a5404297203c4e",
+    "v": 27
+  }
+}

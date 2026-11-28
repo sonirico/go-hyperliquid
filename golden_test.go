@@ -560,6 +560,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.TrailingStop(ctx, "BTC", false, 0.001, true, TrailingStopRetracement{Px: "500"}, &activationPx)
 			return err
 		}},
+		{name: "topUpIsolatedOnlyMargin", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.TopUpIsolatedOnlyMargin(ctx, "BTC", 5)
+			return err
+		}},
 	}
 }
 
