@@ -382,21 +382,23 @@ type OrderQueryResult struct {
 }
 
 type Fill struct {
-	ClosedPnl     string `json:"closedPnl"`
-	Coin          string `json:"coin"`
-	Crossed       bool   `json:"crossed"`
-	Dir           string `json:"dir"`
-	Hash          string `json:"hash"`
-	Oid           int64  `json:"oid"`
-	Price         string `json:"px"`
-	Side          string `json:"side"`
-	StartPosition string `json:"startPosition"`
-	Size          string `json:"sz"`
-	Time          int64  `json:"time"`
-	Fee           string `json:"fee"`
-	FeeToken      string `json:"feeToken"`
-	BuilderFee    string `json:"builderFee,omitempty"`
-	Tid           int64  `json:"tid"`
+	ClosedPnl     string  `json:"closedPnl"`
+	Coin          string  `json:"coin"`
+	Crossed       bool    `json:"crossed"`
+	Dir           string  `json:"dir"`
+	Hash          string  `json:"hash"`
+	Oid           int64   `json:"oid"`
+	Price         string  `json:"px"`
+	Side          string  `json:"side"`
+	StartPosition string  `json:"startPosition"`
+	Size          string  `json:"sz"`
+	Time          int64   `json:"time"`
+	Fee           string  `json:"fee"`
+	FeeToken      string  `json:"feeToken"`
+	BuilderFee    string  `json:"builderFee,omitempty"`
+	Tid           int64   `json:"tid"`
+	Cloid         *string `json:"cloid,omitempty"`
+	TwapId        *int64  `json:"twapId"`
 }
 
 type UserFillsParams struct {

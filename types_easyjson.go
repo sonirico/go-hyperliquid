@@ -9404,6 +9404,34 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(in *jlexer.Lexer, ou
 			} else {
 				out.Tid = int64(in.Int64())
 			}
+		case "cloid":
+			if in.IsNull() {
+				in.Skip()
+				out.Cloid = nil
+			} else {
+				if out.Cloid == nil {
+					out.Cloid = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Cloid = string(in.String())
+				}
+			}
+		case "twapId":
+			if in.IsNull() {
+				in.Skip()
+				out.TwapId = nil
+			} else {
+				if out.TwapId == nil {
+					out.TwapId = new(int64)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.TwapId = int64(in.Int64())
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -9492,6 +9520,20 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(out *jwriter.Writer,
 		const prefix string = ",\"tid\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Tid))
+	}
+	if in.Cloid != nil {
+		const prefix string = ",\"cloid\":"
+		out.RawString(prefix)
+		out.String(string(*in.Cloid))
+	}
+	{
+		const prefix string = ",\"twapId\":"
+		out.RawString(prefix)
+		if in.TwapId == nil {
+			out.RawString("null")
+		} else {
+			out.Int64(int64(*in.TwapId))
+		}
 	}
 	out.RawByte('}')
 }

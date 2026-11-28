@@ -557,3 +557,11 @@ func TestVaultDetails_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &VaultDetails{})
 	})
 }
+
+func TestFill_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userFills")
+
+		assertKeysCovered(t, raw, &[]Fill{})
+	})
+}
