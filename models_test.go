@@ -541,3 +541,21 @@ func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestUserFundingHistory_UnmarshalJSON(t *testing.T) {
+	// captured from mainnet userFunding, 2026-11-28
+	jsonData := `{"time":1795802400039,"hash":"0x0000000000000000000000000000000000000000000000000000000000000000","delta":{"type":"funding","coin":"BTC","usdc":"0.018294","szi":"-0.08169","fundingRate":"0.0000037383","nSamples":null}}`
+
+	var funding UserFundingHistory
+	err := json.Unmarshal([]byte(jsonData), &funding)
+	require.NoError(t, err, "unmarshaling should not fail")
+
+	assert.Equal(t, int64(1795802400039), funding.Time)
+	assert.Equal(t, Delta{
+		Type:        "funding",
+		Coin:        "BTC",
+		USDC:        "0.018294",
+		Size:        "-0.08169",
+		FundingRate: "0.0000037383",
+	}, funding.Delta)
+}
