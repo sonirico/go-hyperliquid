@@ -526,6 +526,11 @@ type PerpDeploySetFundingMultipliersAction struct {
 	SetFundingMultipliers [][]any `json:"setFundingMultipliers" msgpack:"setFundingMultipliers"`
 }
 
+type PerpDeploySetFundingInterestRatesAction struct {
+	Type                    string  `json:"type"                    msgpack:"type"`
+	SetFundingInterestRates [][]any `json:"setFundingInterestRates" msgpack:"setFundingInterestRates"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

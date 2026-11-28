@@ -2000,6 +2000,19 @@ func (e *Exchange) PerpDeploySetFundingMultipliers(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetFundingInterestRates sets the funding interest rates of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingInterestRates(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingInterestRatesAction{
+		Type:                    "perpDeploy",
+		SetFundingInterestRates: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
