@@ -216,3 +216,18 @@ func TestInfo_UserTwapSliceFills(t *testing.T) {
 	}, *req)
 	require.Len(t, fills, 20)
 }
+
+func TestInfo_BorrowLendReserveState(t *testing.T) {
+	const token = 0
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "borrowLendReserveState")))
+
+	state, err := info.BorrowLendReserveState(context.TODO(), token)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":  "borrowLendReserveState",
+		"token": float64(token),
+	}, *req)
+	require.Equal(t, "1.0", state.OraclePx)
+}
