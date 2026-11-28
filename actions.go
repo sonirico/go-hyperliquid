@@ -212,10 +212,18 @@ type SpotDeployRegisterToken2 struct {
 	FullName string              `json:"fullName" msgpack:"fullName"`
 }
 
+// SpotDeployUserGenesis represents the userGenesis variant of a spot deploy action
+type SpotDeployUserGenesis struct {
+	Token               int         `json:"token"               msgpack:"token"`
+	UserAndWei          [][2]string `json:"userAndWei"          msgpack:"userAndWei"`
+	ExistingTokenAndWei [][2]any    `json:"existingTokenAndWei" msgpack:"existingTokenAndWei"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
 	Type           string                    `json:"type"                     msgpack:"type"`
 	RegisterToken2 *SpotDeployRegisterToken2 `json:"registerToken2,omitempty" msgpack:"registerToken2,omitempty"`
+	UserGenesis    *SpotDeployUserGenesis    `json:"userGenesis,omitempty"    msgpack:"userGenesis,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

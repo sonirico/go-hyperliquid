@@ -361,6 +361,12 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeployRegisterToken(ctx, "TKN", 2, 8, 1000000, "Token")
 			return err
 		}},
+		{name: "spotDeploy_userGenesis", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployUserGenesis(
+				ctx, 1, [][2]string{{goldenOther, "100"}}, []SpotDeployExistingTokenWei{{Token: 0, Wei: "50"}},
+			)
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

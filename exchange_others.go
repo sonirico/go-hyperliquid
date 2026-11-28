@@ -1279,16 +1279,33 @@ func (e *Exchange) SpotDeployRegisterToken(
 	return &result, nil
 }
 
+// SpotDeployExistingTokenWei is the amount of an existing token granted by userGenesis
+type SpotDeployExistingTokenWei struct {
+	Token int
+	Wei   string
+}
+
 // SpotDeployUserGenesis initializes user genesis for spot trading
 func (e *Exchange) SpotDeployUserGenesis(
 	ctx context.Context,
-	balances map[string]float64,
+	token int,
+	userAndWei [][2]string,
+	existingTokenAndWei []SpotDeployExistingTokenWei,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeployUserGenesis",
-		"balances": balances,
+	existing := make([][2]any, len(existingTokenAndWei))
+	for i, item := range existingTokenAndWei {
+		existing[i] = [2]any{item.Token, item.Wei}
+	}
+
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		UserGenesis: &SpotDeployUserGenesis{
+			Token:               token,
+			UserAndWei:          userAndWei,
+			ExistingTokenAndWei: existing,
+		},
 	}
 
 	sig, err := e.signL1Action(
