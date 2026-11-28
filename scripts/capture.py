@@ -3,7 +3,7 @@
 
 Usage:
     capture.py info '<json body>' <out>
-    capture.py ws '<subscription json>' <out>
+    capture.py ws '<subscription json>' <out> [limit seconds]
 """
 import json
 import sys
@@ -25,27 +25,28 @@ def capture_info(body):
         return resp.read().decode()
 
 
-def capture_ws(subscription):
+def capture_ws(subscription, limit):
     import websocket
 
-    conn = websocket.create_connection(WS_URL, timeout=WS_TIMEOUT_SECONDS)
+    conn = websocket.create_connection(WS_URL, timeout=limit)
     try:
         conn.send(json.dumps({"method": "subscribe", "subscription": json.loads(subscription)}))
-        deadline = time.time() + WS_TIMEOUT_SECONDS
+        deadline = time.time() + limit
         while time.time() < deadline:
             raw = conn.recv()
             if json.loads(raw).get("channel") != "subscriptionResponse":
                 return raw
     finally:
         conn.close()
-    raise TimeoutError("no data message within %d s" % WS_TIMEOUT_SECONDS)
+    raise TimeoutError("no data message within %d s" % limit)
 
 
 def main():
-    if len(sys.argv) != 4 or sys.argv[1] not in ("info", "ws"):
+    if len(sys.argv) not in (4, 5) or sys.argv[1] not in ("info", "ws"):
         sys.exit(__doc__)
-    kind, arg, out = sys.argv[1:]
-    raw = capture_info(arg) if kind == "info" else capture_ws(arg)
+    kind, arg, out = sys.argv[1:4]
+    limit = int(sys.argv[4]) if len(sys.argv) == 5 else WS_TIMEOUT_SECONDS
+    raw = capture_info(arg) if kind == "info" else capture_ws(arg, limit)
     with open(out, "w") as f:
         f.write(raw)
 

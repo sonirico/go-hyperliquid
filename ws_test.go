@@ -236,3 +236,11 @@ func TestWsMessage_Bbo(t *testing.T) {
 		assertKeysCovered(t, raw, &Bbo{})
 	})
 }
+
+func TestWsMessage_Candle(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_candle")
+
+		assertKeysCovered(t, raw, &Candle{})
+	})
+}
