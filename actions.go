@@ -506,3 +506,56 @@ func (a CSignerAction) MarshalJSON() ([]byte, error) {
 	}
 	return marshalVariantJSON(a.Type, variant, nil)
 }
+
+// CValidatorNodeIp represents the node ip of a validator profile
+type CValidatorNodeIp struct {
+	Ip string `json:"Ip" msgpack:"Ip"`
+}
+
+// CValidatorProfile represents the profile of a validator register
+type CValidatorProfile struct {
+	NodeIp              CValidatorNodeIp `json:"node_ip"              msgpack:"node_ip"`
+	Name                string           `json:"name"                 msgpack:"name"`
+	Description         string           `json:"description"          msgpack:"description"`
+	DelegationsDisabled bool             `json:"delegations_disabled" msgpack:"delegations_disabled"`
+	CommissionBps       int              `json:"commission_bps"       msgpack:"commission_bps"`
+	Signer              string           `json:"signer"               msgpack:"signer"`
+}
+
+// CValidatorRegister represents the register variant of a validator action
+type CValidatorRegister struct {
+	Profile    CValidatorProfile `json:"profile"     msgpack:"profile"`
+	Unjailed   bool              `json:"unjailed"    msgpack:"unjailed"`
+	InitialWei int               `json:"initial_wei" msgpack:"initial_wei"`
+}
+
+// CValidatorAction represents consensus validator action, exactly one variant is set
+//
+//easyjson:skip
+type CValidatorAction struct {
+	Type     string
+	Register *CValidatorRegister
+}
+
+func (a CValidatorAction) variant() (string, any, error) {
+	if a.Register != nil {
+		return "register", a.Register, nil
+	}
+	return "", nil, errors.New("CValidatorAction needs exactly one variant")
+}
+
+func (a CValidatorAction) EncodeMsgpack(enc *msgpack.Encoder) error {
+	variant, value, err := a.variant()
+	if err != nil {
+		return err
+	}
+	return encodeVariantMsgpack(enc, a.Type, variant, value)
+}
+
+func (a CValidatorAction) MarshalJSON() ([]byte, error) {
+	variant, value, err := a.variant()
+	if err != nil {
+		return nil, err
+	}
+	return marshalVariantJSON(a.Type, variant, value)
+}

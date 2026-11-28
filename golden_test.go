@@ -421,6 +421,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CSignerJailSelf(ctx)
 			return err
 		}},
+		{name: "cValidator_register", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CValidatorRegister(ctx, "1.2.3.4", "val", "desc", false, 500, goldenOther, true, 100000000)
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

@@ -2012,13 +2012,31 @@ func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, err
 // CValidatorRegister registers as consensus validator
 func (e *Exchange) CValidatorRegister(
 	ctx context.Context,
-	validatorProfile map[string]any,
+	nodeIp string,
+	name string,
+	description string,
+	delegationsDisabled bool,
+	commissionBps int,
+	signer string,
+	unjailed bool,
+	initialWei int,
 ) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":             "cValidatorRegister",
-		"validatorProfile": validatorProfile,
+	action := CValidatorAction{
+		Type: "CValidatorAction",
+		Register: &CValidatorRegister{
+			Profile: CValidatorProfile{
+				NodeIp:              CValidatorNodeIp{Ip: nodeIp},
+				Name:                name,
+				Description:         description,
+				DelegationsDisabled: delegationsDisabled,
+				CommissionBps:       commissionBps,
+				Signer:              signer,
+			},
+			Unjailed:   unjailed,
+			InitialWei: initialWei,
+		},
 	}
 
 	sig, err := e.signL1Action(

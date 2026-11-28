@@ -200,6 +200,7 @@ cases = {
     "spotDeploy_enableQuoteToken": lambda: ex.spot_deploy_enable_quote_token(1),
     "cSigner_unjailSelf": lambda: ex.c_signer_unjail_self(),
     "cSigner_jailSelf": lambda: ex.c_signer_jail_self(),
+    "cValidator_register": lambda: ex.c_validator_register("1.2.3.4", "val", "desc", False, 500, OTHER, True, 100000000),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 
