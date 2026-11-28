@@ -42,6 +42,16 @@ func abs(x float64) float64 {
 	return x
 }
 
+// floatToUsdInt converts a float64 to an integer with 6 decimals
+func floatToUsdInt(x float64) (int64, error) {
+	withDecimals := x * 1e6
+	rounded := math.Round(withDecimals)
+	if math.Abs(rounded-withDecimals) >= 1e-3 {
+		return 0, fmt.Errorf("float_to_usd_int causes rounding: %f", x)
+	}
+	return int64(rounded), nil
+}
+
 // floatToWire converts a float64 to a wire-compatible string format
 func floatToWire(x float64) (string, error) {
 	// Format to 8 decimal places

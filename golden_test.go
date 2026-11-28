@@ -443,6 +443,14 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CValidatorUnregister(ctx)
 			return err
 		}},
+		{name: "updateIsolatedMargin_add", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UpdateIsolatedMargin(ctx, 1.5, "BTC")
+			return err
+		}},
+		{name: "updateIsolatedMargin_remove", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UpdateIsolatedMargin(ctx, -1.5, "BTC")
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

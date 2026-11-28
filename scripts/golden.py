@@ -204,6 +204,8 @@ cases = {
     "cValidator_changeProfile_nil": lambda: ex.c_validator_change_profile(None, None, None, False, None, None, None),
     "cValidator_changeProfile_set": lambda: ex.c_validator_change_profile("1.2.3.4", "val", "desc", True, True, 500, OTHER),
     "cValidator_unregister": lambda: ex.c_validator_unregister(),
+    "updateIsolatedMargin_add": lambda: ex.update_isolated_margin(1.5, "BTC"),
+    "updateIsolatedMargin_remove": lambda: ex.update_isolated_margin(-1.5, "BTC"),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

@@ -74,11 +74,16 @@ func (e *Exchange) UpdateIsolatedMargin(
 		return nil, fmt.Errorf("coin %s not found in info", name)
 	}
 
+	ntli, err := floatToUsdInt(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
 	action := UpdateIsolatedMarginAction{
 		Type:  "updateIsolatedMargin",
 		Asset: asset,
-		IsBuy: amount > 0,
-		Ntli:  abs(amount),
+		IsBuy: true,
+		Ntli:  ntli,
 	}
 
 	nonce := e.nextNonce()
