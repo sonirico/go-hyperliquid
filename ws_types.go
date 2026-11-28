@@ -159,9 +159,9 @@ type (
 	}
 
 	OpenOrders struct {
-		Dex    string         `json:"dex"`
-		User   string         `json:"user"`
-		Orders []WsBasicOrder `json:"orders"`
+		Dex    string              `json:"dex"`
+		User   string              `json:"user"`
+		Orders []FrontendOpenOrder `json:"orders"`
 	}
 
 	WsOrder struct {

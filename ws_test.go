@@ -292,3 +292,11 @@ func TestWsMessage_ClearinghouseState(t *testing.T) {
 		assertKeysCovered(t, raw, &ClearinghouseStateMessage{})
 	})
 }
+
+func TestWsMessage_OpenOrders(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_openOrders")
+
+		assertKeysCovered(t, raw, &OpenOrders{})
+	})
+}

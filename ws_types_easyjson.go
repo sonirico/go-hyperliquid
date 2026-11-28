@@ -2172,15 +2172,15 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid15(in *jlexer.Lexer, ou
 				in.Delim('[')
 				if out.Orders == nil {
 					if !in.IsDelim(']') {
-						out.Orders = make([]WsBasicOrder, 0, 0)
+						out.Orders = make([]FrontendOpenOrder, 0, 0)
 					} else {
-						out.Orders = []WsBasicOrder{}
+						out.Orders = []FrontendOpenOrder{}
 					}
 				} else {
 					out.Orders = (out.Orders)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v22 WsBasicOrder
+					var v22 FrontendOpenOrder
 					if in.IsNull() {
 						in.Skip()
 					} else {
