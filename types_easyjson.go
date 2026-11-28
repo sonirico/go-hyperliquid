@@ -3396,6 +3396,26 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid25(in *jlexer.Lexer, ou
 					*out.FullName = string(in.String())
 				}
 			}
+		case "deployerTradingFeeShare":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DeployerTradingFeeShare = string(in.String())
+			}
+		case "deployerLabel":
+			if in.IsNull() {
+				in.Skip()
+				out.DeployerLabel = nil
+			} else {
+				if out.DeployerLabel == nil {
+					out.DeployerLabel = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.DeployerLabel = string(in.String())
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -3457,6 +3477,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid25(out *jwriter.Writer,
 		} else {
 			out.String(string(*in.FullName))
 		}
+	}
+	{
+		const prefix string = ",\"deployerTradingFeeShare\":"
+		out.RawString(prefix)
+		out.String(string(in.DeployerTradingFeeShare))
+	}
+	if in.DeployerLabel != nil {
+		const prefix string = ",\"deployerLabel\":"
+		out.RawString(prefix)
+		out.String(string(*in.DeployerLabel))
 	}
 	out.RawByte('}')
 }

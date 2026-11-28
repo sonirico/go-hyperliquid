@@ -115,14 +115,16 @@ type EvmContract struct {
 }
 
 type SpotTokenInfo struct {
-	Name        string       `json:"name"`
-	SzDecimals  int          `json:"szDecimals"`
-	WeiDecimals int          `json:"weiDecimals"`
-	Index       int          `json:"index"`
-	TokenID     string       `json:"tokenId"`
-	IsCanonical bool         `json:"isCanonical"`
-	EvmContract *EvmContract `json:"evmContract"`
-	FullName    *string      `json:"fullName"`
+	Name                    string       `json:"name"`
+	SzDecimals              int          `json:"szDecimals"`
+	WeiDecimals             int          `json:"weiDecimals"`
+	Index                   int          `json:"index"`
+	TokenID                 string       `json:"tokenId"`
+	IsCanonical             bool         `json:"isCanonical"`
+	EvmContract             *EvmContract `json:"evmContract"`
+	FullName                *string      `json:"fullName"`
+	DeployerTradingFeeShare string       `json:"deployerTradingFeeShare"`
+	DeployerLabel           *string      `json:"deployerLabel,omitempty"`
 }
 
 type SpotMeta struct {

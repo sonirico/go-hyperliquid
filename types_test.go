@@ -26,7 +26,7 @@ func TestSpotTokenInfo_MarshalJSON(t *testing.T) {
 				EvmContract: nil,
 				FullName:    nil,
 			},
-			expected: `{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":0,"tokenId":"0x1","isCanonical":true,"evmContract":null,"fullName":null}`,
+			expected: `{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":0,"tokenId":"0x1","isCanonical":true,"evmContract":null,"fullName":null,"deployerTradingFeeShare":""}`,
 		},
 		{
 			name: "with_evm_contract_and_fullname",
@@ -43,7 +43,7 @@ func TestSpotTokenInfo_MarshalJSON(t *testing.T) {
 				},
 				FullName: stringPtr("USD Coin"),
 			},
-			expected: `{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":1,"tokenId":"0x2","isCanonical":false,"evmContract":{"address":"0x1234567890abcdef1234567890abcdef12345678","evm_extra_wei_decimals":12},"fullName":"USD Coin"}`,
+			expected: `{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":1,"tokenId":"0x2","isCanonical":false,"evmContract":{"address":"0x1234567890abcdef1234567890abcdef12345678","evm_extra_wei_decimals":12},"fullName":"USD Coin","deployerTradingFeeShare":""}`,
 		},
 		{
 			name: "empty_evm_contract",
@@ -60,7 +60,7 @@ func TestSpotTokenInfo_MarshalJSON(t *testing.T) {
 				},
 				FullName: stringPtr("Ethereum"),
 			},
-			expected: `{"name":"ETH","szDecimals":18,"weiDecimals":18,"index":2,"tokenId":"0x3","isCanonical":true,"evmContract":{"address":"","evm_extra_wei_decimals":0},"fullName":"Ethereum"}`,
+			expected: `{"name":"ETH","szDecimals":18,"weiDecimals":18,"index":2,"tokenId":"0x3","isCanonical":true,"evmContract":{"address":"","evm_extra_wei_decimals":0},"fullName":"Ethereum","deployerTradingFeeShare":""}`,
 		},
 	}
 
@@ -217,7 +217,7 @@ func TestSpotMeta_MarshalJSON(t *testing.T) {
 					},
 				},
 			},
-			expected: `{"universe":[{"name":"USDC/USDT","tokens":[0,1],"index":0,"isCanonical":true}],"tokens":[{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":0,"tokenId":"0x1","isCanonical":true,"evmContract":{"address":"0x1234567890abcdef","evm_extra_wei_decimals":12},"fullName":"USD Coin"}]}`,
+			expected: `{"universe":[{"name":"USDC/USDT","tokens":[0,1],"index":0,"isCanonical":true}],"tokens":[{"name":"USDC","szDecimals":6,"weiDecimals":6,"index":0,"tokenId":"0x1","isCanonical":true,"evmContract":{"address":"0x1234567890abcdef","evm_extra_wei_decimals":12},"fullName":"USD Coin","deployerTradingFeeShare":""}]}`,
 		},
 	}
 

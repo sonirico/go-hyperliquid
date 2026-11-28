@@ -606,3 +606,11 @@ func TestMetaUniverse_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[][]AssetInfo{})
 	})
 }
+
+func TestSpotMeta_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "spotMeta")
+
+		assertKeysCovered(t, raw, &SpotMeta{})
+	})
+}
