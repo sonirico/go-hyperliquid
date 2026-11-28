@@ -16,6 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/stretchr/testify/require"
+	"github.com/vmihailenco/msgpack/v5"
 )
 
 const (
@@ -770,6 +771,29 @@ func TestGolden(t *testing.T) {
 			require.Equal(t, file.Signature, signature)
 		})
 	}
+}
+
+func TestGoldenReserveRequestWeightOmitsDestination(t *testing.T) {
+	t.Run("json", func(t *testing.T) {
+		t.Parallel()
+		files := loadTestGoldenFiles(t)
+
+		var action map[string]any
+		require.NoError(t, json.Unmarshal(files["reserve_request_weight"].Action, &action))
+
+		require.NotContains(t, action, "destination")
+	})
+
+	t.Run("msgpack", func(t *testing.T) {
+		t.Parallel()
+
+		data, err := msgpack.Marshal(ReserveRequestWeightAction{Type: "reserveRequestWeight", Weight: 1})
+		require.NoError(t, err)
+
+		var action map[string]any
+		require.NoError(t, msgpack.Unmarshal(data, &action))
+		require.NotContains(t, action, "destination")
+	})
 }
 
 func toGoldenTypes(types []apitypes.Type) []goldenType {
