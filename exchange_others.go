@@ -2066,6 +2066,19 @@ func (e *Exchange) PerpDeploySetOpenInterestCaps(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetMarginModes sets the margin modes of builder-deployed DEX coins: strictIsolated, noCross or normal
+func (e *Exchange) PerpDeploySetMarginModes(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetMarginModesAction{
+		Type:           "perpDeploy",
+		SetMarginModes: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer

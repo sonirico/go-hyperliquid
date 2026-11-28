@@ -490,6 +490,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeploySetOpenInterestCaps(ctx, map[string]*int{"test:X": nil})
 			return err
 		}},
+		{name: "perp_deploy_set_margin_modes", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetMarginModes(ctx, map[string]string{"test:X": "strictIsolated"})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

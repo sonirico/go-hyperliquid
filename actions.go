@@ -566,6 +566,11 @@ type PerpDeploySetOpenInterestCapsAction struct {
 	SetOpenInterestCaps [][]any `json:"setOpenInterestCaps" msgpack:"setOpenInterestCaps"`
 }
 
+type PerpDeploySetMarginModesAction struct {
+	Type           string  `json:"type"           msgpack:"type"`
+	SetMarginModes [][]any `json:"setMarginModes" msgpack:"setMarginModes"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err
