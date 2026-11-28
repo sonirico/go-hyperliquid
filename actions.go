@@ -675,3 +675,15 @@ type GossipPriorityBidAction struct {
 	Ip     string `json:"ip"     msgpack:"ip"`
 	MaxGas int    `json:"maxGas" msgpack:"maxGas"`
 }
+
+// AgentSendAssetAction represents agent send asset action
+type AgentSendAssetAction struct {
+	Type           string `json:"type"           msgpack:"type"`
+	Destination    string `json:"destination"    msgpack:"destination"`
+	SourceDex      string `json:"sourceDex"      msgpack:"sourceDex"`
+	DestinationDex string `json:"destinationDex" msgpack:"destinationDex"`
+	Token          string `json:"token"          msgpack:"token"`
+	Amount         string `json:"amount"         msgpack:"amount"`
+	FromSubAccount string `json:"fromSubAccount" msgpack:"fromSubAccount"`
+	Nonce          int64  `json:"nonce"          msgpack:"nonce"`
+}

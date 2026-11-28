@@ -318,6 +318,18 @@ cases = {
     "noop": lambda: ex.noop(NONCE),
     "agentSetAbstraction": lambda: ex.agent_set_abstraction("u"),
     "gossipPriorityBid": lambda: ex.gossip_priority_bid(1, "1.2.3.4", 1000000),
+    "agentSendAsset": lambda: l1(
+        {
+            "type": "agentSendAsset",
+            "destination": OTHER,
+            "sourceDex": "",
+            "destinationDex": "spot",
+            "token": TOKEN,
+            "amount": "1.5",
+            "fromSubAccount": "",
+            "nonce": NONCE,
+        }
+    ),
 }
 
 os.makedirs(out_dir, exist_ok=True)

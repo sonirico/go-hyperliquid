@@ -2533,3 +2533,51 @@ func (e *Exchange) GossipPriorityBid(
 
 	return actionResponse(resp)
 }
+
+// AgentSendAsset sends an asset signed by an agent. It is posted with a null vaultAddress and
+// the vault, if any, travels in fromSubAccount.
+func (e *Exchange) AgentSendAsset(
+	ctx context.Context,
+	destination string,
+	sourceDex string,
+	destinationDex string,
+	token string,
+	amount float64,
+) (json.RawMessage, error) {
+	amountWire, err := floatToWire(amount)
+	if err != nil {
+		return nil, fmt.Errorf("invalid amount: %w", err)
+	}
+
+	nonce := e.nextNonce()
+
+	action := AgentSendAssetAction{
+		Type:           "agentSendAsset",
+		Destination:    destination,
+		SourceDex:      sourceDex,
+		DestinationDex: destinationDex,
+		Token:          token,
+		Amount:         amountWire,
+		FromSubAccount: e.vault,
+		Nonce:          nonce,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		"",
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

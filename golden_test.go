@@ -223,6 +223,21 @@ func signGoldenCreateVault(pk *ecdsa.PrivateKey) (goldenSigned, error) {
 	return goldenSigned{action: action, signature: sig}, err
 }
 
+func signGoldenAgentSendAsset(pk *ecdsa.PrivateKey) (goldenSigned, error) {
+	action := AgentSendAssetAction{
+		Type:           "agentSendAsset",
+		Destination:    goldenOther,
+		SourceDex:      "",
+		DestinationDex: "spot",
+		Token:          goldenToken,
+		Amount:         "1.5",
+		FromSubAccount: "",
+		Nonce:          goldenNonce,
+	}
+	sig, err := SignL1Action(pk, action, "", goldenNonce, nil, false)
+	return goldenSigned{action: action, signature: sig}, err
+}
+
 func goldenLimitOrder() CreateOrderRequest {
 	return CreateOrderRequest{
 		Coin:      "BTC",
@@ -576,6 +591,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.GossipPriorityBid(ctx, 1, "1.2.3.4", 1000000)
 			return err
 		}},
+		{name: "agentSendAsset", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.AgentSendAsset(ctx, goldenOther, "", "spot", goldenToken, 1.5)
+			return err
+		}, direct: signGoldenAgentSendAsset},
 	}
 }
 

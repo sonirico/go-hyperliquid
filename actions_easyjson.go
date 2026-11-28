@@ -7105,3 +7105,145 @@ func (v *AgentSetAbstractionAction) UnmarshalJSON(data []byte) error {
 func (v *AgentSetAbstractionAction) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid68(l, v)
 }
+func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid69(in *jlexer.Lexer, out *AgentSendAssetAction) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "type":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
+		case "destination":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Destination = string(in.String())
+			}
+		case "sourceDex":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SourceDex = string(in.String())
+			}
+		case "destinationDex":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DestinationDex = string(in.String())
+			}
+		case "token":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Token = string(in.String())
+			}
+		case "amount":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Amount = string(in.String())
+			}
+		case "fromSubAccount":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.FromSubAccount = string(in.String())
+			}
+		case "nonce":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Nonce = int64(in.Int64())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid69(out *jwriter.Writer, in AgentSendAssetAction) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Type))
+	}
+	{
+		const prefix string = ",\"destination\":"
+		out.RawString(prefix)
+		out.String(string(in.Destination))
+	}
+	{
+		const prefix string = ",\"sourceDex\":"
+		out.RawString(prefix)
+		out.String(string(in.SourceDex))
+	}
+	{
+		const prefix string = ",\"destinationDex\":"
+		out.RawString(prefix)
+		out.String(string(in.DestinationDex))
+	}
+	{
+		const prefix string = ",\"token\":"
+		out.RawString(prefix)
+		out.String(string(in.Token))
+	}
+	{
+		const prefix string = ",\"amount\":"
+		out.RawString(prefix)
+		out.String(string(in.Amount))
+	}
+	{
+		const prefix string = ",\"fromSubAccount\":"
+		out.RawString(prefix)
+		out.String(string(in.FromSubAccount))
+	}
+	{
+		const prefix string = ",\"nonce\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Nonce))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v AgentSendAssetAction) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid69(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v AgentSendAssetAction) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid69(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *AgentSendAssetAction) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid69(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *AgentSendAssetAction) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid69(l, v)
+}
