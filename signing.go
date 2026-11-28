@@ -583,30 +583,42 @@ func SignPerpDexClassTransferAction(
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
 }
 
-type signTokenDelegateAction struct {
-	Type             string  `msgpack:"type"`
-	Token            string  `msgpack:"token"`
-	Amount           float64 `msgpack:"amount"`
-	ValidatorAddress string  `msgpack:"validatorAddress"`
-}
-
-// SignTokenDelegateAction signs token delegate action
+// SignTokenDelegateAction signs a tokenDelegate action.
+//
+// tokenDelegate is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:TokenDelegate, not as an L1 action. nonce is the
+// action nonce.
 func SignTokenDelegateAction(
 	privateKey *ecdsa.PrivateKey,
-	token string,
-	amount float64,
-	validatorAddress string,
-	timestamp int64,
+	validator string,
+	wei uint64,
+	isUndelegate bool,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signTokenDelegateAction{
-		Type:             "tokenDelegate",
-		Token:            token,
-		Amount:           amount,
-		ValidatorAddress: validatorAddress,
+	action := map[string]any{
+		"type":         "tokenDelegate",
+		"validator":    validator,
+		"wei":          wei,
+		"isUndelegate": isUndelegate,
+		"nonce":        big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "validator", Type: "address"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "isUndelegate", Type: "bool"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:TokenDelegate",
+		isMainnet,
+	)
 }
 
 // SignWithdrawFromBridgeAction signs a withdraw3 action.
@@ -693,52 +705,71 @@ func SignAgent(
 	)
 }
 
-type signApproveBuilderFee struct {
-	Type string `msgpack:"type"`
-	// BuilderAddress is the address of the builder
-	BuilderAddress string `msgpack:"builderAddress"`
-	// MaxFeeRate is the maximum fee rate the user is willing to pay
-	MaxFeeRate float64 `msgpack:"maxFeeRate"`
-}
-
-// SignApproveBuilderFee signs approve builder fee action
+// SignApproveBuilderFee signs an approveBuilderFee action.
+//
+// approveBuilderFee is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:ApproveBuilderFee, not as an L1 action. nonce is the
+// action nonce.
 func SignApproveBuilderFee(
 	privateKey *ecdsa.PrivateKey,
-	builderAddress string,
-	maxFeeRate float64,
-	timestamp int64,
+	builder string,
+	maxFeeRate string,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signApproveBuilderFee{
-		Type:           "approveBuilderFee",
-		BuilderAddress: builderAddress,
-		MaxFeeRate:     maxFeeRate,
+	action := map[string]any{
+		"type":       "approveBuilderFee",
+		"maxFeeRate": maxFeeRate,
+		"builder":    builder,
+		"nonce":      big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "maxFeeRate", Type: "string"},
+		{Name: "builder", Type: "address"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:ApproveBuilderFee",
+		isMainnet,
+	)
 }
 
-type signConvertToMultiSigUserAction struct {
-	Type      string   `msgpack:"type"`
-	Signers   []string `msgpack:"signers"`
-	Threshold int      `msgpack:"threshold"`
-}
-
-// SignConvertToMultiSigUserAction signs convert to multi-sig user action
+// SignConvertToMultiSigUserAction signs a convertToMultiSigUser action.
+//
+// convertToMultiSigUser is a user-signed action: it is signed as EIP-712
+// HyperliquidTransaction:ConvertToMultiSigUser, not as an L1 action. nonce is
+// the action nonce and signersJSON the compact JSON the action carries.
 func SignConvertToMultiSigUserAction(
 	privateKey *ecdsa.PrivateKey,
-	signers []string,
-	threshold int,
-	timestamp int64,
+	signersJSON string,
+	nonce int64,
 	isMainnet bool,
 ) (SignatureResult, error) {
-	action := signConvertToMultiSigUserAction{
-		Type:      "convertToMultiSigUser",
-		Signers:   signers,
-		Threshold: threshold,
+	action := map[string]any{
+		"type":    "convertToMultiSigUser",
+		"signers": signersJSON,
+		"nonce":   big.NewInt(nonce),
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "signers", Type: "string"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:ConvertToMultiSigUser",
+		isMainnet,
+	)
 }
 
 var multiSigEnvelopeTypes = []apitypes.Type{

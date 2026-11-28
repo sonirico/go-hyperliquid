@@ -354,6 +354,8 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 		timestamp   = int64(1687816341423)
 	)
 
+	golden := loadTestGoldenFiles(t)
+
 	tests := []struct {
 		name string
 		sign func() (SignatureResult, error)
@@ -415,6 +417,29 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 				S: "0x2469568d152f30acad5672b7657f0aa8e2f9d897fbd03b9b6b7dc3f443a1dff9",
 				V: 27,
 			},
+		},
+		{
+			name: "tokenDelegate",
+			sign: func() (SignatureResult, error) {
+				return SignTokenDelegateAction(privateKey, goldenOther, 100000000, false, goldenNonce, false)
+			},
+			want: golden["token_delegate"].Signature,
+		},
+		{
+			name: "approveBuilderFee",
+			sign: func() (SignatureResult, error) {
+				return SignApproveBuilderFee(privateKey, goldenOther, "0.001%", goldenNonce, false)
+			},
+			want: golden["approve_builder_fee"].Signature,
+		},
+		{
+			name: "convertToMultiSigUser",
+			sign: func() (SignatureResult, error) {
+				return SignConvertToMultiSigUserAction(
+					privateKey, `{"authorizedUsers":["`+goldenOther+`"],"threshold":1}`, goldenNonce, false,
+				)
+			},
+			want: golden["convert_to_multi_sig_user"].Signature,
 		},
 	}
 
