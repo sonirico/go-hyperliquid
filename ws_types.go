@@ -204,6 +204,8 @@ type (
 		Liquidation   *FillLiquidation `json:"liquidation,omitempty"`
 		FeeToken      string           `json:"feeToken"`             // the token the fee was paid in
 		BuilderFee    *string          `json:"builderFee,omitempty"` // amount paid to builder, also included in fee
+		Cloid         *string          `json:"cloid,omitempty"`
+		TwapId        *int64           `json:"twapId"`
 	}
 
 	FillLiquidation struct {
