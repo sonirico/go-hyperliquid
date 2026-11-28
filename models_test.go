@@ -780,3 +780,11 @@ func TestPerpConciseAnnotation_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]Tuple2[string, PerpConciseAnnotation]{})
 	})
 }
+
+func TestSettledOutcome_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "settledOutcome")
+
+		assertKeysCovered(t, raw, &SettledOutcome{})
+	})
+}

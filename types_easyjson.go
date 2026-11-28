@@ -4509,7 +4509,94 @@ func (v *SpotAssetCtx) UnmarshalJSON(data []byte) error {
 func (v *SpotAssetCtx) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid34(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(in *jlexer.Lexer, out *SetReferrerResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(in *jlexer.Lexer, out *SettledOutcome) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		switch key {
+		case "spec":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				(out.Spec).UnmarshalEasyJSON(in)
+			}
+		case "settleFraction":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.SettleFraction = string(in.String())
+			}
+		case "details":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Details = string(in.String())
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(out *jwriter.Writer, in SettledOutcome) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"spec\":"
+		out.RawString(prefix[1:])
+		(in.Spec).MarshalEasyJSON(out)
+	}
+	{
+		const prefix string = ",\"settleFraction\":"
+		out.RawString(prefix)
+		out.String(string(in.SettleFraction))
+	}
+	{
+		const prefix string = ",\"details\":"
+		out.RawString(prefix)
+		out.String(string(in.Details))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v SettledOutcome) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v SettledOutcome) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *SettledOutcome) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *SettledOutcome) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(l, v)
+}
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(in *jlexer.Lexer, out *SetReferrerResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4545,7 +4632,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(out *jwriter.Writer, in SetReferrerResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(out *jwriter.Writer, in SetReferrerResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4565,27 +4652,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v SetReferrerResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v SetReferrerResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid35(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *SetReferrerResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *SetReferrerResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid35(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(in *jlexer.Lexer, out *ScheduleCancelResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(in *jlexer.Lexer, out *ScheduleCancelResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4621,7 +4708,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(out *jwriter.Writer, in ScheduleCancelResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(out *jwriter.Writer, in ScheduleCancelResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4641,27 +4728,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ScheduleCancelResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ScheduleCancelResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid36(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ScheduleCancelResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ScheduleCancelResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid36(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(in *jlexer.Lexer, out *ReserveResponseData) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(in *jlexer.Lexer, out *ReserveResponseData) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4691,7 +4778,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(out *jwriter.Writer, in ReserveResponseData) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(out *jwriter.Writer, in ReserveResponseData) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4706,27 +4793,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ReserveResponseData) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ReserveResponseData) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid37(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ReserveResponseData) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ReserveResponseData) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid37(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(in *jlexer.Lexer, out *ReserveRequestWeightResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(in *jlexer.Lexer, out *ReserveRequestWeightResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4776,7 +4863,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(out *jwriter.Writer, in ReserveRequestWeightResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(out *jwriter.Writer, in ReserveRequestWeightResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4801,27 +4888,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ReserveRequestWeightResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ReserveRequestWeightResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid38(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ReserveRequestWeightResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ReserveRequestWeightResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid38(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(in *jlexer.Lexer, out *ReferrerState) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(in *jlexer.Lexer, out *ReferrerState) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4859,7 +4946,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(out *jwriter.Writer, in ReferrerState) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(out *jwriter.Writer, in ReferrerState) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4879,27 +4966,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ReferrerState) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ReferrerState) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid39(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ReferrerState) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ReferrerState) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid39(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(in *jlexer.Lexer, out *ReferralTokenState) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(in *jlexer.Lexer, out *ReferralTokenState) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -4947,7 +5034,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(out *jwriter.Writer, in ReferralTokenState) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(out *jwriter.Writer, in ReferralTokenState) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -4977,27 +5064,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ReferralTokenState) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ReferralTokenState) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ReferralTokenState) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ReferralTokenState) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(in *jlexer.Lexer, out *ReferralReferredBy) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(in *jlexer.Lexer, out *ReferralReferredBy) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5033,7 +5120,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(out *jwriter.Writer, in ReferralReferredBy) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(out *jwriter.Writer, in ReferralReferredBy) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5053,27 +5140,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ReferralReferredBy) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ReferralReferredBy) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid41(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ReferralReferredBy) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ReferralReferredBy) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid41(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(in *jlexer.Lexer, out *QueriedOrder) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(in *jlexer.Lexer, out *QueriedOrder) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5222,7 +5309,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(out *jwriter.Writer, in QueriedOrder) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(out *jwriter.Writer, in QueriedOrder) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5327,27 +5414,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v QueriedOrder) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v QueriedOrder) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid42(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *QueriedOrder) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *QueriedOrder) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid42(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(in *jlexer.Lexer, out *Position) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, out *Position) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5461,7 +5548,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(out *jwriter.Writer, in Position) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer, in Position) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5534,27 +5621,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Position) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Position) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid43(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Position) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Position) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid43(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, out *PerpDexStatus) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(in *jlexer.Lexer, out *PerpDexStatus) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5584,7 +5671,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer, in PerpDexStatus) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(out *jwriter.Writer, in PerpDexStatus) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5599,27 +5686,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDexStatus) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDexStatus) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid44(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDexStatus) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDexStatus) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid44(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(in *jlexer.Lexer, out *PerpDexSchemaInput) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(in *jlexer.Lexer, out *PerpDexSchemaInput) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5669,7 +5756,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(out *jwriter.Writer, in PerpDexSchemaInput) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(out *jwriter.Writer, in PerpDexSchemaInput) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5698,27 +5785,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDexSchemaInput) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDexSchemaInput) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid45(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDexSchemaInput) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDexSchemaInput) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid45(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(in *jlexer.Lexer, out *PerpDexLimits) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(in *jlexer.Lexer, out *PerpDexLimits) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -5808,7 +5895,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(out *jwriter.Writer, in PerpDexLimits) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(out *jwriter.Writer, in PerpDexLimits) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -5860,27 +5947,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDexLimits) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDexLimits) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid46(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDexLimits) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDexLimits) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid46(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(in *jlexer.Lexer, out *PerpDex) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(in *jlexer.Lexer, out *PerpDex) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6046,7 +6133,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(out *jwriter.Writer, in PerpDex) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(out *jwriter.Writer, in PerpDex) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6143,27 +6230,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDex) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDex) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid47(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDex) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDex) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid47(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(in *jlexer.Lexer, out *PerpDeployResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(in *jlexer.Lexer, out *PerpDeployResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6203,7 +6290,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(out *jwriter.Writer, in PerpDeployResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(out *jwriter.Writer, in PerpDeployResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6228,25 +6315,25 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDeployResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDeployResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid48(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDeployResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDeployResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid48(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(l, v)
 }
 func easyjson6601e8cdDecode1(in *jlexer.Lexer, out *struct {
 	Statuses []TxStatus `json:"statuses"`
@@ -6325,7 +6412,7 @@ func easyjson6601e8cdEncode1(out *jwriter.Writer, in struct {
 	}
 	out.RawByte('}')
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(in *jlexer.Lexer, out *PerpDeployAuctionStatus) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(in *jlexer.Lexer, out *PerpDeployAuctionStatus) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6387,7 +6474,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(out *jwriter.Writer, in PerpDeployAuctionStatus) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(out *jwriter.Writer, in PerpDeployAuctionStatus) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6426,27 +6513,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpDeployAuctionStatus) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpDeployAuctionStatus) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid49(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpDeployAuctionStatus) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpDeployAuctionStatus) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid49(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(in *jlexer.Lexer, out *PerpConciseAnnotation) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(in *jlexer.Lexer, out *PerpConciseAnnotation) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6517,7 +6604,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(out *jwriter.Writer, in PerpConciseAnnotation) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(out *jwriter.Writer, in PerpConciseAnnotation) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6557,27 +6644,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpConciseAnnotation) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpConciseAnnotation) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid50(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpConciseAnnotation) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpConciseAnnotation) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid50(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(in *jlexer.Lexer, out *PerpAnnotation) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(in *jlexer.Lexer, out *PerpAnnotation) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6654,7 +6741,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(out *jwriter.Writer, in PerpAnnotation) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(out *jwriter.Writer, in PerpAnnotation) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6699,27 +6786,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v PerpAnnotation) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v PerpAnnotation) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid51(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *PerpAnnotation) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *PerpAnnotation) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid51(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(in *jlexer.Lexer, out *OutcomeSideSpec) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(in *jlexer.Lexer, out *OutcomeSideSpec) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6749,7 +6836,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(out *jwriter.Writer, in OutcomeSideSpec) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(out *jwriter.Writer, in OutcomeSideSpec) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6764,27 +6851,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OutcomeSideSpec) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OutcomeSideSpec) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid52(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OutcomeSideSpec) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OutcomeSideSpec) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid52(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(in *jlexer.Lexer, out *OutcomeMetaQuestion) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(in *jlexer.Lexer, out *OutcomeMetaQuestion) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -6886,7 +6973,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(out *jwriter.Writer, in OutcomeMetaQuestion) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(out *jwriter.Writer, in OutcomeMetaQuestion) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -6948,27 +7035,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OutcomeMetaQuestion) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OutcomeMetaQuestion) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid53(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OutcomeMetaQuestion) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OutcomeMetaQuestion) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid53(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(in *jlexer.Lexer, out *OutcomeMetaOutcome) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(in *jlexer.Lexer, out *OutcomeMetaOutcome) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7055,7 +7142,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(out *jwriter.Writer, in OutcomeMetaOutcome) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(out *jwriter.Writer, in OutcomeMetaOutcome) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7111,27 +7198,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OutcomeMetaOutcome) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OutcomeMetaOutcome) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid54(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OutcomeMetaOutcome) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OutcomeMetaOutcome) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid54(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(in *jlexer.Lexer, out *OutcomeDeployerLimits) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(in *jlexer.Lexer, out *OutcomeDeployerLimits) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7167,7 +7254,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(out *jwriter.Writer, in OutcomeDeployerLimits) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(out *jwriter.Writer, in OutcomeDeployerLimits) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7187,27 +7274,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OutcomeDeployerLimits) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OutcomeDeployerLimits) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid55(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OutcomeDeployerLimits) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OutcomeDeployerLimits) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid55(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(in *jlexer.Lexer, out *OrderType) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(in *jlexer.Lexer, out *OrderType) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7259,7 +7346,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(out *jwriter.Writer, in OrderType) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(out *jwriter.Writer, in OrderType) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7285,27 +7372,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OrderType) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OrderType) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid56(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OrderType) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OrderType) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid56(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(in *jlexer.Lexer, out *OrderQueryResult) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(in *jlexer.Lexer, out *OrderQueryResult) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7341,7 +7428,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(out *jwriter.Writer, in OrderQueryResult) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(out *jwriter.Writer, in OrderQueryResult) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7361,27 +7448,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OrderQueryResult) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OrderQueryResult) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid57(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OrderQueryResult) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OrderQueryResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid57(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(in *jlexer.Lexer, out *OrderQueryResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(in *jlexer.Lexer, out *OrderQueryResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7423,7 +7510,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(out *jwriter.Writer, in OrderQueryResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(out *jwriter.Writer, in OrderQueryResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7448,27 +7535,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OrderQueryResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OrderQueryResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OrderQueryResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OrderQueryResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(in *jlexer.Lexer, out *OpenOrder) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(in *jlexer.Lexer, out *OpenOrder) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7548,7 +7635,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(out *jwriter.Writer, in OpenOrder) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(out *jwriter.Writer, in OpenOrder) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7598,27 +7685,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v OpenOrder) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v OpenOrder) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid59(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *OpenOrder) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *OpenOrder) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid59(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(in *jlexer.Lexer, out *MultiSigSigner) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(in *jlexer.Lexer, out *MultiSigSigner) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7675,7 +7762,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(out *jwriter.Writer, in MultiSigSigner) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(out *jwriter.Writer, in MultiSigSigner) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7706,27 +7793,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MultiSigSigner) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MultiSigSigner) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid60(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MultiSigSigner) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MultiSigSigner) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid60(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(in *jlexer.Lexer, out *MultiSigResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(in *jlexer.Lexer, out *MultiSigResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7768,7 +7855,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(out *jwriter.Writer, in MultiSigResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(out *jwriter.Writer, in MultiSigResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7793,27 +7880,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MultiSigResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MultiSigResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid61(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MultiSigResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MultiSigResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid61(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(in *jlexer.Lexer, out *MultiSigConversionResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, out *MultiSigConversionResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7855,7 +7942,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(out *jwriter.Writer, in MultiSigConversionResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(out *jwriter.Writer, in MultiSigConversionResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7880,27 +7967,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MultiSigConversionResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MultiSigConversionResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid62(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MultiSigConversionResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MultiSigConversionResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid62(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, out *ModifyResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, out *ModifyResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -7937,7 +8024,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, ou
 				}
 				for !in.IsDelim(']') {
 					var v107 OrderStatus
-					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in, &v107)
+					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in, &v107)
 					out.Data = append(out.Data, v107)
 					in.WantComma()
 				}
@@ -7959,7 +8046,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(out *jwriter.Writer, in ModifyResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer, in ModifyResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -7977,7 +8064,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(out *jwriter.Writer,
 				if v108 > 0 {
 					out.RawByte(',')
 				}
-				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out, v109)
+				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out, v109)
 			}
 			out.RawByte(']')
 		}
@@ -7993,27 +8080,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ModifyResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ModifyResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid63(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ModifyResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ModifyResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid63(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, out *OrderStatus) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in *jlexer.Lexer, out *OrderStatus) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8035,7 +8122,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, ou
 				if out.Resting == nil {
 					out.Resting = new(OrderStatusResting)
 				}
-				easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in, out.Resting)
+				easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid66(in, out.Resting)
 			}
 		case "filled":
 			if in.IsNull() {
@@ -8045,7 +8132,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, ou
 				if out.Filled == nil {
 					out.Filled = new(OrderStatusFilled)
 				}
-				easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid66(in, out.Filled)
+				easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(in, out.Filled)
 			}
 		case "error":
 			if in.IsNull() {
@@ -8071,7 +8158,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer, in OrderStatus) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out *jwriter.Writer, in OrderStatus) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8079,7 +8166,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer,
 		const prefix string = ",\"resting\":"
 		first = false
 		out.RawString(prefix[1:])
-		easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out, *in.Resting)
+		easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid66(out, *in.Resting)
 	}
 	if in.Filled != nil {
 		const prefix string = ",\"filled\":"
@@ -8089,7 +8176,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer,
 		} else {
 			out.RawString(prefix)
 		}
-		easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid66(out, *in.Filled)
+		easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(out, *in.Filled)
 	}
 	if in.Error != nil {
 		const prefix string = ",\"error\":"
@@ -8103,7 +8190,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out *jwriter.Writer,
 	}
 	out.RawByte('}')
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid66(in *jlexer.Lexer, out *OrderStatusFilled) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(in *jlexer.Lexer, out *OrderStatusFilled) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8145,7 +8232,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid66(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid66(out *jwriter.Writer, in OrderStatusFilled) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(out *jwriter.Writer, in OrderStatusFilled) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8166,7 +8253,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid66(out *jwriter.Writer,
 	}
 	out.RawByte('}')
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in *jlexer.Lexer, out *OrderStatusResting) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid66(in *jlexer.Lexer, out *OrderStatusResting) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8216,7 +8303,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out *jwriter.Writer, in OrderStatusResting) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid66(out *jwriter.Writer, in OrderStatusResting) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8241,7 +8328,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out *jwriter.Writer,
 	}
 	out.RawByte('}')
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(in *jlexer.Lexer, out *MetaAndAssetCtxsParams) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(in *jlexer.Lexer, out *MetaAndAssetCtxsParams) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8279,7 +8366,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(out *jwriter.Writer, in MetaAndAssetCtxsParams) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(out *jwriter.Writer, in MetaAndAssetCtxsParams) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8298,27 +8385,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MetaAndAssetCtxsParams) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MetaAndAssetCtxsParams) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid67(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MetaAndAssetCtxsParams) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MetaAndAssetCtxsParams) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid67(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(in *jlexer.Lexer, out *MetaAndAssetCtxs) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(in *jlexer.Lexer, out *MetaAndAssetCtxs) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8429,7 +8516,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(out *jwriter.Writer, in MetaAndAssetCtxs) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(out *jwriter.Writer, in MetaAndAssetCtxs) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8492,27 +8579,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MetaAndAssetCtxs) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MetaAndAssetCtxs) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid68(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MetaAndAssetCtxs) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MetaAndAssetCtxs) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid68(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(in *jlexer.Lexer, out *Meta) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(in *jlexer.Lexer, out *Meta) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8596,7 +8683,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(out *jwriter.Writer, in Meta) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(out *jwriter.Writer, in Meta) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8643,27 +8730,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Meta) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Meta) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid69(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Meta) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Meta) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid69(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(in *jlexer.Lexer, out *MarginTier) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(in *jlexer.Lexer, out *MarginTier) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8699,7 +8786,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(out *jwriter.Writer, in MarginTier) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(out *jwriter.Writer, in MarginTier) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8719,27 +8806,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MarginTier) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MarginTier) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid70(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MarginTier) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MarginTier) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid70(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(in *jlexer.Lexer, out *MarginTable) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(in *jlexer.Lexer, out *MarginTable) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8802,7 +8889,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(out *jwriter.Writer, in MarginTable) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(out *jwriter.Writer, in MarginTable) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8838,27 +8925,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MarginTable) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MarginTable) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid71(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MarginTable) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MarginTable) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid71(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(in *jlexer.Lexer, out *MarginSummary) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(in *jlexer.Lexer, out *MarginSummary) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8906,7 +8993,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(out *jwriter.Writer, in MarginSummary) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(out *jwriter.Writer, in MarginSummary) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -8936,27 +9023,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MarginSummary) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MarginSummary) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid72(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MarginSummary) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MarginSummary) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid72(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(in *jlexer.Lexer, out *MMTier) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(in *jlexer.Lexer, out *MMTier) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -8992,7 +9079,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(out *jwriter.Writer, in MMTier) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(out *jwriter.Writer, in MMTier) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9012,27 +9099,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v MMTier) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v MMTier) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *MMTier) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *MMTier) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(in *jlexer.Lexer, out *LiquidatedPosition) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(in *jlexer.Lexer, out *LiquidatedPosition) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9068,7 +9155,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(out *jwriter.Writer, in LiquidatedPosition) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(out *jwriter.Writer, in LiquidatedPosition) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9088,27 +9175,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v LiquidatedPosition) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v LiquidatedPosition) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid74(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *LiquidatedPosition) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *LiquidatedPosition) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid74(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(in *jlexer.Lexer, out *LimitOrderType) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(in *jlexer.Lexer, out *LimitOrderType) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9138,7 +9225,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(out *jwriter.Writer, in LimitOrderType) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(out *jwriter.Writer, in LimitOrderType) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9153,27 +9240,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v LimitOrderType) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v LimitOrderType) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *LimitOrderType) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *LimitOrderType) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(in *jlexer.Lexer, out *Leverage) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(in *jlexer.Lexer, out *Leverage) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9223,7 +9310,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(out *jwriter.Writer, in Leverage) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(out *jwriter.Writer, in Leverage) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9248,27 +9335,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Leverage) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Leverage) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid76(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Leverage) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Leverage) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid76(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(in *jlexer.Lexer, out *LedgerDelta) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(in *jlexer.Lexer, out *LedgerDelta) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9513,7 +9600,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(out *jwriter.Writer, in LedgerDelta) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(out *jwriter.Writer, in LedgerDelta) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9672,27 +9759,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v LedgerDelta) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v LedgerDelta) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid77(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *LedgerDelta) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *LedgerDelta) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid77(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(in *jlexer.Lexer, out *FundingHistory) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(in *jlexer.Lexer, out *FundingHistory) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9740,7 +9827,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(out *jwriter.Writer, in FundingHistory) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(out *jwriter.Writer, in FundingHistory) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -9770,27 +9857,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v FundingHistory) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FundingHistory) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid78(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FundingHistory) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FundingHistory) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid78(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(in *jlexer.Lexer, out *FrontendOpenOrder) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(in *jlexer.Lexer, out *FrontendOpenOrder) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -9947,7 +10034,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(out *jwriter.Writer, in FrontendOpenOrder) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(out *jwriter.Writer, in FrontendOpenOrder) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10056,27 +10143,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v FrontendOpenOrder) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FrontendOpenOrder) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid79(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FrontendOpenOrder) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FrontendOpenOrder) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid79(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(in *jlexer.Lexer, out *Fill) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(in *jlexer.Lexer, out *Fill) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10218,7 +10305,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(out *jwriter.Writer, in Fill) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(out *jwriter.Writer, in Fill) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10317,27 +10404,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Fill) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Fill) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid80(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Fill) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Fill) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid80(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(in *jlexer.Lexer, out *FeeSchedule) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(in *jlexer.Lexer, out *FeeSchedule) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10424,7 +10511,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(out *jwriter.Writer, in FeeSchedule) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(out *jwriter.Writer, in FeeSchedule) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10480,27 +10567,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v FeeSchedule) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v FeeSchedule) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid81(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *FeeSchedule) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *FeeSchedule) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid81(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(in *jlexer.Lexer, out *ExtraAgents) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(in *jlexer.Lexer, out *ExtraAgents) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10542,7 +10629,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(out *jwriter.Writer, in ExtraAgents) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(out *jwriter.Writer, in ExtraAgents) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10567,27 +10654,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v ExtraAgents) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ExtraAgents) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid82(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ExtraAgents) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ExtraAgents) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid82(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(in *jlexer.Lexer, out *EvmContract) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(in *jlexer.Lexer, out *EvmContract) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10623,7 +10710,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(out *jwriter.Writer, in EvmContract) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(out *jwriter.Writer, in EvmContract) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10643,27 +10730,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v EvmContract) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v EvmContract) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid83(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *EvmContract) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *EvmContract) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid83(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(in *jlexer.Lexer, out *Delta) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(in *jlexer.Lexer, out *Delta) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10717,7 +10804,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(out *jwriter.Writer, in Delta) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(out *jwriter.Writer, in Delta) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10752,27 +10839,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Delta) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Delta) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid84(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Delta) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Delta) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid84(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(in *jlexer.Lexer, out *DelegatorHistoryEntry) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(in *jlexer.Lexer, out *DelegatorHistoryEntry) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10816,7 +10903,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(out *jwriter.Writer, in DelegatorHistoryEntry) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(out *jwriter.Writer, in DelegatorHistoryEntry) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10841,27 +10928,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v DelegatorHistoryEntry) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v DelegatorHistoryEntry) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *DelegatorHistoryEntry) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *DelegatorHistoryEntry) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(in *jlexer.Lexer, out *CumFunding) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(in *jlexer.Lexer, out *CumFunding) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10903,7 +10990,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(out *jwriter.Writer, in CumFunding) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(out *jwriter.Writer, in CumFunding) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -10928,27 +11015,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CumFunding) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CumFunding) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CumFunding) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CumFunding) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(in *jlexer.Lexer, out *CreateVaultResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(in *jlexer.Lexer, out *CreateVaultResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -10990,7 +11077,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(out *jwriter.Writer, in CreateVaultResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(out *jwriter.Writer, in CreateVaultResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11015,27 +11102,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CreateVaultResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CreateVaultResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CreateVaultResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CreateVaultResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(in *jlexer.Lexer, out *CreateSubAccountResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(in *jlexer.Lexer, out *CreateSubAccountResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11085,7 +11172,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(out *jwriter.Writer, in CreateSubAccountResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(out *jwriter.Writer, in CreateSubAccountResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11110,27 +11197,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CreateSubAccountResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CreateSubAccountResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid88(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CreateSubAccountResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CreateSubAccountResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid88(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(in *jlexer.Lexer, out *Cloid) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(in *jlexer.Lexer, out *Cloid) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11160,7 +11247,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(out *jwriter.Writer, in Cloid) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(out *jwriter.Writer, in Cloid) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11175,27 +11262,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v Cloid) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v Cloid) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *Cloid) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Cloid) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(in *jlexer.Lexer, out *CancelResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(in *jlexer.Lexer, out *CancelResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11245,7 +11332,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(out *jwriter.Writer, in CancelResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(out *jwriter.Writer, in CancelResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11270,27 +11357,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CancelResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CancelResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid90(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CancelResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CancelResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid90(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(in *jlexer.Lexer, out *CancelRequest) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(in *jlexer.Lexer, out *CancelRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11326,7 +11413,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(out *jwriter.Writer, in CancelRequest) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(out *jwriter.Writer, in CancelRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11346,27 +11433,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CancelRequest) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CancelRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid91(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CancelRequest) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CancelRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid91(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(in *jlexer.Lexer, out *CancelByCloidRequest) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(in *jlexer.Lexer, out *CancelByCloidRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11402,7 +11489,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(out *jwriter.Writer, in CancelByCloidRequest) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(out *jwriter.Writer, in CancelByCloidRequest) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11422,27 +11509,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v CancelByCloidRequest) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v CancelByCloidRequest) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid92(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *CancelByCloidRequest) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *CancelByCloidRequest) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid92(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(in *jlexer.Lexer, out *BulkOrderResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(in *jlexer.Lexer, out *BulkOrderResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11479,7 +11566,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(in *jlexer.Lexer, ou
 				}
 				for !in.IsDelim(']') {
 					var v137 OrderStatus
-					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid64(in, &v137)
+					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid65(in, &v137)
 					out.Data = append(out.Data, v137)
 					in.WantComma()
 				}
@@ -11501,7 +11588,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(out *jwriter.Writer, in BulkOrderResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(out *jwriter.Writer, in BulkOrderResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11519,7 +11606,7 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(out *jwriter.Writer,
 				if v138 > 0 {
 					out.RawByte(',')
 				}
-				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid64(out, v139)
+				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid65(out, v139)
 			}
 			out.RawByte(']')
 		}
@@ -11535,27 +11622,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BulkOrderResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BulkOrderResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid93(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BulkOrderResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BulkOrderResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid93(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(in *jlexer.Lexer, out *BulkCancelResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(in *jlexer.Lexer, out *BulkCancelResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11618,7 +11705,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(out *jwriter.Writer, in BulkCancelResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(out *jwriter.Writer, in BulkCancelResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11652,27 +11739,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BulkCancelResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BulkCancelResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid94(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BulkCancelResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BulkCancelResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid94(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(in *jlexer.Lexer, out *BuilderInfo) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(in *jlexer.Lexer, out *BuilderInfo) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11708,7 +11795,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(out *jwriter.Writer, in BuilderInfo) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(out *jwriter.Writer, in BuilderInfo) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11728,27 +11815,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BuilderInfo) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BuilderInfo) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BuilderInfo) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BuilderInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(in *jlexer.Lexer, out *BorrowLendUserState) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(in *jlexer.Lexer, out *BorrowLendUserState) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11842,7 +11929,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(out *jwriter.Writer, in BorrowLendUserState) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(out *jwriter.Writer, in BorrowLendUserState) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11893,27 +11980,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BorrowLendUserState) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BorrowLendUserState) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid96(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BorrowLendUserState) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BorrowLendUserState) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid96(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(in *jlexer.Lexer, out *BorrowLendTokenState) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(in *jlexer.Lexer, out *BorrowLendTokenState) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -11949,7 +12036,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(out *jwriter.Writer, in BorrowLendTokenState) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(out *jwriter.Writer, in BorrowLendTokenState) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -11969,27 +12056,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BorrowLendTokenState) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BorrowLendTokenState) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid97(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BorrowLendTokenState) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BorrowLendTokenState) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid97(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(in *jlexer.Lexer, out *BorrowLendReserveState) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(in *jlexer.Lexer, out *BorrowLendReserveState) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12061,7 +12148,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(out *jwriter.Writer, in BorrowLendReserveState) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(out *jwriter.Writer, in BorrowLendReserveState) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12111,27 +12198,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BorrowLendReserveState) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BorrowLendReserveState) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BorrowLendReserveState) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BorrowLendReserveState) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(in *jlexer.Lexer, out *BorrowLendBalance) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(in *jlexer.Lexer, out *BorrowLendBalance) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12167,7 +12254,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(in *jlexer.Lexer, ou
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(out *jwriter.Writer, in BorrowLendBalance) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(out *jwriter.Writer, in BorrowLendBalance) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12187,27 +12274,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(out *jwriter.Writer,
 // MarshalJSON supports json.Marshaler interface
 func (v BorrowLendBalance) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v BorrowLendBalance) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid99(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *BorrowLendBalance) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *BorrowLendBalance) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid99(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(in *jlexer.Lexer, out *AssetPosition) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(in *jlexer.Lexer, out *AssetPosition) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12243,7 +12330,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(out *jwriter.Writer, in AssetPosition) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(out *jwriter.Writer, in AssetPosition) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12263,27 +12350,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v AssetPosition) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetPosition) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid100(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetPosition) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetPosition) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid100(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(in *jlexer.Lexer, out *AssetInfo) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(in *jlexer.Lexer, out *AssetInfo) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12367,7 +12454,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(out *jwriter.Writer, in AssetInfo) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(out *jwriter.Writer, in AssetInfo) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12427,27 +12514,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v AssetInfo) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetInfo) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid101(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetInfo) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid101(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(in *jlexer.Lexer, out *AssetCtx) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(in *jlexer.Lexer, out *AssetCtx) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12552,7 +12639,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(out *jwriter.Writer, in AssetCtx) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(out *jwriter.Writer, in AssetCtx) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12623,27 +12710,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v AssetCtx) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AssetCtx) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid102(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AssetCtx) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AssetCtx) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid102(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(in *jlexer.Lexer, out *ApprovalResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(in *jlexer.Lexer, out *ApprovalResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12685,7 +12772,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(out *jwriter.Writer, in ApprovalResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(out *jwriter.Writer, in ApprovalResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12710,27 +12797,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v ApprovalResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v ApprovalResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid103(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *ApprovalResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ApprovalResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid103(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(in *jlexer.Lexer, out *AgentApprovalResponse) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(in *jlexer.Lexer, out *AgentApprovalResponse) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12772,7 +12859,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(out *jwriter.Writer, in AgentApprovalResponse) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(out *jwriter.Writer, in AgentApprovalResponse) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12797,27 +12884,27 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v AgentApprovalResponse) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AgentApprovalResponse) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid104(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AgentApprovalResponse) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AgentApprovalResponse) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid104(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(l, v)
 }
-func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(in *jlexer.Lexer, out *AccountHistory) {
+func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid106(in *jlexer.Lexer, out *AccountHistory) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -12905,7 +12992,7 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(in *jlexer.Lexer, o
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(out *jwriter.Writer, in AccountHistory) {
+func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid106(out *jwriter.Writer, in AccountHistory) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -12974,23 +13061,23 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(out *jwriter.Writer
 // MarshalJSON supports json.Marshaler interface
 func (v AccountHistory) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(&w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid106(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
 func (v AccountHistory) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid105(w, v)
+	easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid106(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (v *AccountHistory) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(&r, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid106(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *AccountHistory) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid105(l, v)
+	easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid106(l, v)
 }

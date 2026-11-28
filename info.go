@@ -1124,6 +1124,22 @@ func (i *Info) PerpsAtOpenInterestCap(ctx context.Context, dex ...string) ([]str
 	return result, nil
 }
 
+func (i *Info) SettledOutcome(ctx context.Context, outcome int) (*SettledOutcome, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":    "settledOutcome",
+		"outcome": outcome,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch settled outcome: %w", err)
+	}
+
+	var result SettledOutcome
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal settled outcome: %w", err)
+	}
+	return &result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{

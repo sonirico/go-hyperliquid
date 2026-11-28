@@ -331,3 +331,18 @@ func TestInfo_PerpsAtOpenInterestCap(t *testing.T) {
 		}, *req)
 	})
 }
+
+func TestInfo_SettledOutcome(t *testing.T) {
+	const outcome = 0
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "settledOutcome")))
+
+	settled, err := info.SettledOutcome(context.TODO(), outcome)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":    "settledOutcome",
+		"outcome": float64(outcome),
+	}, *req)
+	require.Equal(t, "price:78212.4", settled.Details)
+}

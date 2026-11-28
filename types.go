@@ -852,6 +852,12 @@ type PerpConciseAnnotation struct {
 	Keywords    []string `json:"keywords"`
 }
 
+type SettledOutcome struct {
+	Spec           OutcomeMetaOutcome `json:"spec"`
+	SettleFraction string             `json:"settleFraction"`
+	Details        string             `json:"details"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]
