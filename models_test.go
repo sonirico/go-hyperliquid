@@ -680,3 +680,11 @@ func TestExtraAgents_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]ExtraAgents{})
 	})
 }
+
+func TestBorrowLendUserState_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "borrowLendUserState")
+
+		assertKeysCovered(t, raw, &BorrowLendUserState{})
+	})
+}
