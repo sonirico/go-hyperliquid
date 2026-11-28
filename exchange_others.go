@@ -2219,55 +2219,6 @@ func (e *Exchange) UserSetAbstraction(
 	return &result, nil
 }
 
-// UserDexAbstraction Methods set dex abstraction
-func (e *Exchange) UserDexAbstraction(
-	ctx context.Context,
-	user string,
-	enabled bool,
-) (*ReserveRequestWeightResponse, error) {
-	nonce := e.nextNonce()
-
-	action := map[string]any{
-		"user":    user,
-		"enabled": enabled,
-		"nonce":   big.NewInt(nonce),
-		"type":    "userDexAbstraction",
-	}
-
-	payloadTypes := []apitypes.Type{
-		{Name: "hyperliquidChain", Type: "string"},
-		{Name: "user", Type: "address"},
-		{Name: "enabled", Type: "bool"},
-		{Name: "nonce", Type: "uint64"},
-	}
-
-	sig, err := e.signUserSignedAction(
-		ctx,
-		action,
-		payloadTypes,
-		"HyperliquidTransaction:UserDexAbstraction",
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := actionError(resp); err != nil {
-		return nil, err
-	}
-
-	var result ReserveRequestWeightResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
 // For the default perp dex use the empty string "" as name. For spot use "spot".
 // Token must match the collateral token if transferring to or from a perp dex.
 func (e *Exchange) SendAsset(
