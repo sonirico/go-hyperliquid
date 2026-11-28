@@ -2441,3 +2441,27 @@ func (e *Exchange) TopUpIsolatedOnlyMargin(
 
 	return actionResponse(resp)
 }
+
+// Noop sends a noop action with the given nonce
+func (e *Exchange) Noop(ctx context.Context, nonce int64) (json.RawMessage, error) {
+	action := NoopAction{Type: "noop"}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

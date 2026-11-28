@@ -656,3 +656,8 @@ type TopUpIsolatedOnlyMarginAction struct {
 	Asset    int    `json:"asset"    msgpack:"asset"`
 	Leverage string `json:"leverage" msgpack:"leverage"`
 }
+
+// NoopAction represents noop action
+type NoopAction struct {
+	Type string `json:"type" msgpack:"type"`
+}

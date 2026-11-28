@@ -564,6 +564,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.TopUpIsolatedOnlyMargin(ctx, "BTC", 5)
 			return err
 		}},
+		{name: "noop", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.Noop(ctx, goldenNonce)
+			return err
+		}},
 	}
 }
 

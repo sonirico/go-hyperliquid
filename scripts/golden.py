@@ -315,6 +315,7 @@ cases = {
         }
     ),
     "topUpIsolatedOnlyMargin": lambda: l1({"type": "topUpIsolatedOnlyMargin", "asset": 0, "leverage": "5"}),
+    "noop": lambda: ex.noop(NONCE),
 }
 
 os.makedirs(out_dir, exist_ok=True)
