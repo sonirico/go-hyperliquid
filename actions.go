@@ -490,6 +490,16 @@ type PerpDeploySetOracleAction struct {
 	SetOracle SetOracle `json:"setOracle" msgpack:"setOracle"`
 }
 
+type SetFeeRecipient struct {
+	Dex          string `json:"dex"          msgpack:"dex"`
+	FeeRecipient string `json:"feeRecipient" msgpack:"feeRecipient"`
+}
+
+type PerpDeploySetFeeRecipientAction struct {
+	Type            string          `json:"type"            msgpack:"type"`
+	SetFeeRecipient SetFeeRecipient `json:"setFeeRecipient" msgpack:"setFeeRecipient"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

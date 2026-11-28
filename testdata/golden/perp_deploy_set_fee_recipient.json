@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setFeeRecipient": {
+      "dex": "test",
+      "feeRecipient": "0x1111111111111111111111111111111111111111"
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x18104c8e1d937c2fa53a6d449ba46efa6420ea78f46306ac32bd19007bc58429",
+    "s": "0x5ac64472888db85925723b06e03d44d2a9ddde7b2d69cf7ddd23523913134c89",
+    "v": 27
+  }
+}

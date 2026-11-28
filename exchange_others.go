@@ -1900,6 +1900,54 @@ func (e *Exchange) PerpDeploySetOracle(
 	return &result, nil
 }
 
+func (e *Exchange) postPerpDeployAction(
+	ctx context.Context,
+	action any,
+) (*PerpDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
+	var result PerpDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// PerpDeploySetFeeRecipient sets the fee recipient of a builder-deployed DEX
+func (e *Exchange) PerpDeploySetFeeRecipient(
+	ctx context.Context,
+	dex string,
+	feeRecipient string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFeeRecipientAction{
+		Type:            "perpDeploy",
+		SetFeeRecipient: SetFeeRecipient{Dex: dex, FeeRecipient: feeRecipient},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
