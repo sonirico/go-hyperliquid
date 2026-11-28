@@ -10,6 +10,7 @@ const (
 	ChannelPong               string = "pong"
 	ChannelTrades             string = "trades"
 	ChannelActiveAssetCtx     string = "activeAssetCtx"
+	ChannelActiveSpotAssetCtx string = "activeSpotAssetCtx"
 	ChannelFastAssetCtxs      string = "fastAssetCtxs"
 	ChannelAllDexsAssetCtxs   string = "allDexsAssetCtxs"
 	ChannelL2Book             string = "l2Book"

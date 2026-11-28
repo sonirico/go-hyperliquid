@@ -340,3 +340,54 @@ func TestWsMessage_Notification(t *testing.T) {
 		assertKeysCovered(t, raw, &Notification{})
 	})
 }
+
+func TestActiveAssetCtxSubscription(t *testing.T) {
+	t.Run("delivers a spot activeAssetCtx message", func(t *testing.T) {
+		upgrader := websocket.Upgrader{
+			CheckOrigin: func(*http.Request) bool { return true },
+		}
+		fixture := newTestLiveFixture(t, "ws_activeSpotAssetCtx")
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			conn, err := upgrader.Upgrade(w, r, nil)
+			if err != nil {
+				return
+			}
+			defer func() { _ = conn.Close() }()
+			for {
+				if _, _, err := conn.ReadMessage(); err != nil {
+					return
+				}
+				if err := conn.WriteMessage(websocket.TextMessage, fixture); err != nil {
+					return
+				}
+			}
+		}))
+		defer server.Close()
+
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		client := NewWebsocketClient(server.URL)
+		require.NoError(t, client.Connect(ctx))
+		defer func() { require.NoError(t, client.Close()) }()
+
+		got := make(chan ActiveAssetCtx, 1)
+		_, err := client.ActiveAssetCtx(
+			ActiveAssetCtxSubscriptionParams{Coin: "@107"},
+			func(msg ActiveAssetCtx, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		select {
+		case msg := <-got:
+			require.Equal(t, "@107", msg.Coin)
+			require.Equal(t, 62.572, msg.Ctx.MarkPx)
+		case <-ctx.Done():
+			t.Fatal("spot activeAssetCtx callback was not called")
+		}
+	})
+}

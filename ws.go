@@ -123,9 +123,12 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		readTimeout:   wsReadTimeout,
 		subscribers:   make(map[string]*uniqSubscriber),
 		msgDispatcherRegistry: map[string]msgDispatcher{
-			ChannelPong:             NewPongDispatcher(),
-			ChannelTrades:           NewMsgDispatcher[Trades](ChannelTrades),
-			ChannelActiveAssetCtx:   NewMsgDispatcher[ActiveAssetCtx](ChannelActiveAssetCtx),
+			ChannelPong:           NewPongDispatcher(),
+			ChannelTrades:         NewMsgDispatcher[Trades](ChannelTrades),
+			ChannelActiveAssetCtx: NewMsgDispatcher[ActiveAssetCtx](ChannelActiveAssetCtx),
+			ChannelActiveSpotAssetCtx: NewMsgDispatcher[ActiveAssetCtx](
+				ChannelActiveSpotAssetCtx,
+			),
 			ChannelFastAssetCtxs:    NewMsgDispatcher[WsFastAssetCtxs](ChannelFastAssetCtxs),
 			ChannelAllDexsAssetCtxs: NewMsgDispatcher[WsAllDexsAssetCtxs](ChannelAllDexsAssetCtxs),
 			ChannelL2Book:           NewMsgDispatcher[L2Book](ChannelL2Book),
