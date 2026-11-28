@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "reserveRequestWeight",
+    "weight": 1
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x30cd843e56e9a56441b08a80fc45d8a30a2d0a06f2f246b21fbc8ca6af59711a",
+    "s": "0x7486455f4fec3eadfe9d78de697511e4f385d0dd83b37bb22f7a48745a0e25c9",
+    "v": 27
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "twapCancel",
+    "a": 0,
+    "t": 77738308
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x51a92e2a83a122b74f31ef98e9835087661f1310e475061dc2b3de9bddc6a250",
+    "s": "0x54c984a83acdac85617957148cd2883090f61ea49203f56536a10f427a99193",
+    "v": 28
+  }
+}

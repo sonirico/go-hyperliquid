@@ -1,0 +1,49 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "setOracle": {
+      "dex": "test",
+      "oraclePxs": [
+        [
+          "test:X",
+          "10.0"
+        ]
+      ],
+      "markPxs": [
+        [
+          [
+            "test:X",
+            "10.0"
+          ]
+        ]
+      ],
+      "externalPerpPxs": [
+        [
+          "test:X",
+          "10.0"
+        ]
+      ]
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x15eedb27dc6a917dfb6d63281eb00d7a0b8663a5dd65c5ec70b4cb5c127c9646",
+    "s": "0x42f3ad01444413222ba2dddc335a240aafd443cf7a3a95060d9ac4145cf9fafe",
+    "v": 28
+  }
+}

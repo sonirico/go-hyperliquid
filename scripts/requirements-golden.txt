@@ -1,0 +1,1 @@
+hyperliquid-python-sdk @ git+https://github.com/hyperliquid-dex/hyperliquid-python-sdk@4e436273ab1bec32ca9cd78918f203daaf4fc0a5

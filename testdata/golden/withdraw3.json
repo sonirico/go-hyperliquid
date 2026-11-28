@@ -1,0 +1,39 @@
+{
+  "kind": "user",
+  "action": {
+    "destination": "0x1111111111111111111111111111111111111111",
+    "amount": "1.5",
+    "time": 1700000000000,
+    "type": "withdraw3",
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:Withdraw",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "destination",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "time",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xc8764d148d3b43e222fb25ca45dd30f487f7680209b5f241432f782b18a6fdb5",
+    "s": "0x153547cdf4076f345012265405bd7a5df792c45856a3e1d16a4c0009138b5bdd",
+    "v": 27
+  }
+}

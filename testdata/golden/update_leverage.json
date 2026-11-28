@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "updateLeverage",
+    "asset": 0,
+    "isCross": true,
+    "leverage": 5
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x363a53380dbf5beea952843eec85d4a548133bd7931c35a062be0139e4e5388",
+    "s": "0x10ee1eb6ca2afe38511ea6bc93dad2f8e7ec76d51ecbd9510f83e9540eaec860",
+    "v": 28
+  }
+}

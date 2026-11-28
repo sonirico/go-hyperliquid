@@ -1,0 +1,34 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "twapOrder",
+    "twap": {
+      "a": 0,
+      "b": true,
+      "s": "0.1",
+      "r": false,
+      "m": 30,
+      "t": false
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xf97c65f8869fd3f3003747d199ae44ba8f247c669367b1975c24136f3dcbd792",
+    "s": "0x420a60f2e904793b91dad08b55bcfadd37b5471e9e2eb01a9d2ccd1d7b6cef1c",
+    "v": 28
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "userSetAbstraction",
+    "user": "0x14791697260e4c9a71f18484c9f997b308e59325",
+    "abstraction": "unifiedAccount",
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:UserSetAbstraction",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "user",
+      "type": "address"
+    },
+    {
+      "name": "abstraction",
+      "type": "string"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xead87121af008eb207bd292379407ffb4a934b9a584ab0432e98fa603eb671d8",
+    "s": "0x6db499348622025b455502d17f60e17977758178dfaf5be99034400bf22dfa4d",
+    "v": 28
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "createSubAccount",
+    "name": "sub1"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x63a1f6189698ebb68ca741025b47130ca0929bf1a1a1643408da948b4a627cba",
+    "s": "0x2c70aba8d2d13f8690b3841afb3e05fe6a085bb0d605683bb8f798557612c01e",
+    "v": 27
+  }
+}

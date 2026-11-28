@@ -1,0 +1,38 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "approveAgent",
+    "agentAddress": "0x2B5AD5c4795c026514f8317c7a215E218DcCD6cF",
+    "nonce": 1700000000000,
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:ApproveAgent",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "agentAddress",
+      "type": "address"
+    },
+    {
+      "name": "agentName",
+      "type": "string"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0x3e0e4cf7a5dd61cbfb5fc727f7e7b74406b3c02ec75001f24a5036d350745d44",
+    "s": "0x355fd4ee78d926c9090367a01d568ffa8a6802e8ff54c54a5e2dcdc850488dce",
+    "v": 27
+  }
+}

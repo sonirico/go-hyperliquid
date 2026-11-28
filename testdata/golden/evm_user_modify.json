@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "evmUserModify",
+    "usingBigBlocks": true
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xa625b2f1b5af103b1f56e38a9bc8c3e4b649e4dd5091a31c0a40c82f97af590d",
+    "s": "0x442451f9392165a055603e4163f52769065adb22a8790a8126c470762c1c5d04",
+    "v": 28
+  }
+}

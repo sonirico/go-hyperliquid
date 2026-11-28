@@ -1,0 +1,39 @@
+{
+  "kind": "user",
+  "action": {
+    "maxFeeRate": "0.001%",
+    "builder": "0x1111111111111111111111111111111111111111",
+    "nonce": 1700000000000,
+    "type": "approveBuilderFee",
+    "signatureChainId": "0x66eee",
+    "hyperliquidChain": "Testnet"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:ApproveBuilderFee",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "maxFeeRate",
+      "type": "string"
+    },
+    {
+      "name": "builder",
+      "type": "address"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xf491a30ac2104a9a0efa824fe63fca161b0cffb249473c8f31423d0f2aaa39ac",
+    "s": "0x38157c88b30a1db86d4ad12a7085b0bae69aee8f0fc6c4c9a2e53aa8ac0b824e",
+    "v": 27
+  }
+}

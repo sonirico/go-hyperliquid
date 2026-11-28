@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "vaultTransfer",
+    "vaultAddress": "0x1111111111111111111111111111111111111111",
+    "isDeposit": true,
+    "usd": 1000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x45af3ed2238f3e6c91f339545be553edf46cca286e291b50e68b3524b0e83351",
+    "s": "0x258dfeca34510ccbf0fc40e5f51d46fd4d772efe4ead3b9c7a03f5fc53809eb",
+    "v": 27
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "batchModify",
+    "modifies": [
+      {
+        "oid": 123,
+        "order": {
+          "a": 0,
+          "b": true,
+          "p": "50000",
+          "s": "0.001",
+          "r": false,
+          "t": {
+            "limit": {
+              "tif": "Gtc"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x11b9b7db54f26ebe4c256387534f80e0a4a67ef62403856eec73af50d878d392",
+    "s": "0x497df0a7175b9cae4d4de0dfdc7c82afe99cf8dd4f6f974b9d5627c795c2ee93",
+    "v": 28
+  }
+}
