@@ -134,6 +134,10 @@ func unmarshalCompressed(name string, data []byte, v any) error {
 	return nil
 }
 
+func keyPac() string {
+	return key(ChannelPac)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

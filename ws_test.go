@@ -405,6 +405,19 @@ func TestWsMessage_L2(t *testing.T) {
 	})
 }
 
+func TestWsMessage_Pac(t *testing.T) {
+	t.Run("covers every key of the inflated message data", func(t *testing.T) {
+		var compressed string
+		require.NoError(t, json.Unmarshal(newTestWsFixtureData(t, "ws_pac"), &compressed))
+		packed, err := base64.StdEncoding.DecodeString(compressed)
+		require.NoError(t, err)
+		raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(packed)))
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &[]Tuple2[string, []PacAssetCtx]{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -762,5 +775,25 @@ func TestL2Subscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.NotNil(t, msg.S)
 		require.Equal(t, "BTC", msg.S.Coin)
+	})
+}
+
+func TestPacSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_pac"))
+		got := make(chan WsPac, 1)
+
+		_, err := f.client.Pac(func(msg WsPac, err error) {
+			if err == nil {
+				got <- msg
+			}
+		})
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"pac"}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotEmpty(t, msg)
+		require.Equal(t, "", msg[0].First)
+		require.NotEmpty(t, msg[0].Second)
 	})
 }

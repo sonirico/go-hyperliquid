@@ -270,6 +270,18 @@ func (p remoteL2SubscriptionPayload) Key() string {
 	return keyL2(p.Coin)
 }
 
+type remotePacSubscriptionPayload struct {
+	Type string `json:"type"`
+}
+
+func (p remotePacSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remotePacSubscriptionPayload) Key() string {
+	return keyPac()
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

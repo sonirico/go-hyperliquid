@@ -106,6 +106,10 @@ func (l WsL2) Key() string {
 	return keyL2("")
 }
 
+func (WsPac) Key() string {
+	return keyPac()
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

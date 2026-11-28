@@ -35,6 +35,7 @@ const (
 	ChannelAllDexsClearinghouseState   string = "allDexsClearinghouseState"
 	ChannelOutcomeMetaUpdates          string = "outcomeMetaUpdates"
 	ChannelL2                          string = "l2"
+	ChannelPac                         string = "pac"
 	ChannelError                       string = "error"
 )
 
@@ -274,6 +275,20 @@ type (
 	WsL2LevelUpdate struct {
 		Px string `json:"p"`
 		Sz string `json:"s"`
+	}
+
+	//easyjson:skip
+	WsPac []Tuple2[string, []PacAssetCtx]
+
+	PacAssetCtx struct {
+		Funding      *float64 `json:"funding,string,omitempty"`
+		OpenInterest *float64 `json:"openInterest,string,omitempty"`
+		OraclePx     *float64 `json:"oraclePx,string,omitempty"`
+		PrevDayPx    *float64 `json:"prevDayPx,string,omitempty"`
+		DayNtlVlm    *float64 `json:"dayNtlVlm,string,omitempty"`
+		MarkPx       *float64 `json:"markPx,string,omitempty"`
+		MidPx        *float64 `json:"midPx,string,omitempty"`
+		DayBaseVlm   *float64 `json:"dayBaseVlm,string,omitempty"`
 	}
 
 	FillLiquidation struct {
