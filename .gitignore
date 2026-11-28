@@ -34,3 +34,5 @@ go.work
 !.env.example
 !.env.testnet
 __debug*
+
+.claude/receipts/

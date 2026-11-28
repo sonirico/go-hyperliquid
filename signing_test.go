@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
+	"go/ast"
+	"go/parser"
+	"go/token"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -533,6 +537,96 @@ func TestFloatToUsdInt(t *testing.T) {
 			got := FloatToUsdInt(tc.value)
 
 			assert.Equal(t, tc.want, got)
+		})
+	}
+}
+
+func isMapStringAnyType(expr ast.Expr) bool {
+	mapType, ok := expr.(*ast.MapType)
+	if !ok {
+		return false
+	}
+	key, ok := mapType.Key.(*ast.Ident)
+	if !ok || key.Name != "string" {
+		return false
+	}
+	switch value := mapType.Value.(type) {
+	case *ast.Ident:
+		return value.Name == "any"
+	case *ast.InterfaceType:
+		return len(value.Methods.List) == 0
+	}
+	return false
+}
+
+func mapActionIdents(fn *ast.FuncDecl) map[string]bool {
+	maps := make(map[string]bool)
+	ast.Inspect(fn, func(n ast.Node) bool {
+		switch node := n.(type) {
+		case *ast.AssignStmt:
+			for i, rhs := range node.Rhs {
+				lit, ok := rhs.(*ast.CompositeLit)
+				if !ok || !isMapStringAnyType(lit.Type) || i >= len(node.Lhs) {
+					continue
+				}
+				if ident, ok := node.Lhs[i].(*ast.Ident); ok {
+					maps[ident.Name] = true
+				}
+			}
+		case *ast.ValueSpec:
+			if !isMapStringAnyType(node.Type) {
+				return true
+			}
+			for _, name := range node.Names {
+				maps[name.Name] = true
+			}
+		}
+		return true
+	})
+	return maps
+}
+
+func TestNoMapL1Actions(t *testing.T) {
+	files, err := filepath.Glob("exchange*.go")
+	require.NoError(t, err)
+	require.NotEmpty(t, files)
+
+	for _, file := range files {
+		if strings.HasSuffix(file, "_test.go") {
+			continue
+		}
+		t.Run(file, func(t *testing.T) {
+			t.Parallel()
+			fset := token.NewFileSet()
+			parsed, err := parser.ParseFile(fset, file, nil, 0)
+			require.NoError(t, err)
+
+			for _, decl := range parsed.Decls {
+				fn, ok := decl.(*ast.FuncDecl)
+				if !ok || fn.Body == nil {
+					continue
+				}
+				maps := mapActionIdents(fn)
+				ast.Inspect(fn, func(n ast.Node) bool {
+					call, ok := n.(*ast.CallExpr)
+					if !ok {
+						return true
+					}
+					sel, ok := call.Fun.(*ast.SelectorExpr)
+					if !ok || (sel.Sel.Name != "signL1Action" && sel.Sel.Name != "SignL1Action") {
+						return true
+					}
+					for _, arg := range call.Args {
+						switch a := arg.(type) {
+						case *ast.Ident:
+							assert.False(t, maps[a.Name], "%s: %s passes map %s to %s", fset.Position(a.Pos()), fn.Name.Name, a.Name, sel.Sel.Name)
+						case *ast.CompositeLit:
+							assert.False(t, isMapStringAnyType(a.Type), "%s: %s passes a map literal to %s", fset.Position(a.Pos()), fn.Name.Name, sel.Sel.Name)
+						}
+					}
+					return true
+				})
+			}
 		})
 	}
 }
