@@ -2616,3 +2616,38 @@ func (e *Exchange) CDeposit(ctx context.Context, wei uint64) (json.RawMessage, e
 
 	return actionResponse(resp)
 }
+
+// CWithdraw withdraws from the staking balance
+func (e *Exchange) CWithdraw(ctx context.Context, wei uint64) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type":  "cWithdraw",
+		"wei":   wei,
+		"nonce": big.NewInt(nonce),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:CWithdraw",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

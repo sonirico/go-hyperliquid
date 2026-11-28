@@ -339,6 +339,15 @@ cases = {
         ],
         "HyperliquidTransaction:CDeposit",
     ),
+    "cWithdraw": lambda: user(
+        {"type": "cWithdraw", "wei": 100000000, "nonce": NONCE},
+        [
+            {"name": "hyperliquidChain", "type": "string"},
+            {"name": "wei", "type": "uint64"},
+            {"name": "nonce", "type": "uint64"},
+        ],
+        "HyperliquidTransaction:CWithdraw",
+    ),
 }
 
 os.makedirs(out_dir, exist_ok=True)

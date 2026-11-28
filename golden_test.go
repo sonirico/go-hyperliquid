@@ -599,6 +599,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.CDeposit(ctx, 100000000)
 			return err
 		}},
+		{name: "cWithdraw", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CWithdraw(ctx, 100000000)
+			return err
+		}},
 	}
 }
 
