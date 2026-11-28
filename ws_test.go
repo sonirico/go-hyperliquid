@@ -204,3 +204,11 @@ func TestServerErrorChannelWithoutHandler(t *testing.T) {
 	require.NoError(t, client.dispatch(wsMessage{Channel: ChannelError, Data: []byte(`{"code":1}`)}))
 	require.Equal(t, WsServerError{Message: `{"code":1}`}, got)
 }
+
+func TestWsMessage_AllMids(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allMids")
+
+		assertKeysCovered(t, raw, &AllMids{})
+	})
+}

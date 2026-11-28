@@ -1,6 +1,7 @@
 package hyperliquid
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"testing"
@@ -48,4 +49,12 @@ func newTestLiveFixture(t *testing.T, name string) []byte {
 	raw, err := os.ReadFile(filepath.Join("testdata", "live", name+".json"))
 	require.NoError(t, err)
 	return raw
+}
+
+func newTestWsFixtureData(t *testing.T, name string) []byte {
+	t.Helper()
+
+	var msg wsMessage
+	require.NoError(t, json.Unmarshal(newTestLiveFixture(t, name), &msg))
+	return msg.Data
 }
