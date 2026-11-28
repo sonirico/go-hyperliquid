@@ -346,3 +346,15 @@ func TestInfo_SettledOutcome(t *testing.T) {
 	}, *req)
 	require.Equal(t, "price:78212.4", settled.Details)
 }
+
+func TestInfo_SpotPairDeployAuctionStatus(t *testing.T) {
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "spotPairDeployAuctionStatus")))
+
+	status, err := info.SpotPairDeployAuctionStatus(context.TODO())
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "spotPairDeployAuctionStatus",
+	}, *req)
+	require.Equal(t, "500.0", status.StartGas)
+}

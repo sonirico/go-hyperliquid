@@ -1140,6 +1140,21 @@ func (i *Info) SettledOutcome(ctx context.Context, outcome int) (*SettledOutcome
 	return &result, nil
 }
 
+func (i *Info) SpotPairDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionStatus, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "spotPairDeployAuctionStatus",
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch spot pair deploy auction status: %w", err)
+	}
+
+	var result PerpDeployAuctionStatus
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal spot pair deploy auction status: %w", err)
+	}
+	return &result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
