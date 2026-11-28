@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "validatorL1Stream",
+    "riskFreeRate": "0.04"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x4b3deebd3ec4527018c1ca2953a037bddbdfcf598fa2aa7605fe2673190083b4",
+    "s": "0x7e5259ec729d53b422aab0595f6a2603e7f92520628b8e885834b7bcbe29e7e7",
+    "v": 28
+  }
+}

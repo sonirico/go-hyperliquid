@@ -358,6 +358,7 @@ cases = {
     "userOutcome_mergeQuestion_nilAmount": lambda: l1({"type": "userOutcome", "mergeQuestion": {"question": 1, "amount": None}}),
     "userOutcome_negateOutcome": lambda: l1({"type": "userOutcome", "negateOutcome": {"question": 1, "outcome": 2, "amount": "1.5"}}),
     "authorizeAqav2Role": lambda: l1({"type": "authorizeAqav2Role", "token": 1, "role": "technical"}),
+    "validatorL1Stream": lambda: l1({"type": "validatorL1Stream", "riskFreeRate": "0.04"}),
 }
 
 os.makedirs(out_dir, exist_ok=True)

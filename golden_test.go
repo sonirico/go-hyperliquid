@@ -644,6 +644,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.AuthorizeAqav2Role(ctx, 1, "technical")
 			return err
 		}},
+		{name: "validatorL1Stream", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.ValidatorL1Stream(ctx, "0.04")
+			return err
+		}},
 	}
 }
 

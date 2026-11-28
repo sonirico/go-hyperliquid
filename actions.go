@@ -745,3 +745,9 @@ type AuthorizeAqav2RoleAction struct {
 	Token int    `json:"token" msgpack:"token"`
 	Role  string `json:"role"  msgpack:"role"`
 }
+
+// ValidatorL1StreamAction represents validator L1 stream action
+type ValidatorL1StreamAction struct {
+	Type         string `json:"type"         msgpack:"type"`
+	RiskFreeRate string `json:"riskFreeRate" msgpack:"riskFreeRate"`
+}

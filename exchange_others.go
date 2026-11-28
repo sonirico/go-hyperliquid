@@ -2928,3 +2928,32 @@ func (e *Exchange) AuthorizeAqav2Role(
 
 	return actionResponse(resp)
 }
+
+// ValidatorL1Stream sets the risk free rate of the validator L1 stream
+func (e *Exchange) ValidatorL1Stream(
+	ctx context.Context,
+	riskFreeRate string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := ValidatorL1StreamAction{Type: "validatorL1Stream", RiskFreeRate: riskFreeRate}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
