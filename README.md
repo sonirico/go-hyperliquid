@@ -25,6 +25,7 @@ This Go SDK provides **full feature parity** with the official Python SDK, inclu
 - **Position Management**: Leverage updates, isolated margin, position closing
 - **Bulk Operations**: Bulk orders, bulk cancellations, bulk modifications
 - **Advanced Trading**: Market open/close with slippage protection, scheduled cancellations
+- **TWAP Orders**: Place and cancel TWAP orders
 - **Builder Support**: Order routing through builders with fee structures
 
 ### Account Management
