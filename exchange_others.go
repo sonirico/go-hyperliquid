@@ -2013,6 +2013,19 @@ func (e *Exchange) PerpDeploySetFundingInterestRates(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetFundingClamps sets the funding clamps of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingClamps(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingClampsAction{
+		Type:             "perpDeploy",
+		SetFundingClamps: sortedPerpDeployPairs(values),
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer

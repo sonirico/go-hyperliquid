@@ -531,6 +531,11 @@ type PerpDeploySetFundingInterestRatesAction struct {
 	SetFundingInterestRates [][]any `json:"setFundingInterestRates" msgpack:"setFundingInterestRates"`
 }
 
+type PerpDeploySetFundingClampsAction struct {
+	Type             string  `json:"type"             msgpack:"type"`
+	SetFundingClamps [][]any `json:"setFundingClamps" msgpack:"setFundingClamps"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

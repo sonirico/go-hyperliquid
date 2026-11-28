@@ -466,6 +466,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeploySetFundingInterestRates(ctx, map[string]string{"test:X": "0.0001"})
 			return err
 		}},
+		{name: "perp_deploy_set_funding_clamps", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetFundingClamps(ctx, map[string]string{"test:X": "0.01"})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

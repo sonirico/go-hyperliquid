@@ -274,6 +274,9 @@ cases = {
     "perp_deploy_set_funding_interest_rates": lambda: l1(
         {"type": "perpDeploy", "setFundingInterestRates": [["test:X", "0.0001"]]}
     ),
+    "perp_deploy_set_funding_clamps": lambda: l1(
+        {"type": "perpDeploy", "setFundingClamps": [["test:X", "0.01"]]}
+    ),
     "user_set_abstraction": lambda: ex.user_set_abstraction(wallet.address, "unifiedAccount"),
     "send_asset": lambda: ex.send_asset(OTHER, "", "spot", TOKEN, 1.5),
     "reserve_request_weight": lambda: l1({"type": "reserveRequestWeight", "weight": 1}),
