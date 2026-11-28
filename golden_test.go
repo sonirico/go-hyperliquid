@@ -615,6 +615,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.Hip3LiquidatorTransfer(ctx, "xyz", 1000000, true)
 			return err
 		}},
+		{name: "userOutcome_splitOutcome", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UserOutcomeSplit(ctx, 1, 1.5)
+			return err
+		}},
 	}
 }
 

@@ -704,3 +704,15 @@ type Hip3LiquidatorTransferAction struct {
 	Ntl       int    `json:"ntl"       msgpack:"ntl"`
 	IsDeposit bool   `json:"isDeposit" msgpack:"isDeposit"`
 }
+
+// UserOutcomeAction represents user outcome action, with one variant set
+type UserOutcomeAction struct {
+	Type         string              `json:"type"                   msgpack:"type"`
+	SplitOutcome *SplitOutcomeAction `json:"splitOutcome,omitempty" msgpack:"splitOutcome,omitempty"`
+}
+
+// SplitOutcomeAction represents the split outcome variant of user outcome action
+type SplitOutcomeAction struct {
+	Outcome int    `json:"outcome" msgpack:"outcome"`
+	Amount  string `json:"amount"  msgpack:"amount"`
+}
