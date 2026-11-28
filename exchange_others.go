@@ -512,6 +512,7 @@ func (e *Exchange) CreateVault(
 		Name:        name,
 		Description: description,
 		InitialUsd:  initialUsd,
+		Nonce:       nonce,
 	}
 
 	sig, err := e.signL1Action(

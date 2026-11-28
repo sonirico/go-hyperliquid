@@ -206,6 +206,9 @@ cases = {
     "cValidator_unregister": lambda: ex.c_validator_unregister(),
     "updateIsolatedMargin_add": lambda: ex.update_isolated_margin(1.5, "BTC"),
     "updateIsolatedMargin_remove": lambda: ex.update_isolated_margin(-1.5, "BTC"),
+    "createVault": lambda: l1(
+        {"type": "createVault", "name": "vault", "description": "description", "initialUsd": 1000000, "nonce": NONCE}
+    ),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

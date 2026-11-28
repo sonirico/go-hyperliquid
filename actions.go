@@ -88,6 +88,7 @@ type CreateVaultAction struct {
 	Name        string `json:"name"        msgpack:"name"`
 	Description string `json:"description" msgpack:"description"`
 	InitialUsd  int    `json:"initialUsd"  msgpack:"initialUsd"`
+	Nonce       int64  `json:"nonce"       msgpack:"nonce"`
 }
 
 // VaultModifyAction represents vault modify action

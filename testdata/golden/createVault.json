@@ -1,0 +1,30 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "createVault",
+    "name": "vault",
+    "description": "description",
+    "initialUsd": 1000000,
+    "nonce": 1700000000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xa6b2413b9786b34b7ea3964e3c93de4aa9ebd097f2676b3e70c449dc6e97c21c",
+    "s": "0x71713bd32bbeee80b55f866eb75ca8e12b8d4d5dd64b4e48819800ff0a31a29b",
+    "v": 27
+  }
+}

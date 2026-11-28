@@ -4855,6 +4855,12 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid45(in *jlexer.Lexer, ou
 			} else {
 				out.InitialUsd = int(in.Int())
 			}
+		case "nonce":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Nonce = int64(in.Int64())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -4888,6 +4894,11 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid45(out *jwriter.Writer,
 		const prefix string = ",\"initialUsd\":"
 		out.RawString(prefix)
 		out.Int(int(in.InitialUsd))
+	}
+	{
+		const prefix string = ",\"nonce\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Nonce))
 	}
 	out.RawByte('}')
 }

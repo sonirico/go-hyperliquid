@@ -54,7 +54,8 @@ type goldenSigned struct {
 // goldenRow holds the exchange method call that sends the action (call). When
 // the method signs with the raw private key and bypasses the injected signers,
 // or generates its own key, the golden test builds the wire action the way the
-// method does instead (direct).
+// method does instead (direct). Actions that carry their own nonce use direct
+// because the nonce of a call cannot be fixed.
 type goldenRow struct {
 	name   string
 	skip   string
@@ -174,6 +175,18 @@ func signGoldenAgent(pk *ecdsa.PrivateKey, name *string) (goldenSigned, error) {
 		AgentName:        name,
 		Nonce:            goldenNonce,
 	}
+	return goldenSigned{action: action, signature: sig}, err
+}
+
+func signGoldenCreateVault(pk *ecdsa.PrivateKey) (goldenSigned, error) {
+	action := CreateVaultAction{
+		Type:        "createVault",
+		Name:        "vault",
+		Description: "description",
+		InitialUsd:  1000000,
+		Nonce:       goldenNonce,
+	}
+	sig, err := SignL1Action(pk, action, "", goldenNonce, nil, false)
 	return goldenSigned{action: action, signature: sig}, err
 }
 
@@ -451,6 +464,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.UpdateIsolatedMargin(ctx, -1.5, "BTC")
 			return err
 		}},
+		{name: "createVault", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CreateVault(ctx, "vault", "description", 1000000)
+			return err
+		}, direct: signGoldenCreateVault},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err
