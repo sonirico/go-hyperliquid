@@ -752,3 +752,11 @@ func TestOutcomeTemplate_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]OutcomeTemplate{})
 	})
 }
+
+func TestPerpAnnotation_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "perpAnnotation")
+
+		assertKeysCovered(t, raw, &PerpAnnotation{})
+	})
+}

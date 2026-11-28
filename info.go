@@ -1058,6 +1058,22 @@ func (i *Info) OutcomeTemplates(ctx context.Context) ([]OutcomeTemplate, error) 
 	return result, nil
 }
 
+func (i *Info) PerpAnnotation(ctx context.Context, coin string) (*PerpAnnotation, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "perpAnnotation",
+		"coin": coin,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perp annotation: %w", err)
+	}
+
+	var result *PerpAnnotation
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perp annotation: %w", err)
+	}
+	return result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{

@@ -839,6 +839,13 @@ type OutcomeTemplate struct {
 	Keywords    []Tuple2[string, string] `json:"keywords"`
 }
 
+type PerpAnnotation struct {
+	Category    string   `json:"category"`
+	Description string   `json:"description"`
+	DisplayName *string  `json:"displayName"`
+	Keywords    []string `json:"keywords"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]

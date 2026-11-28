@@ -258,3 +258,27 @@ func TestInfo_OutcomeTemplates(t *testing.T) {
 	}, *req)
 	require.Len(t, templates, 10)
 }
+
+func TestInfo_PerpAnnotation(t *testing.T) {
+	const coin = "io:AAPL"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpAnnotation")))
+
+	annotation, err := info.PerpAnnotation(context.TODO(), coin)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "perpAnnotation",
+		"coin": coin,
+	}, *req)
+	require.Equal(t, "stocks", annotation.Category)
+}
+
+func TestInfo_PerpAnnotation_Null(t *testing.T) {
+	info, _ := newInfoTestServer(t, "null")
+
+	annotation, err := info.PerpAnnotation(context.TODO(), "BTC")
+	require.NoError(t, err)
+
+	require.Nil(t, annotation)
+}
