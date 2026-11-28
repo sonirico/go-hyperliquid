@@ -61,6 +61,12 @@ func keyUserFills(user string) string {
 	return key(ChannelUserFills, user)
 }
 
+func keyUserEvents(_ string) string {
+	// User events are user-specific but don't contain user info in the message itself.
+	// The dispatching is handled by the subscription system based on the subscription key.
+	return key(ChannelUser)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

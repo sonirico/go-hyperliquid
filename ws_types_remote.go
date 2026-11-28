@@ -137,6 +137,19 @@ func (p remoteOrderFillsSubscriptionPayload) Key() string {
 	return keyUserFills(p.User)
 }
 
+type remoteUserEventsSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteUserEventsSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteUserEventsSubscriptionPayload) Key() string {
+	return keyUserEvents(p.User)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

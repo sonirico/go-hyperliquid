@@ -18,6 +18,7 @@ const (
 	ChannelAllMids            string = "allMids"
 	ChannelNotification       string = "notification"
 	ChannelOrderUpdates       string = "orderUpdates"
+	ChannelUser               string = "user"
 	ChannelUserFills          string = "userFills"
 	ChannelBbo                string = "bbo"
 	ChannelSubResponse        string = "subscriptionResponse"
@@ -161,6 +162,35 @@ type (
 		BuilderFee    *string          `json:"builderFee,omitempty"` // amount paid to builder, also included in fee
 		Cloid         *string          `json:"cloid,omitempty"`
 		TwapId        *int64           `json:"twapId"`
+	}
+
+	UserEvents struct {
+		Fills         []WsOrderFill     `json:"fills,omitempty"`
+		Funding       *WsUserFunding    `json:"funding,omitempty"`
+		Liquidation   *WsLiquidation    `json:"liquidation,omitempty"`
+		NonUserCancel []WsNonUserCancel `json:"nonUserCancel,omitempty"`
+	}
+
+	WsUserFunding struct {
+		Time        int64  `json:"time"`
+		Coin        string `json:"coin"`
+		Usdc        string `json:"usdc"`
+		Szi         string `json:"szi"`
+		FundingRate string `json:"fundingRate"`
+		NSamples    *int   `json:"nSamples"`
+	}
+
+	WsLiquidation struct {
+		Lid                    int64  `json:"lid"`
+		Liquidator             string `json:"liquidator"`
+		LiquidatedUser         string `json:"liquidated_user"`
+		LiquidatedNtlPos       string `json:"liquidated_ntl_pos"`
+		LiquidatedAccountValue string `json:"liquidated_account_value"`
+	}
+
+	WsNonUserCancel struct {
+		Coin string `json:"coin"`
+		Oid  int64  `json:"oid"`
 	}
 
 	FillLiquidation struct {

@@ -325,6 +325,14 @@ func TestWsMessage_TwapStates(t *testing.T) {
 	})
 }
 
+func TestWsMessage_UserEvents(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userEvents")
+
+		assertKeysCovered(t, raw, &UserEvents{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -341,38 +349,83 @@ func TestWsMessage_Notification(t *testing.T) {
 	})
 }
 
-func TestActiveAssetCtxSubscription(t *testing.T) {
-	t.Run("delivers a spot activeAssetCtx message", func(t *testing.T) {
-		upgrader := websocket.Upgrader{
-			CheckOrigin: func(*http.Request) bool { return true },
-		}
-		fixture := newTestLiveFixture(t, "ws_activeSpotAssetCtx")
+const (
+	testWsWait = 3 * time.Second
+	testWsUser = "0xb19e5191b3a97657807c704d58e2ffd33aa4ccdf"
+)
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			conn, err := upgrader.Upgrade(w, r, nil)
+type testWsSubscribe struct {
+	client  *WebsocketClient
+	payload chan []byte
+}
+
+// newTestWsSubscribe starts a fake ws server that answers every frame it
+// receives with the fixture and hands the received frames to payload.
+func newTestWsSubscribe(t *testing.T, fixture []byte) testWsSubscribe {
+	t.Helper()
+
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(*http.Request) bool { return true },
+	}
+	payload := make(chan []byte, 8)
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		for {
+			_, frame, err := conn.ReadMessage()
 			if err != nil {
 				return
 			}
-			defer func() { _ = conn.Close() }()
-			for {
-				if _, _, err := conn.ReadMessage(); err != nil {
-					return
-				}
-				if err := conn.WriteMessage(websocket.TextMessage, fixture); err != nil {
-					return
-				}
+			payload <- frame
+			if err := conn.WriteMessage(websocket.TextMessage, fixture); err != nil {
+				return
 			}
-		}))
-		defer server.Close()
+		}
+	}))
+	t.Cleanup(server.Close)
 
-		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-		defer cancel()
-		client := NewWebsocketClient(server.URL)
-		require.NoError(t, client.Connect(ctx))
-		defer func() { require.NoError(t, client.Close()) }()
+	ctx, cancel := context.WithTimeout(context.Background(), testWsWait)
+	t.Cleanup(cancel)
+	client := NewWebsocketClient(server.URL)
+	require.NoError(t, client.Connect(ctx))
+	t.Cleanup(func() { require.NoError(t, client.Close()) })
 
+	return testWsSubscribe{client: client, payload: payload}
+}
+
+func (f testWsSubscribe) requireSubscription(t *testing.T, want string) {
+	t.Helper()
+
+	select {
+	case frame := <-f.payload:
+		require.JSONEq(t, `{"method":"subscribe","subscription":`+want+`}`, string(frame))
+	case <-time.After(testWsWait):
+		t.Fatal("no subscribe frame received")
+	}
+}
+
+func requireTestWsMessage[T any](t *testing.T, got <-chan T) T {
+	t.Helper()
+
+	select {
+	case msg := <-got:
+		return msg
+	case <-time.After(testWsWait):
+		t.Fatal("callback was not called")
+		panic("unreachable")
+	}
+}
+
+func TestActiveAssetCtxSubscription(t *testing.T) {
+	t.Run("delivers a spot activeAssetCtx message", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_activeSpotAssetCtx"))
 		got := make(chan ActiveAssetCtx, 1)
-		_, err := client.ActiveAssetCtx(
+
+		_, err := f.client.ActiveAssetCtx(
 			ActiveAssetCtxSubscriptionParams{Coin: "@107"},
 			func(msg ActiveAssetCtx, err error) {
 				if err == nil {
@@ -382,12 +435,30 @@ func TestActiveAssetCtxSubscription(t *testing.T) {
 		)
 		require.NoError(t, err)
 
-		select {
-		case msg := <-got:
-			require.Equal(t, "@107", msg.Coin)
-			require.Equal(t, 62.572, msg.Ctx.MarkPx)
-		case <-ctx.Done():
-			t.Fatal("spot activeAssetCtx callback was not called")
-		}
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, "@107", msg.Coin)
+		require.Equal(t, 62.572, msg.Ctx.MarkPx)
+	})
+}
+
+func TestUserEventsSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userEvents"))
+		got := make(chan UserEvents, 1)
+
+		_, err := f.client.UserEvents(
+			UserEventsSubscriptionParams{User: testWsUser},
+			func(msg UserEvents, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userEvents","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Len(t, msg.Fills, 1)
+		require.Equal(t, "BTC", msg.Fills[0].Coin)
 	})
 }

@@ -58,6 +58,12 @@ func (w WsOrders) Key() string {
 
 func (w Bbo) Key() string { return keyBbo(w.Coin) }
 
+func (u UserEvents) Key() string {
+	// UserEvents messages are user-specific but don't contain user info in the message itself.
+	// The dispatching is handled by the subscription system based on the subscription key.
+	return ChannelUser
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }
