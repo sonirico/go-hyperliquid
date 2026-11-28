@@ -84,6 +84,10 @@ func (m WsUserTwapHistory) Key() string {
 	return keyUserTwapHistory(m.User)
 }
 
+func (m WsSpotState) Key() string {
+	return keySpotState(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

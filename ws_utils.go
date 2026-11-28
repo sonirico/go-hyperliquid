@@ -87,6 +87,10 @@ func keyUserTwapHistory(user string) string {
 	return key(ChannelUserTwapHistory, user)
 }
 
+func keySpotState(user string) string {
+	return key(ChannelSpotState, user)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

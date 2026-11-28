@@ -216,6 +216,19 @@ func (p remoteUserTwapHistorySubscriptionPayload) Key() string {
 	return keyUserTwapHistory(p.User)
 }
 
+type remoteSpotStateSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteSpotStateSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteSpotStateSubscriptionPayload) Key() string {
+	return keySpotState(p.User)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

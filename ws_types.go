@@ -31,6 +31,7 @@ const (
 	ChannelActiveAssetData             string = "activeAssetData"
 	ChannelUserTwapSliceFills          string = "userTwapSliceFills"
 	ChannelUserTwapHistory             string = "userTwapHistory"
+	ChannelSpotState                   string = "spotState"
 	ChannelError                       string = "error"
 )
 
@@ -232,6 +233,11 @@ type (
 	WsTwapStatus struct {
 		Status      string `json:"status"`
 		Description string `json:"description"`
+	}
+
+	WsSpotState struct {
+		User      string        `json:"user"`
+		SpotState SpotUserState `json:"spotState"`
 	}
 
 	FillLiquidation struct {

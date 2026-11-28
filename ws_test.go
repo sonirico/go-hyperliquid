@@ -373,6 +373,14 @@ func TestWsMessage_UserTwapHistory(t *testing.T) {
 	})
 }
 
+func TestWsMessage_SpotState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_spotState")
+
+		assertKeysCovered(t, raw, &WsSpotState{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -610,5 +618,26 @@ func TestUserTwapHistorySubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.True(t, msg.IsSnapshot)
 		require.NotEmpty(t, msg.History)
+	})
+}
+
+func TestSpotStateSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_spotState"))
+		got := make(chan WsSpotState, 1)
+
+		_, err := f.client.SpotState(
+			SpotStateSubscriptionParams{User: testWsUser},
+			func(msg WsSpotState, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"spotState","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, testWsUser, msg.User)
 	})
 }
