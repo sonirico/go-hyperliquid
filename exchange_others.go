@@ -221,8 +221,8 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	}
 
 	// Sign the action
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		"", // No vault address - reserve must be performed by main wallet
 		nonce,
@@ -1679,8 +1679,8 @@ func (e *Exchange) PerpDeployRegisterAsset2(
 		action.RegisterAsset2.Schema = buildSchemaWire(schema)
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,
@@ -1735,8 +1735,8 @@ func (e *Exchange) PerpDeployHaltTrading(
 		},
 	}
 
-	sig, err := SignL1Action(
-		e.privateKey,
+	sig, err := e.signL1Action(
+		ctx,
 		action,
 		e.vault,
 		nonce,

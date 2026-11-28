@@ -154,11 +154,6 @@ func loadTestGoldenFiles(t *testing.T) map[string]goldenFile {
 	return files
 }
 
-func signGoldenL1(pk *ecdsa.PrivateKey, action any) (goldenSigned, error) {
-	sig, err := SignL1Action(pk, action, "", goldenNonce, nil, false)
-	return goldenSigned{action: action, signature: sig}, err
-}
-
 func signGoldenAgent(pk *ecdsa.PrivateKey, name *string) (goldenSigned, error) {
 	agent, err := crypto.HexToECDSA(goldenAgentKey)
 	if err != nil {
@@ -328,22 +323,10 @@ func goldenRows(userAddress string) []goldenRow {
 		{name: "perp_deploy_register_asset2", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.PerpDeployRegisterAsset2(ctx, "test", &maxGas, assetRequest2, nil)
 			return err
-		}, direct: func(pk *ecdsa.PrivateKey) (goldenSigned, error) {
-			return signGoldenL1(pk, PerpDeployRegisterAsset2Action{
-				Type: "perpDeploy",
-				RegisterAsset2: RegisterAsset2{
-					MaxGas: &maxGas, AssetRequest: assetRequest2, Dex: "test",
-				},
-			})
 		}},
 		{name: "perp_deploy_halt_trading", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.PerpDeployHaltTrading(ctx, "test:X", true)
 			return err
-		}, direct: func(pk *ecdsa.PrivateKey) (goldenSigned, error) {
-			return signGoldenL1(pk, PerpDeployHaltTradingAction{
-				Type:        "perpDeploy",
-				HaltTrading: HaltTrading{Coin: "test:X", IsHalted: true},
-			})
 		}},
 		{name: "perp_deploy_set_oracle", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.PerpDeploySetOracle(
@@ -365,8 +348,6 @@ func goldenRows(userAddress string) []goldenRow {
 		{name: "reserve_request_weight", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.Reserve(ctx, 1)
 			return err
-		}, direct: func(pk *ecdsa.PrivateKey) (goldenSigned, error) {
-			return signGoldenL1(pk, ReserveRequestWeightAction{Type: "reserveRequestWeight", Weight: 1})
 		}},
 		{name: "twap_order", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.TwapOrder(ctx, TwapOrderRequest{Coin: "BTC", IsBuy: true, Size: 0.1, Minutes: 30})

@@ -365,3 +365,46 @@ func TestPostAction_VaultAddress(t *testing.T) {
 		})
 	}
 }
+
+func TestInjectedL1Signer(t *testing.T) {
+	pk, err := crypto.HexToECDSA(goldenKey)
+	require.NoError(t, err)
+	maxGas := 1000000
+
+	type testCase struct {
+		name string
+		call func(ctx context.Context, ex *Exchange) error
+	}
+
+	testCases := []testCase{
+		{"SetReferrer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SetReferrer(ctx, "ABC")
+			return err
+		}},
+		{"Reserve", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.Reserve(ctx, 1)
+			return err
+		}},
+		{"PerpDeployRegisterAsset2", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployRegisterAsset2(ctx, "test", &maxGas, AssetRequest2{
+				Coin: "test:X", SzDecimals: 2, OraclePx: "10.0", MarginTableID: 10, MarginMode: "strictIsolated",
+			}, nil)
+			return err
+		}},
+		{"PerpDeployHaltTrading", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployHaltTrading(ctx, "test:X", true)
+			return err
+		}},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			fixture := newTestGoldenFixture(t, pk)
+
+			callErr := tc.call(context.Background(), fixture.exchange)
+
+			require.NoError(t, callErr)
+			require.Equal(t, 1, fixture.signer.calls)
+		})
+	}
+}
