@@ -404,6 +404,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeploySetDeployerTradingFeeShare(ctx, 1, "50%")
 			return err
 		}},
+		{name: "spotDeploy_enableQuoteToken", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployEnableQuoteToken(ctx, 1)
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

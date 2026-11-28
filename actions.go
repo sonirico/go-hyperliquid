@@ -263,6 +263,11 @@ type SpotDeploySetDeployerTradingFeeShare struct {
 	Share string `json:"share" msgpack:"share"`
 }
 
+// SpotDeployEnableQuoteToken represents the enableQuoteToken variant of a spot deploy action
+type SpotDeployEnableQuoteToken struct {
+	Token int `json:"token" msgpack:"token"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
 	Type                       string                                `json:"type"                                 msgpack:"type"`
@@ -275,6 +280,7 @@ type SpotDeployAction struct {
 	RegisterSpot               *SpotDeployRegisterSpot               `json:"registerSpot,omitempty"               msgpack:"registerSpot,omitempty"`
 	RegisterHyperliquidity     *SpotDeployRegisterHyperliquidity     `json:"registerHyperliquidity,omitempty"     msgpack:"registerHyperliquidity,omitempty"`
 	SetDeployerTradingFeeShare *SpotDeploySetDeployerTradingFeeShare `json:"setDeployerTradingFeeShare,omitempty" msgpack:"setDeployerTradingFeeShare,omitempty"`
+	EnableQuoteToken           *SpotDeployEnableQuoteToken           `json:"enableQuoteToken,omitempty"           msgpack:"enableQuoteToken,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

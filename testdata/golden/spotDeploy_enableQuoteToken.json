@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "enableQuoteToken": {
+      "token": 1
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xede6c0e31f608ad796b1487bb7ab3d19daf04f5ac2fabc998bc3143b043ee6c2",
+    "s": "0x332d84bb42821fbe23b7d8dcdcc48e8556b1694e6f7c77afa47453e4dddeac28",
+    "v": 28
+  }
+}

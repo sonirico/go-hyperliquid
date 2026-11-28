@@ -1646,6 +1646,46 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 	return &result, nil
 }
 
+// SpotDeployEnableQuoteToken enables a token as a quote token
+func (e *Exchange) SpotDeployEnableQuoteToken(
+	ctx context.Context,
+	token int,
+) (*SpotDeployResponse, error) {
+	nonce := e.nextNonce()
+
+	action := SpotDeployAction{
+		Type:             "spotDeploy",
+		EnableQuoteToken: &SpotDeployEnableQuoteToken{Token: token},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := actionError(resp); err != nil {
+		return nil, err
+	}
+
+	var result SpotDeployResponse
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
 // Perp Deploy Methods
 
 // PerpDeployRegisterAsset registers a new perpetual asset on a builder-deployed DEX.
