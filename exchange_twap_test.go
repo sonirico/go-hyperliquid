@@ -48,7 +48,8 @@ func TestTwapActionHash_MatchesPythonSDK(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := actionHash(tc.action, "", tc.nonce, nil)
+			got, err := actionHash(tc.action, "", tc.nonce, nil)
+			require.NoError(t, err)
 			require.Equal(t, tc.want, hex.EncodeToString(got))
 		})
 	}

@@ -50,7 +50,8 @@ func TestSubAccountSpotTransfer_ActionHashMatchesPythonSDK(t *testing.T) {
 		Amount:         "1.5",
 	}
 
-	hash := actionHash(action, "", 1700000000000, nil)
+	hash, err := actionHash(action, "", 1700000000000, nil)
+	require.NoError(t, err)
 	require.Equal(
 		t,
 		"56e7f6cf4678cb307604a37ad02c187f33c67b0d4fc80e2d1b0e42784d18ce24",

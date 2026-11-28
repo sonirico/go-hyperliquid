@@ -290,7 +290,8 @@ func TestDebugActionHash(t *testing.T) {
 	isMainnet := false
 
 	// Debug: Print action hash components
-	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	hash, err := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	require.NoError(t, err)
 	t.Logf("Action hash: %x", hash)
 
 	// Debug: Print phantom agent
@@ -423,8 +424,10 @@ func TestActionHash_CancelWithLargeOrderID(t *testing.T) {
 	nonce := int64(1703001234567)
 	var expiresAfter *int64
 
-	hash1 := actionHash(action, vaultAddress, nonce, expiresAfter)
-	hash2 := actionHash(action, vaultAddress, nonce, expiresAfter)
+	hash1, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	require.NoError(t, err)
+	hash2, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	require.NoError(t, err)
 
 	assert.Equal(t, hash1, hash2,
 		"actionHash must be deterministic across repeated calls")
@@ -434,7 +437,7 @@ func TestActionHash_CancelWithLargeOrderID(t *testing.T) {
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
 	enc.UseCompactInts(true)
-	err := enc.Encode(action)
+	err = enc.Encode(action)
 	require.NoError(t, err)
 
 	once := convertStr16ToStr8(buf.Bytes())
@@ -533,6 +536,34 @@ func TestUserSignedSignHelpers_MatchPythonSDK(t *testing.T) {
 			got, err := tt.sign()
 			require.NoError(t, err)
 			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestSignL1Action_Errors(t *testing.T) {
+	privateKey, err := crypto.HexToECDSA(goldenKey)
+	require.NoError(t, err)
+
+	type testCase struct {
+		name   string
+		action any
+		vault  string
+	}
+
+	testCases := []testCase{
+		{"unencodable action", map[string]any{"type": "x", "ch": make(chan int)}, ""},
+		{"invalid vault address", ScheduleCancelAction{Type: "scheduleCancel"}, "0xzz"},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			var signErr error
+
+			require.NotPanics(t, func() {
+				_, signErr = SignL1Action(privateKey, tc.action, tc.vault, goldenNonce, nil, false)
+			})
+
+			require.Error(t, signErr)
 		})
 	}
 }

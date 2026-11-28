@@ -20,10 +20,13 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
-func addressToBytes(address string) []byte {
+func addressToBytes(address string) ([]byte, error) {
 	address = strings.TrimPrefix(address, "0x")
-	bytes, _ := hex.DecodeString(address)
-	return bytes
+	bytes, err := hex.DecodeString(address)
+	if err != nil {
+		return nil, fmt.Errorf("invalid address %q: %w", address, err)
+	}
+	return bytes, nil
 }
 
 // convertStr16ToStr8 converts msgpack str16 (0xda + 2 byte length) to str8 (0xd9 + 1 byte length)
@@ -311,7 +314,7 @@ func readLen(data []byte, pos, size int) int {
 	}
 }
 
-func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) []byte {
+func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int64) ([]byte, error) {
 	var buf bytes.Buffer
 	enc := msgpack.NewEncoder(&buf)
 	// CRITICAL: Do NOT use SetSortMapKeys(true) - Python preserves insertion order
@@ -320,7 +323,7 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	err := enc.Encode(action)
 	if err != nil {
-		panic(fmt.Sprintf("failed to marshal action: %v", err))
+		return nil, fmt.Errorf("failed to marshal action: %w", err)
 	}
 	data := buf.Bytes()
 
@@ -331,7 +334,7 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	// Add nonce as 8 bytes big endian
 	if nonce < 0 {
-		panic(fmt.Sprintf("nonce cannot be negative: %d", nonce))
+		return nil, fmt.Errorf("nonce cannot be negative: %d", nonce)
 	}
 	nonceBytes := make([]byte, 8)
 	binary.BigEndian.PutUint64(nonceBytes, uint64(nonce))
@@ -342,13 +345,17 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 		data = append(data, 0x00)
 	} else {
 		data = append(data, 0x01)
-		data = append(data, addressToBytes(vaultAddress)...)
+		vaultBytes, err := addressToBytes(vaultAddress)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, vaultBytes...)
 	}
 
 	// Add expires_after if provided
 	if expiresAfter != nil {
 		if *expiresAfter < 0 {
-			panic(fmt.Sprintf("expiresAfter cannot be negative: %d", *expiresAfter))
+			return nil, fmt.Errorf("expiresAfter cannot be negative: %d", *expiresAfter)
 		}
 		data = append(data, 0x00)
 		expiresAfterBytes := make([]byte, 8)
@@ -360,7 +367,7 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 	hash := crypto.Keccak256(data)
 	// fmt.Printf("   Msgpack data: %s\n", hex.EncodeToString(data))
 	// fmt.Printf("   Action hash: %s\n", hex.EncodeToString(hash))
-	return hash
+	return hash, nil
 }
 
 func constructPhantomAgent(hash []byte, isMainnet bool) map[string]any {
@@ -695,7 +702,10 @@ func SignL1Action(
 	isMainnet bool,
 ) (SignatureResult, error) {
 	// Step 1: Create action hash
-	hash := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	hash, err := actionHash(action, vaultAddress, timestamp, expiresAfter)
+	if err != nil {
+		return SignatureResult{}, err
+	}
 	// fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
 
 	// Step 2: Construct phantom agent
