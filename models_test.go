@@ -624,3 +624,11 @@ func TestSpotAssetCtx_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, response[1], &[]SpotAssetCtx{})
 	})
 }
+
+func TestOutcomeMeta_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeMeta")
+
+		assertKeysCovered(t, raw, &OutcomeMeta{})
+	})
+}

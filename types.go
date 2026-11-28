@@ -835,16 +835,28 @@ type VaultDetails struct {
 	AlwaysCloseOnWithdraw bool               `json:"alwaysCloseOnWithdraw"`
 }
 
+//easyjson:skip
 type OutcomeMeta struct {
 	Outcomes  []OutcomeMetaOutcome  `json:"outcomes"`
 	Questions []OutcomeMetaQuestion `json:"questions"`
+	Deployers []OutcomeMetaDeployer `json:"deployers"`
+	FeeScale  string                `json:"feeScale"`
+}
+
+//easyjson:skip
+type OutcomeMetaDeployer struct {
+	Deployer     string                     `json:"deployer"`
+	SubDeployers []Tuple2[string, []string] `json:"subDeployers"`
+	Venue        string                     `json:"venue"`
 }
 type OutcomeMetaOutcome struct {
-	Outcome     int               `json:"outcome"`
-	Name        string            `json:"name"`
-	Description string            `json:"description"`
-	SideSpecs   []OutcomeSideSpec `json:"sideSpecs"`
-	QuoteToken  string            `json:"quoteToken"`
+	Outcome          int               `json:"outcome"`
+	Name             string            `json:"name"`
+	Description      string            `json:"description"`
+	SideSpecs        []OutcomeSideSpec `json:"sideSpecs"`
+	QuoteToken       string            `json:"quoteToken"`
+	Venue            string            `json:"venue,omitempty"`
+	DeployerFeeScale string            `json:"deployerFeeScale,omitempty"`
 }
 type OutcomeSideSpec struct {
 	Name string `json:"name"`
