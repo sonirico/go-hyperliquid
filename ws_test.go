@@ -258,3 +258,11 @@ func TestWsMessage_ActiveAssetCtx(t *testing.T) {
 		assertKeysCovered(t, raw, &ActiveAssetCtx{})
 	})
 }
+
+func TestWsMessage_AllDexsAssetCtxs(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allDexsAssetCtxs")
+
+		assertKeysCovered(t, raw, &WsAllDexsAssetCtxs{})
+	})
+}
