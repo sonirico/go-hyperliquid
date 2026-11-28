@@ -2581,3 +2581,38 @@ func (e *Exchange) AgentSendAsset(
 
 	return actionResponse(resp)
 }
+
+// CDeposit deposits into the staking balance
+func (e *Exchange) CDeposit(ctx context.Context, wei uint64) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := map[string]any{
+		"type":  "cDeposit",
+		"wei":   wei,
+		"nonce": big.NewInt(nonce),
+	}
+
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "wei", Type: "uint64"},
+		{Name: "nonce", Type: "uint64"},
+	}
+
+	sig, err := e.signUserSignedAction(
+		ctx,
+		action,
+		payloadTypes,
+		"HyperliquidTransaction:CDeposit",
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

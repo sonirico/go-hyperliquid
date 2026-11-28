@@ -595,6 +595,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.AgentSendAsset(ctx, goldenOther, "", "spot", goldenToken, 1.5)
 			return err
 		}, direct: signGoldenAgentSendAsset},
+		{name: "cDeposit", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CDeposit(ctx, 100000000)
+			return err
+		}},
 	}
 }
 
