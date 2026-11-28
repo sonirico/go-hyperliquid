@@ -458,6 +458,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeploySetSubDeployers(ctx, "test", []SubDeployer{{Variant: "setOracle", User: goldenOther, Allowed: true}})
 			return err
 		}},
+		{name: "perp_deploy_set_funding_multipliers", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetFundingMultipliers(ctx, map[string]string{"test:X": "1.0"})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

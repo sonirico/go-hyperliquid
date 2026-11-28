@@ -1934,6 +1934,17 @@ func (e *Exchange) postPerpDeployAction(
 	return &result, nil
 }
 
+func sortedPerpDeployPairs[V any](values map[string]V) [][]any {
+	pairs := make([][]any, 0, len(values))
+	for coin, value := range values {
+		pairs = append(pairs, []any{coin, value})
+	}
+	sort.Slice(pairs, func(i, j int) bool {
+		return pairs[i][0].(string) < pairs[j][0].(string)
+	})
+	return pairs
+}
+
 // PerpDeploySetFeeRecipient sets the fee recipient of a builder-deployed DEX
 func (e *Exchange) PerpDeploySetFeeRecipient(
 	ctx context.Context,
@@ -1971,6 +1982,19 @@ func (e *Exchange) PerpDeploySetSubDeployers(
 	action := PerpDeploySetSubDeployersAction{
 		Type:            "perpDeploy",
 		SetSubDeployers: SetSubDeployers{Dex: dex, SubDeployers: subDeployers},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
+// PerpDeploySetFundingMultipliers sets the funding multipliers of builder-deployed DEX coins
+func (e *Exchange) PerpDeploySetFundingMultipliers(
+	ctx context.Context,
+	values map[string]string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeploySetFundingMultipliersAction{
+		Type:                  "perpDeploy",
+		SetFundingMultipliers: sortedPerpDeployPairs(values),
 	}
 
 	return e.postPerpDeployAction(ctx, action)

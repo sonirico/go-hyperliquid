@@ -521,6 +521,11 @@ type PerpDeploySetSubDeployersAction struct {
 	SetSubDeployers SetSubDeployers `json:"setSubDeployers" msgpack:"setSubDeployers"`
 }
 
+type PerpDeploySetFundingMultipliersAction struct {
+	Type                  string  `json:"type"                  msgpack:"type"`
+	SetFundingMultipliers [][]any `json:"setFundingMultipliers" msgpack:"setFundingMultipliers"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err
