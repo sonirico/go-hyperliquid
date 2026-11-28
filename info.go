@@ -776,6 +776,22 @@ func (i *Info) UserStakingRewards(ctx context.Context, address string) ([]Stakin
 	return result, nil
 }
 
+func (i *Info) DelegatorHistory(ctx context.Context, user string) ([]DelegatorHistoryEntry, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "delegatorHistory",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch delegator history: %w", err)
+	}
+
+	var result []DelegatorHistoryEntry
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal delegator history: %w", err)
+	}
+	return result, nil
+}
+
 func (i *Info) QueryOrderByOid(
 	ctx context.Context,
 	user string,

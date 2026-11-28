@@ -576,6 +576,12 @@ type StakingReward struct {
 	TotalAmount string `json:"totalAmount"`
 }
 
+type DelegatorHistoryEntry struct {
+	Time  int64           `json:"time"`
+	Hash  string          `json:"hash"`
+	Delta json.RawMessage `json:"delta"`
+}
+
 type ReferralReferredBy struct {
 	Code     string `json:"code"`
 	Referrer string `json:"referrer"`

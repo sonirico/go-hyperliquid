@@ -171,3 +171,18 @@ func TestQueryVaultDetails_OmitsEmptyUser(t *testing.T) {
 		"vaultAddress": vault,
 	}, *req)
 }
+
+func TestInfo_DelegatorHistory(t *testing.T) {
+	const user = "0x000000000056f99d36b6f2e0c51fd41496bbacb8"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "delegatorHistory")))
+
+	history, err := info.DelegatorHistory(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "delegatorHistory",
+		"user": user,
+	}, *req)
+	require.Len(t, history, 20)
+}
