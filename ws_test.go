@@ -828,3 +828,165 @@ func TestSacSubscription(t *testing.T) {
 		require.NotEmpty(t, msg)
 	})
 }
+
+type testWsPostFrame struct {
+	Method  string `json:"method"`
+	ID      int64  `json:"id"`
+	Request struct {
+		Type    string          `json:"type"`
+		Payload json.RawMessage `json:"payload"`
+	} `json:"request"`
+}
+
+// newTestWsPostClient connects a client to a fake ws server that hands every
+// post frame to handle. The server closes the connection if handle fails.
+func newTestWsPostClient(
+	t *testing.T,
+	handle func(conn *websocket.Conn, frame testWsPostFrame) error,
+) *WebsocketClient {
+	t.Helper()
+
+	upgrader := websocket.Upgrader{
+		CheckOrigin: func(*http.Request) bool { return true },
+	}
+
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		defer func() { _ = conn.Close() }()
+		for {
+			var frame testWsPostFrame
+			if err := conn.ReadJSON(&frame); err != nil {
+				return
+			}
+			if err := handle(conn, frame); err != nil {
+				return
+			}
+		}
+	}))
+	t.Cleanup(server.Close)
+
+	ctx, cancel := context.WithTimeout(context.Background(), testWsWait)
+	t.Cleanup(cancel)
+	client := NewWebsocketClient(server.URL)
+	require.NoError(t, client.Connect(ctx))
+	t.Cleanup(func() { require.NoError(t, client.Close()) })
+
+	return client
+}
+
+func writeTestWsPostResponse(
+	conn *websocket.Conn,
+	id int64,
+	responseType string,
+	payload json.RawMessage,
+) error {
+	return conn.WriteJSON(map[string]any{
+		"channel": ChannelPost,
+		"data": map[string]any{
+			"id":       id,
+			"response": map[string]any{"type": responseType, "payload": payload},
+		},
+	})
+}
+
+func echoTestWsPost(conn *websocket.Conn, frame testWsPostFrame) error {
+	return writeTestWsPostResponse(conn, frame.ID, frame.Request.Type, frame.Request.Payload)
+}
+
+func TestWsPost_Info(t *testing.T) {
+	t.Run("sends the request and returns the response payload", func(t *testing.T) {
+		frames := make(chan testWsPostFrame, 1)
+		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
+			frames <- frame
+			return writeTestWsPostResponse(conn, frame.ID, "info", json.RawMessage(`{"mids":{"BTC":"1"}}`))
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "allMids"})
+
+		require.NoError(t, err)
+		require.JSONEq(t, `{"mids":{"BTC":"1"}}`, string(got))
+		frame := <-frames
+		require.Equal(t, "post", frame.Method)
+		require.Equal(t, "info", frame.Request.Type)
+		require.JSONEq(t, `{"type":"allMids"}`, string(frame.Request.Payload))
+	})
+}
+
+func TestWsPost_Error(t *testing.T) {
+	t.Run("turns an error response into an error", func(t *testing.T) {
+		client := newTestWsPostClient(t, func(conn *websocket.Conn, frame testWsPostFrame) error {
+			return writeTestWsPostResponse(conn, frame.ID, "error", json.RawMessage(`"422 Failed to deserialize"`))
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "nope"})
+
+		require.EqualError(t, err, "422 Failed to deserialize")
+		require.Nil(t, got)
+	})
+}
+
+func TestWsPost_ContextCancel(t *testing.T) {
+	t.Run("returns when the context is cancelled and forgets the request", func(t *testing.T) {
+		received := make(chan struct{}, 1)
+		client := newTestWsPostClient(t, func(_ *websocket.Conn, _ testWsPostFrame) error {
+			received <- struct{}{}
+			return nil
+		})
+		ctx, cancel := context.WithCancel(context.Background())
+		go func() {
+			<-received
+			cancel()
+		}()
+
+		got, err := client.Post(ctx, "info", map[string]string{"type": "allMids"})
+
+		require.ErrorIs(t, err, context.Canceled)
+		require.Nil(t, got)
+		client.postMu.Lock()
+		defer client.postMu.Unlock()
+		require.Empty(t, client.pendingPosts)
+	})
+}
+
+func TestWsPost_ConcurrentIDs(t *testing.T) {
+	t.Run("routes each response to its own request", func(t *testing.T) {
+		const posts = 20
+		client := newTestWsPostClient(t, echoTestWsPost)
+		results := make([]json.RawMessage, posts)
+		errs := make([]error, posts)
+		var wg sync.WaitGroup
+
+		for i := range posts {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				results[i], errs[i] = client.Post(
+					context.Background(), "info", map[string]int{"n": i})
+			}()
+		}
+		wg.Wait()
+
+		for i := range posts {
+			require.NoError(t, errs[i])
+			want, err := json.Marshal(map[string]int{"n": i})
+			require.NoError(t, err)
+			require.JSONEq(t, string(want), string(results[i]))
+		}
+	})
+}
+
+func TestWsPost_ConnectionClosed(t *testing.T) {
+	t.Run("fails the pending request when the connection drops", func(t *testing.T) {
+		client := newTestWsPostClient(t, func(_ *websocket.Conn, _ testWsPostFrame) error {
+			return errors.New("drop the connection")
+		})
+
+		got, err := client.Post(context.Background(), "info", map[string]string{"type": "allMids"})
+
+		require.ErrorIs(t, err, errWsConnectionClosed)
+		require.Nil(t, got)
+	})
+}

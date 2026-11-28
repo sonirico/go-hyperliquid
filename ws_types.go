@@ -37,12 +37,34 @@ const (
 	ChannelL2                          string = "l2"
 	ChannelPac                         string = "pac"
 	ChannelSac                         string = "sac"
+	ChannelPost                        string = "post"
 	ChannelError                       string = "error"
 )
 
 type wsMessage struct {
 	Channel string          `json:"channel"`
 	Data    json.RawMessage `json:"data"`
+}
+
+type wsPostCommand struct {
+	Method  string        `json:"method"`
+	ID      int64         `json:"id"`
+	Request wsPostRequest `json:"request"`
+}
+
+type wsPostRequest struct {
+	Type    string `json:"type"`
+	Payload any    `json:"payload"`
+}
+
+type wsPostMessage struct {
+	ID       int64          `json:"id"`
+	Response wsPostResponse `json:"response"`
+}
+
+type wsPostResponse struct {
+	Type    string          `json:"type"`
+	Payload json.RawMessage `json:"payload"`
 }
 
 type wsCommand struct {

@@ -42,6 +42,13 @@ func (e WsServerError) Error() string {
 	return fmt.Sprintf("websocket server error: %s", e.Message)
 }
 
+var errWsConnectionClosed = errors.New("websocket connection closed")
+
+type wsPostResult struct {
+	Response wsPostResponse
+	Err      error
+}
+
 type Subscription struct {
 	ID      string
 	Payload any
@@ -57,6 +64,9 @@ type WebsocketClient struct {
 	subscribers           map[string]*uniqSubscriber
 	msgDispatcherRegistry map[string]msgDispatcher
 	nextSubID             atomic.Int64
+	nextPostID            atomic.Int64
+	postMu                sync.Mutex
+	pendingPosts          map[int64]chan wsPostResult
 	done                  chan struct{}
 	closeOnce             sync.Once
 	reconnectWait         time.Duration // initial wait between reconnect attempts
@@ -122,6 +132,7 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		reconnectWait: time.Second,
 		readTimeout:   wsReadTimeout,
 		subscribers:   make(map[string]*uniqSubscriber),
+		pendingPosts:  make(map[int64]chan wsPostResult),
 		msgDispatcherRegistry: map[string]msgDispatcher{
 			ChannelPong:           NewPongDispatcher(),
 			ChannelTrades:         NewMsgDispatcher[Trades](ChannelTrades),
@@ -163,6 +174,12 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 		func(_ []*uniqSubscriber, msg wsMessage) error {
 			cli.handleServerError(msg)
 			return nil
+		},
+	)
+
+	cli.msgDispatcherRegistry[ChannelPost] = msgDispatcherFunc[any](
+		func(_ []*uniqSubscriber, msg wsMessage) error {
+			return cli.handlePostResponse(msg)
 		},
 	)
 
@@ -287,6 +304,8 @@ func (w *WebsocketClient) readPump(ctx context.Context) {
 		}
 		w.mu.Unlock()
 
+		w.failPendingPosts(errWsConnectionClosed)
+
 		if shouldReconnect {
 			w.reconnect(ctx)
 		}
@@ -366,6 +385,34 @@ func (w *WebsocketClient) dispatch(msg wsMessage) error {
 	w.mu.RUnlock()
 
 	return dispatcher.Dispatch(subscribers, msg)
+}
+
+func (w *WebsocketClient) handlePostResponse(msg wsMessage) error {
+	var post wsPostMessage
+	if err := json.Unmarshal(msg.Data, &post); err != nil {
+		return fmt.Errorf("failed to unmarshal post response: %w", err)
+	}
+
+	w.postMu.Lock()
+	respCh, ok := w.pendingPosts[post.ID]
+	delete(w.pendingPosts, post.ID)
+	w.postMu.Unlock()
+	if !ok {
+		return fmt.Errorf("no pending post request with id: %d", post.ID)
+	}
+
+	respCh <- wsPostResult{Response: post.Response}
+	return nil
+}
+
+func (w *WebsocketClient) failPendingPosts(err error) {
+	w.postMu.Lock()
+	defer w.postMu.Unlock()
+
+	for id, respCh := range w.pendingPosts {
+		respCh <- wsPostResult{Err: err}
+		delete(w.pendingPosts, id)
+	}
 }
 
 // handleServerError logs a message received on the "error" channel and passes
