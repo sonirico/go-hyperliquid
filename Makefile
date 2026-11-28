@@ -7,7 +7,7 @@ GOGENERATE=$(GOCMD) generate
 
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
 
-.PHONY: all test coverage deps generate lint fmt vet check examples help
+.PHONY: all test verify-live coverage deps generate lint fmt vet check examples help
 
 all: deps generate fmt vet lint test ## Run all development tasks
 
@@ -23,6 +23,9 @@ test-verbose: ## Run tests with verbose output
 
 test-short: ## Run short tests only
 	$(GOTEST) -short $(shell go list ./... | grep -v examples)
+
+verify-live: ## Check signatures against the testnet (network, build tag live)
+	$(GOTEST) -tags live -run TestLive -count=1 .
 
 coverage: ## Run tests with coverage
 	$(GOTEST) -race -coverprofile=coverage.out -covermode=atomic $(shell go list ./... | grep -v examples)
