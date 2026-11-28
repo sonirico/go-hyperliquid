@@ -2881,30 +2881,19 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid22(out *jwriter.Writer,
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.Dex != "" {
+	{
 		const prefix string = ",\"dex\":"
-		first = false
 		out.RawString(prefix[1:])
 		out.String(string(in.Dex))
 	}
 	if in.User != "" {
 		const prefix string = ",\"user\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		out.String(string(in.User))
 	}
 	{
 		const prefix string = ",\"clearinghouseState\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		(in.ClearinghouseState).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')

@@ -149,7 +149,7 @@ type (
 	}
 
 	ClearinghouseStateMessage struct {
-		Dex                string             `json:"dex,omitempty"`
+		Dex                string             `json:"dex"`
 		User               string             `json:"user,omitempty"`
 		ClearinghouseState ClearinghouseState `json:"clearinghouseState"`
 	}

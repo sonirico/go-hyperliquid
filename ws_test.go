@@ -284,3 +284,11 @@ func TestWsMessage_FastAssetCtxs(t *testing.T) {
 		assertKeysCovered(t, raw, &map[string]FastAssetCtx{})
 	})
 }
+
+func TestWsMessage_ClearinghouseState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_clearinghouseState")
+
+		assertKeysCovered(t, raw, &ClearinghouseStateMessage{})
+	})
+}
