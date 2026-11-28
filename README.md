@@ -194,14 +194,21 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/cryptokvc">
+                    <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
+                    <br />
+                    <sub><b>CryptoKVC</b></sub>
+                </a>
+            </td>
+		</tr>
+		<tr>
+            <td align="center">
                 <a href="https://github.com/Saundr21">
                     <img src="https://avatars.githubusercontent.com/u/144389161?v=4" width="100;" alt="Saundr21"/>
                     <br />
                     <sub><b>Saunder</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/coder-ishan">
                     <img src="https://avatars.githubusercontent.com/u/59679369?v=4" width="100;" alt="coder-ishan"/>
@@ -214,13 +221,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <img src="https://avatars.githubusercontent.com/u/138504730?v=4" width="100;" alt="KILLY000"/>
                     <br />
                     <sub><b>Vernon Stokes</b></sub>
-                </a>
-            </td>
-            <td align="center">
-                <a href="https://github.com/cryptokvc">
-                    <img src="https://avatars.githubusercontent.com/u/84129150?v=4" width="100;" alt="cryptokvc"/>
-                    <br />
-                    <sub><b>CryptoKVC</b></sub>
                 </a>
             </td>
             <td align="center">
