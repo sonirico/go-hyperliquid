@@ -96,6 +96,16 @@ func (OutcomeMetaUpdates) Key() string {
 	return keyOutcomeMetaUpdates()
 }
 
+func (l WsL2) Key() string {
+	if l.S != nil {
+		return keyL2(l.S.Coin)
+	}
+	if l.U != nil {
+		return keyL2(l.U.Coin)
+	}
+	return keyL2("")
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

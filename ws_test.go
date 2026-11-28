@@ -397,6 +397,14 @@ func TestWsMessage_OutcomeMetaUpdates(t *testing.T) {
 	})
 }
 
+func TestWsMessage_L2(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_l2")
+
+		assertKeysCovered(t, raw, &WsL2{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -698,5 +706,61 @@ func TestOutcomeMetaUpdatesSubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.Len(t, msg, 4)
 		require.Equal(t, 1, msg[0].OutcomeCreated.Outcome)
+	})
+}
+
+func TestWsL2_UnmarshalJSON(t *testing.T) {
+	const diff = `{"c":"BTC","t":1,"l":[[{"p":"10","s":"2"}],[]],"r":[[],[0]]}`
+	want := WsL2Diff{
+		Coin:    "BTC",
+		Time:    1,
+		Levels:  [][]WsL2LevelUpdate{{{Px: "10", Sz: "2"}}, {}},
+		Removed: [][]int{{}, {0}},
+	}
+
+	t.Run("decodes an uncompressed diff", func(t *testing.T) {
+		var got WsL2
+
+		require.NoError(t, json.Unmarshal([]byte(`{"u":`+diff+`}`), &got))
+
+		require.Equal(t, &want, got.U)
+		require.Nil(t, got.S)
+	})
+
+	t.Run("decodes a compressed diff", func(t *testing.T) {
+		var packed bytes.Buffer
+		writer, err := flate.NewWriter(&packed, flate.DefaultCompression)
+		require.NoError(t, err)
+		_, err = writer.Write([]byte(diff))
+		require.NoError(t, err)
+		require.NoError(t, writer.Close())
+		var got WsL2
+
+		require.NoError(t, json.Unmarshal(
+			[]byte(`{"c":"`+base64.StdEncoding.EncodeToString(packed.Bytes())+`"}`), &got))
+
+		require.Equal(t, &want, got.U)
+	})
+}
+
+func TestL2Subscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_l2"))
+		got := make(chan WsL2, 1)
+
+		_, err := f.client.L2(
+			L2SubscriptionParams{Coin: "BTC", NSigFigs: 5},
+			func(msg WsL2, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"l2","c":"BTC","s":5}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotNil(t, msg.S)
+		require.Equal(t, "BTC", msg.S.Coin)
 	})
 }

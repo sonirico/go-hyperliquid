@@ -34,6 +34,7 @@ const (
 	ChannelSpotState                   string = "spotState"
 	ChannelAllDexsClearinghouseState   string = "allDexsClearinghouseState"
 	ChannelOutcomeMetaUpdates          string = "outcomeMetaUpdates"
+	ChannelL2                          string = "l2"
 	ChannelError                       string = "error"
 )
 
@@ -255,6 +256,24 @@ type (
 		OutcomeSettled  *int                 `json:"outcomeSettled,omitempty"`
 		QuestionUpdated *OutcomeMetaQuestion `json:"questionUpdated,omitempty"`
 		QuestionSettled *int                 `json:"questionSettled,omitempty"`
+	}
+
+	//easyjson:skip
+	WsL2 struct {
+		S *L2Book   `json:"s,omitempty"`
+		U *WsL2Diff `json:"u,omitempty"`
+	}
+
+	WsL2Diff struct {
+		Coin    string              `json:"c"`
+		Time    int64               `json:"t"`
+		Levels  [][]WsL2LevelUpdate `json:"l"`
+		Removed [][]int             `json:"r"`
+	}
+
+	WsL2LevelUpdate struct {
+		Px string `json:"p"`
+		Sz string `json:"s"`
 	}
 
 	FillLiquidation struct {

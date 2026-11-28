@@ -1,6 +1,12 @@
 package hyperliquid
 
 import (
+	"bytes"
+	"compress/flate"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
 	"strings"
 
 	"github.com/sonirico/vago/fp"
@@ -97,6 +103,35 @@ func keyAllDexsClearinghouseState(user string) string {
 
 func keyOutcomeMetaUpdates() string {
 	return key(ChannelOutcomeMetaUpdates)
+}
+
+func keyL2(coin string) string {
+	return key(ChannelL2, coin)
+}
+
+// unmarshalCompressed decodes a base64 string holding a raw DEFLATE stream (RFC 1951, no zlib/gzip wrapper)
+// of JSON into v.
+func unmarshalCompressed(name string, data []byte, v any) error {
+	var b64 string
+	if err := json.Unmarshal(data, &b64); err != nil {
+		return fmt.Errorf("%s: data is not a string: %w", name, err)
+	}
+
+	compressed, err := base64.StdEncoding.DecodeString(b64)
+	if err != nil {
+		return fmt.Errorf("%s: base64 decode: %w", name, err)
+	}
+
+	raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(compressed)))
+	if err != nil {
+		return fmt.Errorf("%s: inflate: %w", name, err)
+	}
+
+	if err := json.Unmarshal(raw, v); err != nil {
+		return fmt.Errorf("%s: json decode: %w", name, err)
+	}
+
+	return nil
 }
 
 func keyBbo(coin string) string {

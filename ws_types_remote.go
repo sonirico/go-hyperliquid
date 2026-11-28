@@ -254,6 +254,22 @@ func (p remoteOutcomeMetaUpdatesSubscriptionPayload) Key() string {
 	return keyOutcomeMetaUpdates()
 }
 
+type remoteL2SubscriptionPayload struct {
+	Type     string `json:"type"`
+	Coin     string `json:"c"`
+	NSigFigs int    `json:"s,omitempty"`
+	Mantissa int    `json:"m,omitempty"`
+}
+
+func (p remoteL2SubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteL2SubscriptionPayload) Key() string {
+	// Deliberately exclude NSigFigs and Mantissa.
+	return keyL2(p.Coin)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`
