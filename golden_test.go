@@ -568,6 +568,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.Noop(ctx, goldenNonce)
 			return err
 		}},
+		{name: "agentSetAbstraction", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.AgentSetAbstraction(ctx, "u")
+			return err
+		}},
 	}
 }
 

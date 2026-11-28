@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "agentSetAbstraction",
+    "abstraction": "u"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x93874db7738dc23602081943a5ea8b37a394b06893aa21c8c44dd1dad59bdfc",
+    "s": "0x1c9120ce0f7db5789aff0ab3d2fba1089bbe429b90d1a2167aa91d380d730b12",
+    "v": 28
+  }
+}

@@ -2465,3 +2465,35 @@ func (e *Exchange) Noop(ctx context.Context, nonce int64) (json.RawMessage, erro
 
 	return actionResponse(resp)
 }
+
+// AgentSetAbstraction sets the account abstraction of the signing agent, abstraction is i, u or p
+func (e *Exchange) AgentSetAbstraction(
+	ctx context.Context,
+	abstraction string,
+) (json.RawMessage, error) {
+	nonce := e.nextNonce()
+
+	action := AgentSetAbstractionAction{
+		Type:        "agentSetAbstraction",
+		Abstraction: abstraction,
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}

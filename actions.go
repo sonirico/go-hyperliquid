@@ -661,3 +661,9 @@ type TopUpIsolatedOnlyMarginAction struct {
 type NoopAction struct {
 	Type string `json:"type" msgpack:"type"`
 }
+
+// AgentSetAbstractionAction represents agent set abstraction action, abstraction is i, u or p
+type AgentSetAbstractionAction struct {
+	Type        string `json:"type"        msgpack:"type"`
+	Abstraction string `json:"abstraction" msgpack:"abstraction"`
+}
