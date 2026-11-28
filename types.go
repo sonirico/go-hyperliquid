@@ -239,8 +239,10 @@ type SpotBalance struct {
 	EntryNtl string `json:"entryNtl"`
 }
 
+//easyjson:skip
 type SpotUserState struct {
-	Balances []SpotBalance `json:"balances"`
+	Balances                         []SpotBalance         `json:"balances"`
+	TokenToAvailableAfterMaintenance []Tuple2[int, string] `json:"tokenToAvailableAfterMaintenance"`
 }
 
 type MarginSummary struct {
