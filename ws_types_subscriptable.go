@@ -72,6 +72,10 @@ func (m WsUserNonFundingLedgerUpdates) Key() string {
 	return keyUserNonFundingLedgerUpdates(m.User)
 }
 
+func (m UserActiveAssetData) Key() string {
+	return keyActiveAssetData(m.User, m.Coin)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

@@ -349,6 +349,14 @@ func TestWsMessage_UserNonFundingLedgerUpdates(t *testing.T) {
 	})
 }
 
+func TestWsMessage_ActiveAssetData(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeAssetData")
+
+		assertKeysCovered(t, raw, &UserActiveAssetData{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -521,5 +529,26 @@ func TestUserNonFundingLedgerUpdatesSubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.True(t, msg.IsSnapshot)
 		require.NotEmpty(t, msg.NonFundingLedgerUpdates)
+	})
+}
+
+func TestActiveAssetDataSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_activeAssetData"))
+		got := make(chan UserActiveAssetData, 1)
+
+		_, err := f.client.ActiveAssetData(
+			ActiveAssetDataSubscriptionParams{User: testWsUser, Coin: "BTC"},
+			func(msg UserActiveAssetData, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"activeAssetData","user":"`+testWsUser+`","coin":"BTC"}`)
+		msg := requireTestWsMessage(t, got)
+		require.Equal(t, "BTC", msg.Coin)
 	})
 }

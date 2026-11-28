@@ -28,6 +28,7 @@ const (
 	ChannelWebData3                    string = "webData3"
 	ChannelUserFundings                string = "userFundings"
 	ChannelUserNonFundingLedgerUpdates string = "userNonFundingLedgerUpdates"
+	ChannelActiveAssetData             string = "activeAssetData"
 	ChannelError                       string = "error"
 )
 

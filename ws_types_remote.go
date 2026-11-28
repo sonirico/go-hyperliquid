@@ -176,6 +176,20 @@ func (p remoteUserNonFundingLedgerUpdatesSubscriptionPayload) Key() string {
 	return keyUserNonFundingLedgerUpdates(p.User)
 }
 
+type remoteActiveAssetDataSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+	Coin string `json:"coin"`
+}
+
+func (p remoteActiveAssetDataSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteActiveAssetDataSubscriptionPayload) Key() string {
+	return keyActiveAssetData(p.User, p.Coin)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`
