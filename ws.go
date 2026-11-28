@@ -136,7 +136,6 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 			ChannelAllMids:          NewMsgDispatcher[AllMids](ChannelAllMids),
 			ChannelNotification:     NewMsgDispatcher[Notification](ChannelNotification),
 			ChannelOrderUpdates:     NewMsgDispatcher[WsOrders](ChannelOrderUpdates),
-			ChannelWebData2:         NewMsgDispatcher[WebData2](ChannelWebData2),
 			ChannelBbo:              NewMsgDispatcher[Bbo](ChannelBbo),
 			ChannelUserFills:        NewMsgDispatcher[WsOrderFills](ChannelUserFills),
 			ChannelSubResponse:      NewNoopDispatcher(),
