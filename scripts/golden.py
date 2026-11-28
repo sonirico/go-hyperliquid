@@ -354,6 +354,8 @@ cases = {
     "userOutcome_splitOutcome": lambda: l1({"type": "userOutcome", "splitOutcome": {"outcome": 1, "amount": "1.5"}}),
     "userOutcome_mergeOutcome": lambda: l1({"type": "userOutcome", "mergeOutcome": {"outcome": 1, "amount": "1.5"}}),
     "userOutcome_mergeOutcome_nilAmount": lambda: l1({"type": "userOutcome", "mergeOutcome": {"outcome": 1, "amount": None}}),
+    "userOutcome_mergeQuestion": lambda: l1({"type": "userOutcome", "mergeQuestion": {"question": 1, "amount": "1.5"}}),
+    "userOutcome_mergeQuestion_nilAmount": lambda: l1({"type": "userOutcome", "mergeQuestion": {"question": 1, "amount": None}}),
 }
 
 os.makedirs(out_dir, exist_ok=True)

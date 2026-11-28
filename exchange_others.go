@@ -2817,3 +2817,45 @@ func (e *Exchange) UserOutcomeMerge(
 
 	return actionResponse(resp)
 }
+
+// UserOutcomeMergeQuestion merges the outcomes of a question, all of them when amount is nil
+func (e *Exchange) UserOutcomeMergeQuestion(
+	ctx context.Context,
+	question int,
+	amount *float64,
+) (json.RawMessage, error) {
+	var amountWire *string
+	if amount != nil {
+		wireValue, err := floatToWire(*amount)
+		if err != nil {
+			return nil, fmt.Errorf("invalid amount: %w", err)
+		}
+		amountWire = &wireValue
+	}
+
+	nonce := e.nextNonce()
+
+	action := UserOutcomeAction{
+		Type:          "userOutcome",
+		MergeQuestion: &MergeQuestionAction{Question: question, Amount: amountWire},
+	}
+
+	sig, err := e.signL1Action(
+		ctx,
+		action,
+		e.vault,
+		nonce,
+		e.expiresAfter,
+		e.client.baseURL == MainnetAPIURL,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
+	if err != nil {
+		return nil, err
+	}
+
+	return actionResponse(resp)
+}
