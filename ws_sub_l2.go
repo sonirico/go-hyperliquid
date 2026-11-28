@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// The data is a snapshot under s, a diff under u or a compressed diff under c, see unmarshalCompressed.
+// UnmarshalJSON handles data that is a snapshot under s, a diff under u or a compressed diff under c, see unmarshalCompressed.
 // A compressed diff is decoded into U.
 func (l *WsL2) UnmarshalJSON(data []byte) error {
 	var raw struct {

@@ -18,7 +18,7 @@ import (
 func TestNextNonce(t *testing.T) {
 	cases := []struct {
 		name          string
-		preLastOffset int64         // preLast = baseNow + preLastOffset
+		preLastOffset int64         // preLast is baseNow plus preLastOffset
 		advance       time.Duration // fake time to advance before calling nextNonce
 	}{
 		{

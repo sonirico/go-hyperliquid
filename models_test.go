@@ -359,7 +359,6 @@ func TestLevel_UnmarshalJSON_StringToFloat(t *testing.T) {
 }
 
 func TestLedgerDelta_UnmarshalJSON(t *testing.T) {
-
 	int64Ptr := func(i int64) *int64 { return &i }
 	boolPtr := func(b bool) *bool { return &b }
 

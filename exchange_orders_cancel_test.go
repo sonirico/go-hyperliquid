@@ -17,7 +17,7 @@ func TestCancelByCloid(t *testing.T) {
 		placeFirst bool
 		order      CreateOrderRequest
 		coin       string
-		// used for cancelling a non existent
+		// used for canceling a non existent
 		cloid   *string
 		wantErr string
 		record  bool
@@ -26,7 +26,6 @@ func TestCancelByCloid(t *testing.T) {
 	_ = loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	// t.Logf("Using private key: %s", key)
 
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)
@@ -107,10 +106,8 @@ func TestCancel(t *testing.T) {
 	_ = loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	// t.Logf("Using private key: %s", key)
 	exchange, err := newExchange(key, TestnetAPIURL)
 	require.NoError(t, err)
-	// t.Logf("Exchange wallet address: %s", exchange.accountAddr)
 
 	cases := []tc{
 		{

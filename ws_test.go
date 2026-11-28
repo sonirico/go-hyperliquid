@@ -945,7 +945,7 @@ func TestWsPost_Error(t *testing.T) {
 }
 
 func TestWsPost_ContextCancel(t *testing.T) {
-	t.Run("returns when the context is cancelled and forgets the request", func(t *testing.T) {
+	t.Run("returns when the context is canceled and forgets the request", func(t *testing.T) {
 		received := make(chan struct{}, 1)
 		client := newTestWsPostClient(t, func(_ *websocket.Conn, _ testWsPostFrame) error {
 			received <- struct{}{}

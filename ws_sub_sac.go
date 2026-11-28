@@ -2,7 +2,7 @@ package hyperliquid
 
 import "fmt"
 
-// Data for this type is compressed, see unmarshalCompressed.
+// UnmarshalJSON handles data that is compressed, see unmarshalCompressed.
 func (s *WsSac) UnmarshalJSON(data []byte) error {
 	var ctxs map[string]SacAssetCtx
 	if err := unmarshalCompressed("sac", data, &ctxs); err != nil {

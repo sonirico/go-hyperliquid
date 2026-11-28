@@ -177,7 +177,6 @@ func TestOrders(t *testing.T) {
 	_ = loadEnvClean(".env.testnet")
 
 	key := ent.Str("HL_PRIVATE_KEY", "")
-	// t.Logf("Using private key: %s", key)
 	invalidKey := "aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899"
 
 	exchange, err := newExchange(
@@ -185,7 +184,6 @@ func TestOrders(t *testing.T) {
 		TestnetAPIURL,
 	)
 	require.NoError(t, err)
-	// exchange.debug = true // Enable debug logging
 	t.Logf("Exchange wallet address: %s", exchange.accountAddr)
 
 	cases := []tc{

@@ -43,8 +43,6 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 	}
 	data := buf.Bytes()
 
-	// fmt.Printf("🔍 DEBUG actionHash msgpack: %s\n", hex.EncodeToString(data))
-
 	// Add nonce as 8 bytes big endian
 	if nonce < 0 {
 		return nil, fmt.Errorf("nonce cannot be negative: %d", nonce)
@@ -78,8 +76,6 @@ func actionHash(action any, vaultAddress string, nonce int64, expiresAfter *int6
 
 	// Return keccak256 hash
 	hash := crypto.Keccak256(data)
-	// fmt.Printf("   Msgpack data: %s\n", hex.EncodeToString(data))
-	// fmt.Printf("   Action hash: %s\n", hex.EncodeToString(hash))
 	return hash, nil
 }
 
@@ -419,7 +415,6 @@ func SignL1Action(
 	if err != nil {
 		return SignatureResult{}, err
 	}
-	// fmt.Printf("[DEBUG] SignL1Action - ActionHash: %x\n", hash)
 
 	// Step 2: Construct phantom agent
 	phantomAgent := constructPhantomAgent(hash, isMainnet)

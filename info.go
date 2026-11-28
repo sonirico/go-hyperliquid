@@ -251,7 +251,7 @@ func (i *Info) SpotMeta(ctx context.Context) (*SpotMeta, error) {
 	return &spotMeta, nil
 }
 
-// allPerpMetas Retrieve all perpetuals metadata (universe and margin tables)
+// AllPerpMetas retrieves all perpetuals metadata (universe and margin tables)
 func (i *Info) AllPerpMetas(ctx context.Context) ([]*Meta, error) {
 	payload := map[string]any{
 		"type": "allPerpMetas",
@@ -1163,7 +1163,7 @@ func (i *Info) SpotPairDeployAuctionStatus(ctx context.Context) (*PerpDeployAuct
 	return &result, nil
 }
 
-// portfolio returns the user's portfolio
+// Portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "portfolio",
@@ -1217,12 +1217,12 @@ func (i *Info) QueryUserVaultEquities(ctx context.Context, user string) ([]Vault
 // QueryVaultDetails returns the details of a vault.
 func (i *Info) QueryVaultDetails(
 	ctx context.Context,
-	VaultAddress string,
+	vaultAddress string,
 	user string,
 ) (*VaultDetails, error) {
 	payload := map[string]any{
 		"type":         "vaultDetails",
-		"vaultAddress": VaultAddress,
+		"vaultAddress": vaultAddress,
 	}
 	if user != "" {
 		payload["user"] = user
@@ -1391,7 +1391,7 @@ func (i *Info) PredictedFundings(ctx context.Context) ([]CoinPredictedFundings, 
 	return result, nil
 }
 
-// Retrieve extra agents associated with a user
+// ExtraAgents retrieves extra agents associated with a user
 func (i *Info) ExtraAgents(ctx context.Context, user string) ([]ExtraAgents, error) {
 	payload := map[string]any{
 		"type": "extraAgents",

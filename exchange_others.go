@@ -1775,7 +1775,7 @@ func buildSchemaWire(schema *PerpDexSchemaInput) *RegisterAssetSchema {
 	return wire
 }
 
-// PerpHaltTrading halts or unhalts trading for a builder-deployed DEX
+// PerpDeployHaltTrading halts or unhalts trading for a builder-deployed DEX
 func (e *Exchange) PerpDeployHaltTrading(
 	ctx context.Context,
 	coin string,
@@ -2442,7 +2442,7 @@ func (e *Exchange) UserSetAbstraction(
 	return &result, nil
 }
 
-// For the default perp dex use the empty string "" as name. For spot use "spot".
+// SendAsset transfers an asset between accounts or dexes. For the default perp dex use the empty string "" as name. For spot use "spot".
 // Token must match the collateral token if transferring to or from a perp dex.
 func (e *Exchange) SendAsset(
 	ctx context.Context,
@@ -2508,7 +2508,7 @@ func (e *Exchange) SendAsset(
 	return &result, nil
 }
 
-// Borrow, repay, supply, or withdraw HIP-2 borrow/lend assets
+// BorrowLend borrows, repays, supplies, or withdraws HIP-2 borrow/lend assets
 func (e *Exchange) BorrowLend(
 	ctx context.Context,
 	amount float64,

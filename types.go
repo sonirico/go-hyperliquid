@@ -94,7 +94,7 @@ type MetaAndAssetCtxsParams struct {
 	Dex *string
 }
 
-// This type has no JSON annotation because it cannot be directly unmarshalled from the response
+// MetaAndAssetCtxs has no JSON annotation because it cannot be directly unmarshalled from the response
 type MetaAndAssetCtxs struct {
 	Meta
 	Ctxs []AssetCtx
@@ -141,7 +141,7 @@ type SpotAssetCtx struct {
 	DayBaseVlm        string  `json:"dayBaseVlm"`
 }
 
-// This type has no JSON annotation because it cannot be directly unmarshalled from the response
+// SpotMetaAndAssetCtxs has no JSON annotation because it cannot be directly unmarshalled from the response
 type SpotMetaAndAssetCtxs struct {
 	Meta SpotMeta
 	Ctxs []SpotAssetCtx

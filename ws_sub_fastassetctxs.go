@@ -2,7 +2,7 @@ package hyperliquid
 
 import "fmt"
 
-// Data for this type is compressed, decode the base64 then uncompress (RFC 1951, raw — no zlib/gzip wrapper).
+// UnmarshalJSON handles data that is compressed: decode the base64 then uncompress (RFC 1951, raw — no zlib/gzip wrapper).
 func (w *WsFastAssetCtxs) UnmarshalJSON(data []byte) error {
 	var ctxs map[string]FastAssetCtx
 	if err := unmarshalCompressed("fastAssetCtxs", data, &ctxs); err != nil {
