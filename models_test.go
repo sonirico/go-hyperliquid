@@ -672,3 +672,11 @@ func TestSubAccount_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &[]SubAccount{})
 	})
 }
+
+func TestExtraAgents_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "extraAgents")
+
+		assertKeysCovered(t, raw, &[]ExtraAgents{})
+	})
+}
