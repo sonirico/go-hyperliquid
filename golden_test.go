@@ -24,6 +24,7 @@ const (
 	goldenAgentKey = "0000000000000000000000000000000000000000000000000000000000000002"
 	goldenNonce    = int64(1700000000000)
 	goldenOther    = "0x1111111111111111111111111111111111111111"
+	goldenMixed    = "0xAbCdEf1111111111111111111111111111111111"
 	goldenToken    = "USDC:0x6d1e7cde53ba9467b783cb7c530ce054"
 	goldenCloid    = "0x00000000000000000000000000000001"
 )
@@ -366,6 +367,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeployUserGenesis(
 				ctx, 1, [][2]string{{goldenOther, "100"}}, []SpotDeployExistingTokenWei{{Token: 0, Wei: "50"}},
 			)
+			return err
+		}},
+		{name: "spotDeploy_userGenesis_mixedCase", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployUserGenesis(ctx, 1, [][2]string{{goldenMixed, "100"}}, nil)
 			return err
 		}},
 		{name: "spotDeploy_enableFreezePrivilege", call: func(ctx context.Context, ex *Exchange) error {

@@ -1294,6 +1294,11 @@ func (e *Exchange) SpotDeployUserGenesis(
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
+	users := make([][2]string, len(userAndWei))
+	for i, item := range userAndWei {
+		users[i] = [2]string{strings.ToLower(item[0]), item[1]}
+	}
+
 	existing := make([][2]any, len(existingTokenAndWei))
 	for i, item := range existingTokenAndWei {
 		existing[i] = [2]any{item.Token, item.Wei}
@@ -1303,7 +1308,7 @@ func (e *Exchange) SpotDeployUserGenesis(
 		Type: "spotDeploy",
 		UserGenesis: &SpotDeployUserGenesis{
 			Token:               token,
-			UserAndWei:          userAndWei,
+			UserAndWei:          users,
 			ExistingTokenAndWei: existing,
 		},
 	}

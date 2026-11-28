@@ -18,6 +18,7 @@ KEY = "0x0123456789012345678901234567890123456789012345678901234567890123"
 AGENT_KEY_HEX = "00" * 31 + "02"
 NONCE = 1700000000000
 OTHER = "0x1111111111111111111111111111111111111111"
+MIXED = "0xAbCdEf1111111111111111111111111111111111"
 TOKEN = "USDC:0x6d1e7cde53ba9467b783cb7c530ce054"
 CLOID = "0x00000000000000000000000000000001"
 LIMIT_GTC = {"limit": {"tif": "Gtc"}}
@@ -186,6 +187,7 @@ cases = {
     "twap_cancel": lambda: l1({"type": "twapCancel", "a": 0, "t": 77738308}),
     "spotDeploy_registerToken2": lambda: ex.spot_deploy_register_token("TKN", 2, 8, 1000000, "Token"),
     "spotDeploy_userGenesis": lambda: ex.spot_deploy_user_genesis(1, [(OTHER, "100")], [(0, "50")]),
+    "spotDeploy_userGenesis_mixedCase": lambda: ex.spot_deploy_user_genesis(1, [(MIXED, "100")], []),
     "spotDeploy_enableFreezePrivilege": lambda: ex.spot_deploy_enable_freeze_privilege(1),
     "spotDeploy_freezeUser": lambda: ex.spot_deploy_freeze_user(1, OTHER, True),
     "spotDeploy_revokeFreezePrivilege": lambda: ex.spot_deploy_revoke_freeze_privilege(1),
