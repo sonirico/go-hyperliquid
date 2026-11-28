@@ -364,12 +364,20 @@ type ConvertToMultiSigUserAction struct {
 	Nonce   int64  `json:"nonce"   msgpack:"nonce"`
 }
 
-// MultiSigAction represents multi-signature action
+// MultiSigPayload represents the payload of a multi-signature action
+type MultiSigPayload struct {
+	MultiSigUser string `json:"multiSigUser" msgpack:"multiSigUser"`
+	OuterSigner  string `json:"outerSigner"  msgpack:"outerSigner"`
+	Action       any    `json:"action"       msgpack:"action"`
+}
+
+// MultiSigAction represents multi-signature action. The type is not part of the
+// msgpack encoding because the signature covers the action without it
 type MultiSigAction struct {
-	Type       string         `json:"type"       msgpack:"type"`
-	Action     map[string]any `json:"action"     msgpack:"action"`
-	Signers    []string       `json:"signers"    msgpack:"signers"`
-	Signatures []string       `json:"signatures" msgpack:"signatures"`
+	Type             string            `json:"type"             msgpack:"-"`
+	SignatureChainId string            `json:"signatureChainId" msgpack:"signatureChainId"`
+	Signatures       []SignatureResult `json:"signatures"       msgpack:"signatures"`
+	Payload          MultiSigPayload   `json:"payload"          msgpack:"payload"`
 }
 
 type RegisterAssetSchema struct {

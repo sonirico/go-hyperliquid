@@ -1,0 +1,45 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "multiSig",
+    "signatureChainId": "0x66eee",
+    "signatures": [
+      {
+        "r": "0x01",
+        "s": "0x02",
+        "v": 27
+      }
+    ],
+    "payload": {
+      "multiSigUser": "0x1111111111111111111111111111111111111111",
+      "outerSigner": "0x14791697260e4c9a71f18484c9f997b308e59325",
+      "action": {
+        "type": "noop"
+      }
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:SendMultiSig",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "multiSigActionHash",
+      "type": "bytes32"
+    },
+    {
+      "name": "nonce",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xfedcfd0bc17d255f4a4fc02e0809370ed4f0d386b2cda6a0b1bf4ca8a0ebb212",
+    "s": "0xa5ae12d03a60c9d8cc384e7ac1ea3ab399e9941698c78dc01ef5f9639c3762f",
+    "v": 27
+  }
+}

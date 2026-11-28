@@ -69,7 +69,11 @@ func TestLive(t *testing.T) {
 			t.Logf("method result: %v, response: %s", callErr, transport.response)
 
 			require.NotEmpty(t, transport.response, "nothing was posted")
-			require.Contains(t, strings.ToLower(transport.response), address)
+			want := address
+			if row.live != "" {
+				want = strings.ToLower(row.live)
+			}
+			require.Contains(t, strings.ToLower(transport.response), want)
 		})
 	}
 }

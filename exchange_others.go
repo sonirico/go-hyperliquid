@@ -2167,25 +2167,32 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 
 func (e *Exchange) MultiSig(
 	ctx context.Context,
-	action map[string]any,
-	signers []string,
-	signatures []string,
+	multiSigUser string,
+	action any,
+	signatures []SignatureResult,
+	nonce int64,
 ) (*MultiSigResponse, error) {
-	nonce := e.nextNonce()
-
-	multiSigAction := map[string]any{
-		"type":       "multiSig",
-		"action":     action,
-		"signers":    signers,
-		"signatures": signatures,
+	multiSigAction := MultiSigAction{
+		Type:             "multiSig",
+		SignatureChainId: "0x66eee",
+		Signatures:       signatures,
+		Payload: MultiSigPayload{
+			MultiSigUser: strings.ToLower(multiSigUser),
+			OuterSigner:  strings.ToLower(crypto.PubkeyToAddress(e.privateKey.PublicKey).Hex()),
+			Action:       action,
+		},
 	}
 
-	sig, err := e.signL1Action(
+	envelope, err := newMultiSigEnvelope(multiSigAction, e.vault, nonce, e.expiresAfter)
+	if err != nil {
+		return nil, err
+	}
+
+	sig, err := e.signUserSignedAction(
 		ctx,
-		multiSigAction,
-		e.vault,
-		nonce,
-		e.expiresAfter,
+		envelope,
+		multiSigEnvelopeTypes,
+		"HyperliquidTransaction:SendMultiSig",
 		e.client.baseURL == MainnetAPIURL,
 	)
 	if err != nil {

@@ -55,10 +55,13 @@ type goldenSigned struct {
 // the method signs with the raw private key and bypasses the injected signers,
 // or generates its own key, the golden test builds the wire action the way the
 // method does instead (direct). Actions that carry their own nonce use direct
-// because the nonce of a call cannot be fixed.
+// because the nonce of a call cannot be fixed. The live test looks for live in
+// the response instead of the signer address when the server rejects the action
+// before it recovers the signer.
 type goldenRow struct {
 	name   string
 	skip   string
+	live   string
 	call   func(ctx context.Context, ex *Exchange) error
 	direct func(pk *ecdsa.PrivateKey) (goldenSigned, error)
 }
@@ -176,6 +179,10 @@ func signGoldenAgent(pk *ecdsa.PrivateKey, name *string) (goldenSigned, error) {
 		Nonce:            goldenNonce,
 	}
 	return goldenSigned{action: action, signature: sig}, err
+}
+
+type goldenNoop struct {
+	Type string `json:"type" msgpack:"type"`
 }
 
 func signGoldenCreateVault(pk *ecdsa.PrivateKey) (goldenSigned, error) {
@@ -472,6 +479,12 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SendToEVMWithData(ctx, goldenToken, "1.5", "spot", goldenOther, "hex", 1337, 100000, "0xdeadbeef")
 			return err
 		}},
+		{name: "multiSig", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.MultiSig(
+				ctx, goldenOther, goldenNoop{Type: "noop"}, []SignatureResult{{R: "0x01", S: "0x02", V: 27}}, goldenNonce,
+			)
+			return err
+		}, live: "Invalid multi-sig outer signer"},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

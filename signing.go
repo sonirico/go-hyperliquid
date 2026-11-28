@@ -123,9 +123,9 @@ func l1Payload(phantomAgent map[string]any, isMainnet bool) apitypes.TypedData {
 
 // SignatureResult represents the structured signature result
 type SignatureResult struct {
-	R string `json:"r"`
-	S string `json:"s"`
-	V int    `json:"v"`
+	R string `json:"r" msgpack:"r"`
+	S string `json:"s" msgpack:"s"`
+	V int    `json:"v" msgpack:"v"`
 }
 
 // L1ActionSigner signs L1 actions (msgpack + phantom agent EIP-712).
@@ -741,30 +741,50 @@ func SignConvertToMultiSigUserAction(
 	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
 }
 
-type signMultiSigAction struct {
-	Type       string         `msgpack:"type"`
-	Action     map[string]any `msgpack:"action"`
-	Signers    []string       `msgpack:"signers"`
-	Signatures []string       `msgpack:"signatures"`
+var multiSigEnvelopeTypes = []apitypes.Type{
+	{Name: "hyperliquidChain", Type: "string"},
+	{Name: "multiSigActionHash", Type: "bytes32"},
+	{Name: "nonce", Type: "uint64"},
 }
 
-// SignMultiSigAction signs multi-signature action
-func SignMultiSigAction(
-	privateKey *ecdsa.PrivateKey,
-	innerAction map[string]any,
-	signers []string,
-	signatures []string,
-	timestamp int64,
-	isMainnet bool,
-) (SignatureResult, error) {
-	action := signMultiSigAction{
-		Type:       "multiSig",
-		Action:     innerAction,
-		Signers:    signers,
-		Signatures: signatures,
+func newMultiSigEnvelope(
+	action MultiSigAction,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
+) (map[string]any, error) {
+	hash, err := actionHash(action, vaultAddress, nonce, expiresAfter)
+	if err != nil {
+		return nil, err
 	}
 
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
+	return map[string]any{
+		"multiSigActionHash": hash,
+		"nonce":              big.NewInt(nonce),
+	}, nil
+}
+
+// SignMultiSigAction signs multi-signature action as the outer signer
+func SignMultiSigAction(
+	privateKey *ecdsa.PrivateKey,
+	action MultiSigAction,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
+	isMainnet bool,
+) (SignatureResult, error) {
+	envelope, err := newMultiSigEnvelope(action, vaultAddress, nonce, expiresAfter)
+	if err != nil {
+		return SignatureResult{}, err
+	}
+
+	return SignUserSignedAction(
+		privateKey,
+		envelope,
+		multiSigEnvelopeTypes,
+		"HyperliquidTransaction:SendMultiSig",
+		isMainnet,
+	)
 }
 
 // FloatToUsdInt converts float to USD integer representation

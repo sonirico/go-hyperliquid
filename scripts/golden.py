@@ -246,6 +246,7 @@ cases = {
         {"type": "createVault", "name": "vault", "description": "description", "initialUsd": 1000000, "nonce": NONCE}
     ),
     "sendToEvmWithData": lambda: send_to_evm_with_data("0xdeadbeef"),
+    "multiSig": lambda: ex.multi_sig(OTHER, {"type": "noop"}, [{"r": "0x01", "s": "0x02", "v": 27}], NONCE),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 
