@@ -244,3 +244,17 @@ func TestWsMessage_Candle(t *testing.T) {
 		assertKeysCovered(t, raw, &Candle{})
 	})
 }
+
+func TestWsMessage_ActiveAssetCtx(t *testing.T) {
+	t.Run("covers every key of the perp message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeAssetCtx")
+
+		assertKeysCovered(t, raw, &ActiveAssetCtx{})
+	})
+
+	t.Run("covers every key of the spot message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_activeSpotAssetCtx")
+
+		assertKeysCovered(t, raw, &ActiveAssetCtx{})
+	})
+}

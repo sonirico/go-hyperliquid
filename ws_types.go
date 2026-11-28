@@ -71,13 +71,19 @@ type (
 		MarkPx    float64 `json:"markPx,string"`
 		MidPx     float64 `json:"midPx,string"`
 
+		DayBaseVlm float64 `json:"dayBaseVlm,string"`
+
 		// PerpsAssetCtx
-		Funding      float64 `json:"funding,string,omitempty"`
-		OpenInterest float64 `json:"openInterest,string,omitempty"`
-		OraclePx     float64 `json:"oraclePx,string,omitempty"`
+		Funding      float64  `json:"funding,string,omitempty"`
+		OpenInterest float64  `json:"openInterest,string,omitempty"`
+		OraclePx     float64  `json:"oraclePx,string,omitempty"`
+		Premium      float64  `json:"premium,string,omitempty"`
+		ImpactPxs    []string `json:"impactPxs,omitempty"`
 
 		// SpotAssetCtx
 		CirculatingSupply float64 `json:"circulatingSupply,string,omitempty"`
+		Coin              string  `json:"coin,omitempty"`
+		TotalSupply       float64 `json:"totalSupply,string,omitempty"`
 	}
 
 	AllMids struct {

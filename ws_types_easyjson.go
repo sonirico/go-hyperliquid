@@ -1782,6 +1782,12 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid13(in *jlexer.Lexer, ou
 			} else {
 				out.MidPx = float64(in.Float64Str())
 			}
+		case "dayBaseVlm":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DayBaseVlm = float64(in.Float64Str())
+			}
 		case "funding":
 			if in.IsNull() {
 				in.Skip()
@@ -1800,11 +1806,56 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid13(in *jlexer.Lexer, ou
 			} else {
 				out.OraclePx = float64(in.Float64Str())
 			}
+		case "premium":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Premium = float64(in.Float64Str())
+			}
+		case "impactPxs":
+			if in.IsNull() {
+				in.Skip()
+				out.ImpactPxs = nil
+			} else {
+				in.Delim('[')
+				if out.ImpactPxs == nil {
+					if !in.IsDelim(']') {
+						out.ImpactPxs = make([]string, 0, 4)
+					} else {
+						out.ImpactPxs = []string{}
+					}
+				} else {
+					out.ImpactPxs = (out.ImpactPxs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v13 string
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v13 = string(in.String())
+					}
+					out.ImpactPxs = append(out.ImpactPxs, v13)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "circulatingSupply":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				out.CirculatingSupply = float64(in.Float64Str())
+			}
+		case "coin":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Coin = string(in.String())
+			}
+		case "totalSupply":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TotalSupply = float64(in.Float64Str())
 			}
 		default:
 			in.SkipRecursive()
@@ -1840,6 +1891,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid13(out *jwriter.Writer,
 		out.RawString(prefix)
 		out.Float64Str(float64(in.MidPx))
 	}
+	{
+		const prefix string = ",\"dayBaseVlm\":"
+		out.RawString(prefix)
+		out.Float64Str(float64(in.DayBaseVlm))
+	}
 	if in.Funding != 0 {
 		const prefix string = ",\"funding\":"
 		out.RawString(prefix)
@@ -1855,10 +1911,39 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid13(out *jwriter.Writer,
 		out.RawString(prefix)
 		out.Float64Str(float64(in.OraclePx))
 	}
+	if in.Premium != 0 {
+		const prefix string = ",\"premium\":"
+		out.RawString(prefix)
+		out.Float64Str(float64(in.Premium))
+	}
+	if len(in.ImpactPxs) != 0 {
+		const prefix string = ",\"impactPxs\":"
+		out.RawString(prefix)
+		{
+			out.RawByte('[')
+			for v14, v15 := range in.ImpactPxs {
+				if v14 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v15))
+			}
+			out.RawByte(']')
+		}
+	}
 	if in.CirculatingSupply != 0 {
 		const prefix string = ",\"circulatingSupply\":"
 		out.RawString(prefix)
 		out.Float64Str(float64(in.CirculatingSupply))
+	}
+	if in.Coin != "" {
+		const prefix string = ",\"coin\":"
+		out.RawString(prefix)
+		out.String(string(in.Coin))
+	}
+	if in.TotalSupply != 0 {
+		const prefix string = ",\"totalSupply\":"
+		out.RawString(prefix)
+		out.Float64Str(float64(in.TotalSupply))
 	}
 	out.RawByte('}')
 }
@@ -1929,13 +2014,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid14(in *jlexer.Lexer, ou
 						*out.PerpsAtOpenInterestCap = (*out.PerpsAtOpenInterestCap)[:0]
 					}
 					for !in.IsDelim(']') {
-						var v13 string
+						var v16 string
 						if in.IsNull() {
 							in.Skip()
 						} else {
-							v13 = string(in.String())
+							v16 = string(in.String())
 						}
-						*out.PerpsAtOpenInterestCap = append(*out.PerpsAtOpenInterestCap, v13)
+						*out.PerpsAtOpenInterestCap = append(*out.PerpsAtOpenInterestCap, v16)
 						in.WantComma()
 					}
 					in.Delim(']')
@@ -1964,13 +2049,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid14(in *jlexer.Lexer, ou
 						*out.LeadingVaults = (*out.LeadingVaults)[:0]
 					}
 					for !in.IsDelim(']') {
-						var v14 LeadingVault
+						var v17 LeadingVault
 						if in.IsNull() {
 							in.Skip()
 						} else {
-							(v14).UnmarshalEasyJSON(in)
+							(v17).UnmarshalEasyJSON(in)
 						}
-						*out.LeadingVaults = append(*out.LeadingVaults, v14)
+						*out.LeadingVaults = append(*out.LeadingVaults, v17)
 						in.WantComma()
 					}
 					in.Delim(']')
@@ -2002,11 +2087,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid14(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v15, v16 := range *in.PerpsAtOpenInterestCap {
-				if v15 > 0 {
+			for v18, v19 := range *in.PerpsAtOpenInterestCap {
+				if v18 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v16))
+				out.String(string(v19))
 			}
 			out.RawByte(']')
 		}
@@ -2018,11 +2103,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid14(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v17, v18 := range *in.LeadingVaults {
-				if v17 > 0 {
+			for v20, v21 := range *in.LeadingVaults {
+				if v20 > 0 {
 					out.RawByte(',')
 				}
-				(v18).MarshalEasyJSON(out)
+				(v21).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -2095,13 +2180,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid15(in *jlexer.Lexer, ou
 					out.Orders = (out.Orders)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v19 WsBasicOrder
+					var v22 WsBasicOrder
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						(v19).UnmarshalEasyJSON(in)
+						(v22).UnmarshalEasyJSON(in)
 					}
-					out.Orders = append(out.Orders, v19)
+					out.Orders = append(out.Orders, v22)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2137,11 +2222,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid15(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v20, v21 := range in.Orders {
-				if v20 > 0 {
+			for v23, v24 := range in.Orders {
+				if v23 > 0 {
 					out.RawByte(',')
 				}
-				(v21).MarshalEasyJSON(out)
+				(v24).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -2436,34 +2521,34 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid19(in *jlexer.Lexer, ou
 					out.Levels = (out.Levels)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v22 []Level
+					var v25 []Level
 					if in.IsNull() {
 						in.Skip()
-						v22 = nil
+						v25 = nil
 					} else {
 						in.Delim('[')
-						if v22 == nil {
+						if v25 == nil {
 							if !in.IsDelim(']') {
-								v22 = make([]Level, 0, 2)
+								v25 = make([]Level, 0, 2)
 							} else {
-								v22 = []Level{}
+								v25 = []Level{}
 							}
 						} else {
-							v22 = (v22)[:0]
+							v25 = (v25)[:0]
 						}
 						for !in.IsDelim(']') {
-							var v23 Level
+							var v26 Level
 							if in.IsNull() {
 								in.Skip()
 							} else {
-								(v23).UnmarshalEasyJSON(in)
+								(v26).UnmarshalEasyJSON(in)
 							}
-							v22 = append(v22, v23)
+							v25 = append(v25, v26)
 							in.WantComma()
 						}
 						in.Delim(']')
 					}
-					out.Levels = append(out.Levels, v22)
+					out.Levels = append(out.Levels, v25)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2500,19 +2585,19 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid19(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v24, v25 := range in.Levels {
-				if v24 > 0 {
+			for v27, v28 := range in.Levels {
+				if v27 > 0 {
 					out.RawByte(',')
 				}
-				if v25 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v28 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v26, v27 := range v25 {
-						if v26 > 0 {
+					for v29, v30 := range v28 {
+						if v29 > 0 {
 							out.RawByte(',')
 						}
-						(v27).MarshalEasyJSON(out)
+						(v30).MarshalEasyJSON(out)
 					}
 					out.RawByte(']')
 				}
@@ -2918,13 +3003,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid23(in *jlexer.Lexer, ou
 					out.AssetPositions = (out.AssetPositions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v28 AssetPosition
+					var v31 AssetPosition
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						(v28).UnmarshalEasyJSON(in)
+						(v31).UnmarshalEasyJSON(in)
 					}
-					out.AssetPositions = append(out.AssetPositions, v28)
+					out.AssetPositions = append(out.AssetPositions, v31)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -2995,11 +3080,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid23(out *jwriter.Writer,
 		}
 		{
 			out.RawByte('[')
-			for v29, v30 := range in.AssetPositions {
-				if v29 > 0 {
+			for v32, v33 := range in.AssetPositions {
+				if v32 > 0 {
 					out.RawByte(',')
 				}
-				(v30).MarshalEasyJSON(out)
+				(v33).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -3246,13 +3331,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid25(in *jlexer.Lexer, ou
 					out.Bbo = (out.Bbo)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v31 Level
+					var v34 Level
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						(v31).UnmarshalEasyJSON(in)
+						(v34).UnmarshalEasyJSON(in)
 					}
-					out.Bbo = append(out.Bbo, v31)
+					out.Bbo = append(out.Bbo, v34)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -3288,11 +3373,11 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid25(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v32, v33 := range in.Bbo {
-				if v32 > 0 {
+			for v35, v36 := range in.Bbo {
+				if v35 > 0 {
 					out.RawByte(',')
 				}
-				(v33).MarshalEasyJSON(out)
+				(v36).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -3346,13 +3431,13 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid26(in *jlexer.Lexer, ou
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v34 string
+					var v37 string
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						v34 = string(in.String())
+						v37 = string(in.String())
 					}
-					(out.Mids)[key] = v34
+					(out.Mids)[key] = v37
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -3378,16 +3463,16 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid26(out *jwriter.Writer,
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
-			v35First := true
-			for v35Name, v35Value := range in.Mids {
-				if v35First {
-					v35First = false
+			v38First := true
+			for v38Name, v38Value := range in.Mids {
+				if v38First {
+					v38First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v35Name))
+				out.String(string(v38Name))
 				out.RawByte(':')
-				out.String(string(v35Value))
+				out.String(string(v38Value))
 			}
 			out.RawByte('}')
 		}
