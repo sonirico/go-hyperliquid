@@ -720,3 +720,11 @@ func TestSpotDeployState_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &SpotDeployState{})
 	})
 }
+
+func TestTwapSliceFill_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userTwapSliceFills")
+
+		assertKeysCovered(t, raw, &[]TwapSliceFill{})
+	})
+}

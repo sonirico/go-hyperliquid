@@ -979,6 +979,22 @@ func (i *Info) PerpDeployAuctionStatus(ctx context.Context) (*PerpDeployAuctionS
 	return &result, nil
 }
 
+func (i *Info) UserTwapSliceFills(ctx context.Context, user string) ([]TwapSliceFill, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type": "userTwapSliceFills",
+		"user": user,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch twap slice fills: %w", err)
+	}
+
+	var result []TwapSliceFill
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal twap slice fills: %w", err)
+	}
+	return result, nil
+}
+
 func (i *Info) SpotDeployState(ctx context.Context, user string) (*SpotDeployState, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "spotDeployState",

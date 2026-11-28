@@ -201,3 +201,18 @@ func TestInfo_SpotDeployState(t *testing.T) {
 	}, *req)
 	require.Len(t, state.States, 1)
 }
+
+func TestInfo_UserTwapSliceFills(t *testing.T) {
+	const user = "0xdcea581d9d582a0053261bbab53604066f293c74"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "userTwapSliceFills")))
+
+	fills, err := info.UserTwapSliceFills(context.TODO(), user)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type": "userTwapSliceFills",
+		"user": user,
+	}, *req)
+	require.Len(t, fills, 20)
+}

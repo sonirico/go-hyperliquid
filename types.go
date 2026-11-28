@@ -576,6 +576,11 @@ type StakingReward struct {
 	TotalAmount string `json:"totalAmount"`
 }
 
+type TwapSliceFill struct {
+	Fill   Fill  `json:"fill"`
+	TwapId int64 `json:"twapId"`
+}
+
 type DelegatorHistoryEntry struct {
 	Time  int64           `json:"time"`
 	Hash  string          `json:"hash"`
