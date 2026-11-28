@@ -1608,13 +1608,14 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 // SpotDeploySetDeployerTradingFeeShare sets deployer trading fee share
 func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 	ctx context.Context,
-	feeShare float64,
+	token int,
+	share string,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":     "spotDeploySetDeployerTradingFeeShare",
-		"feeShare": feeShare,
+	action := SpotDeployAction{
+		Type:                       "spotDeploy",
+		SetDeployerTradingFeeShare: &SpotDeploySetDeployerTradingFeeShare{Token: token, Share: share},
 	}
 
 	sig, err := e.signL1Action(

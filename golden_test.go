@@ -400,6 +400,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.SpotDeployRegisterHyperliquidity(ctx, 0, 1.5, 0.5, 10, &nSeededLevels)
 			return err
 		}},
+		{name: "spotDeploy_setDeployerTradingFeeShare", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeploySetDeployerTradingFeeShare(ctx, 1, "50%")
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err
