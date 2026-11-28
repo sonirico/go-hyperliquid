@@ -71,6 +71,10 @@ func keyUserFundings(user string) string {
 	return key(ChannelUserFundings, user)
 }
 
+func keyUserNonFundingLedgerUpdates(user string) string {
+	return key(ChannelUserNonFundingLedgerUpdates, user)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

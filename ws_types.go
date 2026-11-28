@@ -7,27 +7,28 @@ import (
 //go:generate easyjson -all
 
 const (
-	ChannelPong               string = "pong"
-	ChannelTrades             string = "trades"
-	ChannelActiveAssetCtx     string = "activeAssetCtx"
-	ChannelActiveSpotAssetCtx string = "activeSpotAssetCtx"
-	ChannelFastAssetCtxs      string = "fastAssetCtxs"
-	ChannelAllDexsAssetCtxs   string = "allDexsAssetCtxs"
-	ChannelL2Book             string = "l2Book"
-	ChannelCandle             string = "candle"
-	ChannelAllMids            string = "allMids"
-	ChannelNotification       string = "notification"
-	ChannelOrderUpdates       string = "orderUpdates"
-	ChannelUser               string = "user"
-	ChannelUserFills          string = "userFills"
-	ChannelBbo                string = "bbo"
-	ChannelSubResponse        string = "subscriptionResponse"
-	ChannelClearinghouseState string = "clearinghouseState"
-	ChannelOpenOrders         string = "openOrders"
-	ChannelTwapStates         string = "twapStates"
-	ChannelWebData3           string = "webData3"
-	ChannelUserFundings       string = "userFundings"
-	ChannelError              string = "error"
+	ChannelPong                        string = "pong"
+	ChannelTrades                      string = "trades"
+	ChannelActiveAssetCtx              string = "activeAssetCtx"
+	ChannelActiveSpotAssetCtx          string = "activeSpotAssetCtx"
+	ChannelFastAssetCtxs               string = "fastAssetCtxs"
+	ChannelAllDexsAssetCtxs            string = "allDexsAssetCtxs"
+	ChannelL2Book                      string = "l2Book"
+	ChannelCandle                      string = "candle"
+	ChannelAllMids                     string = "allMids"
+	ChannelNotification                string = "notification"
+	ChannelOrderUpdates                string = "orderUpdates"
+	ChannelUser                        string = "user"
+	ChannelUserFills                   string = "userFills"
+	ChannelBbo                         string = "bbo"
+	ChannelSubResponse                 string = "subscriptionResponse"
+	ChannelClearinghouseState          string = "clearinghouseState"
+	ChannelOpenOrders                  string = "openOrders"
+	ChannelTwapStates                  string = "twapStates"
+	ChannelWebData3                    string = "webData3"
+	ChannelUserFundings                string = "userFundings"
+	ChannelUserNonFundingLedgerUpdates string = "userNonFundingLedgerUpdates"
+	ChannelError                       string = "error"
 )
 
 type wsMessage struct {
@@ -198,6 +199,12 @@ type (
 		IsSnapshot bool            `json:"isSnapshot"`
 		User       string          `json:"user"`
 		Fundings   []WsUserFunding `json:"fundings"`
+	}
+
+	WsUserNonFundingLedgerUpdates struct {
+		IsSnapshot              bool                          `json:"isSnapshot"`
+		User                    string                        `json:"user"`
+		NonFundingLedgerUpdates []UserNonFundingLedgerUpdates `json:"nonFundingLedgerUpdates"`
 	}
 
 	FillLiquidation struct {

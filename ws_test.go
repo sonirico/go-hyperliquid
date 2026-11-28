@@ -341,6 +341,14 @@ func TestWsMessage_UserFundings(t *testing.T) {
 	})
 }
 
+func TestWsMessage_UserNonFundingLedgerUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userNonFundingLedgerUpdates")
+
+		assertKeysCovered(t, raw, &WsUserNonFundingLedgerUpdates{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -358,8 +366,10 @@ func TestWsMessage_Notification(t *testing.T) {
 }
 
 const (
-	testWsWait = 3 * time.Second
-	testWsUser = "0xb19e5191b3a97657807c704d58e2ffd33aa4ccdf"
+	testWsWait      = 3 * time.Second
+	testWsUser      = "0xb19e5191b3a97657807c704d58e2ffd33aa4ccdf"
+	testWsVaultUser = "0xdfc24b077bc1425ad1dea75bcb6f8158e10df303"
+	testWsTwapUser  = "0xdcea581d9d582a0053261bbab53604066f293c74"
 )
 
 type testWsSubscribe struct {
@@ -489,5 +499,27 @@ func TestUserFundingsSubscription(t *testing.T) {
 		f.requireSubscription(t, `{"type":"userFundings","user":"`+testWsUser+`"}`)
 		msg := requireTestWsMessage(t, got)
 		require.True(t, msg.IsSnapshot)
+	})
+}
+
+func TestUserNonFundingLedgerUpdatesSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userNonFundingLedgerUpdates"))
+		got := make(chan WsUserNonFundingLedgerUpdates, 1)
+
+		_, err := f.client.UserNonFundingLedgerUpdates(
+			UserNonFundingLedgerUpdatesSubscriptionParams{User: testWsVaultUser},
+			func(msg WsUserNonFundingLedgerUpdates, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userNonFundingLedgerUpdates","user":"`+testWsVaultUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
+		require.NotEmpty(t, msg.NonFundingLedgerUpdates)
 	})
 }

@@ -68,6 +68,10 @@ func (m UserFundings) Key() string {
 	return keyUserFundings(m.User)
 }
 
+func (m WsUserNonFundingLedgerUpdates) Key() string {
+	return keyUserNonFundingLedgerUpdates(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }
