@@ -813,4 +813,6 @@ func TestUserFundingHistory_UnmarshalJSON(t *testing.T) {
 		Size:        "-0.08169",
 		FundingRate: "0.0000037383",
 	}, funding.Delta)
+
+	assertKeysCovered(t, []byte(jsonData), &UserFundingHistory{})
 }

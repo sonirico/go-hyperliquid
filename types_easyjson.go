@@ -10776,6 +10776,20 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid85(in *jlexer.Lexer, ou
 			} else {
 				out.FundingRate = string(in.String())
 			}
+		case "nSamples":
+			if in.IsNull() {
+				in.Skip()
+				out.NSamples = nil
+			} else {
+				if out.NSamples == nil {
+					out.NSamples = new(int)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.NSamples = int(in.Int())
+				}
+			}
 		case "szi":
 			if in.IsNull() {
 				in.Skip()
@@ -10817,6 +10831,15 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid85(out *jwriter.Writer,
 		const prefix string = ",\"fundingRate\":"
 		out.RawString(prefix)
 		out.String(string(in.FundingRate))
+	}
+	{
+		const prefix string = ",\"nSamples\":"
+		out.RawString(prefix)
+		if in.NSamples == nil {
+			out.RawString("null")
+		} else {
+			out.Int(int(*in.NSamples))
+		}
 	}
 	{
 		const prefix string = ",\"szi\":"
