@@ -1,8 +1,13 @@
 package hyperliquid
 
 import (
+	"bytes"
+	"compress/flate"
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -264,5 +269,18 @@ func TestWsMessage_AllDexsAssetCtxs(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_allDexsAssetCtxs")
 
 		assertKeysCovered(t, raw, &WsAllDexsAssetCtxs{})
+	})
+}
+
+func TestWsMessage_FastAssetCtxs(t *testing.T) {
+	t.Run("covers every key of the inflated message data", func(t *testing.T) {
+		var compressed string
+		require.NoError(t, json.Unmarshal(newTestWsFixtureData(t, "ws_fastAssetCtxs"), &compressed))
+		packed, err := base64.StdEncoding.DecodeString(compressed)
+		require.NoError(t, err)
+		raw, err := io.ReadAll(flate.NewReader(bytes.NewReader(packed)))
+		require.NoError(t, err)
+
+		assertKeysCovered(t, raw, &map[string]FastAssetCtx{})
 	})
 }
