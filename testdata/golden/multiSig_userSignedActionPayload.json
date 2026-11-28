@@ -1,0 +1,45 @@
+{
+  "kind": "user",
+  "action": {
+    "type": "usdSend",
+    "destination": "0x1111111111111111111111111111111111111111",
+    "amount": "1.5",
+    "time": 1700000000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "HyperliquidTransaction:UsdSend",
+  "types": [
+    {
+      "name": "hyperliquidChain",
+      "type": "string"
+    },
+    {
+      "name": "payloadMultiSigUser",
+      "type": "address"
+    },
+    {
+      "name": "outerSigner",
+      "type": "address"
+    },
+    {
+      "name": "destination",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "string"
+    },
+    {
+      "name": "time",
+      "type": "uint64"
+    }
+  ],
+  "signature": {
+    "r": "0xa4c5c2c69975430cb3fc39b9fc1b48dd5bbacc265f56e016eb96bf2b2bd3786c",
+    "s": "0x6c1183f0feda5e36426cf54d122846adc661c0438f8c8ae8b30a738069e23ee3",
+    "v": 28
+  }
+}

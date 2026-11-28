@@ -63,6 +63,10 @@ func TestLive(t *testing.T) {
 
 	for _, row := range append(goldenRows(goldenOther), liveRows()...) {
 		t.Run(row.name, func(t *testing.T) {
+			if row.call == nil {
+				t.Skip("nothing is sent")
+			}
+
 			ex, transport := newTestLiveExchange(t, pk)
 
 			callErr := row.call(context.Background(), ex)

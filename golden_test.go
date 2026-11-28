@@ -57,7 +57,8 @@ type goldenSigned struct {
 // method does instead (direct). Actions that carry their own nonce use direct
 // because the nonce of a call cannot be fixed. The live test looks for live in
 // the response instead of the signer address when the server rejects the action
-// before it recovers the signer.
+// before it recovers the signer. Rows without call sign without sending and are
+// not part of the live test.
 type goldenRow struct {
 	name   string
 	skip   string
@@ -183,6 +184,31 @@ func signGoldenAgent(pk *ecdsa.PrivateKey, name *string) (goldenSigned, error) {
 
 type goldenNoop struct {
 	Type string `json:"type" msgpack:"type"`
+}
+
+func signGoldenMultiSigL1Payload(pk *ecdsa.PrivateKey) (goldenSigned, error) {
+	action := goldenNoop{Type: "noop"}
+	sig, err := SignMultiSigL1ActionPayload(pk, action, "", goldenNonce, nil, goldenOther, goldenMixed, false)
+	return goldenSigned{action: action, signature: sig}, err
+}
+
+func signGoldenMultiSigUserSignedPayload(pk *ecdsa.PrivateKey) (goldenSigned, error) {
+	action := map[string]any{
+		"type":        "usdSend",
+		"destination": goldenOther,
+		"amount":      "1.5",
+		"time":        big.NewInt(goldenNonce),
+	}
+	payloadTypes := []apitypes.Type{
+		{Name: "hyperliquidChain", Type: "string"},
+		{Name: "destination", Type: "string"},
+		{Name: "amount", Type: "string"},
+		{Name: "time", Type: "uint64"},
+	}
+	sig, err := SignMultiSigUserSignedActionPayload(
+		pk, action, payloadTypes, "HyperliquidTransaction:UsdSend", goldenOther, goldenMixed, false,
+	)
+	return goldenSigned{action: action, signature: sig}, err
 }
 
 func signGoldenCreateVault(pk *ecdsa.PrivateKey) (goldenSigned, error) {
@@ -485,6 +511,8 @@ func goldenRows(userAddress string) []goldenRow {
 			)
 			return err
 		}, live: "Invalid multi-sig outer signer"},
+		{name: "multiSig_l1ActionPayload", direct: signGoldenMultiSigL1Payload},
+		{name: "multiSig_userSignedActionPayload", direct: signGoldenMultiSigUserSignedPayload},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

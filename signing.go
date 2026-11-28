@@ -787,6 +787,54 @@ func SignMultiSigAction(
 	)
 }
 
+// SignMultiSigL1ActionPayload signs an L1 action as one of the signers of a multi-sig user
+func SignMultiSigL1ActionPayload(
+	privateKey *ecdsa.PrivateKey,
+	action any,
+	vaultAddress string,
+	nonce int64,
+	expiresAfter *int64,
+	multiSigUser string,
+	outerSigner string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	envelope := []any{strings.ToLower(multiSigUser), strings.ToLower(outerSigner), action}
+
+	return SignL1Action(privateKey, envelope, vaultAddress, nonce, expiresAfter, isMainnet)
+}
+
+// SignMultiSigUserSignedActionPayload signs a user-signed action as one of the signers of a multi-sig user
+func SignMultiSigUserSignedActionPayload(
+	privateKey *ecdsa.PrivateKey,
+	action map[string]any,
+	payloadTypes []apitypes.Type,
+	primaryType string,
+	multiSigUser string,
+	outerSigner string,
+	isMainnet bool,
+) (SignatureResult, error) {
+	envelope := make(map[string]any, len(action)+2)
+	for key, value := range action {
+		envelope[key] = value
+	}
+	envelope["payloadMultiSigUser"] = strings.ToLower(multiSigUser)
+	envelope["outerSigner"] = strings.ToLower(outerSigner)
+
+	envelopeTypes := make([]apitypes.Type, 0, len(payloadTypes)+2)
+	for _, payloadType := range payloadTypes {
+		envelopeTypes = append(envelopeTypes, payloadType)
+		if payloadType.Name == "hyperliquidChain" {
+			envelopeTypes = append(
+				envelopeTypes,
+				apitypes.Type{Name: "payloadMultiSigUser", Type: "address"},
+				apitypes.Type{Name: "outerSigner", Type: "address"},
+			)
+		}
+	}
+
+	return SignUserSignedAction(privateKey, envelope, envelopeTypes, primaryType, isMainnet)
+}
+
 // FloatToUsdInt converts float to USD integer representation
 func FloatToUsdInt(value float64) int {
 	// Convert float USD to integer representation (assuming 6 decimals for USDC)

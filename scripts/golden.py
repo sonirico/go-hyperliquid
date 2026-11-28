@@ -125,6 +125,20 @@ def send_to_evm_with_data(data_hex):
     return ex._post_action(action, sig, NONCE)
 
 
+def multi_sig_l1_payload():
+    action = {"type": "noop"}
+    sig = sg.sign_multi_sig_l1_action_payload(wallet, action, False, None, NONCE, None, OTHER, MIXED)
+    return ex._post_action(action, sig, NONCE)
+
+
+def multi_sig_user_signed_payload():
+    action = {"type": "usdSend", "destination": OTHER, "amount": "1.5", "time": NONCE}
+    sig = sg.sign_multi_sig_user_signed_action_payload(
+        wallet, action, False, sg.USD_SEND_SIGN_TYPES, "HyperliquidTransaction:UsdSend", OTHER, MIXED
+    )
+    return ex._post_action(action, sig, NONCE)
+
+
 def limit_modify(oid):
     return {
         "oid": oid,
@@ -247,6 +261,8 @@ cases = {
     ),
     "sendToEvmWithData": lambda: send_to_evm_with_data("0xdeadbeef"),
     "multiSig": lambda: ex.multi_sig(OTHER, {"type": "noop"}, [{"r": "0x01", "s": "0x02", "v": 27}], NONCE),
+    "multiSig_l1ActionPayload": multi_sig_l1_payload,
+    "multiSig_userSignedActionPayload": multi_sig_user_signed_payload,
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 
