@@ -26,6 +26,7 @@ const (
 	ChannelOpenOrders         string = "openOrders"
 	ChannelTwapStates         string = "twapStates"
 	ChannelWebData3           string = "webData3"
+	ChannelUserFundings       string = "userFundings"
 	ChannelError              string = "error"
 )
 
@@ -191,6 +192,12 @@ type (
 	WsNonUserCancel struct {
 		Coin string `json:"coin"`
 		Oid  int64  `json:"oid"`
+	}
+
+	UserFundings struct {
+		IsSnapshot bool            `json:"isSnapshot"`
+		User       string          `json:"user"`
+		Fundings   []WsUserFunding `json:"fundings"`
 	}
 
 	FillLiquidation struct {

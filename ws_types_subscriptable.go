@@ -64,6 +64,10 @@ func (u UserEvents) Key() string {
 	return ChannelUser
 }
 
+func (m UserFundings) Key() string {
+	return keyUserFundings(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }

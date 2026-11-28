@@ -333,6 +333,14 @@ func TestWsMessage_UserEvents(t *testing.T) {
 	})
 }
 
+func TestWsMessage_UserFundings(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_userFundings")
+
+		assertKeysCovered(t, raw, &UserFundings{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -460,5 +468,26 @@ func TestUserEventsSubscription(t *testing.T) {
 		msg := requireTestWsMessage(t, got)
 		require.Len(t, msg.Fills, 1)
 		require.Equal(t, "BTC", msg.Fills[0].Coin)
+	})
+}
+
+func TestUserFundingsSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_userFundings"))
+		got := make(chan UserFundings, 1)
+
+		_, err := f.client.UserFundings(
+			UserFundingsSubscriptionParams{User: testWsUser},
+			func(msg UserFundings, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"userFundings","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.True(t, msg.IsSnapshot)
 	})
 }

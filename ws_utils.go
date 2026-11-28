@@ -67,6 +67,10 @@ func keyUserEvents(_ string) string {
 	return key(ChannelUser)
 }
 
+func keyUserFundings(user string) string {
+	return key(ChannelUserFundings, user)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }
