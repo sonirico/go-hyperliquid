@@ -306,3 +306,28 @@ func TestInfo_PerpConciseAnnotations(t *testing.T) {
 	}, *req)
 	require.Len(t, annotations, 20)
 }
+
+func TestInfo_PerpsAtOpenInterestCap(t *testing.T) {
+	t.Run("sends only the type without a dex", func(t *testing.T) {
+		info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpsAtOpenInterestCap")))
+
+		coins, err := info.PerpsAtOpenInterestCap(context.TODO())
+		require.NoError(t, err)
+
+		require.Equal(t, map[string]any{"type": "perpsAtOpenInterestCap"}, *req)
+		require.Equal(t, "ACE", coins[0])
+		require.Len(t, coins, 9)
+	})
+
+	t.Run("sends the dex when given", func(t *testing.T) {
+		info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "perpsAtOpenInterestCap")))
+
+		_, err := info.PerpsAtOpenInterestCap(context.TODO(), "flx")
+		require.NoError(t, err)
+
+		require.Equal(t, map[string]any{
+			"type": "perpsAtOpenInterestCap",
+			"dex":  "flx",
+		}, *req)
+	})
+}

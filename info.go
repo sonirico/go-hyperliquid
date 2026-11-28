@@ -1104,6 +1104,26 @@ func (i *Info) PerpConciseAnnotations(ctx context.Context) ([]Tuple2[string, Per
 	return result, nil
 }
 
+func (i *Info) PerpsAtOpenInterestCap(ctx context.Context, dex ...string) ([]string, error) {
+	payload := map[string]any{
+		"type": "perpsAtOpenInterestCap",
+	}
+	if len(dex) > 0 && dex[0] != "" {
+		payload["dex"] = dex[0]
+	}
+
+	resp, err := i.client.post(ctx, "/info", payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch perps at open interest cap: %w", err)
+	}
+
+	var result []string
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal perps at open interest cap: %w", err)
+	}
+	return result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
