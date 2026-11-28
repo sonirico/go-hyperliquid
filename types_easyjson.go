@@ -9234,6 +9234,61 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid73(in *jlexer.Lexer, ou
 			} else {
 				out.TriggerPx = float64(in.Float64Str())
 			}
+		case "children":
+			if in.IsNull() {
+				in.Skip()
+				out.Children = nil
+			} else {
+				in.Delim('[')
+				if out.Children == nil {
+					if !in.IsDelim(']') {
+						out.Children = make([]FrontendOpenOrder, 0, 0)
+					} else {
+						out.Children = []FrontendOpenOrder{}
+					}
+				} else {
+					out.Children = (out.Children)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v119 FrontendOpenOrder
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						(v119).UnmarshalEasyJSON(in)
+					}
+					out.Children = append(out.Children, v119)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "tif":
+			if in.IsNull() {
+				in.Skip()
+				out.Tif = nil
+			} else {
+				if out.Tif == nil {
+					out.Tif = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Tif = string(in.String())
+				}
+			}
+		case "cloid":
+			if in.IsNull() {
+				in.Skip()
+				out.Cloid = nil
+			} else {
+				if out.Cloid == nil {
+					out.Cloid = new(string)
+				}
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Cloid = string(in.String())
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -9312,6 +9367,40 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid73(out *jwriter.Writer,
 		const prefix string = ",\"triggerPx\":"
 		out.RawString(prefix)
 		out.Float64Str(float64(in.TriggerPx))
+	}
+	{
+		const prefix string = ",\"children\":"
+		out.RawString(prefix)
+		if in.Children == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v120, v121 := range in.Children {
+				if v120 > 0 {
+					out.RawByte(',')
+				}
+				(v121).MarshalEasyJSON(out)
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"tif\":"
+		out.RawString(prefix)
+		if in.Tif == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Tif))
+		}
+	}
+	{
+		const prefix string = ",\"cloid\":"
+		out.RawString(prefix)
+		if in.Cloid == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.Cloid))
+		}
 	}
 	out.RawByte('}')
 }
@@ -9666,13 +9755,13 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid75(in *jlexer.Lexer, ou
 					out.StakingDiscountTiers = (out.StakingDiscountTiers)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v119 StakingDiscount
+					var v122 StakingDiscount
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						(v119).UnmarshalEasyJSON(in)
+						(v122).UnmarshalEasyJSON(in)
 					}
-					out.StakingDiscountTiers = append(out.StakingDiscountTiers, v119)
+					out.StakingDiscountTiers = append(out.StakingDiscountTiers, v122)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -9728,11 +9817,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid75(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v120, v121 := range in.StakingDiscountTiers {
-				if v120 > 0 {
+			for v123, v124 := range in.StakingDiscountTiers {
+				if v123 > 0 {
 					out.RawByte(',')
 				}
-				(v121).MarshalEasyJSON(out)
+				(v124).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -10652,9 +10741,9 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid86(in *jlexer.Lexer, ou
 					out.Data = (out.Data)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v122 OrderStatus
-					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(in, &v122)
-					out.Data = append(out.Data, v122)
+					var v125 OrderStatus
+					easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid58(in, &v125)
+					out.Data = append(out.Data, v125)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -10689,11 +10778,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid86(out *jwriter.Writer,
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v123, v124 := range in.Data {
-				if v123 > 0 {
+			for v126, v127 := range in.Data {
+				if v126 > 0 {
 					out.RawByte(',')
 				}
-				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(out, v124)
+				easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid58(out, v127)
 			}
 			out.RawByte(']')
 		}
@@ -10765,13 +10854,13 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid87(in *jlexer.Lexer, ou
 					out.Data = (out.Data)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v125 OpenOrder
+					var v128 OpenOrder
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						(v125).UnmarshalEasyJSON(in)
+						(v128).UnmarshalEasyJSON(in)
 					}
-					out.Data = append(out.Data, v125)
+					out.Data = append(out.Data, v128)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -10806,11 +10895,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid87(out *jwriter.Writer,
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v126, v127 := range in.Data {
-				if v126 > 0 {
+			for v129, v130 := range in.Data {
+				if v129 > 0 {
 					out.RawByte(',')
 				}
-				(v127).MarshalEasyJSON(out)
+				(v130).MarshalEasyJSON(out)
 			}
 			out.RawByte(']')
 		}
@@ -10952,36 +11041,36 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid89(in *jlexer.Lexer, ou
 					out.TokenToState = (out.TokenToState)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v128 BorrowLendTokenToState
+					var v131 BorrowLendTokenToState
 					if in.IsNull() {
 						in.Skip()
-						v128 = nil
+						v131 = nil
 					} else {
 						in.Delim('[')
-						if v128 == nil {
+						if v131 == nil {
 							if !in.IsDelim(']') {
-								v128 = make(BorrowLendTokenToState, 0, 2)
+								v131 = make(BorrowLendTokenToState, 0, 2)
 							} else {
-								v128 = BorrowLendTokenToState{}
+								v131 = BorrowLendTokenToState{}
 							}
 						} else {
-							v128 = (v128)[:0]
+							v131 = (v131)[:0]
 						}
 						for !in.IsDelim(']') {
-							var v129 MixedValue
+							var v132 MixedValue
 							if in.IsNull() {
 								in.Skip()
 							} else {
 								if data := in.Raw(); in.Ok() {
-									in.AddError((v129).UnmarshalJSON(data))
+									in.AddError((v132).UnmarshalJSON(data))
 								}
 							}
-							v128 = append(v128, v129)
+							v131 = append(v131, v132)
 							in.WantComma()
 						}
 						in.Delim(']')
 					}
-					out.TokenToState = append(out.TokenToState, v128)
+					out.TokenToState = append(out.TokenToState, v131)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -11027,19 +11116,19 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid89(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v130, v131 := range in.TokenToState {
-				if v130 > 0 {
+			for v133, v134 := range in.TokenToState {
+				if v133 > 0 {
 					out.RawByte(',')
 				}
-				if v131 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v134 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v132, v133 := range v131 {
-						if v132 > 0 {
+					for v135, v136 := range v134 {
+						if v135 > 0 {
 							out.RawByte(',')
 						}
-						out.Raw((v133).MarshalJSON())
+						out.Raw((v136).MarshalJSON())
 					}
 					out.RawByte(']')
 				}
@@ -11699,13 +11788,13 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid95(in *jlexer.Lexer, ou
 					out.ImpactPxs = (out.ImpactPxs)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v134 string
+					var v137 string
 					if in.IsNull() {
 						in.Skip()
 					} else {
-						v134 = string(in.String())
+						v137 = string(in.String())
 					}
-					out.ImpactPxs = append(out.ImpactPxs, v134)
+					out.ImpactPxs = append(out.ImpactPxs, v137)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -11777,11 +11866,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid95(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v135, v136 := range in.ImpactPxs {
-				if v135 > 0 {
+			for v138, v139 := range in.ImpactPxs {
+				if v138 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v136))
+				out.String(string(v139))
 			}
 			out.RawByte(']')
 		}
@@ -12021,15 +12110,15 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(in *jlexer.Lexer, ou
 					out.AccountValueHistory = (out.AccountValueHistory)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v137 MixedArray
+					var v140 MixedArray
 					if in.IsNull() {
 						in.Skip()
 					} else {
 						if data := in.Raw(); in.Ok() {
-							in.AddError((v137).UnmarshalJSON(data))
+							in.AddError((v140).UnmarshalJSON(data))
 						}
 					}
-					out.AccountValueHistory = append(out.AccountValueHistory, v137)
+					out.AccountValueHistory = append(out.AccountValueHistory, v140)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -12050,15 +12139,15 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid98(in *jlexer.Lexer, ou
 					out.PnlHistory = (out.PnlHistory)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v138 MixedArray
+					var v141 MixedArray
 					if in.IsNull() {
 						in.Skip()
 					} else {
 						if data := in.Raw(); in.Ok() {
-							in.AddError((v138).UnmarshalJSON(data))
+							in.AddError((v141).UnmarshalJSON(data))
 						}
 					}
-					out.PnlHistory = append(out.PnlHistory, v138)
+					out.PnlHistory = append(out.PnlHistory, v141)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -12090,19 +12179,19 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v139, v140 := range in.AccountValueHistory {
-				if v139 > 0 {
+			for v142, v143 := range in.AccountValueHistory {
+				if v142 > 0 {
 					out.RawByte(',')
 				}
-				if v140 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v143 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v141, v142 := range v140 {
-						if v141 > 0 {
+					for v144, v145 := range v143 {
+						if v144 > 0 {
 							out.RawByte(',')
 						}
-						out.Raw((v142).MarshalJSON())
+						out.Raw((v145).MarshalJSON())
 					}
 					out.RawByte(']')
 				}
@@ -12117,19 +12206,19 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid98(out *jwriter.Writer,
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v143, v144 := range in.PnlHistory {
-				if v143 > 0 {
+			for v146, v147 := range in.PnlHistory {
+				if v146 > 0 {
 					out.RawByte(',')
 				}
-				if v144 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v147 == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v145, v146 := range v144 {
-						if v145 > 0 {
+					for v148, v149 := range v147 {
+						if v148 > 0 {
 							out.RawByte(',')
 						}
-						out.Raw((v146).MarshalJSON())
+						out.Raw((v149).MarshalJSON())
 					}
 					out.RawByte(']')
 				}

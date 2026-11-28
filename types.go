@@ -285,6 +285,9 @@ type FrontendOpenOrder struct {
 	Timestamp        int64     `json:"timestamp"`
 	TriggerCondition string    `json:"triggerCondition"`
 	TriggerPx        float64   `json:"triggerPx,string"`
+	Children         []FrontendOpenOrder `json:"children"`
+	Tif              *string   `json:"tif"`
+	Cloid            *string   `json:"cloid"`
 }
 
 type OrderSide string
