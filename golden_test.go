@@ -265,6 +265,7 @@ func goldenRows(userAddress string) []goldenRow {
 	maxGas := 1000000
 	nSeededLevels := 3
 	activationPx := 50000.0
+	outcomeAmount := 1.5
 	bot := "bot"
 	nodeIp := "1.2.3.4"
 	validatorName := "val"
@@ -617,6 +618,14 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "userOutcome_splitOutcome", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserOutcomeSplit(ctx, 1, 1.5)
+			return err
+		}},
+		{name: "userOutcome_mergeOutcome", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UserOutcomeMerge(ctx, 1, &outcomeAmount)
+			return err
+		}},
+		{name: "userOutcome_mergeOutcome_nilAmount", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UserOutcomeMerge(ctx, 1, nil)
 			return err
 		}},
 	}

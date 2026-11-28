@@ -709,10 +709,17 @@ type Hip3LiquidatorTransferAction struct {
 type UserOutcomeAction struct {
 	Type         string              `json:"type"                   msgpack:"type"`
 	SplitOutcome *SplitOutcomeAction `json:"splitOutcome,omitempty" msgpack:"splitOutcome,omitempty"`
+	MergeOutcome *MergeOutcomeAction `json:"mergeOutcome,omitempty" msgpack:"mergeOutcome,omitempty"`
 }
 
 // SplitOutcomeAction represents the split outcome variant of user outcome action
 type SplitOutcomeAction struct {
 	Outcome int    `json:"outcome" msgpack:"outcome"`
 	Amount  string `json:"amount"  msgpack:"amount"`
+}
+
+// MergeOutcomeAction represents the merge outcome variant of user outcome action
+type MergeOutcomeAction struct {
+	Outcome int     `json:"outcome" msgpack:"outcome"`
+	Amount  *string `json:"amount"  msgpack:"amount"`
 }

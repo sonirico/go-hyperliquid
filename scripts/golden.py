@@ -352,6 +352,8 @@ cases = {
     "claimRewards": lambda: l1({"type": "claimRewards"}),
     "hip3LiquidatorTransfer": lambda: l1({"type": "hip3LiquidatorTransfer", "dex": "xyz", "ntl": 1000000, "isDeposit": True}),
     "userOutcome_splitOutcome": lambda: l1({"type": "userOutcome", "splitOutcome": {"outcome": 1, "amount": "1.5"}}),
+    "userOutcome_mergeOutcome": lambda: l1({"type": "userOutcome", "mergeOutcome": {"outcome": 1, "amount": "1.5"}}),
+    "userOutcome_mergeOutcome_nilAmount": lambda: l1({"type": "userOutcome", "mergeOutcome": {"outcome": 1, "amount": None}}),
 }
 
 os.makedirs(out_dir, exist_ok=True)
