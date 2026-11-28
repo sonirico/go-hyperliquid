@@ -138,6 +138,10 @@ func keyPac() string {
 	return key(ChannelPac)
 }
 
+func keySac() string {
+	return key(ChannelSac)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

@@ -148,6 +148,7 @@ func NewWebsocketClient(baseURL string, opts ...WsOpt) *WebsocketClient {
 			ChannelOutcomeMetaUpdates:          NewMsgDispatcher[OutcomeMetaUpdates](ChannelOutcomeMetaUpdates),
 			ChannelL2:                          NewMsgDispatcher[WsL2](ChannelL2),
 			ChannelPac:                         NewMsgDispatcher[WsPac](ChannelPac),
+			ChannelSac:                         NewMsgDispatcher[WsSac](ChannelSac),
 			ChannelUserFills:                   NewMsgDispatcher[WsOrderFills](ChannelUserFills),
 			ChannelSubResponse:                 NewNoopDispatcher(),
 			ChannelClearinghouseState: NewMsgDispatcher[ClearinghouseStateMessage](

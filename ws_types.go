@@ -36,6 +36,7 @@ const (
 	ChannelOutcomeMetaUpdates          string = "outcomeMetaUpdates"
 	ChannelL2                          string = "l2"
 	ChannelPac                         string = "pac"
+	ChannelSac                         string = "sac"
 	ChannelError                       string = "error"
 )
 
@@ -289,6 +290,18 @@ type (
 		MarkPx       *float64 `json:"markPx,string,omitempty"`
 		MidPx        *float64 `json:"midPx,string,omitempty"`
 		DayBaseVlm   *float64 `json:"dayBaseVlm,string,omitempty"`
+	}
+
+	//easyjson:skip
+	WsSac map[string]SacAssetCtx
+
+	SacAssetCtx struct {
+		PrevDayPx         *float64 `json:"prevDayPx,string,omitempty"`
+		DayNtlVlm         *float64 `json:"dayNtlVlm,string,omitempty"`
+		MarkPx            *float64 `json:"markPx,string,omitempty"`
+		MidPx             *float64 `json:"midPx,string"`
+		DayBaseVlm        *float64 `json:"dayBaseVlm,string,omitempty"`
+		CirculatingSupply *float64 `json:"circulatingSupply,string,omitempty"`
 	}
 
 	FillLiquidation struct {

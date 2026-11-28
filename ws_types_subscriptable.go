@@ -110,6 +110,10 @@ func (WsPac) Key() string {
 	return keyPac()
 }
 
+func (WsSac) Key() string {
+	return keySac()
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }
