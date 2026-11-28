@@ -667,3 +667,11 @@ type AgentSetAbstractionAction struct {
 	Type        string `json:"type"        msgpack:"type"`
 	Abstraction string `json:"abstraction" msgpack:"abstraction"`
 }
+
+// GossipPriorityBidAction represents gossip priority bid action
+type GossipPriorityBidAction struct {
+	Type   string `json:"type"   msgpack:"type"`
+	SlotID int    `json:"slotId" msgpack:"slotId"`
+	Ip     string `json:"ip"     msgpack:"ip"`
+	MaxGas int    `json:"maxGas" msgpack:"maxGas"`
+}

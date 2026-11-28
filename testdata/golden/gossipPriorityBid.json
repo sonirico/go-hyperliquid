@@ -1,0 +1,29 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "gossipPriorityBid",
+    "slotId": 1,
+    "ip": "1.2.3.4",
+    "maxGas": 1000000
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x3dce68f03d641500601889263bc11c0ba38fbbe62cc591f578170f42a1dc8101",
+    "s": "0x23dbfc8f0daf0298bfc624719606aebe32d08b6301c5f33e4f655163afd39fda",
+    "v": 28
+  }
+}

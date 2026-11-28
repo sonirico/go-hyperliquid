@@ -572,6 +572,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.AgentSetAbstraction(ctx, "u")
 			return err
 		}},
+		{name: "gossipPriorityBid", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.GossipPriorityBid(ctx, 1, "1.2.3.4", 1000000)
+			return err
+		}},
 	}
 }
 

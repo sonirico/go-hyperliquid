@@ -317,6 +317,7 @@ cases = {
     "topUpIsolatedOnlyMargin": lambda: l1({"type": "topUpIsolatedOnlyMargin", "asset": 0, "leverage": "5"}),
     "noop": lambda: ex.noop(NONCE),
     "agentSetAbstraction": lambda: ex.agent_set_abstraction("u"),
+    "gossipPriorityBid": lambda: ex.gossip_priority_bid(1, "1.2.3.4", 1000000),
 }
 
 os.makedirs(out_dir, exist_ok=True)
