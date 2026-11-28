@@ -308,3 +308,11 @@ func TestWsMessage_UserFills(t *testing.T) {
 		assertKeysCovered(t, raw, &WsOrderFills{})
 	})
 }
+
+func TestWsMessage_OrderUpdates(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_orderUpdates")
+
+		assertKeysCovered(t, raw, &WsOrders{})
+	})
+}
