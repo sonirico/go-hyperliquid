@@ -91,6 +91,10 @@ func keySpotState(user string) string {
 	return key(ChannelSpotState, user)
 }
 
+func keyAllDexsClearinghouseState(user string) string {
+	return key(ChannelAllDexsClearinghouseState, user)
+}
+
 func keyBbo(coin string) string {
 	return key(ChannelBbo, coin)
 }

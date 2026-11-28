@@ -381,6 +381,14 @@ func TestWsMessage_SpotState(t *testing.T) {
 	})
 }
 
+func TestWsMessage_AllDexsClearinghouseState(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_allDexsClearinghouseState")
+
+		assertKeysCovered(t, raw, &WsAllDexsClearinghouseState{})
+	})
+}
+
 func TestWsMessage_WebData3(t *testing.T) {
 	t.Run("covers every key of the message data", func(t *testing.T) {
 		raw := newTestWsFixtureData(t, "ws_webData3")
@@ -639,5 +647,27 @@ func TestSpotStateSubscription(t *testing.T) {
 		f.requireSubscription(t, `{"type":"spotState","user":"`+testWsUser+`"}`)
 		msg := requireTestWsMessage(t, got)
 		require.Equal(t, testWsUser, msg.User)
+	})
+}
+
+func TestAllDexsClearinghouseStateSubscription(t *testing.T) {
+	t.Run("sends the payload and delivers the fixture", func(t *testing.T) {
+		f := newTestWsSubscribe(t, newTestLiveFixture(t, "ws_allDexsClearinghouseState"))
+		got := make(chan WsAllDexsClearinghouseState, 1)
+
+		_, err := f.client.AllDexsClearinghouseState(
+			AllDexsClearinghouseStateSubscriptionParams{User: testWsUser},
+			func(msg WsAllDexsClearinghouseState, err error) {
+				if err == nil {
+					got <- msg
+				}
+			},
+		)
+		require.NoError(t, err)
+
+		f.requireSubscription(t, `{"type":"allDexsClearinghouseState","user":"`+testWsUser+`"}`)
+		msg := requireTestWsMessage(t, got)
+		require.NotEmpty(t, msg.ClearinghouseStates)
+		require.Equal(t, "", msg.ClearinghouseStates[0].First)
 	})
 }

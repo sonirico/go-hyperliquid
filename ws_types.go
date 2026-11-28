@@ -32,6 +32,7 @@ const (
 	ChannelUserTwapSliceFills          string = "userTwapSliceFills"
 	ChannelUserTwapHistory             string = "userTwapHistory"
 	ChannelSpotState                   string = "spotState"
+	ChannelAllDexsClearinghouseState   string = "allDexsClearinghouseState"
 	ChannelError                       string = "error"
 )
 
@@ -238,6 +239,12 @@ type (
 	WsSpotState struct {
 		User      string        `json:"user"`
 		SpotState SpotUserState `json:"spotState"`
+	}
+
+	//easyjson:skip
+	WsAllDexsClearinghouseState struct {
+		User                string                      `json:"user"`
+		ClearinghouseStates []Tuple2[string, UserState] `json:"clearinghouseStates"`
 	}
 
 	FillLiquidation struct {

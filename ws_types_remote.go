@@ -229,6 +229,19 @@ func (p remoteSpotStateSubscriptionPayload) Key() string {
 	return keySpotState(p.User)
 }
 
+type remoteAllDexsClearinghouseStateSubscriptionPayload struct {
+	Type string `json:"type"`
+	User string `json:"user"`
+}
+
+func (p remoteAllDexsClearinghouseStateSubscriptionPayload) Channel() string {
+	return p.Type
+}
+
+func (p remoteAllDexsClearinghouseStateSubscriptionPayload) Key() string {
+	return keyAllDexsClearinghouseState(p.User)
+}
+
 type remoteBboSubscriptionPayload struct {
 	Type string `json:"type"`
 	Coin string `json:"coin"`

@@ -88,6 +88,10 @@ func (m WsSpotState) Key() string {
 	return keySpotState(m.User)
 }
 
+func (m WsAllDexsClearinghouseState) Key() string {
+	return keyAllDexsClearinghouseState(m.User)
+}
+
 func (w WsOrderFills) Key() string {
 	return keyUserFills(w.User)
 }
