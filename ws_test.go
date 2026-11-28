@@ -228,3 +228,11 @@ func TestWsMessage_Trades(t *testing.T) {
 		assertKeysCovered(t, raw, &Trades{})
 	})
 }
+
+func TestWsMessage_Bbo(t *testing.T) {
+	t.Run("covers every key of the message data", func(t *testing.T) {
+		raw := newTestWsFixtureData(t, "ws_bbo")
+
+		assertKeysCovered(t, raw, &Bbo{})
+	})
+}
