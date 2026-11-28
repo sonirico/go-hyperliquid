@@ -77,6 +77,12 @@ make generate
 
 **Important**: Always commit the generated files along with your changes.
 
+### Adding or changing an action
+
+1. An L1 action is a struct with `msgpack` tags in the API's field order, never a `map[string]any`.
+2. Every action has a case in `scripts/golden.py`, a row in `golden_test.go`, and a row in `live_test.go`. `make verify-live` must pass before review.
+3. Every response struct has a fixture in `testdata/live/` and a test using `assertKeysCovered`.
+
 ### Commit Messages
 
 We follow conventional commit format:
