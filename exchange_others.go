@@ -774,51 +774,6 @@ func (e *Exchange) UseBigBlocks(ctx context.Context, enable bool) (*ApprovalResp
 	return &result, nil
 }
 
-// PerpDexClassTransfer transfers tokens between perp dex classes
-func (e *Exchange) PerpDexClassTransfer(
-	ctx context.Context,
-	dex, token string,
-	amount float64,
-	toPerp bool,
-) (*TransferResponse, error) {
-	nonce := e.nextNonce()
-
-	action := PerpDexClassTransferAction{
-		Type:   "perpDexClassTransfer",
-		Dex:    dex,
-		Token:  token,
-		Amount: amount,
-		ToPerp: toPerp,
-	}
-
-	sig, err := e.signL1Action(
-		ctx,
-		action,
-		e.vault,
-		nonce,
-		e.expiresAfter,
-		e.client.baseURL == MainnetAPIURL,
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := actionError(resp); err != nil {
-		return nil, err
-	}
-
-	var result TransferResponse
-	if err := json.Unmarshal(resp, &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
-}
-
 // SubAccountSpotTransfer transfers spot tokens to/from sub-account
 func (e *Exchange) SubAccountSpotTransfer(
 	ctx context.Context,

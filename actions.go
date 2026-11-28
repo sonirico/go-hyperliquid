@@ -180,15 +180,6 @@ type BatchModifyAction struct {
 	Modifies []ModifyAction `json:"modifies"      msgpack:"modifies"`
 }
 
-// PerpDexClassTransferAction represents perp dex class transfer
-type PerpDexClassTransferAction struct {
-	Type   string  `json:"type"   msgpack:"type"`
-	Dex    string  `json:"dex"    msgpack:"dex"`
-	Token  string  `json:"token"  msgpack:"token"`
-	Amount float64 `json:"amount" msgpack:"amount"`
-	ToPerp bool    `json:"toPerp" msgpack:"toPerp"`
-}
-
 // SubAccountSpotTransferAction represents sub-account spot transfer
 type SubAccountSpotTransferAction struct {
 	Type           string `json:"type"           msgpack:"type"`

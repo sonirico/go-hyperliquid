@@ -555,34 +555,6 @@ func SignUsdTransferAction(
 	)
 }
 
-type signPerpDexClassTransferAction struct {
-	Type   string  `msgpack:"type"`
-	Dex    string  `msgpack:"dex"`
-	Token  string  `msgpack:"token"`
-	Amount float64 `msgpack:"amount"`
-	ToPerp bool    `msgpack:"toPerp"`
-}
-
-// SignPerpDexClassTransferAction signs perp dex class transfer action
-func SignPerpDexClassTransferAction(
-	privateKey *ecdsa.PrivateKey,
-	dex, token string,
-	amount float64,
-	toPerp bool,
-	timestamp int64,
-	isMainnet bool,
-) (SignatureResult, error) {
-	action := signPerpDexClassTransferAction{
-		Type:   "perpDexClassTransfer",
-		Dex:    dex,
-		Token:  token,
-		Amount: amount,
-		ToPerp: toPerp,
-	}
-
-	return SignL1Action(privateKey, action, "", timestamp, nil, isMainnet)
-}
-
 // SignTokenDelegateAction signs a tokenDelegate action.
 //
 // tokenDelegate is a user-signed action: it is signed as EIP-712
