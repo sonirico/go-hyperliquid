@@ -259,6 +259,9 @@ cases = {
     "perp_deploy_set_fee_recipient": lambda: l1(
         {"type": "perpDeploy", "setFeeRecipient": {"dex": "test", "feeRecipient": OTHER}}
     ),
+    "perp_deploy_disable_dex": lambda: l1(
+        {"type": "perpDeploy", "disableDex": "test"}
+    ),
     "user_set_abstraction": lambda: ex.user_set_abstraction(wallet.address, "unifiedAccount"),
     "send_asset": lambda: ex.send_asset(OTHER, "", "spot", TOKEN, 1.5),
     "reserve_request_weight": lambda: l1({"type": "reserveRequestWeight", "weight": 1}),

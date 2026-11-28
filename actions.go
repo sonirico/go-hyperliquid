@@ -500,6 +500,11 @@ type PerpDeploySetFeeRecipientAction struct {
 	SetFeeRecipient SetFeeRecipient `json:"setFeeRecipient" msgpack:"setFeeRecipient"`
 }
 
+type PerpDeployDisableDexAction struct {
+	Type       string `json:"type"       msgpack:"type"`
+	DisableDex string `json:"disableDex" msgpack:"disableDex"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

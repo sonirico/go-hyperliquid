@@ -1,0 +1,27 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "perpDeploy",
+    "disableDex": "test"
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0x54f2ae15b6e838098a84f95bb21c71951a95405fb7693fb98a187870be4ae57f",
+    "s": "0x9450fed6db84dbafcbe62d574f9d95eaba3ddf4074915f5a8422a742dc70917",
+    "v": 27
+  }
+}

@@ -446,6 +446,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeploySetFeeRecipient(ctx, "test", goldenOther)
 			return err
 		}},
+		{name: "perp_deploy_disable_dex", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeployDisableDex(ctx, "test")
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

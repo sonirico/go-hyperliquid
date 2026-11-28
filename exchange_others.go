@@ -1948,6 +1948,16 @@ func (e *Exchange) PerpDeploySetFeeRecipient(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeployDisableDex disables a builder-deployed DEX
+func (e *Exchange) PerpDeployDisableDex(
+	ctx context.Context,
+	dex string,
+) (*PerpDeployResponse, error) {
+	action := PerpDeployDisableDexAction{Type: "perpDeploy", DisableDex: dex}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer
