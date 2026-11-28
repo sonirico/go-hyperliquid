@@ -688,3 +688,11 @@ func TestBorrowLendUserState_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &BorrowLendUserState{})
 	})
 }
+
+func TestOrderQueryResult_Cloid_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "orderStatusCloid")
+
+		assertKeysCovered(t, raw, &OrderQueryResult{})
+	})
+}
