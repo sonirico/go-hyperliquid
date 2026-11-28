@@ -825,6 +825,11 @@ type SpotDeployState struct {
 	GasAuction PerpDeployAuctionStatus `json:"gasAuction"`
 }
 
+type OutcomeDeployerLimits struct {
+	NDailyOutcomesRemaining  int `json:"nDailyOutcomesRemaining"`
+	NActiveOutcomesRemaining int `json:"nActiveOutcomesRemaining"`
+}
+
 // AccountHistory represents historical portfolio data for a specific time range
 type AccountHistory struct {
 	AccountValueHistory []MixedArray `json:"accountValueHistory"` // [timestamp, value]

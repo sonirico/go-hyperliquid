@@ -1027,6 +1027,22 @@ func (i *Info) BorrowLendReserveState(ctx context.Context, token int) (*BorrowLe
 	return &result, nil
 }
 
+func (i *Info) OutcomeDeployerLimits(ctx context.Context, venue string) (*OutcomeDeployerLimits, error) {
+	resp, err := i.client.post(ctx, "/info", map[string]any{
+		"type":  "outcomeDeployerLimits",
+		"venue": venue,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch outcome deployer limits: %w", err)
+	}
+
+	var result OutcomeDeployerLimits
+	if err := json.Unmarshal(resp, &result); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal outcome deployer limits: %w", err)
+	}
+	return &result, nil
+}
+
 // portfolio returns the user's portfolio
 func (i *Info) Portfolio(ctx context.Context, user string) ([]Portfolio, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{

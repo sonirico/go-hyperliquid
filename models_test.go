@@ -736,3 +736,11 @@ func TestBorrowLendReserveState_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &BorrowLendReserveState{})
 	})
 }
+
+func TestOutcomeDeployerLimits_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "outcomeDeployerLimits")
+
+		assertKeysCovered(t, raw, &OutcomeDeployerLimits{})
+	})
+}

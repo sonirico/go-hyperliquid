@@ -231,3 +231,18 @@ func TestInfo_BorrowLendReserveState(t *testing.T) {
 	}, *req)
 	require.Equal(t, "1.0", state.OraclePx)
 }
+
+func TestInfo_OutcomeDeployerLimits(t *testing.T) {
+	const venue = "skew"
+
+	info, req := newInfoTestServer(t, string(newTestLiveFixture(t, "outcomeDeployerLimits")))
+
+	limits, err := info.OutcomeDeployerLimits(context.TODO(), venue)
+	require.NoError(t, err)
+
+	require.Equal(t, map[string]any{
+		"type":  "outcomeDeployerLimits",
+		"venue": venue,
+	}, *req)
+	require.Equal(t, 968, limits.NDailyOutcomesRemaining)
+}
