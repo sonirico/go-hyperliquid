@@ -529,17 +529,33 @@ type CValidatorRegister struct {
 	InitialWei int               `json:"initial_wei" msgpack:"initial_wei"`
 }
 
+// CValidatorChangeProfile represents the changeProfile variant of a validator action,
+// unset fields are sent as null
+type CValidatorChangeProfile struct {
+	NodeIp             *CValidatorNodeIp `json:"node_ip"             msgpack:"node_ip"`
+	Name               *string           `json:"name"                msgpack:"name"`
+	Description        *string           `json:"description"         msgpack:"description"`
+	Unjailed           bool              `json:"unjailed"            msgpack:"unjailed"`
+	DisableDelegations *bool             `json:"disable_delegations" msgpack:"disable_delegations"`
+	CommissionBps      *int              `json:"commission_bps"      msgpack:"commission_bps"`
+	Signer             *string           `json:"signer"              msgpack:"signer"`
+}
+
 // CValidatorAction represents consensus validator action, exactly one variant is set
 //
 //easyjson:skip
 type CValidatorAction struct {
-	Type     string
-	Register *CValidatorRegister
+	Type          string
+	Register      *CValidatorRegister
+	ChangeProfile *CValidatorChangeProfile
 }
 
 func (a CValidatorAction) variant() (string, any, error) {
-	if a.Register != nil {
+	switch {
+	case a.Register != nil && a.ChangeProfile == nil:
 		return "register", a.Register, nil
+	case a.ChangeProfile != nil && a.Register == nil:
+		return "changeProfile", a.ChangeProfile, nil
 	}
 	return "", nil, errors.New("CValidatorAction needs exactly one variant")
 }

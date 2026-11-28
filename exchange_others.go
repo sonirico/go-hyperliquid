@@ -2070,13 +2070,29 @@ func (e *Exchange) CValidatorRegister(
 // CValidatorChangeProfile changes validator profile
 func (e *Exchange) CValidatorChangeProfile(
 	ctx context.Context,
-	newProfile map[string]any,
+	nodeIp *string,
+	name *string,
+	description *string,
+	unjailed bool,
+	disableDelegations *bool,
+	commissionBps *int,
+	signer *string,
 ) (*ValidatorResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":       "cValidatorChangeProfile",
-		"newProfile": newProfile,
+	action := CValidatorAction{
+		Type: "CValidatorAction",
+		ChangeProfile: &CValidatorChangeProfile{
+			Name:               name,
+			Description:        description,
+			Unjailed:           unjailed,
+			DisableDelegations: disableDelegations,
+			CommissionBps:      commissionBps,
+			Signer:             signer,
+		},
+	}
+	if nodeIp != nil {
+		action.ChangeProfile.NodeIp = &CValidatorNodeIp{Ip: *nodeIp}
 	}
 
 	sig, err := e.signL1Action(

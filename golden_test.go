@@ -194,6 +194,12 @@ func goldenRows(userAddress string) []goldenRow {
 	maxGas := 1000000
 	nSeededLevels := 3
 	bot := "bot"
+	nodeIp := "1.2.3.4"
+	validatorName := "val"
+	validatorDescription := "desc"
+	disableDelegations := true
+	commissionBps := 500
+	validatorSigner := goldenOther
 	assetRequest2 := AssetRequest2{
 		Coin: "test:X", SzDecimals: 2, OraclePx: "10.0", MarginTableID: 10, MarginMode: "strictIsolated",
 	}
@@ -423,6 +429,14 @@ func goldenRows(userAddress string) []goldenRow {
 		}},
 		{name: "cValidator_register", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.CValidatorRegister(ctx, "1.2.3.4", "val", "desc", false, 500, goldenOther, true, 100000000)
+			return err
+		}},
+		{name: "cValidator_changeProfile_nil", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CValidatorChangeProfile(ctx, nil, nil, nil, false, nil, nil, nil)
+			return err
+		}},
+		{name: "cValidator_changeProfile_set", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.CValidatorChangeProfile(ctx, &nodeIp, &validatorName, &validatorDescription, true, &disableDelegations, &commissionBps, &validatorSigner)
 			return err
 		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
