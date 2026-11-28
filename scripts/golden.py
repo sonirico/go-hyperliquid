@@ -184,6 +184,7 @@ cases = {
         {"type": "twapOrder", "twap": {"a": 0, "b": True, "s": "0.1", "r": False, "m": 30, "t": False}}
     ),
     "twap_cancel": lambda: l1({"type": "twapCancel", "a": 0, "t": 77738308}),
+    "spotDeploy_registerToken2": lambda: ex.spot_deploy_register_token("TKN", 2, 8, 1000000, "Token"),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 

@@ -357,6 +357,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.TwapCancel(ctx, "BTC", 77738308)
 			return err
 		}},
+		{name: "spotDeploy_registerToken2", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SpotDeployRegisterToken(ctx, "TKN", 2, 8, 1000000, "Token")
+			return err
+		}},
 		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
 			return err

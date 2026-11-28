@@ -1,0 +1,35 @@
+{
+  "kind": "l1",
+  "action": {
+    "type": "spotDeploy",
+    "registerToken2": {
+      "spec": {
+        "name": "TKN",
+        "szDecimals": 2,
+        "weiDecimals": 8
+      },
+      "maxGas": 1000000,
+      "fullName": "Token"
+    }
+  },
+  "nonce": 1700000000000,
+  "vaultAddress": null,
+  "expiresAfter": null,
+  "isMainnet": false,
+  "primaryType": "Agent",
+  "types": [
+    {
+      "name": "source",
+      "type": "string"
+    },
+    {
+      "name": "connectionId",
+      "type": "bytes32"
+    }
+  ],
+  "signature": {
+    "r": "0xd14f93815e46b07ec4709b33f30daf2a2baab36146f7ab2a537377cebfa4baec",
+    "s": "0x44815eac4679f5fde7a617f8f5e0c2e47e45b9ceadec2a5f0a9a1b9e43984f12",
+    "v": 28
+  }
+}

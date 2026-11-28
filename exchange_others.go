@@ -1238,16 +1238,16 @@ func (e *Exchange) SpotDeployRegisterToken(
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeploy",
-		"registerToken2": map[string]any{
-			"spec": map[string]any{
-				"name":        tokenName,
-				"szDecimals":  szDecimals,
-				"weiDecimals": weiDecimals,
+	action := SpotDeployAction{
+		Type: "spotDeploy",
+		RegisterToken2: &SpotDeployRegisterToken2{
+			Spec: SpotDeployTokenSpec{
+				Name:        tokenName,
+				SzDecimals:  szDecimals,
+				WeiDecimals: weiDecimals,
 			},
-			"maxGas":   maxGas,
-			"fullName": fullName,
+			MaxGas:   maxGas,
+			FullName: fullName,
 		},
 	}
 

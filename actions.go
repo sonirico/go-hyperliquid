@@ -198,6 +198,26 @@ type BorrowLendAction struct {
 	Amount    string `json:"amount"    msgpack:"amount"`
 }
 
+// SpotDeployTokenSpec represents the token spec of a spot deploy registerToken2
+type SpotDeployTokenSpec struct {
+	Name        string `json:"name"        msgpack:"name"`
+	SzDecimals  int    `json:"szDecimals"  msgpack:"szDecimals"`
+	WeiDecimals int    `json:"weiDecimals" msgpack:"weiDecimals"`
+}
+
+// SpotDeployRegisterToken2 represents the registerToken2 variant of a spot deploy action
+type SpotDeployRegisterToken2 struct {
+	Spec     SpotDeployTokenSpec `json:"spec"     msgpack:"spec"`
+	MaxGas   int                 `json:"maxGas"   msgpack:"maxGas"`
+	FullName string              `json:"fullName" msgpack:"fullName"`
+}
+
+// SpotDeployAction represents spot deploy action, exactly one variant is set
+type SpotDeployAction struct {
+	Type           string                    `json:"type"                     msgpack:"type"`
+	RegisterToken2 *SpotDeployRegisterToken2 `json:"registerToken2,omitempty" msgpack:"registerToken2,omitempty"`
+}
+
 // ScheduleCancelAction represents schedule cancel action
 type ScheduleCancelAction struct {
 	Type string `json:"type"           msgpack:"type"`
