@@ -36,7 +36,6 @@ type CancelByCloidWire struct {
 // CancelByCloidAction represents the cancel by cloid action
 type CancelByCloidAction struct {
 	Type    string              `json:"type"          msgpack:"type"`
-	Dex     string              `json:"dex,omitempty" msgpack:"dex,omitempty"`
 	Cancels []CancelByCloidWire `json:"cancels"       msgpack:"cancels"`
 }
 
@@ -229,7 +228,6 @@ type ModifyAction struct {
 // BatchModifyAction represents multiple order modifications
 type BatchModifyAction struct {
 	Type     string         `json:"type"          msgpack:"type"`
-	Dex      string         `json:"dex,omitempty" msgpack:"dex,omitempty"`
 	Modifies []ModifyAction `json:"modifies"      msgpack:"modifies"`
 }
 

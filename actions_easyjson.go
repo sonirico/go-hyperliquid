@@ -5686,12 +5686,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid56(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
-		case "dex":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Dex = string(in.String())
-			}
 		case "cancels":
 			if in.IsNull() {
 				in.Skip()
@@ -5737,11 +5731,6 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid56(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
-	}
-	if in.Dex != "" {
-		const prefix string = ",\"dex\":"
-		out.RawString(prefix)
-		out.String(string(in.Dex))
 	}
 	{
 		const prefix string = ",\"cancels\":"
@@ -6486,12 +6475,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid63(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
-		case "dex":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Dex = string(in.String())
-			}
 		case "modifies":
 			if in.IsNull() {
 				in.Skip()
@@ -6537,11 +6520,6 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid63(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
-	}
-	if in.Dex != "" {
-		const prefix string = ",\"dex\":"
-		out.RawString(prefix)
-		out.String(string(in.Dex))
 	}
 	{
 		const prefix string = ",\"modifies\":"

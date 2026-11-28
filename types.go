@@ -13,12 +13,10 @@ const (
 	SideBid Side = "B"
 )
 
-type Grouping string
-
 const (
-	GroupingNA           Grouping = "na"
-	GroupingNormalTpsl   Grouping = "normalTpsl"
-	GroupingPositionTpls Grouping = "positionTpsl"
+	GroupingNA           = "na"
+	GroupingNormalTpsl   = "normalTpsl"
+	GroupingPositionTpls = "positionTpsl"
 )
 
 // Constants for default values
