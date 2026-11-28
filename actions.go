@@ -505,6 +505,22 @@ type PerpDeployDisableDexAction struct {
 	DisableDex string `json:"disableDex" msgpack:"disableDex"`
 }
 
+type SubDeployer struct {
+	Variant string `json:"variant" msgpack:"variant"`
+	User    string `json:"user"    msgpack:"user"`
+	Allowed bool   `json:"allowed" msgpack:"allowed"`
+}
+
+type SetSubDeployers struct {
+	Dex          string        `json:"dex"          msgpack:"dex"`
+	SubDeployers []SubDeployer `json:"subDeployers" msgpack:"subDeployers"`
+}
+
+type PerpDeploySetSubDeployersAction struct {
+	Type            string          `json:"type"            msgpack:"type"`
+	SetSubDeployers SetSubDeployers `json:"setSubDeployers" msgpack:"setSubDeployers"`
+}
+
 func encodeVariantMsgpack(enc *msgpack.Encoder, actionType, variant string, value any) error {
 	if err := enc.EncodeMapLen(2); err != nil {
 		return err

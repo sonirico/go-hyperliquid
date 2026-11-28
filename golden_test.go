@@ -450,6 +450,14 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.PerpDeployDisableDex(ctx, "test")
 			return err
 		}},
+		{name: "perp_deploy_set_sub_deployers_empty", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetSubDeployers(ctx, "test", nil)
+			return err
+		}},
+		{name: "perp_deploy_set_sub_deployers", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.PerpDeploySetSubDeployers(ctx, "test", []SubDeployer{{Variant: "setOracle", User: goldenOther, Allowed: true}})
+			return err
+		}},
 		{name: "user_set_abstraction", call: func(ctx context.Context, ex *Exchange) error {
 			_, err := ex.UserSetAbstraction(ctx, userAddress, "unifiedAccount")
 			return err

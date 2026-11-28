@@ -1958,6 +1958,24 @@ func (e *Exchange) PerpDeployDisableDex(
 	return e.postPerpDeployAction(ctx, action)
 }
 
+// PerpDeploySetSubDeployers sets the sub deployers of a builder-deployed DEX
+func (e *Exchange) PerpDeploySetSubDeployers(
+	ctx context.Context,
+	dex string,
+	subDeployers []SubDeployer,
+) (*PerpDeployResponse, error) {
+	if subDeployers == nil {
+		subDeployers = []SubDeployer{}
+	}
+
+	action := PerpDeploySetSubDeployersAction{
+		Type:            "perpDeploy",
+		SetSubDeployers: SetSubDeployers{Dex: dex, SubDeployers: subDeployers},
+	}
+
+	return e.postPerpDeployAction(ctx, action)
+}
+
 // CSigner Methods
 
 // CSignerUnjailSelf unjails self as consensus signer

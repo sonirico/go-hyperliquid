@@ -262,6 +262,12 @@ cases = {
     "perp_deploy_disable_dex": lambda: l1(
         {"type": "perpDeploy", "disableDex": "test"}
     ),
+    "perp_deploy_set_sub_deployers_empty": lambda: l1(
+        {"type": "perpDeploy", "setSubDeployers": {"dex": "test", "subDeployers": []}}
+    ),
+    "perp_deploy_set_sub_deployers": lambda: l1(
+        {"type": "perpDeploy", "setSubDeployers": {"dex": "test", "subDeployers": [{"variant": "setOracle", "user": OTHER, "allowed": True}]}}
+    ),
     "user_set_abstraction": lambda: ex.user_set_abstraction(wallet.address, "unifiedAccount"),
     "send_asset": lambda: ex.send_asset(OTHER, "", "spot", TOKEN, 1.5),
     "reserve_request_weight": lambda: l1({"type": "reserveRequestWeight", "weight": 1}),
