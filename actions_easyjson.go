@@ -4186,12 +4186,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid40(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
-		case "dex":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Dex = string(in.String())
-			}
 		case "orders":
 			if in.IsNull() {
 				in.Skip()
@@ -4257,11 +4251,6 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid40(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
-	}
-	if in.Dex != "" {
-		const prefix string = ",\"dex\":"
-		out.RawString(prefix)
-		out.String(string(in.Dex))
 	}
 	{
 		const prefix string = ",\"orders\":"
@@ -4619,12 +4608,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid44(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
-		case "dex":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Dex = string(in.String())
-			}
 		case "oid":
 			if m, ok := out.Oid.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
@@ -4658,16 +4641,6 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid44(out *jwriter.Writer,
 		first = false
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
-	}
-	if in.Dex != "" {
-		const prefix string = ",\"dex\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
-		out.String(string(in.Dex))
 	}
 	{
 		const prefix string = ",\"oid\":"
@@ -5355,12 +5328,6 @@ func easyjsonB97b45a3DecodeGithubComSoniricoGoHyperliquid52(in *jlexer.Lexer, ou
 			} else {
 				out.Type = string(in.String())
 			}
-		case "dex":
-			if in.IsNull() {
-				in.Skip()
-			} else {
-				out.Dex = string(in.String())
-			}
 		case "cancels":
 			if in.IsNull() {
 				in.Skip()
@@ -5406,11 +5373,6 @@ func easyjsonB97b45a3EncodeGithubComSoniricoGoHyperliquid52(out *jwriter.Writer,
 		const prefix string = ",\"type\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Type))
-	}
-	if in.Dex != "" {
-		const prefix string = ",\"dex\":"
-		out.RawString(prefix)
-		out.String(string(in.Dex))
 	}
 	{
 		const prefix string = ",\"cancels\":"

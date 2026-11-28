@@ -225,20 +225,6 @@ func newModifyOrderAction(
 		return ModifyAction{}, fmt.Errorf("failed to wire size: %w", err)
 	}
 
-	// Build order type map with proper field ordering
-	orderTypeMap := make(map[string]any)
-	if modifyRequest.Order.OrderType.Limit != nil {
-		orderTypeMap["limit"] = map[string]any{
-			"tif": modifyRequest.Order.OrderType.Limit.Tif,
-		}
-	} else if modifyRequest.Order.OrderType.Trigger != nil {
-		orderTypeMap["trigger"] = map[string]any{
-			"triggerPx": modifyRequest.Order.OrderType.Trigger.TriggerPx,
-			"isMarket":  modifyRequest.Order.OrderType.Trigger.IsMarket,
-			"tpsl":      modifyRequest.Order.OrderType.Trigger.Tpsl,
-		}
-	}
-
 	asset, ok := e.info.CoinToAsset(modifyRequest.Order.Coin)
 	if !ok {
 		return ModifyAction{}, fmt.Errorf("coin %s not found in info", modifyRequest.Order.Coin)
@@ -283,7 +269,6 @@ func newModifyOrdersAction(
 			return BatchModifyAction{}, fmt.Errorf("failed to create modify request %d: %w", i, err)
 		}
 		modify.Type = ""
-		modify.Dex = ""
 		modifies[i] = modify
 	}
 

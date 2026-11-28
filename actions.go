@@ -20,9 +20,8 @@ type CancelOrderWire struct {
 
 // CancelAction represents the cancel action
 type CancelAction struct {
-	Type    string            `json:"type"          msgpack:"type"`
-	Dex     string            `json:"dex,omitempty" msgpack:"dex,omitempty"`
-	Cancels []CancelOrderWire `json:"cancels"       msgpack:"cancels"`
+	Type    string            `json:"type"    msgpack:"type"`
+	Cancels []CancelOrderWire `json:"cancels" msgpack:"cancels"`
 }
 
 // CancelByCloidWire represents cancel by cloid item wire format
@@ -159,7 +158,6 @@ type OrderWireTypeTrigger struct {
 // CRITICAL: Field order MUST match Python SDK insertion order for msgpack hash consistency
 type OrderAction struct {
 	Type     string       `json:"type"              msgpack:"type"`
-	Dex      string       `json:"dex,omitempty"     msgpack:"dex,omitempty"`
 	Orders   []OrderWire  `json:"orders"            msgpack:"orders"`
 	Grouping string       `json:"grouping"          msgpack:"grouping"`
 	Builder  *BuilderInfo `json:"builder,omitempty" msgpack:"builder,omitempty"`
@@ -168,7 +166,6 @@ type OrderAction struct {
 // ModifyAction represents a single order modification
 type ModifyAction struct {
 	Type  string    `json:"type,omitempty" msgpack:"type,omitempty"`
-	Dex   string    `json:"dex,omitempty"  msgpack:"dex,omitempty"`
 	Oid   any       `json:"oid"            msgpack:"oid"`
 	Order OrderWire `json:"order"          msgpack:"order"`
 }
