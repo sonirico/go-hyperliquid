@@ -268,6 +268,13 @@ Thanks to all the people who have contributed to this project! 🎉
                 </a>
             </td>
             <td align="center">
+                <a href="https://github.com/takinanton">
+                    <img src="https://avatars.githubusercontent.com/u/191816639?v=4" width="100;" alt="takinanton"/>
+                    <br />
+                    <sub><b>Anton</b></sub>
+                </a>
+            </td>
+            <td align="center">
                 <a href="https://github.com/freeeverett">
                     <img src="https://avatars.githubusercontent.com/u/54989739?v=4" width="100;" alt="freeeverett"/>
                     <br />
@@ -281,6 +288,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Martina</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/07Vaishnavi-Singh">
                     <img src="https://avatars.githubusercontent.com/u/100015197?v=4" width="100;" alt="07Vaishnavi-Singh"/>
@@ -288,8 +297,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>Vaiz_07</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/chiliec">
                     <img src="https://avatars.githubusercontent.com/u/982358?v=4" width="100;" alt="chiliec"/>
@@ -325,6 +332,8 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>feeeei</b></sub>
                 </a>
             </td>
+		</tr>
+		<tr>
             <td align="center">
                 <a href="https://github.com/tpkeeper">
                     <img src="https://avatars.githubusercontent.com/u/7260146?v=4" width="100;" alt="tpkeeper"/>
@@ -332,8 +341,6 @@ Thanks to all the people who have contributed to this project! 🎉
                     <sub><b>tpkeeper</b></sub>
                 </a>
             </td>
-		</tr>
-		<tr>
             <td align="center">
                 <a href="https://github.com/vyomshm">
                     <img src="https://avatars.githubusercontent.com/u/20184946?v=4" width="100;" alt="vyomshm"/>

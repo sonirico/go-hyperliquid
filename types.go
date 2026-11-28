@@ -438,7 +438,7 @@ type UserFundingHistory struct {
 type Delta struct {
 	Coin        string `json:"coin"`
 	FundingRate string `json:"fundingRate"`
-	Size        string `json:"size"`
+	Size        string `json:"szi"`
 	Type        string `json:"type"`
 	USDC        string `json:"usdc"`
 }
