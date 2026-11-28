@@ -164,7 +164,7 @@ func (e *Exchange) executeAction(ctx context.Context, action, result any) error 
 		return err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return err
 	}
@@ -197,6 +197,7 @@ func (e *Exchange) postAction(
 	action any,
 	signature SignatureResult,
 	nonce int64,
+	vault string,
 ) ([]byte, error) {
 	payload := map[string]any{
 		"action":    action,
@@ -205,17 +206,10 @@ func (e *Exchange) postAction(
 	}
 
 	if e.vault != "" {
-		// Handle vault address based on action type
-		if actionMap, ok := action.(map[string]any); ok {
-			if actionMap["type"] != "usdClassTransfer" {
-				payload["vaultAddress"] = e.vault
-			} else {
-				payload["vaultAddress"] = nil
-			}
+		if vault == "" {
+			payload["vaultAddress"] = nil
 		} else {
-			// For struct types, we need to use reflection or type assertion
-			// For now, assume it's not usdClassTransfer
-			payload["vaultAddress"] = e.vault
+			payload["vaultAddress"] = vault
 		}
 	}
 

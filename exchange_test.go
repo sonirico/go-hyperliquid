@@ -321,3 +321,47 @@ func TestActionError_StatusErr(t *testing.T) {
 		})
 	}
 }
+
+func TestPostAction_VaultAddress(t *testing.T) {
+	pk, err := crypto.HexToECDSA(goldenKey)
+	require.NoError(t, err)
+
+	type testCase struct {
+		name     string
+		call     func(ctx context.Context, ex *Exchange) error
+		expected any
+	}
+
+	testCases := []testCase{
+		{"SendAsset", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SendAsset(ctx, goldenOther, "", "spot", goldenToken, 1.5)
+			return err
+		}, nil},
+		{"UsdClassTransfer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.UsdClassTransfer(ctx, 1.5, true)
+			return err
+		}, nil},
+		{"SetReferrer", func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.SetReferrer(ctx, "ABC")
+			return err
+		}, goldenOther},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			server, recorded := newUserSignedTestServer(t)
+			ex := NewExchange(
+				context.Background(), pk, server.URL, &Meta{}, goldenOther, "", &SpotMeta{}, &MixedArray{},
+			)
+
+			callErr := tc.call(context.Background(), ex)
+
+			require.NoError(t, callErr)
+			bodies := recorded()
+			require.Len(t, bodies, 1)
+			vault, ok := bodies[0]["vaultAddress"]
+			require.True(t, ok, "vaultAddress missing from the payload")
+			require.Equal(t, tc.expected, vault)
+		})
+	}
+}

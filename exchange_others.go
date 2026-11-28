@@ -48,7 +48,7 @@ func (e *Exchange) UpdateLeverage(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (e *Exchange) UpdateIsolatedMargin(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +186,7 @@ func (e *Exchange) ScheduleCancel(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +234,7 @@ func (e *Exchange) Reserve(ctx context.Context, weight int) (*ReserveRequestWeig
 	}
 
 	// Post to exchange
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, fmt.Errorf("failed to post reserve action: %w", err)
 	}
@@ -291,7 +291,7 @@ func (e *Exchange) SetReferrer(ctx context.Context, code string) (*SetReferrerRe
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -331,7 +331,7 @@ func (e *Exchange) CreateSubAccount(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -389,7 +389,7 @@ func (e *Exchange) UsdClassTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
 	if err != nil {
 		return nil, err
 	}
@@ -433,7 +433,7 @@ func (e *Exchange) SubAccountTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -477,7 +477,7 @@ func (e *Exchange) VaultUsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -521,7 +521,7 @@ func (e *Exchange) CreateVault(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -564,7 +564,7 @@ func (e *Exchange) VaultModify(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -605,7 +605,7 @@ func (e *Exchange) VaultDistribute(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -659,7 +659,7 @@ func (e *Exchange) UsdTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -715,7 +715,7 @@ func (e *Exchange) SpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -752,7 +752,7 @@ func (e *Exchange) UseBigBlocks(ctx context.Context, enable bool) (*ApprovalResp
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -797,7 +797,7 @@ func (e *Exchange) PerpDexClassTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -851,7 +851,7 @@ func (e *Exchange) SubAccountSpotTransfer(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -903,7 +903,7 @@ func (e *Exchange) TokenDelegate(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -957,7 +957,7 @@ func (e *Exchange) WithdrawFromBridge(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1036,7 +1036,7 @@ func (e *Exchange) SendToEVMWithData(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1100,7 +1100,7 @@ func (e *Exchange) ApproveAgent(
 		Nonce:            nonce,
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, "", err
 	}
@@ -1149,7 +1149,7 @@ func (e *Exchange) ApproveBuilderFee(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1209,7 +1209,7 @@ func (e *Exchange) ConvertToMultiSigUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1263,7 +1263,7 @@ func (e *Exchange) SpotDeployRegisterToken(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1303,7 +1303,7 @@ func (e *Exchange) SpotDeployUserGenesis(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1341,7 +1341,7 @@ func (e *Exchange) SpotDeployEnableFreezePrivilege(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1381,7 +1381,7 @@ func (e *Exchange) SpotDeployFreezeUser(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1419,7 +1419,7 @@ func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1461,7 +1461,7 @@ func (e *Exchange) SpotDeployGenesis(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1503,7 +1503,7 @@ func (e *Exchange) SpotDeployRegisterSpot(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1545,7 +1545,7 @@ func (e *Exchange) SpotDeployRegisterHyperliquidity(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1585,7 +1585,7 @@ func (e *Exchange) SpotDeploySetDeployerTradingFeeShare(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1639,7 +1639,7 @@ func (e *Exchange) PerpDeployRegisterAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1691,7 +1691,7 @@ func (e *Exchange) PerpDeployRegisterAsset2(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1747,7 +1747,7 @@ func (e *Exchange) PerpDeployHaltTrading(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1831,7 +1831,7 @@ func (e *Exchange) PerpDeploySetOracle(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1869,7 +1869,7 @@ func (e *Exchange) CSignerUnjailSelf(ctx context.Context) (*ValidatorResponse, e
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1905,7 +1905,7 @@ func (e *Exchange) CSignerJailSelf(ctx context.Context) (*ValidatorResponse, err
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1945,7 +1945,7 @@ func (e *Exchange) CSignerInner(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -1987,7 +1987,7 @@ func (e *Exchange) CValidatorRegister(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2027,7 +2027,7 @@ func (e *Exchange) CValidatorChangeProfile(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2063,7 +2063,7 @@ func (e *Exchange) CValidatorUnregister(ctx context.Context) (*ValidatorResponse
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2106,7 +2106,7 @@ func (e *Exchange) MultiSig(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, multiSigAction, sig, nonce)
+	resp, err := e.postAction(ctx, multiSigAction, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2155,7 +2155,7 @@ func (e *Exchange) UserSetAbstraction(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2204,7 +2204,7 @@ func (e *Exchange) UserDexAbstraction(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
@@ -2270,7 +2270,7 @@ func (e *Exchange) SendAsset(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, "")
 	if err != nil {
 		return nil, err
 	}
@@ -2319,7 +2319,7 @@ func (e *Exchange) BorrowLend(
 		return nil, err
 	}
 
-	resp, err := e.postAction(ctx, action, sig, nonce)
+	resp, err := e.postAction(ctx, action, sig, nonce, e.vault)
 	if err != nil {
 		return nil, err
 	}
