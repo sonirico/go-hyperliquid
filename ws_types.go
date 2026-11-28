@@ -253,16 +253,18 @@ type (
 	}
 
 	TwapState struct {
-		Coin        string  `json:"coin"`
-		User        string  `json:"user"`
-		Side        string  `json:"side"`
-		Sz          float64 `json:"sz,string"`
-		ExecutedSz  float64 `json:"executedSz,string"`
-		ExecutedNtl float64 `json:"executedNtl,string"`
-		Minutes     int     `json:"minutes"`
-		ReduceOnly  bool    `json:"reduceOnly"`
-		Randomize   bool    `json:"randomize"`
-		Timestamp   int64   `json:"timestamp"`
+		Coin        string          `json:"coin"`
+		User        string          `json:"user"`
+		Side        string          `json:"side"`
+		Sz          float64         `json:"sz,string"`
+		ExecutedSz  float64         `json:"executedSz,string"`
+		ExecutedNtl float64         `json:"executedNtl,string"`
+		Minutes     int             `json:"minutes"`
+		ReduceOnly  bool            `json:"reduceOnly"`
+		Randomize   bool            `json:"randomize"`
+		Timestamp   int64           `json:"timestamp"`
+		Trigger     json.RawMessage `json:"trigger"`
+		StopPx      json.RawMessage `json:"stopPx"`
 	}
 
 	//easyjson:skip

@@ -1426,6 +1426,22 @@ func easyjson8df87204DecodeGithubComSoniricoGoHyperliquid10(in *jlexer.Lexer, ou
 			} else {
 				out.Timestamp = int64(in.Int64())
 			}
+		case "trigger":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.Trigger).UnmarshalJSON(data))
+				}
+			}
+		case "stopPx":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.StopPx).UnmarshalJSON(data))
+				}
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1489,6 +1505,16 @@ func easyjson8df87204EncodeGithubComSoniricoGoHyperliquid10(out *jwriter.Writer,
 		const prefix string = ",\"timestamp\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Timestamp))
+	}
+	{
+		const prefix string = ",\"trigger\":"
+		out.RawString(prefix)
+		out.Raw((in.Trigger).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"stopPx\":"
+		out.RawString(prefix)
+		out.Raw((in.StopPx).MarshalJSON())
 	}
 	out.RawByte('}')
 }
