@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go-version: ['1.25']
+        go-version: ['1.27.4']
 
     steps:
     - name: Checkout code
@@ -69,7 +69,7 @@ jobs:
       run: go test -v -race -coverprofile=coverage.out $(go list ./... | grep -v examples)
 
     - name: Upload coverage to Coveralls
-      if: matrix.go-version == '1.25'
+      if: matrix.go-version == '1.27.4'
       uses: coverallsapp/github-action@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -85,7 +85,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v7
       with:
-        go-version: '1.25'
+        go-version: '1.27.4'
 
     - name: Run Gosec Security Scanner
       # gosec v2.30.0 and later require Go 1.26, so pin the last release that

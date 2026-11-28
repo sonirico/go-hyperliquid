@@ -6,7 +6,7 @@ Thank you for your interest in contributing to go-hyperliquid! This document pro
 
 ### Prerequisites
 
-- Go 1.21 or later
+- Go 1.27.4 or later
 - Git
 - golangci-lint (optional, will be installed automatically)
 
