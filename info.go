@@ -852,7 +852,7 @@ func (i *Info) QuerySubAccounts(ctx context.Context, user string) ([]SubAccount,
 func (i *Info) QueryUserToMultiSigSigners(
 	ctx context.Context,
 	multiSigUser string,
-) ([]MultiSigSigner, error) {
+) (*MultiSigSigner, error) {
 	resp, err := i.client.post(ctx, "/info", map[string]any{
 		"type": "userToMultiSigSigners",
 		"user": multiSigUser,
@@ -861,7 +861,7 @@ func (i *Info) QueryUserToMultiSigSigners(
 		return nil, fmt.Errorf("failed to fetch multi-sig signers: %w", err)
 	}
 
-	var result []MultiSigSigner
+	var result *MultiSigSigner
 	if err := json.Unmarshal(resp, &result); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal multi-sig signers: %w", err)
 	}

@@ -696,3 +696,11 @@ func TestOrderQueryResult_Cloid_UnmarshalJSON(t *testing.T) {
 		assertKeysCovered(t, raw, &OrderQueryResult{})
 	})
 }
+
+func TestMultiSigSigner_UnmarshalJSON(t *testing.T) {
+	t.Run("covers every key of the API response", func(t *testing.T) {
+		raw := newTestLiveFixture(t, "userToMultiSigSigners")
+
+		assertKeysCovered(t, raw, &MultiSigSigner{})
+	})
+}

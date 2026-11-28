@@ -614,8 +614,8 @@ type SubAccount struct {
 }
 
 type MultiSigSigner struct {
-	User      string `json:"user"`
-	Threshold int    `json:"threshold"`
+	AuthorizedUsers []string `json:"authorizedUsers"`
+	Threshold       int      `json:"threshold"`
 }
 
 type BulkOrderResponse struct {
