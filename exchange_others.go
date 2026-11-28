@@ -1421,11 +1421,13 @@ func (e *Exchange) SpotDeployFreezeUser(
 // SpotDeployRevokeFreezePrivilege revokes freeze privilege for spot deployer
 func (e *Exchange) SpotDeployRevokeFreezePrivilege(
 	ctx context.Context,
+	token int,
 ) (*SpotDeployResponse, error) {
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type": "spotDeployRevokeFreezePrivilege",
+	action := SpotDeployAction{
+		Type:                  "spotDeploy",
+		RevokeFreezePrivilege: &SpotDeployRevokeFreezePrivilege{Token: token},
 	}
 
 	sig, err := e.signL1Action(

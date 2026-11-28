@@ -231,6 +231,11 @@ type SpotDeployFreezeUser struct {
 	Freeze bool   `json:"freeze" msgpack:"freeze"`
 }
 
+// SpotDeployRevokeFreezePrivilege represents the revokeFreezePrivilege variant of a spot deploy action
+type SpotDeployRevokeFreezePrivilege struct {
+	Token int `json:"token" msgpack:"token"`
+}
+
 // SpotDeployAction represents spot deploy action, exactly one variant is set
 type SpotDeployAction struct {
 	Type                  string                           `json:"type"                            msgpack:"type"`
@@ -238,6 +243,7 @@ type SpotDeployAction struct {
 	UserGenesis           *SpotDeployUserGenesis           `json:"userGenesis,omitempty"           msgpack:"userGenesis,omitempty"`
 	EnableFreezePrivilege *SpotDeployEnableFreezePrivilege `json:"enableFreezePrivilege,omitempty" msgpack:"enableFreezePrivilege,omitempty"`
 	FreezeUser            *SpotDeployFreezeUser            `json:"freezeUser,omitempty"            msgpack:"freezeUser,omitempty"`
+	RevokeFreezePrivilege *SpotDeployRevokeFreezePrivilege `json:"revokeFreezePrivilege,omitempty" msgpack:"revokeFreezePrivilege,omitempty"`
 }
 
 // ScheduleCancelAction represents schedule cancel action

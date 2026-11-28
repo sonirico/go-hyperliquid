@@ -188,6 +188,7 @@ cases = {
     "spotDeploy_userGenesis": lambda: ex.spot_deploy_user_genesis(1, [(OTHER, "100")], [(0, "50")]),
     "spotDeploy_enableFreezePrivilege": lambda: ex.spot_deploy_enable_freeze_privilege(1),
     "spotDeploy_freezeUser": lambda: ex.spot_deploy_freeze_user(1, OTHER, True),
+    "spotDeploy_revokeFreezePrivilege": lambda: ex.spot_deploy_revoke_freeze_privilege(1),
     "borrowLend": lambda: l1({"type": "borrowLend", "operation": "supply", "token": 0, "amount": "1.5"}),
 }
 
