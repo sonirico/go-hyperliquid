@@ -1139,6 +1139,18 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid8(in *jlexer.Lexer, out
 			} else {
 				out.Withdrawable = string(in.String())
 			}
+		case "time":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Time = int64(in.Int64())
+			}
+		case "crossMaintenanceMarginUsed":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.CrossMaintenanceMarginUsed = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1183,6 +1195,16 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid8(out *jwriter.Writer, 
 		const prefix string = ",\"withdrawable\":"
 		out.RawString(prefix)
 		out.String(string(in.Withdrawable))
+	}
+	{
+		const prefix string = ",\"time\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.Time))
+	}
+	{
+		const prefix string = ",\"crossMaintenanceMarginUsed\":"
+		out.RawString(prefix)
+		out.String(string(in.CrossMaintenanceMarginUsed))
 	}
 	out.RawByte('}')
 }
@@ -5032,6 +5054,12 @@ func easyjson6601e8cdDecodeGithubComSoniricoGoHyperliquid40(in *jlexer.Lexer, ou
 					(*out.CumFunding).UnmarshalEasyJSON(in)
 				}
 			}
+		case "maxLeverage":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.MaxLeverage = int(in.Int())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -5103,6 +5131,11 @@ func easyjson6601e8cdEncodeGithubComSoniricoGoHyperliquid40(out *jwriter.Writer,
 		const prefix string = ",\"cumFunding\":"
 		out.RawString(prefix)
 		(*in.CumFunding).MarshalEasyJSON(out)
+	}
+	{
+		const prefix string = ",\"maxLeverage\":"
+		out.RawString(prefix)
+		out.Int(int(in.MaxLeverage))
 	}
 	out.RawByte('}')
 }
