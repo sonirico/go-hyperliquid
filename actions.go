@@ -190,6 +190,14 @@ type SubAccountSpotTransferAction struct {
 	Amount         string `json:"amount"         msgpack:"amount"`
 }
 
+// BorrowLendAction represents borrow/lend action
+type BorrowLendAction struct {
+	Type      string `json:"type"      msgpack:"type"`
+	Operation string `json:"operation" msgpack:"operation"`
+	Token     int64  `json:"token"     msgpack:"token"`
+	Amount    string `json:"amount"    msgpack:"amount"`
+}
+
 // ScheduleCancelAction represents schedule cancel action
 type ScheduleCancelAction struct {
 	Type string `json:"type"           msgpack:"type"`

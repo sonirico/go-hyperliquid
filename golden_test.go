@@ -357,6 +357,10 @@ func goldenRows(userAddress string) []goldenRow {
 			_, err := ex.TwapCancel(ctx, "BTC", 77738308)
 			return err
 		}},
+		{name: "borrowLend", call: func(ctx context.Context, ex *Exchange) error {
+			_, err := ex.BorrowLend(ctx, 1.5, "supply", 0)
+			return err
+		}},
 	}
 }
 

@@ -2300,11 +2300,11 @@ func (e *Exchange) BorrowLend(
 
 	nonce := e.nextNonce()
 
-	action := map[string]any{
-		"type":      "borrowLend",
-		"operation": operation,
-		"token":     token,
-		"amount":    amountWire,
+	action := BorrowLendAction{
+		Type:      "borrowLend",
+		Operation: operation,
+		Token:     token,
+		Amount:    amountWire,
 	}
 
 	sig, err := e.signL1Action(
